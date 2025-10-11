@@ -26,11 +26,11 @@ export function debounce(func, wait = 300) {
  * @returns {string} Formatted date string
  */
 export function formatDate(date) {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('pt-BR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("pt-BR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -41,7 +41,7 @@ export function formatDate(date) {
  * @param {string} suffix - Suffix to add when truncated
  * @returns {string} Truncated text
  */
-export function truncate(text, maxLength = 150, suffix = '...') {
+export function truncate(text, maxLength = 150, suffix = "...") {
   if (!text || text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + suffix;
 }
@@ -51,7 +51,7 @@ export function truncate(text, maxLength = 150, suffix = '...') {
  * @param {string} prefix - Prefix for the ID
  * @returns {string} Unique ID
  */
-export function generateId(prefix = 'id') {
+export function generateId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -64,34 +64,34 @@ export function generateId(prefix = 'id') {
  */
 export function createElement(tag, attributes = {}, children = null) {
   const element = document.createElement(tag);
-  
+
   Object.entries(attributes).forEach(([key, value]) => {
-    if (key === 'className') {
+    if (key === "className") {
       element.className = value;
-    } else if (key === 'dataset') {
+    } else if (key === "dataset") {
       Object.entries(value).forEach(([dataKey, dataValue]) => {
         element.dataset[dataKey] = dataValue;
       });
-    } else if (key.startsWith('on') && typeof value === 'function') {
+    } else if (key.startsWith("on") && typeof value === "function") {
       element.addEventListener(key.substring(2).toLowerCase(), value);
     } else {
       element.setAttribute(key, value);
     }
   });
-  
+
   if (children) {
-    if (typeof children === 'string') {
+    if (typeof children === "string") {
       element.textContent = children;
     } else if (Array.isArray(children)) {
-      children.forEach(child => {
+      children.forEach((child) => {
         if (child instanceof HTMLElement) {
           element.appendChild(child);
-        } else if (typeof child === 'string') {
+        } else if (typeof child === "string") {
           element.appendChild(document.createTextNode(child));
         }
       });
     }
   }
-  
+
   return element;
 }

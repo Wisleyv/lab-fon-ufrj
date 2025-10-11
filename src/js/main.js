@@ -3,18 +3,18 @@
  * Walking Skeleton - Lab Fonética UFRJ
  */
 
-import { JSONAdapter } from './adapters/JSONAdapter.js';
-import { PesquisadoresSection } from './sections/pesquisadores.js';
+import { JSONAdapter } from "./adapters/JSONAdapter.js";
+import { PesquisadoresSection } from "./sections/pesquisadores.js";
 
 /**
  * Application configuration
  */
 const config = {
-  dataSource: 'json',
-  jsonUrl: './src/data.json',
+  dataSource: "json",
+  jsonUrl: "./src/data.json",
   sections: {
-    pesquisadores: 'pesquisadores-container'
-  }
+    pesquisadores: "pesquisadores-container",
+  },
 };
 
 /**
@@ -23,14 +23,14 @@ const config = {
 const app = {
   data: null,
   sections: {},
-  isInitialized: false
+  isInitialized: false,
 };
 
 /**
  * Initialize the application
  */
 async function init() {
-  console.log('🚀 Initializing Lab Fonética UFRJ...');
+  console.log("🚀 Initializing Lab Fonética UFRJ...");
 
   try {
     // Show loading state
@@ -44,7 +44,7 @@ async function init() {
       throw new Error(app.data.message);
     }
 
-    console.log('✅ Data loaded successfully:', app.data);
+    console.log("✅ Data loaded successfully:", app.data);
 
     // Initialize sections
     await initializeSections();
@@ -53,10 +53,9 @@ async function init() {
     await renderAllSections();
 
     app.isInitialized = true;
-    console.log('✅ Application initialized successfully');
-
+    console.log("✅ Application initialized successfully");
   } catch (error) {
-    console.error('❌ Initialization error:', error);
+    console.error("❌ Initialization error:", error);
     showGlobalError(error);
   } finally {
     showGlobalLoading(false);
@@ -71,13 +70,13 @@ async function initializeSections() {
   app.sections.pesquisadores = new PesquisadoresSection(
     config.sections.pesquisadores,
     {
-      loadingMessage: 'Carregando equipe...',
-      errorMessage: 'Não foi possível carregar a equipe.',
-      emptyMessage: 'Nenhum membro da equipe cadastrado.'
-    }
+      loadingMessage: "Carregando equipe...",
+      errorMessage: "Não foi possível carregar a equipe.",
+      emptyMessage: "Nenhum membro da equipe cadastrado.",
+    },
   );
 
-  console.log('✅ Sections initialized');
+  console.log("✅ Sections initialized");
 }
 
 /**
@@ -88,20 +87,20 @@ async function renderAllSections() {
 
   // Render coordenacao (if exists)
   if (app.data.coordenacao && app.data.coordenacao.length > 0) {
-    console.log('📋 Rendering coordenação...');
+    console.log("📋 Rendering coordenação...");
     // For walking skeleton, we'll render coordenacao in the same section
   }
 
   // Render pesquisadores
   if (app.data.pesquisadores) {
-    console.log('📋 Rendering pesquisadores...');
+    console.log("📋 Rendering pesquisadores...");
     renderPromises.push(
-      app.sections.pesquisadores.render(app.data.pesquisadores)
+      app.sections.pesquisadores.render(app.data.pesquisadores),
     );
   }
 
   await Promise.all(renderPromises);
-  console.log('✅ All sections rendered');
+  console.log("✅ All sections rendered");
 }
 
 /**
@@ -109,10 +108,10 @@ async function renderAllSections() {
  * @param {boolean} show - Whether to show loading
  */
 function showGlobalLoading(show) {
-  const loader = document.getElementById('global-loader');
+  const loader = document.getElementById("global-loader");
   if (loader) {
-    loader.style.display = show ? 'flex' : 'none';
-    loader.setAttribute('aria-hidden', !show);
+    loader.style.display = show ? "flex" : "none";
+    loader.setAttribute("aria-hidden", !show);
   }
 }
 
@@ -121,7 +120,7 @@ function showGlobalLoading(show) {
  * @param {Error} error - The error that occurred
  */
 function showGlobalError(error) {
-  const errorContainer = document.getElementById('global-error');
+  const errorContainer = document.getElementById("global-error");
   if (errorContainer) {
     errorContainer.innerHTML = `
       <div class="error-content">
@@ -133,26 +132,26 @@ function showGlobalError(error) {
         </button>
       </div>
     `;
-    errorContainer.style.display = 'block';
+    errorContainer.style.display = "block";
   }
 }
 
 /**
  * Handle errors globally
  */
-window.addEventListener('error', (event) => {
-  console.error('Global error:', event.error);
+window.addEventListener("error", (event) => {
+  console.error("Global error:", event.error);
 });
 
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled promise rejection:", event.reason);
 });
 
 /**
  * Start application when DOM is ready
  */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
 } else {
   init();
 }

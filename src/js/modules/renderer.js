@@ -3,7 +3,7 @@
  * Abstract class for rendering page sections
  */
 
-import { createElement } from '../utils/helpers.js';
+import { createElement } from "../utils/helpers.js";
 
 export class SectionRenderer {
   /**
@@ -15,10 +15,10 @@ export class SectionRenderer {
     this.containerId = containerId;
     this.container = null;
     this.options = {
-      loadingMessage: 'Carregando...',
-      errorMessage: 'Erro ao carregar conteúdo.',
-      emptyMessage: 'Nenhum conteúdo disponível.',
-      ...options
+      loadingMessage: "Carregando...",
+      errorMessage: "Erro ao carregar conteúdo.",
+      emptyMessage: "Nenhum conteúdo disponível.",
+      ...options,
     };
     this.isRendering = false;
   }
@@ -43,9 +43,9 @@ export class SectionRenderer {
    */
   async render(data) {
     if (!this.init()) return;
-    
+
     if (this.isRendering) {
-      console.warn('Rendering already in progress');
+      console.warn("Rendering already in progress");
       return;
     }
 
@@ -59,14 +59,14 @@ export class SectionRenderer {
       }
 
       const content = await this.template(data);
-      this.container.innerHTML = '';
-      
-      if (typeof content === 'string') {
+      this.container.innerHTML = "";
+
+      if (typeof content === "string") {
         this.container.innerHTML = content;
       } else if (content instanceof HTMLElement) {
         this.container.appendChild(content);
       } else if (Array.isArray(content)) {
-        content.forEach(element => {
+        content.forEach((element) => {
           if (element instanceof HTMLElement) {
             this.container.appendChild(element);
           }
@@ -75,7 +75,7 @@ export class SectionRenderer {
 
       this.afterRender();
     } catch (error) {
-      console.error('Render error:', error);
+      console.error("Render error:", error);
       this.showError(error);
     } finally {
       this.isRendering = false;
@@ -89,7 +89,7 @@ export class SectionRenderer {
    * @throws {Error} Must be implemented by subclass
    */
   template(data) {
-    throw new Error('Method template() must be implemented by subclass');
+    throw new Error("Method template() must be implemented by subclass");
   }
 
   /**
@@ -122,7 +122,7 @@ export class SectionRenderer {
     this.container.innerHTML = `
       <div class="error" role="alert">
         <p>${this.options.errorMessage}</p>
-        ${error.message ? `<small>${error.message}</small>` : ''}
+        ${error.message ? `<small>${error.message}</small>` : ""}
       </div>
     `;
   }
@@ -144,7 +144,7 @@ export class SectionRenderer {
    */
   clear() {
     if (this.container) {
-      this.container.innerHTML = '';
+      this.container.innerHTML = "";
     }
   }
 

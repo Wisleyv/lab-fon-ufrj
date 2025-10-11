@@ -3,7 +3,7 @@
  * Fetches data from local JSON files
  */
 
-import { DataAdapter } from './DataAdapter.js';
+import { DataAdapter } from "./DataAdapter.js";
 
 export class JSONAdapter extends DataAdapter {
   /**
@@ -28,38 +28,40 @@ export class JSONAdapter extends DataAdapter {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-        
+
         const response = await fetch(this.url, {
           signal: controller.signal,
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         });
-        
+
         clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const rawData = await response.json();
         const normalizedData = this.normalize(rawData);
-        
+
         if (!this.validate(normalizedData)) {
-          throw new Error('Data validation failed');
+          throw new Error("Data validation failed");
         }
-        
+
         return normalizedData;
       } catch (error) {
         console.warn(`Fetch attempt ${attempt + 1} failed:`, error.message);
-        
+
         // Last attempt - throw error
         if (attempt === this.retries - 1) {
           return this.handleError(error);
         }
-        
+
         // Wait before retry (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (attempt + 1)),
+        );
       }
     }
   }
@@ -75,7 +77,7 @@ export class JSONAdapter extends DataAdapter {
     return {
       ...rawData,
       _loaded: true,
-      _timestamp: new Date().toISOString()
+      _timestamp: new Date().toISOString(),
     };
   }
 
@@ -86,9 +88,11 @@ export class JSONAdapter extends DataAdapter {
    */
   validate(data) {
     if (!super.validate(data)) return false;
-    
+
     // Check if data has expected structure
     // For the walking skeleton, we expect at least pesquisadores
-    return data.hasOwnProperty('pesquisadores') || data.hasOwnProperty('coordenacao');
+    return (
+      data.hasOwnProperty("pesquisadores") || data.hasOwnProperty("coordenacao")
+    );
   }
 }

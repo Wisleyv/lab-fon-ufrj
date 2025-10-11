@@ -13,8 +13,8 @@ export class HTMLSanitizer {
    * // Returns: '&lt;script&gt;alert("xss")&lt;/script&gt;'
    */
   static sanitize(str) {
-    if (typeof str !== 'string') return '';
-    const div = document.createElement('div');
+    if (typeof str !== "string") return "";
+    const div = document.createElement("div");
     div.textContent = str;
     return div.innerHTML;
   }
@@ -28,17 +28,20 @@ export class HTMLSanitizer {
    * HTMLSanitizer.sanitizeHTML('<p>Text with <strong>bold</strong> and <script>bad</script></p>')
    * // Returns: '<p>Text with <strong>bold</strong> and </p>'
    */
-  static sanitizeHTML(html, allowedTags = ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'span']) {
-    if (typeof html !== 'string') return '';
-    
-    const div = document.createElement('div');
+  static sanitizeHTML(
+    html,
+    allowedTags = ["b", "i", "em", "strong", "a", "p", "br", "span"],
+  ) {
+    if (typeof html !== "string") return "";
+
+    const div = document.createElement("div");
     div.innerHTML = html;
-    
+
     const walker = document.createTreeWalker(
       div,
       NodeFilter.SHOW_ELEMENT,
       null,
-      false
+      false,
     );
 
     const nodesToRemove = [];
@@ -47,23 +50,23 @@ export class HTMLSanitizer {
       if (!allowedTags.includes(node.tagName.toLowerCase())) {
         nodesToRemove.push(node);
       }
-      
+
       // Remove dangerous attributes
       if (node.hasAttributes()) {
         const attrs = Array.from(node.attributes);
-        attrs.forEach(attr => {
-          if (attr.name.startsWith('on') || attr.name === 'style') {
+        attrs.forEach((attr) => {
+          if (attr.name.startsWith("on") || attr.name === "style") {
             node.removeAttribute(attr.name);
           }
         });
       }
     }
 
-    nodesToRemove.forEach(node => {
+    nodesToRemove.forEach((node) => {
       const textNode = document.createTextNode(node.textContent);
       node.replaceWith(textNode);
     });
-    
+
     return div.innerHTML;
   }
 
@@ -73,9 +76,9 @@ export class HTMLSanitizer {
    * @param {string[]} allowedProtocols - Allowed URL protocols
    * @returns {string|null} Sanitized URL or null if invalid
    */
-  static sanitizeURL(url, allowedProtocols = ['http:', 'https:', 'mailto:']) {
+  static sanitizeURL(url, allowedProtocols = ["http:", "https:", "mailto:"]) {
     if (!url) return null;
-    
+
     try {
       const urlObj = new URL(url, window.location.origin);
       if (allowedProtocols.includes(urlObj.protocol)) {
@@ -84,7 +87,7 @@ export class HTMLSanitizer {
     } catch (e) {
       // Invalid URL
     }
-    
+
     return null;
   }
 }

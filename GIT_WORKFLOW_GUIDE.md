@@ -9,6 +9,7 @@
 ## 🎯 Problema Identificado
 
 Você está trabalhando em um **GitHub Codespace** (ambiente de desenvolvimento na nuvem) e precisa garantir que:
+
 1. ✅ Suas alterações sejam salvas no GitHub
 2. ✅ Você possa acessar os arquivos no seu computador local
 3. ✅ Não haja conflitos ou perda de dados
@@ -63,6 +64,7 @@ Abra no navegador: https://github.com/Wisleyv/lab-fon-ufrj
 ### Opção A: Trabalho no Codespace (recomendado para você)
 
 #### Ao COMEÇAR o trabalho:
+
 ```bash
 # 1. Puxar últimas alterações do GitHub
 git pull origin main
@@ -72,6 +74,7 @@ git checkout -b feature/nome-da-feature
 ```
 
 #### Durante o trabalho:
+
 ```bash
 # Salvar progresso frequentemente (mini-commits locais)
 git add .
@@ -79,6 +82,7 @@ git commit -m "wip: descrição do que foi feito"
 ```
 
 #### Ao FINALIZAR o trabalho:
+
 ```bash
 # 1. Commit final (se houver alterações pendentes)
 git add .
@@ -102,6 +106,7 @@ git branch -d feature/nome-da-feature
 Se você trabalha alternadamente entre Codespace e seu computador:
 
 #### No Codespace (antes de sair):
+
 ```bash
 git add .
 git commit -m "docs: atualização dos documentos"
@@ -109,6 +114,7 @@ git push origin main
 ```
 
 #### No seu computador local:
+
 ```bash
 # 1. Clonar o repositório (primeira vez)
 cd ~/Documentos  # ou pasta de sua preferência
@@ -127,6 +133,7 @@ git push origin main
 ```
 
 #### De volta ao Codespace:
+
 ```bash
 # Puxar as alterações feitas localmente
 git pull origin main
@@ -137,6 +144,7 @@ git pull origin main
 ## 🛡️ Prevenção de Conflitos
 
 ### Regra de Ouro
+
 **Sempre execute `git pull` ANTES de começar a trabalhar!**
 
 ```bash
@@ -290,6 +298,7 @@ git push origin main
 ### Configurar Editor para Auto-Save
 
 No VS Code (já está no Codespace), pressione `Ctrl+,` (ou `Cmd+,` no Mac) e procure por:
+
 - **Files: Auto Save** → defina como `afterDelay`
 - **Files: Auto Save Delay** → 1000ms
 
@@ -411,15 +420,18 @@ Copie e use como rotina:
 
 ```markdown
 ### Ao INICIAR trabalho:
+
 - [ ] Abrir Codespace / Terminal
 - [ ] `git pull origin main`
 - [ ] Criar branch (opcional): `git checkout -b feature/nome`
 
 ### Durante trabalho:
+
 - [ ] Salvar arquivos frequentemente (Ctrl+S)
 - [ ] Commits pequenos: `git add . && git commit -m "wip: progresso"`
 
 ### Ao FINALIZAR trabalho:
+
 - [ ] Commit final: `git add . && git commit -m "feat: descrição"`
 - [ ] Merge para main: `git checkout main && git merge feature/nome`
 - [ ] Push: `git push origin main`

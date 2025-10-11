@@ -11,27 +11,32 @@ This is a fully functional "walking skeleton" prototype that validates the high-
 ### What's Implemented
 
 ✅ **Modern Build System**
+
 - Vite for fast development and optimized builds
 - ES6 modules architecture
 - Hot Module Replacement (HMR)
 
 ✅ **Modular Architecture**
+
 - Abstract `DataAdapter` base class
 - `JSONAdapter` implementation with retry logic
 - Base `SectionRenderer` class for all sections
 - `PesquisadoresSection` as functional slice demonstration
 
 ✅ **Security**
+
 - XSS protection via `HTMLSanitizer` utility
 - URL validation
 - HTML content sanitization
 
 ✅ **Testing Infrastructure**
+
 - Vitest for unit testing
 - 39 passing tests
 - DOM testing with jsdom
 
 ✅ **Accessibility**
+
 - Semantic HTML5
 - ARIA attributes
 - Skip links
@@ -39,6 +44,7 @@ This is a fully functional "walking skeleton" prototype that validates the high-
 - Keyboard navigation support
 
 ✅ **Responsive Design**
+
 - Mobile-first CSS
 - Flexible grid layouts
 - Touch-friendly interfaces
@@ -48,6 +54,7 @@ This is a fully functional "walking skeleton" prototype that validates the high-
 This skeleton demonstrates:
 
 1. **End-to-End Data Flow**
+
    ```
    data.json → JSONAdapter → PesquisadoresSection → Rendered HTML
    ```
@@ -105,7 +112,7 @@ lab-fon-ufrj/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm 9+
 
 ### Installation
@@ -165,6 +172,7 @@ npm run format
 ### 1. Dynamic Content Loading
 
 The `pesquisadores` section demonstrates:
+
 - Fetching data from JSON
 - Error handling with retry logic
 - Loading states
@@ -174,8 +182,9 @@ The `pesquisadores` section demonstrates:
 ### 2. Security
 
 All user-generated content is sanitized:
+
 ```javascript
-import { HTMLSanitizer } from './utils/sanitizer.js';
+import { HTMLSanitizer } from "./utils/sanitizer.js";
 
 const safeName = HTMLSanitizer.sanitize(user.name);
 const safeHTML = HTMLSanitizer.sanitizeHTML(user.bio);
@@ -215,6 +224,7 @@ Test Files  2 passed (2)
 ```
 
 **Coverage areas:**
+
 - ✅ HTML sanitization (XSS prevention)
 - ✅ URL validation
 - ✅ Helper functions (debounce, truncate, etc.)
@@ -226,6 +236,7 @@ Test Files  2 passed (2)
 Based on the evaluation document, the following should be prioritized:
 
 ### Phase 1: Complete Core Features (Priority High 🔴)
+
 - [ ] Implement remaining sections (Trabalhos, Parcerias)
 - [ ] Add Service Worker for offline support
 - [ ] Implement error boundary system
@@ -233,6 +244,7 @@ Based on the evaluation document, the following should be prioritized:
 - [ ] Set up CI/CD pipeline
 
 ### Phase 2: Enhanced Modularity (Priority Medium 🟡)
+
 - [ ] Create WordPress adapter
 - [ ] Implement plugin/hook system
 - [ ] Add code splitting
@@ -240,6 +252,7 @@ Based on the evaluation document, the following should be prioritized:
 - [ ] Performance monitoring
 
 ### Phase 3: Advanced Features (Priority Low 🟢)
+
 - [ ] E2E tests with Playwright
 - [ ] Visual regression tests
 - [ ] Analytics integration
@@ -251,6 +264,7 @@ Based on the evaluation document, the following should be prioritized:
 ### Vite Configuration
 
 Key settings in `vite.config.js`:
+
 - ES Module build output
 - Hash-based cache busting
 - Source maps enabled
@@ -259,32 +273,35 @@ Key settings in `vite.config.js`:
 
 ### Package Scripts
 
-| Script | Description |
-|--------|-------------|
-| `dev` | Start development server |
-| `build` | Build for production |
-| `preview` | Preview production build |
-| `test` | Run tests in watch mode |
-| `test:ui` | Run tests with UI |
+| Script          | Description              |
+| --------------- | ------------------------ |
+| `dev`           | Start development server |
+| `build`         | Build for production     |
+| `preview`       | Preview production build |
+| `test`          | Run tests in watch mode  |
+| `test:ui`       | Run tests with UI        |
 | `test:coverage` | Generate coverage report |
-| `lint` | Check code quality |
-| `format` | Format code |
+| `lint`          | Check code quality       |
+| `format`        | Format code              |
 
 ## 📚 Architecture Decisions
 
 ### Why Vite?
+
 - ⚡ Lightning-fast HMR
 - 📦 Optimized production builds
 - 🔌 Plugin ecosystem
 - 🎯 Zero-config for most use cases
 
 ### Why ES6 Modules?
+
 - 🌳 Tree-shaking for smaller bundles
 - 📖 Better code organization
 - 🔄 Easy migration to frameworks later
 - 🧪 Better testability
 
 ### Why Abstract Adapters?
+
 - 🔄 Easy to swap data sources
 - 🧪 Easy to mock in tests
 - 📝 Clear contracts via base class
@@ -311,9 +328,10 @@ This is a foundational prototype. To extend:
 5. Run tests to verify
 
 Example:
+
 ```javascript
 // src/js/sections/trabalhos.js
-import { SectionRenderer } from '../modules/renderer.js';
+import { SectionRenderer } from "../modules/renderer.js";
 
 export class TrabalhosSection extends SectionRenderer {
   template(trabalhos) {

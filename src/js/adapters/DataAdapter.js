@@ -10,7 +10,7 @@ export class DataAdapter {
    * @throws {Error} Must be implemented by subclass
    */
   async fetch() {
-    throw new Error('Method fetch() must be implemented by subclass');
+    throw new Error("Method fetch() must be implemented by subclass");
   }
 
   /**
@@ -20,7 +20,7 @@ export class DataAdapter {
    * @throws {Error} Must be implemented by subclass
    */
   normalize(rawData) {
-    throw new Error('Method normalize() must be implemented by subclass');
+    throw new Error("Method normalize() must be implemented by subclass");
   }
 
   /**
@@ -29,11 +29,11 @@ export class DataAdapter {
    * @returns {Object} Error response object
    */
   handleError(error) {
-    console.error('Data fetch error:', error);
+    console.error("Data fetch error:", error);
     return {
       error: true,
       message: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -43,6 +43,6 @@ export class DataAdapter {
    * @returns {boolean} True if valid
    */
   validate(data) {
-    return data && typeof data === 'object' && !data.error;
+    return data && typeof data === "object" && !data.error;
   }
 }

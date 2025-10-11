@@ -42,10 +42,10 @@ Referência de conteúdo: estrutura em 6 seções conforme proposta original.
 
 ## 2. Objetivos e Princípios de Arquitetura
 
-- **Separação de responsabilidades**: HTML (estrutura), CSS (apresentação), JS/JSON (conteúdo e lógica).  
-- **Modularidade**: cada seção é um módulo independente (renderização, templates e dados).  
-- **Manutenibilidade**: atualizar conteúdo sem tocar no código (editar `data.json`).  
-- **Evolução**: fácil migração para CMS (a mesma lógica de consumir dados via API se aplica).  
+- **Separação de responsabilidades**: HTML (estrutura), CSS (apresentação), JS/JSON (conteúdo e lógica).
+- **Modularidade**: cada seção é um módulo independente (renderização, templates e dados).
+- **Manutenibilidade**: atualizar conteúdo sem tocar no código (editar `data.json`).
+- **Evolução**: fácil migração para CMS (a mesma lógica de consumir dados via API se aplica).
 - **Acessibilidade e Performance**: incorporar ARIA, semantic HTML, lazy-loading e otimização de assets.
 
 ---
@@ -99,38 +99,38 @@ Sugestão mínima de estrutura:
 ```html
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Laboratório de Fonética — UFRJ</title>
-  <link rel="stylesheet" href="css/main.css">
-</head>
-<body>
-  <header>
-    <div class="container">
-      <a class="logo" href="#">Lab. de Fonética — UFRJ</a>
-      <nav id="main-nav"></nav>
-      <button id="menu-toggle" aria-expanded="false">Menu</button>
-    </div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Laboratório de Fonética — UFRJ</title>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <a class="logo" href="#">Lab. de Fonética — UFRJ</a>
+        <nav id="main-nav"></nav>
+        <button id="menu-toggle" aria-expanded="false">Menu</button>
+      </div>
+    </header>
 
-  <main>
-    <section id="coordenacao" aria-labelledby="h-coordenacao"></section>
-    <section id="colaboradores" aria-labelledby="h-colaboradores"></section>
-    <section id="pesquisadores" aria-labelledby="h-pesquisadores"></section>
-    <section id="trabalhos" aria-labelledby="h-trabalhos"></section>
-    <section id="links" aria-labelledby="h-links"></section>
-    <section id="parcerias" aria-labelledby="h-parcerias"></section>
-  </main>
+    <main>
+      <section id="coordenacao" aria-labelledby="h-coordenacao"></section>
+      <section id="colaboradores" aria-labelledby="h-colaboradores"></section>
+      <section id="pesquisadores" aria-labelledby="h-pesquisadores"></section>
+      <section id="trabalhos" aria-labelledby="h-trabalhos"></section>
+      <section id="links" aria-labelledby="h-links"></section>
+      <section id="parcerias" aria-labelledby="h-parcerias"></section>
+    </main>
 
-  <footer>
-    <div class="container">
-      <p>© Laboratório de Fonética — UFRJ</p>
-    </div>
-  </footer>
+    <footer>
+      <div class="container">
+        <p>© Laboratório de Fonética — UFRJ</p>
+      </div>
+    </footer>
 
-  <script src="js/main.js" defer></script>
-</body>
+    <script src="js/main.js" defer></script>
+  </body>
 </html>
 ```
 
@@ -161,8 +161,8 @@ Sugestão mínima de estrutura:
 
 **Boas práticas para o `data.json`**:
 
-- Use **UTF-8** e evite comentários no JSON (usar um arquivo `README.md` para documentação).  
-- Mantenha IDs únicos para entradas que serão linkadas.  
+- Use **UTF-8** e evite comentários no JSON (usar um arquivo `README.md` para documentação).
+- Mantenha IDs únicos para entradas que serão linkadas.
 - Armazene apenas conteúdo; qualquer lógica de apresentação deve ficar em JS/CSS.
 
 ---
@@ -173,7 +173,7 @@ Sugestão mínima de estrutura:
 
 ```js
 async function fetchContent() {
-  const res = await fetch('data.json');
+  const res = await fetch("data.json");
   const data = await res.json();
   renderPage(data);
   initializeInteractivity();
@@ -189,14 +189,14 @@ function renderPage(data) {
 }
 
 function renderPesquisadores(list) {
-  const container = document.getElementById('pesquisadores');
-  container.innerHTML = '';
-  list.forEach(p => container.appendChild(createResearcherCard(p)));
+  const container = document.getElementById("pesquisadores");
+  container.innerHTML = "";
+  list.forEach((p) => container.appendChild(createResearcherCard(p)));
 }
 
 function createResearcherCard(p) {
-  const card = document.createElement('article');
-  card.className = 'card pesquisador';
+  const card = document.createElement("article");
+  card.className = "card pesquisador";
   card.innerHTML = `...`;
   return card;
 }
@@ -208,12 +208,12 @@ function initializeInteractivity() {
 }
 
 // inicialização
-document.addEventListener('DOMContentLoaded', fetchContent);
+document.addEventListener("DOMContentLoaded", fetchContent);
 ```
 
 **Observações**:
 
-- Prefira `defer` no script (`<script defer src="js/main.js"></script>`) para garantir parsing do HTML primeiro.  
+- Prefira `defer` no script (`<script defer src="js/main.js"></script>`) para garantir parsing do HTML primeiro.
 - Trate erros de fetch com fallback (ex: mensagem de "Conteúdo indisponível").
 
 ---
@@ -239,8 +239,8 @@ function createResearcherInnerHTML(p) {
 
 **Pontos importantes**:
 
-- Use `loading="lazy"` para imagens não-críticas.  
-- Inclua `alt` descritivo em todas as imagens.  
+- Use `loading="lazy"` para imagens não-críticas.
+- Inclua `alt` descritivo em todas as imagens.
 - Evite `innerHTML` com conteúdo não-sanitizado; se o conteúdo vem de fontes externas, sanitize antes.
 
 ---
@@ -249,25 +249,35 @@ function createResearcherInnerHTML(p) {
 
 **Princípios**:
 
-- Desenvolver estilos básicos para mobile primeiro.  
-- Usar `rem` e `em` para tipografia responsiva.  
+- Desenvolver estilos básicos para mobile primeiro.
+- Usar `rem` e `em` para tipografia responsiva.
 - Grid/Flexbox para layout de cards.
 
 **Breakpoints sugeridos**:
 
-- `min-width: 640px` (pequenos tablets)  
-- `min-width: 768px` (tablets)  
+- `min-width: 640px` (pequenos tablets)
+- `min-width: 768px` (tablets)
 - `min-width: 1024px` (desktops)
 
 **Pequeno snippet**:
 
 ```css
 /* mobile base */
-.container { padding: 1rem; }
-.card { border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+.container {
+  padding: 1rem;
+}
+.card {
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
 
 @media (min-width: 768px) {
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
 }
 ```
 
@@ -277,27 +287,27 @@ function createResearcherInnerHTML(p) {
 
 **Acessibilidade**:
 
-- Marcação semântica (`<main>`, `<section>`, `<article>`, `<nav>`).  
-- `aria-labelledby` para cada section.  
-- `alt` em imagens; `aria-expanded` em botões de menu.  
+- Marcação semântica (`<main>`, `<section>`, `<article>`, `<nav>`).
+- `aria-labelledby` para cada section.
+- `alt` em imagens; `aria-expanded` em botões de menu.
 - Garantir foco acessível (outline visível) e navegação via teclado.
 
 **Interatividade**:
 
-- Rolagem suave para navegação interna com `scrollIntoView({behavior: 'smooth'})`.  
-- Menu responsivo com `aria-expanded` toggle.  
+- Rolagem suave para navegação interna com `scrollIntoView({behavior: 'smooth'})`.
+- Menu responsivo com `aria-expanded` toggle.
 - Expand/collapse para listas longas (ex: publicações), com `aria-controls`.
 
 ---
 
 ## 11. Boas práticas de performance e otimização de assets
 
-- **Compressão:** gzip / Brotli no servidor.  
-- **Minificação:** CSS e JS antes do deploy.  
-- **Cache:** TTL para assets estáticos com versionamento (`/dist/main.v1.0.css`).  
-- **Imagens:** converter para WebP/AVIF quando possível; usar `srcset` para múltiplas resoluções.  
-- **Critical CSS:** inline do CSS crítico para primeira dobra (opcional).  
-- **Lazy-loading** para imagens e iframes.  
+- **Compressão:** gzip / Brotli no servidor.
+- **Minificação:** CSS e JS antes do deploy.
+- **Cache:** TTL para assets estáticos com versionamento (`/dist/main.v1.0.css`).
+- **Imagens:** converter para WebP/AVIF quando possível; usar `srcset` para múltiplas resoluções.
+- **Critical CSS:** inline do CSS crítico para primeira dobra (opcional).
+- **Lazy-loading** para imagens e iframes.
 - **Audit:** rodar Lighthouse e corrigir problemas de performance.
 
 ---
@@ -306,12 +316,12 @@ function createResearcherInnerHTML(p) {
 
 **Checklist mínimo**:
 
-- [ ] Testes em Chrome, Firefox, Safari (desktop e mobile).  
-- [ ] Testes em iOS (Safari) e Android (Chrome).  
-- [ ] Verificação de responsividade (320px, 375px, 425px, 768px, 1024px).  
-- [ ] Validação de links e downloads (ex: PDFs).  
-- [ ] Testes de contraste de cor (WCAG AA).  
-- [ ] Navegação somente por teclado.  
+- [ ] Testes em Chrome, Firefox, Safari (desktop e mobile).
+- [ ] Testes em iOS (Safari) e Android (Chrome).
+- [ ] Verificação de responsividade (320px, 375px, 425px, 768px, 1024px).
+- [ ] Validação de links e downloads (ex: PDFs).
+- [ ] Testes de contraste de cor (WCAG AA).
+- [ ] Navegação somente por teclado.
 - [ ] Verificação de formulários (se houver) e sanitização.
 
 ---
@@ -320,21 +330,21 @@ function createResearcherInnerHTML(p) {
 
 **Pré-deploy**:
 
-- Confirmar que identidade visual e conteúdo (data.json) foram entregues.  
-- Testar no ambiente staging (ou local com servidor).  
+- Confirmar que identidade visual e conteúdo (data.json) foram entregues.
+- Testar no ambiente staging (ou local com servidor).
 
 **Server checks (mínimos)**:
 
-- Servidor aceita arquivos estáticos (HTML/CSS/JS).  
-- Caso PHP seja necessário, confirmar versão suportada.  
-- Certificado HTTPS (Let's Encrypt).  
+- Servidor aceita arquivos estáticos (HTML/CSS/JS).
+- Caso PHP seja necessário, confirmar versão suportada.
+- Certificado HTTPS (Let's Encrypt).
 - Configurar headers de cache e compressão.
 
 **Checklist de deploy**:
 
-- [ ] Fazer backup da versão anterior (se houver).  
-- [ ] Subir arquivos e validar paths.  
-- [ ] Testar links e downloads em produção.  
+- [ ] Fazer backup da versão anterior (se houver).
+- [ ] Subir arquivos e validar paths.
+- [ ] Testar links e downloads em produção.
 - [ ] Ativar monitoramento (ex: UptimeRobot).
 
 ---
@@ -345,8 +355,8 @@ function createResearcherInnerHTML(p) {
 
 **Mapeamento básico**:
 
-- `coordenacao`, `colaboradores`, `pesquisadores` → custom post type `membros` (ou `pesquisadores`) com campos ACF (foto, cargo, lattes, bio).  
-- `trabalhos` → custom post type `publicacoes` (titulo, autores, ano, arquivo).  
+- `coordenacao`, `colaboradores`, `pesquisadores` → custom post type `membros` (ou `pesquisadores`) com campos ACF (foto, cargo, lattes, bio).
+- `trabalhos` → custom post type `publicacoes` (titulo, autores, ano, arquivo).
 - `links` e `parcerias` → taxonomias ou CPTs simples.
 
 **Troca de fonte no `main.js`**:
@@ -359,27 +369,27 @@ function createResearcherInnerHTML(p) {
 
 **Passo 1: Criar novo projeto**
 
-- Menu: Projetos → Novo.  
-- Nome: `Website Institucional - Laboratório de Fonética UFRJ`.  
-- Código/ID: `UFRJ-FONETICA-WEB-2025`.  
-- Cliente: Laboratório de Fonética da UFRJ.  
-- Tipo: `Time and Materials` (ou similar).  
-- Datas: definir data de início e fim (30 dias).  
+- Menu: Projetos → Novo.
+- Nome: `Website Institucional - Laboratório de Fonética UFRJ`.
+- Código/ID: `UFRJ-FONETICA-WEB-2025`.
+- Cliente: Laboratório de Fonética da UFRJ.
+- Tipo: `Time and Materials` (ou similar).
+- Datas: definir data de início e fim (30 dias).
 
 **Passo 2: Estruturar EAP / WBS**
 
-- Inserir atividades-pai: `1.0 Planejamento`, `2.0 Design`, `3.0 Desenvolvimento`, `4.0 Testes`, `5.0 Ajustes e Deploy`, `6.0 Gestão`.  
-- Para cada atividade-pai, criar sub-tarefas com horas (ver tabela abaixo).  
+- Inserir atividades-pai: `1.0 Planejamento`, `2.0 Design`, `3.0 Desenvolvimento`, `4.0 Testes`, `5.0 Ajustes e Deploy`, `6.0 Gestão`.
+- Para cada atividade-pai, criar sub-tarefas com horas (ver tabela abaixo).
 
 **Passo 3: Marcos e dependências**
 
-- Criar marcos (M1, M2, M3) e vincular a conclusão de determinadas atividades.  
+- Criar marcos (M1, M2, M3) e vincular a conclusão de determinadas atividades.
 - Definir predecessoras nas tarefas para gerar cronograma realista.
 
 **Passo 4: Recursos e custos**
 
-- Cadastrar recurso(s) (Desenvolvedor Web Pleno).  
-- Definir custo/hora: R$ 80,00.  
+- Cadastrar recurso(s) (Desenvolvedor Web Pleno).
+- Definir custo/hora: R$ 80,00.
 - Atribuir recursos às tarefas com horas previstas; ProjeQtOr calculará custos.
 
 **Passo 5: Acompanhamento**
@@ -389,28 +399,28 @@ function createResearcherInnerHTML(p) {
 
 ---
 
-## 16. Mapeamento detalhado de tarefas, horas e custos (Tabela — conforme *Excerto*)
+## 16. Mapeamento detalhado de tarefas, horas e custos (Tabela — conforme _Excerto_)
 
-| **Etapa**                    | **Tarefa**                                        | **Horas Estimadas** | **Subtotal (R$)** |
-| ---------------------------- | -------------------------------------------------:| -------------------:| -----------------:|
-| 1. Planejamento e Estratégia | Reunião de alinhamento (Briefing)                 | 1h                  | R$ 80,00          |
-|                              | Análise de requisitos / Arquitetura da informação | 4h                  | R$ 320,00         |
-| 2. Design (Adaptação UI/UX)  | Criação do wireframe                              | 6h                  | R$ 480,00         |
-|                              | Mockup alta fidelidade (aplicação da identidade)  | 6h                  | R$ 480,00         |
-|                              | Reunião de apresentação do design                 | 1h                  | R$ 80,00          |
-| 3. Desenvolvimento Front-end | Configuração do ambiente / Estrutura do projeto   | 3h                  | R$ 240,00         |
-|                              | Codificação HTML5 semântico                       | 10h                 | R$ 800,00         |
-|                              | Estilização CSS3 (fidelidade ao design)           | 12h                 | R$ 960,00         |
-|                              | Implementação de responsividade                   | 12h                 | R$ 960,00         |
-|                              | Interatividade JS (menu, scroll, etc.)            | 3h                  | R$ 240,00         |
-| 4. Testes e Validação        | Testes compatibilidade (browsers)                 | 2h                  | R$ 160,00         |
-|                              | Testes de responsividade                          | 2h                  | R$ 160,00         |
-|                              | Verificação de links e revisão final de conteúdo  | 2h                  | R$ 160,00         |
-| 5. Ajustes e Implementação   | Rodada final de ajustes (feedback)                | 4h                  | R$ 320,00         |
-|                              | Implementação no servidor (deploy)                | 3h                  | R$ 240,00         |
-|                              | Verificação final em produção                     | 1h                  | R$ 80,00          |
-| Gestão e Comunicação         | Gerenciamento do projeto                          | 3h                  | R$ 240,00         |
-| **TOTAL**                    |                                                   | **75 horas**        | **R$ 6.000,00**   |
+| **Etapa**                    |                                        **Tarefa** | **Horas Estimadas** | **Subtotal (R$)** |
+| ---------------------------- | ------------------------------------------------: | ------------------: | ----------------: |
+| 1. Planejamento e Estratégia |                 Reunião de alinhamento (Briefing) |                  1h |          R$ 80,00 |
+|                              | Análise de requisitos / Arquitetura da informação |                  4h |         R$ 320,00 |
+| 2. Design (Adaptação UI/UX)  |                              Criação do wireframe |                  6h |         R$ 480,00 |
+|                              |  Mockup alta fidelidade (aplicação da identidade) |                  6h |         R$ 480,00 |
+|                              |                 Reunião de apresentação do design |                  1h |          R$ 80,00 |
+| 3. Desenvolvimento Front-end |   Configuração do ambiente / Estrutura do projeto |                  3h |         R$ 240,00 |
+|                              |                       Codificação HTML5 semântico |                 10h |         R$ 800,00 |
+|                              |           Estilização CSS3 (fidelidade ao design) |                 12h |         R$ 960,00 |
+|                              |                   Implementação de responsividade |                 12h |         R$ 960,00 |
+|                              |            Interatividade JS (menu, scroll, etc.) |                  3h |         R$ 240,00 |
+| 4. Testes e Validação        |                 Testes compatibilidade (browsers) |                  2h |         R$ 160,00 |
+|                              |                          Testes de responsividade |                  2h |         R$ 160,00 |
+|                              |  Verificação de links e revisão final de conteúdo |                  2h |         R$ 160,00 |
+| 5. Ajustes e Implementação   |                Rodada final de ajustes (feedback) |                  4h |         R$ 320,00 |
+|                              |                Implementação no servidor (deploy) |                  3h |         R$ 240,00 |
+|                              |                     Verificação final em produção |                  1h |          R$ 80,00 |
+| Gestão e Comunicação         |                          Gerenciamento do projeto |                  3h |         R$ 240,00 |
+| **TOTAL**                    |                                                   |        **75 horas** |   **R$ 6.000,00** |
 
 > **Observação:** Os valores e horas acima são idênticos aos informados no Excerto da proposta orçamentária (Rev.1).
 
@@ -418,14 +428,14 @@ function createResearcherInnerHTML(p) {
 
 ## 17. Milestones e Cronograma resumido (30 dias)
 
-- **Semana 1:** Planejamento e Design — Wireframe + Mockup aprovados (M1).  
-- **Semanas 2–3:** Desenvolvimento Front-end (M2 ao final da semana 3).  
+- **Semana 1:** Planejamento e Design — Wireframe + Mockup aprovados (M1).
+- **Semanas 2–3:** Desenvolvimento Front-end (M2 ao final da semana 3).
 - **Semana 4:** Testes, ajustes finais e Deploy (M3 — Go-live).
 
 **Milestones**:
 
-- M1 — Mockup de Alta Fidelidade Aprovado (fim da Semana 1).  
-- M2 — Ambiente de Desenvolvimento + Versão Alfa Concluída (fim da Semana 3).  
+- M1 — Mockup de Alta Fidelidade Aprovado (fim da Semana 1).
+- M2 — Ambiente de Desenvolvimento + Versão Alfa Concluída (fim da Semana 3).
 - M3 — Site publicado (Go-live) (fim da Semana 4).
 
 ---
@@ -434,13 +444,13 @@ function createResearcherInnerHTML(p) {
 
 **Editar conteúdo**:
 
-- Para adicionar/editar pesquisador: atualizar `data.json` → committed no repositório → fazer deploy.  
+- Para adicionar/editar pesquisador: atualizar `data.json` → committed no repositório → fazer deploy.
 - Para adicionar publicação: colocar arquivo em `assets/papers/` e adicionar entrada em `data.json.trabalhos` com `link` apontando para o arquivo.
 
 **Rotina recomendada**:
 
-- Backup semanal do diretório `/assets/` e `data.json`.  
-- Versões no Git (branch `main` / `dev`) para controle.  
+- Backup semanal do diretório `/assets/` e `data.json`.
+- Versões no Git (branch `main` / `dev`) para controle.
 - Registro de mudanças em `CHANGELOG.md`.
 
 ---
@@ -456,7 +466,14 @@ function createResearcherInnerHTML(p) {
 ```json
 {
   "coordenacao": [
-    {"nome": "Prof. Fulano", "cargo": "Coordenador", "foto": "assets/images/fulano.jpg", "lattes": "https://...", "email": "fulano@ufrj.br", "bio": "..."}
+    {
+      "nome": "Prof. Fulano",
+      "cargo": "Coordenador",
+      "foto": "assets/images/fulano.jpg",
+      "lattes": "https://...",
+      "email": "fulano@ufrj.br",
+      "bio": "..."
+    }
   ],
   "pesquisadores": [],
   "trabalhos": [],
@@ -468,31 +485,32 @@ function createResearcherInnerHTML(p) {
 ### 19.3 `main.js` (esqueleto)
 
 ```js
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const resp = await fetch('data.json');
+    const resp = await fetch("data.json");
     const data = await resp.json();
     renderPage(data);
     initializeInteractivity();
   } catch (err) {
-    console.error('Falha ao carregar conteúdo:', err);
-    document.getElementById('main').innerHTML = '<p>Conteúdo temporariamente indisponível.</p>';
+    console.error("Falha ao carregar conteúdo:", err);
+    document.getElementById("main").innerHTML =
+      "<p>Conteúdo temporariamente indisponível.</p>";
   }
 });
 ```
 
 ### 19.4 Pequena checklist de migração para WordPress (heads-up)
 
-- Criar CPTs (`pesquisadores`, `publicacoes`), usar ACF para campos extras.  
-- Mapear cada `data.json` → endpoint WP (JSON).  
+- Criar CPTs (`pesquisadores`, `publicacoes`), usar ACF para campos extras.
+- Mapear cada `data.json` → endpoint WP (JSON).
 - Ajustar `main.js` para consumir a API do WP e normalizar nomes de campos.
 
 ---
 
 ## Referências e notas finais
 
-- Texto-base: Proposta orçamentária (Excerto).  
-- Estrutura e conteúdos inspirados no exemplo: https://sites.google.com/view/grupoprovale/contato  
+- Texto-base: Proposta orçamentária (Excerto).
+- Estrutura e conteúdos inspirados no exemplo: https://sites.google.com/view/grupoprovale/contato
 
 ---
 
