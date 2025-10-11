@@ -1,0 +1,73 @@
+{
+  "header": {
+    "title": "Laboratório de Fonética",
+    "subtitle": "Universidade Federal do Rio de Janeiro",
+    "logo": "assets/logo.png"
+  },
+  "about": {
+    "title": "Sobre o Laboratório",
+    "content": "O Laboratório de Fonética da UFRJ é um centro de pesquisa dedicado ao estudo dos sons da fala, suas propriedades acústicas e articulatórias, e seus aspectos perceptuais e cognitivos."
+  },
+  "research": {
+    "title": "Áreas de Pesquisa",
+    "areas": [
+      {
+        "name": "Fonética Acústica",
+        "description": "Análise das propriedades físicas dos sons da fala"
+      },
+      {
+        "name": "Fonética Articulatória",
+        "description": "Estudo da produção dos sons da fala"
+      },
+      {
+        "name": "Fonética Perceptual",
+        "description": "Investigação da percepção dos sons da fala"
+      }
+    ]
+  },
+  "team": {
+    "title": "Equipe",
+    "members": [
+      {
+        "name": "Prof. Dr. João Silva",
+        "role": "Coordenador",
+        "photo": "assets/team/joao.jpg"
+      },
+      {
+        "name": "Profa. Dra. Maria Santos",
+        "role": "Pesquisadora",
+        "photo": "assets/team/maria.jpg"
+      }
+    ]
+  },
+  "publications": {
+    "title": "Publicações Recentes",
+    "items": [
+      {
+        "title": "Análise acústica do português brasileiro",
+        "authors": "Silva, J.; Santos, M.",
+        "year": "2024",
+        "journal": "Revista de Fonética"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contato",
+    "email": "labfon@letras.ufrj.br",
+    "phone": "+55 21 1234-5678",
+    "address": "Faculdade de Letras - UFRJ, Av. Horácio Macedo, 2151, Rio de Janeiro - RJ"
+  },
+  "footer": {
+    "copyright": "© 2024 Laboratório de Fonética - UFRJ. Todos os direitos reservados.",
+    "social": [
+      {
+        "platform": "Instagram",
+        "url": "#"
+      },
+      {
+        "platform": "Facebook",
+        "url": "#"
+      }
+    ]
+  }
+}
