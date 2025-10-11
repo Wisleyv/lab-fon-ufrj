@@ -1,0 +1,73 @@
+{
+  "coordenacao": [
+    {
+      "nome": "Dra. Maria Silva",
+      "cargo": "Coordenadora",
+      "foto": "assets/images/placeholder-avatar.jpg",
+      "lattes": "https://lattes.cnpq.br/1234567890",
+      "email": "maria.silva@letras.ufrj.br",
+      "bio": "Doutora em Linguística pela UFRJ. Especialista em fonética acústica e prosódia do português brasileiro."
+    }
+  ],
+  "pesquisadores": [
+    {
+      "nome": "Dr. João Santos",
+      "cargo": "Pesquisador Sênior",
+      "foto": "assets/images/placeholder-avatar.jpg",
+      "lattes": "https://lattes.cnpq.br/0987654321",
+      "email": "joao.santos@letras.ufrj.br",
+      "bio": "Doutor em Fonética Experimental. Atua nas áreas de análise acústica da fala e variação linguística."
+    },
+    {
+      "nome": "Dra. Ana Paula Costa",
+      "cargo": "Pesquisadora",
+      "foto": "assets/images/placeholder-avatar.jpg",
+      "lattes": "https://lattes.cnpq.br/1122334455",
+      "email": "ana.costa@letras.ufrj.br",
+      "bio": "Doutora em Linguística Aplicada. Pesquisa aquisição fonológica e ensino de pronúncia."
+    },
+    {
+      "nome": "Me. Carlos Oliveira",
+      "cargo": "Mestrando",
+      "foto": "assets/images/placeholder-avatar.jpg",
+      "lattes": "https://lattes.cnpq.br/5544332211",
+      "email": "carlos.oliveira@letras.ufrj.br",
+      "bio": "Mestrando em Linguística. Desenvolve pesquisa sobre percepção de sons da fala."
+    }
+  ],
+  "sobre": {
+    "titulo": "Sobre o Laboratório",
+    "descricao": "O Laboratório de Fonética da UFRJ é um centro de excelência em pesquisa fonética e fonológica, dedicado ao estudo científico dos sons da fala humana.",
+    "missao": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
+  },
+  "trabalhos": [
+    {
+      "titulo": "Análise acústica de vogais do português brasileiro",
+      "autores": ["Maria Silva", "João Santos"],
+      "ano": 2024,
+      "veiculo": "Revista de Estudos da Linguagem",
+      "tipo": "artigo",
+      "link": "https://exemplo.com/artigo1.pdf"
+    },
+    {
+      "titulo": "Variação prosódica em dialetos do Rio de Janeiro",
+      "autores": ["Ana Paula Costa"],
+      "ano": 2023,
+      "veiculo": "Cadernos de Linguística",
+      "tipo": "artigo",
+      "link": "https://exemplo.com/artigo2.pdf"
+    }
+  ],
+  "parcerias": [
+    {
+      "nome": "Universidade de São Paulo",
+      "logo": "assets/images/logo-usp.png",
+      "link": "https://www.usp.br"
+    },
+    {
+      "nome": "CNPQ",
+      "logo": "assets/images/logo-cnpq.png",
+      "link": "https://www.cnpq.br"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Laboratório de Fonética da UFRJ - Centro de excelência em pesquisa fonética e fonológica">
+  <meta name="keywords" content="fonética, fonologia, linguística, UFRJ, pesquisa">
+  <meta name="author" content="Laboratório de Fonética UFRJ">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Laboratório de Fonética UFRJ">
+  <meta property="og:description" content="Centro de excelência em pesquisa fonética e fonológica">
+  
+  <title>Laboratório de Fonética UFRJ</title>
+  
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://lattes.cnpq.br">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/css/main.css">
+  
+  <!-- Module script -->
+  <script type="module" src="/src/js/main.js"></script>
+</head>
+<body>
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- Global Loading Indicator -->
+  <div id="global-loader" class="global-loader" role="status" aria-live="polite">
+    <div class="loader-content">
+      <div class="spinner"></div>
+      <p>Carregando...</p>
+    </div>
+  </div>
+
+  <!-- Global Error Container -->
+  <div id="global-error" class="global-error" style="display: none;" role="alert"></div>
+
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <h1>Laboratório de Fonética</h1>
+          <p class="subtitle">Universidade Federal do Rio de Janeiro</p>
+        </div>
+        <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+          <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <ul class="nav-list">
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#pesquisadores">Equipe</a></li>
+            <li><a href="#trabalhos">Publicações</a></li>
+            <li><a href="#parcerias">Parcerias</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" class="site-main" role="main">
+    
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container">
+        <div class="hero-content">
+          <h2 id="hero-title">Pesquisa de Excelência em Fonética</h2>
+          <p class="hero-description">
+            Desenvolvendo estudos inovadores sobre os sons da fala e 
+            contribuindo para o avanço da ciência linguística no Brasil.
+          </p>
+          <div class="hero-actions">
+            <a href="#pesquisadores" class="btn btn-primary">Conheça a Equipe</a>
+            <a href="#trabalhos" class="btn btn-secondary">Publicações</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre Section -->
+    <section id="sobre" class="section section-sobre" aria-labelledby="sobre-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="sobre-title">Sobre o Laboratório</h2>
+        </header>
+        <div class="sobre-content">
+          <p>
+            O Laboratório de Fonética da UFRJ é um centro de excelência dedicado 
+            à pesquisa científica dos sons da fala humana. Nossa equipe desenvolve 
+            estudos em fonética experimental, fonologia e áreas relacionadas, 
+            contribuindo para o avanço do conhecimento sobre a língua portuguesa.
+          </p>
+          <p>
+            <strong>Missão:</strong> Desenvolver pesquisas de ponta em fonética 
+            experimental e aplicada, formar pesquisadores qualificados e contribuir 
+            para o avanço do conhecimento sobre a língua portuguesa.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pesquisadores Section -->
+    <section id="pesquisadores" class="section section-pesquisadores" aria-labelledby="pesquisadores-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="pesquisadores-title">Nossa Equipe</h2>
+          <p class="section-description">
+            Conheça os pesquisadores que fazem parte do nosso laboratório
+          </p>
+        </header>
+        
+        <!-- This container will be populated by JavaScript -->
+        <div id="pesquisadores-container" class="pesquisadores-grid" role="region" aria-label="Lista de pesquisadores">
+          <!-- Content loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Trabalhos Section (Placeholder) -->
+    <section id="trabalhos" class="section section-trabalhos" aria-labelledby="trabalhos-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="trabalhos-title">Publicações</h2>
+          <p class="section-description">Em breve</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- Parcerias Section (Placeholder) -->
+    <section id="parcerias" class="section section-parcerias" aria-labelledby="parcerias-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="parcerias-title">Parcerias</h2>
+          <p class="section-description">Em breve</p>
+        </header>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Laboratório de Fonética UFRJ</h3>
+          <p>Faculdade de Letras - UFRJ<br>
+             Av. Horácio Macedo, 2151<br>
+             Cidade Universitária<br>
+             Rio de Janeiro - RJ</p>
+        </div>
+        <div class="footer-section">
+          <h3>Contato</h3>
+          <p>Email: <a href="mailto:labfon@letras.ufrj.br">labfon@letras.ufrj.br</a><br>
+             Tel: (21) 3938-9600</p>
+        </div>
+        <div class="footer-section">
+          <h3>Links Úteis</h3>
+          <ul>
+            <li><a href="https://www.ufrj.br" target="_blank" rel="noopener noreferrer">UFRJ</a></li>
+            <li><a href="https://www.letras.ufrj.br" target="_blank" rel="noopener noreferrer">Faculdade de Letras</a></li>
+            <li><a href="https://lattes.cnpq.br" target="_blank" rel="noopener noreferrer">Plataforma Lattes</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Laboratório de Fonética UFRJ. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Screen reader announcements -->
+  <div id="aria-live-region" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- No JavaScript fallback -->
+  <noscript>
+    <div class="noscript-warning">
+      <p>Este site requer JavaScript para funcionar corretamente. Por favor, habilite JavaScript no seu navegador.</p>
+    </div>
+  </noscript>
+
+</body>
+</html>

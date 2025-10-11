@@ -1,0 +1,32 @@
+{
+  "name": "lab-fon-ufrj",
+  "version": "1.0.0",
+  "description": "Website do Laboratório de Fonética da UFRJ",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write \"**/*.{js,css,html,md}\""
+  },
+  "keywords": [
+    "fonética",
+    "UFRJ",
+    "pesquisa",
+    "linguística"
+  ],
+  "author": "Laboratório de Fonética UFRJ",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.37.0",
+    "jsdom": "^27.0.0",
+    "prettier": "^3.6.2",
+    "vite": "^7.1.9",
+    "vitest": "^3.2.4"
+  }
+}
