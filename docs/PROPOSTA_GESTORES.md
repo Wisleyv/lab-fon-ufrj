@@ -188,12 +188,17 @@ Menu: "Laboratório de Fonética" → Nova aba
 
 ## 📞 Contatos
 
+**Programa de Pós-Graduação em Letras Vernáculas (PPGLEV):**
+- Coordenadora: Sofia de Sousa Silva
+- Email: sofia.silva@letras.ufrj.br
+- Tel:
+
 **Laboratório de Fonética:**
-- Coordenador: Manuella Carnaval
+- Coordenadora: Manuella Carnaval
 - Email: manuellacarnaval@letras.ufrj.br
 - Tel: (21) 98755-6242
 
-**Desenvolvimento (se contratado):**
+**Desenvolvimento:**
 - Empresa/Profissional: Wisley Vilela
 - Email: wisley@wisley.net
 - Tel: (21) 98381-9214
