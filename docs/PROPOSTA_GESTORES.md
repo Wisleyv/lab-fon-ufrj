@@ -1,9 +1,9 @@
-# Proposta: Website Institucional do Laboratório de Fonética
+# Proposta: Website Institucional do Laboratório de Fonética e Acústica
 
 **Para:** Gestores PPGLEV e Administrador do Servidor  
 **De:** Laboratório de Fonética UFRJ  
 **Data:** 05 de novembro de 2025  
-**Assunto:** Solicitação de hospedagem no ambiente WordPress institucional
+**Assunto:** Solicitação de hospedagem no ambiente WordPress institucional (sob posvernaculas.letras.ufrj.br)
 
 ---
 
@@ -12,7 +12,6 @@
 Solicitamos autorização para hospedar o website institucional do Laboratório de Fonética dentro do ambiente WordPress do PPGLEV, utilizando o diretório `/wp-content/labfonac/`, com sistema de administração completamente independente.
 
 **Investimento Total Estimado:** R$ 3.000 - R$ 5.000 (único)  
-**Economia Anual:** R$ 500 - R$ 1.000 (vs. hospedagem separada)  
 **Tempo de Implementação:** 5-6 semanas  
 **Impacto no PPGLEV:** Mínimo (isolamento completo)
 
@@ -22,7 +21,7 @@ Solicitamos autorização para hospedar o website institucional do Laboratório 
 
 1. **Reduzir custos** aproveitando infraestrutura WordPress existente
 2. **Manter identidade visual própria** do Laboratório de Fonética
-3. **Garantir autonomia administrativa** sem acesso ao wp-admin do PPGLEV
+3. **Garantir autonomia administrativa** sem acesso ao wp-admin do PPGLEV (posvernaculas.letras.ufrj.br)
 4. **Facilitar manutenção** com interface amigável para usuários leigos
 
 ---
@@ -52,21 +51,13 @@ Menu: "Laboratório de Fonética" → Nova aba
 
 ---
 
-## 💰 Análise de Custos
+## 💰 Análise de Custos Estimados
 
-### Opção 1: Hospedagem Separada (NÃO recomendada)
-- Hospedagem: R$ 500-1.000/ano (recorrente)
-- Domínio: R$ 40/ano
-- Manutenção duplicada
-- **Total 3 anos:** R$ 1.620+
-
-### Opção 2: Integração WordPress (RECOMENDADA)
+### Integração WordPress (RECOMENDADA)
 - Desenvolvimento: R$ 3.000-5.000 (único)
 - Hospedagem: R$ 0 (usa infraestrutura existente)
 - Manutenção: R$ 600-1.200/ano
 - **Total 3 anos:** R$ 4.800
-
-**ECONOMIA:** R$ 1.620+ em 3 anos + Simplificação operacional
 
 ---
 
@@ -87,9 +78,10 @@ Menu: "Laboratório de Fonética" → Nova aba
 
 3. **Inclusão em backup:** Adicionar `/wp-content/labfonac/data/` à rotina existente
 
-4. **Tempo estimado:** 2-4 horas de trabalho (setup único)
+4. **Tempo estimado:** 30-40 minutos de trabalho (setup único)
+5. **Acesso SFTP:** usuário e senha ou upload do conjunto de pastas e arquivos
 
-### O que o Lab Fonética fornece
+### O que o Lab Fonética e Acústica fornece
 
 - Todo o código e assets
 - Gestão de conteúdo
@@ -131,7 +123,7 @@ Menu: "Laboratório de Fonética" → Nova aba
 | 6 | Testes e treinamento | Todos | Go-live |
 
 **Prazo total:** 6 semanas  
-**Esforço TI PPGLEV:** ~4 horas (setup + acompanhamento)
+**Esforço TI PPGLEV:** ~2 horas (setup + acompanhamento)
 
 ---
 
@@ -140,11 +132,11 @@ Menu: "Laboratório de Fonética" → Nova aba
 ### Para o PPGLEV
 
 1. **Fortalecimento da presença digital** dos laboratórios vinculados
-2. **Valorização da pesquisa** com melhor divulgação
+2. **Valorização da pesquisa** com melhor divulgação e preservação de identidade visual dos laboratórios
 3. **Economia de recursos** (infraestrutura compartilhada)
 4. **Modernização** sem custos adicionais significativos
 
-### Para o Lab Fonética
+### Para o Lab Fonética e Acústica
 
 1. **Autonomia** para gerir conteúdo sem intermediários
 2. **Identidade visual própria** alinhada à pesquisa
@@ -197,14 +189,14 @@ Menu: "Laboratório de Fonética" → Nova aba
 ## 📞 Contatos
 
 **Laboratório de Fonética:**
-- Coordenador: [Nome]
-- Email: [email@labfonac.ufrj.br]
-- Tel: [xxxx-xxxx]
+- Coordenador: Manuella Carnaval
+- Email: manuellacarnaval@letras.ufrj.br
+- Tel: (21) 98755-6242
 
 **Desenvolvimento (se contratado):**
-- Empresa/Profissional: [Nome]
-- Email: [dev@exemplo.com]
-- Tel: [xxxx-xxxx]
+- Empresa/Profissional: Wisley Vilela
+- Email: wisley@wisley.net
+- Tel: (21) 98381-9214
 
 ---
 
@@ -212,12 +204,12 @@ Menu: "Laboratório de Fonética" → Nova aba
 
 Para análise técnica detalhada, consultar:
 
-1. **`WORDPRESS_DEPLOYMENT_EVALUATION.md`**
+1. **`WORDPRESS_DEPLOYMENT_EVALUATION.md`** [[https://github.com/Wisleyv/lab-fon-ufrj/blob/main/WORDPRESS_DEPLOYMENT_EVALUATION.md]]
    - Avaliação completa de viabilidade
    - Análise comparativa de soluções
    - Especificações técnicas detalhadas
 
-2. **`docs/ADMIN_SYSTEM_CODE_EXAMPLES.md`**
+2. **`docs/ADMIN_SYSTEM_CODE_EXAMPLES.md`** [[https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/ADMIN_SYSTEM_CODE_EXAMPLES.md]]
    - Exemplos de código completos
    - Estrutura de arquivos
    - Instruções de instalação
@@ -226,15 +218,16 @@ Para análise técnica detalhada, consultar:
 
 ## 🚀 Próximos Passos
 
-1. **Reunião de alinhamento** com gestores e TI (1 hora)
+1. **Reunião de alinhamento** com gestores em 11/11/2025, 14h (1 hora)
 2. **Aprovação formal** via email ou documento assinado
-3. **Configuração inicial** do servidor (meia jornada de trabalho)
+3. **Configuração inicial** do servidor
 4. **Kick-off do desenvolvimento** (se aprovado orçamento)
 
 **Estamos à disposição para esclarecer dúvidas e ajustar a proposta conforme necessário.**
 
 ---
 
+**Elaborado por:** Wisley Vilela
 **Data:** 05/11/2025  
 **Versão:** 1.0  
 **Status:** Aguardando aprovação
