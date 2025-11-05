@@ -1,7 +1,7 @@
 # Documentation Index
 
-**Last Updated:** October 11, 2025  
-**Project Version:** 1.0.0 (Walking Skeleton)
+**Last Updated:** November 5, 2025  
+**Project Version:** 1.0.0 (Walking Skeleton + WordPress Deployment Evaluation)
 
 ## 📖 Documentation Overview
 
@@ -16,6 +16,10 @@ This document serves as a central index to all project documentation, decisions,
 1. **[README.md](./README.md)** - Project overview, quick start, architecture summary
 2. **[WALKING_SKELETON_README.md](./WALKING_SKELETON_README.md)** - Technical implementation details
 3. **[GIT_WORKFLOW_GUIDE.md](./GIT_WORKFLOW_GUIDE.md)** - How to work with Git/GitHub/Codespaces
+
+**Considering WordPress deployment?** See:
+4. **[WORDPRESS_DEPLOYMENT_EVALUATION.md](./WORDPRESS_DEPLOYMENT_EVALUATION.md)** - Complete deployment analysis
+5. **[docs/PROPOSTA_GESTORES.md](./docs/PROPOSTA_GESTORES.md)** - Executive summary for stakeholders
 
 ---
 
@@ -33,6 +37,14 @@ This document serves as a central index to all project documentation, decisions,
 | [Algoritmo+Projeto_Modular_Website_Institucional_vCombinada.md](./Algoritmo+Projeto_Modular_Website_Institucional_vCombinada.md) | Original project proposal | Historical reference | ✅ Reference |
 | **DOCUMENTATION_INDEX.md** (this file) | Documentation navigation | Everyone | ✅ Complete |
 
+### WordPress Deployment Documentation (NEW)
+
+| Document | Purpose | Audience | Status |
+|----------|---------|----------|--------|
+| [WORDPRESS_DEPLOYMENT_EVALUATION.md](./WORDPRESS_DEPLOYMENT_EVALUATION.md) | Complete deployment feasibility study | Tech Lead, DevOps, Managers | ✅ Complete |
+| [docs/PROPOSTA_GESTORES.md](./docs/PROPOSTA_GESTORES.md) | Executive proposal for stakeholders | Managers, Decision Makers | ✅ Complete |
+| [docs/ADMIN_SYSTEM_CODE_EXAMPLES.md](./docs/ADMIN_SYSTEM_CODE_EXAMPLES.md) | Complete code examples for admin system | Developers, Server Admin | ✅ Complete |
+
 ---
 
 ## 🗂️ Documentation by Topic
@@ -48,6 +60,29 @@ This document serves as a central index to all project documentation, decisions,
 **Secondary Source:** [EVALUATION_Architecture_and_Best_Practices.md](./EVALUATION_Architecture_and_Best_Practices.md)
 - Original architectural analysis
 - Design pattern recommendations
+
+### WordPress Deployment (NEW)
+
+**Primary Source:** [WORDPRESS_DEPLOYMENT_EVALUATION.md](./WORDPRESS_DEPLOYMENT_EVALUATION.md)
+- Deployment scenarios and requirements
+- Backend administration solutions comparison
+- Independent authentication system architecture
+- Cost-benefit analysis (online vs desktop vs manual editing)
+- Security considerations and permissions
+- Complete implementation checklist
+
+**Executive Summary:** [docs/PROPOSTA_GESTORES.md](./docs/PROPOSTA_GESTORES.md)
+- Business case for WordPress integration
+- Budget and timeline estimates
+- Risk assessment
+- Stakeholder approval checklist
+
+**Technical Reference:** [docs/ADMIN_SYSTEM_CODE_EXAMPLES.md](./docs/ADMIN_SYSTEM_CODE_EXAMPLES.md)
+- Complete PHP code examples (authentication, dashboard, save)
+- CSS and JavaScript for admin interface
+- Security configurations (.htaccess)
+- Installation procedures
+- JSON structure examples
 - Scalability considerations
 - Migration strategies
 
