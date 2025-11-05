@@ -53,7 +53,7 @@ Menu: "Laboratório de Fonética" → Nova aba
 
 ## 💰 Análise de Custos Estimados
 
-### Integração WordPress (RECOMENDADA)
+### Integração WordPress
 - Desenvolvimento: R$ 3.000-5.000 (único)
 - Hospedagem: R$ 0 (usa infraestrutura existente)
 - Manutenção: R$ 600-1.200/ano
@@ -198,8 +198,13 @@ Menu: "Laboratório de Fonética" → Nova aba
 - Email: manuellacarnaval@letras.ufrj.br
 - Tel: (21) 98755-6242
 
+**Gestão do Servidor:**
+- Profissional: Rafael Laplace
+- Email: rafael.andrade@igead.com.br / rafaellaplace@gmail.com
+- Tel: 
+
 **Desenvolvimento:**
-- Empresa/Profissional: Wisley Vilela
+- Profissional: Wisley Vilela
 - Email: wisley@wisley.net
 - Tel: (21) 98381-9214
 
@@ -225,14 +230,14 @@ Para análise técnica detalhada, consultar:
 
 1. **Reunião de alinhamento** com gestores em 11/11/2025, 14h (1 hora)
 2. **Aprovação formal** via email ou documento assinado
-3. **Configuração inicial** do servidor
-4. **Kick-off do desenvolvimento** (se aprovado orçamento)
+3. **Configuração inicial** do servidor (Rafael Laplace)
+4. **Início do desenvolvimento**  
 
 **Estamos à disposição para esclarecer dúvidas e ajustar a proposta conforme necessário.**
 
 ---
 
-**Elaborado por:** Wisley Vilela
+**Elaborado por:** Wisley Vilela  
 **Data:** 05/11/2025  
 **Versão:** 1.0  
 **Status:** Aguardando aprovação
