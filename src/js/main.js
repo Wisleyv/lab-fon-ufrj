@@ -11,7 +11,7 @@ import { PesquisadoresSection } from "./sections/pesquisadores.js";
  */
 const config = {
   dataSource: "json",
-  jsonUrl: "./src/data.json",
+  jsonUrl: "./data.json", // Served from public/ folder via Vite
   sections: {
     pesquisadores: "pesquisadores-container",
   },
