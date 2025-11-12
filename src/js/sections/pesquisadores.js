@@ -1,127 +1,235 @@
 /**
  * Pesquisadores Section Renderer
- * Renders researcher cards with their information
+ * Renders team members with category grouping and multiple view modes
  */
 
 import { SectionRenderer } from "../modules/renderer.js";
 import { HTMLSanitizer } from "../utils/sanitizer.js";
-import { createElement, truncate } from "../utils/helpers.js";
+import { createElement } from "../utils/helpers.js";
 
 export class PesquisadoresSection extends SectionRenderer {
   constructor(containerId, options = {}) {
     super(containerId, {
-      loadingMessage: "Carregando pesquisadores...",
-      errorMessage: "Erro ao carregar pesquisadores.",
-      emptyMessage: "Nenhum pesquisador cadastrado.",
+      loadingMessage: "Carregando equipe...",
+      errorMessage: "Erro ao carregar equipe.",
+      emptyMessage: "Nenhum membro cadastrado.",
       ...options,
+    });
+
+    // View mode state (grid, list, or card)
+    this.viewMode = this.loadViewMode();
+    
+    // Category configuration
+    this.categories = {
+      coordenacao: { title: "Coordenação", order: 1 },
+      docentes: { title: "Docentes/Pesquisadores", order: 2 },
+      pos_graduacao: { title: "Discentes de Pós-Graduação", order: 3 },
+      graduacao: { title: "Discentes de Graduação", order: 4 },
+      egressos: { title: "Egressos", order: 5 }
+    };
+  }
+
+  /**
+   * Load view mode from localStorage or default to 'grid'
+   */
+  loadViewMode() {
+    return localStorage.getItem('team-view-mode') || 'grid';
+  }
+
+  /**
+   * Save view mode to localStorage
+   */
+  saveViewMode(mode) {
+    localStorage.setItem('team-view-mode', mode);
+    this.viewMode = mode;
+  }
+
+  /**
+   * Creates the HTML template for team members
+   * @param {Array} equipe - Array of team member objects
+   * @returns {DocumentFragment} Fragment containing all elements
+   */
+  template(equipe) {
+    if (!Array.isArray(equipe)) {
+      console.error("Expected array of equipe");
+      return document.createDocumentFragment();
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    // Create view mode toggle buttons and insert into header placeholder
+    const viewTogglePlaceholder = document.getElementById('view-toggle-placeholder');
+    if (viewTogglePlaceholder && viewTogglePlaceholder.children.length === 0) {
+      const viewToggle = this.createViewToggle();
+      viewTogglePlaceholder.appendChild(viewToggle);
+    }
+
+    // Group team members by category
+    const grouped = this.groupByCategory(equipe);
+
+    // Create sections for each category
+    Object.entries(grouped)
+      .sort(([catA], [catB]) => {
+        const orderA = this.categories[catA]?.order || 999;
+        const orderB = this.categories[catB]?.order || 999;
+        return orderA - orderB;
+      })
+      .forEach(([categoria, members]) => {
+        const section = this.createCategorySection(categoria, members);
+        fragment.appendChild(section);
+      });
+
+    return fragment;
+  }
+
+  /**
+   * Creates view mode toggle buttons
+   */
+  createViewToggle() {
+    const toggleContainer = createElement("div", {
+      className: "view-toggle",
+      role: "toolbar",
+      "aria-label": "Opções de visualização"
+    });
+
+    const modes = [
+      { value: 'grid', icon: '⊞', label: 'Grade' },
+      { value: 'list', icon: '☰', label: 'Lista' },
+      { value: 'card', icon: '▢', label: 'Cartões' }
+    ];
+
+    modes.forEach(mode => {
+      const button = createElement("button", {
+        className: `view-toggle-btn ${this.viewMode === mode.value ? 'active' : ''}`,
+        type: "button",
+        "data-view": mode.value,
+        "aria-label": `Visualizar como ${mode.label}`,
+        "aria-pressed": this.viewMode === mode.value ? "true" : "false",
+        title: mode.label
+      });
+      
+      button.innerHTML = `<span class="icon">${mode.icon}</span>`;
+      
+      button.addEventListener('click', () => this.switchView(mode.value));
+      
+      toggleContainer.appendChild(button);
+    });
+
+    return toggleContainer;
+  }
+
+  /**
+   * Switch view mode
+   */
+  switchView(mode) {
+    this.saveViewMode(mode);
+    
+    // Update button states
+    const buttons = document.querySelectorAll('.view-toggle-btn');
+    buttons.forEach(btn => {
+      const isActive = btn.dataset.view === mode;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+
+    // Update ALL container classes (one per category)
+    const equipeContainers = this.container.querySelectorAll('.equipe-container');
+    equipeContainers.forEach(container => {
+      container.className = `equipe-container view-${mode}`;
     });
   }
 
   /**
-   * Creates the HTML template for researchers
-   * @param {Array} pesquisadores - Array of researcher objects
-   * @returns {HTMLElement[]} Array of card elements
+   * Group team members by category
    */
-  template(pesquisadores) {
-    if (!Array.isArray(pesquisadores)) {
-      console.error("Expected array of pesquisadores");
-      return [];
-    }
-
-    return pesquisadores.map((pessoa) => this.createCard(pessoa));
+  groupByCategory(equipe) {
+    return equipe.reduce((acc, member) => {
+      const cat = member.categoria || 'outros';
+      if (!acc[cat]) {
+        acc[cat] = [];
+      }
+      acc[cat].push(member);
+      return acc;
+    }, {});
   }
 
   /**
-   * Creates a single researcher card
-   * @param {Object} pessoa - Researcher data
-   * @returns {HTMLElement} Card element
+   * Creates a category section
    */
-  createCard(pessoa) {
-    // Sanitize all text inputs
-    const nome = HTMLSanitizer.sanitize(pessoa.nome || "Nome não informado");
-    const cargo = HTMLSanitizer.sanitize(pessoa.cargo || "");
-    const email = pessoa.email || "";
-    const bio = HTMLSanitizer.sanitize(pessoa.bio || "");
-    const bioTruncated = truncate(bio, 150);
+  createCategorySection(categoria, members) {
+    const section = createElement("section", {
+      className: "equipe-category",
+      "aria-labelledby": `categoria-${categoria}`
+    });
 
-    // Sanitize URLs
-    const lattesUrl = HTMLSanitizer.sanitizeURL(pessoa.lattes);
-    const emailUrl = pessoa.email ? `mailto:${pessoa.email}` : null;
-    const foto = pessoa.foto || "assets/images/placeholder-avatar.jpg";
+    // Category header
+    const categoryTitle = this.categories[categoria]?.title || categoria;
+    const header = createElement("h3", {
+      id: `categoria-${categoria}`,
+      className: "categoria-title"
+    }, categoryTitle);
+    
+    section.appendChild(header);
 
-    // Create card structure
+    // Members container
+    const container = createElement("div", {
+      className: `equipe-container view-${this.viewMode}`
+    });
+
+    members.forEach(member => {
+      const card = this.createMemberCard(member);
+      container.appendChild(card);
+    });
+
+    section.appendChild(container);
+
+    return section;
+  }
+
+  /**
+   * Creates a single member card
+   */
+  createMemberCard(member) {
+    const nome = HTMLSanitizer.sanitize(member.nome || "Nome não informado");
+    const instituicao = HTMLSanitizer.sanitize(member.instituicao || "");
+    const lattesUrl = HTMLSanitizer.sanitizeURL(member.lattes);
+    const foto = member.foto || "/assets/images/placeholder-avatar.jpg";
+
     const card = createElement("article", {
-      className: "pesquisador-card",
+      className: "membro-card",
       role: "article",
-      "aria-label": `Pesquisador: ${nome}`,
+      "aria-label": `${nome} - ${instituicao}`
     });
 
     // Photo
-    const figure = createElement("figure", { className: "pesquisador-foto" });
+    const figure = createElement("figure", { className: "membro-foto" });
     const img = createElement("img", {
       src: foto,
       alt: `Foto de ${nome}`,
-      loading: "lazy",
+      loading: "lazy"
     });
     figure.appendChild(img);
 
     // Content
-    const content = createElement("div", { className: "pesquisador-content" });
+    const content = createElement("div", { className: "membro-content" });
 
-    const header = createElement("header", { className: "pesquisador-header" });
-    const h3 = createElement("h3", { className: "pesquisador-nome" }, nome);
-    header.appendChild(h3);
+    const h4 = createElement("h4", { className: "membro-nome" }, nome);
+    const instSpan = createElement("span", { className: "membro-instituicao" }, instituicao);
 
-    if (cargo) {
-      const cargoSpan = createElement(
-        "span",
-        { className: "pesquisador-cargo" },
-        cargo,
-      );
-      header.appendChild(cargoSpan);
-    }
+    content.appendChild(h4);
+    content.appendChild(instSpan);
 
-    const bioP = createElement(
-      "p",
-      { className: "pesquisador-bio" },
-      bioTruncated,
-    );
-
-    // Links
-    const links = createElement("div", { className: "pesquisador-links" });
-
+    // Lattes link
     if (lattesUrl) {
-      const lattesLink = createElement(
-        "a",
-        {
-          href: lattesUrl,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          className: "btn btn-secondary",
-          "aria-label": `Currículo Lattes de ${nome}`,
-        },
-        "Currículo Lattes",
-      );
-      links.appendChild(lattesLink);
+      const lattesLink = createElement("a", {
+        href: lattesUrl,
+        target: "_blank",
+        rel: "noopener noreferrer",
+        className: "btn btn-lattes",
+        "aria-label": `Currículo Lattes de ${nome}`
+      }, "Currículo Lattes");
+      content.appendChild(lattesLink);
     }
-
-    if (emailUrl) {
-      const emailLink = createElement(
-        "a",
-        {
-          href: emailUrl,
-          className: "btn btn-secondary",
-          "aria-label": `Email de ${nome}`,
-        },
-        "Email",
-      );
-      links.appendChild(emailLink);
-    }
-
-    // Assemble card
-    content.appendChild(header);
-    content.appendChild(bioP);
-    content.appendChild(links);
 
     card.appendChild(figure);
     card.appendChild(content);
@@ -131,13 +239,12 @@ export class PesquisadoresSection extends SectionRenderer {
 
   /**
    * Hook called after rendering
-   * Can add animations, event listeners, etc.
    */
   afterRender() {
     // Add entrance animations
-    const cards = this.container.querySelectorAll(".pesquisador-card");
+    const cards = this.container.querySelectorAll(".membro-card");
     cards.forEach((card, index) => {
-      card.style.animationDelay = `${index * 0.1}s`;
+      card.style.animationDelay = `${index * 0.05}s`;
       card.classList.add("fade-in");
     });
 
@@ -152,8 +259,8 @@ export class PesquisadoresSection extends SectionRenderer {
   announceContent(count) {
     const message =
       count === 1
-        ? "Um pesquisador carregado"
-        : `${count} pesquisadores carregados`;
+        ? "Um membro da equipe carregado"
+        : `${count} membros da equipe carregados`;
 
     // Create live region if it doesn't exist
     let liveRegion = document.getElementById("aria-live-region");

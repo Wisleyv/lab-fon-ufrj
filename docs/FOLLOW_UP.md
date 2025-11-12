@@ -94,7 +94,7 @@
       <svg><!-- Instagram icon --></svg>
       @labfoneticaufrj
     </a>
-    <a href="mailto:labfon@letras.ufrj.br">
+    <a href="mailto:labfonac@letras.ufrj.br">
       <svg><!-- Email icon --></svg>
       labfon@letras.ufrj.br
     </a>

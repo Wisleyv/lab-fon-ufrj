@@ -1,38 +1,116 @@
 {
-  "coordenacao": [
+  "equipe": [
     {
-      "nome": "Dra. Maria Silva",
-      "cargo": "Coordenadora",
-      "foto": "assets/images/placeholder-avatar.jpg",
-      "lattes": "https://lattes.cnpq.br/1234567890",
-      "email": "maria.silva@letras.ufrj.br",
-      "bio": "Doutora em Linguística pela UFRJ. Especialista em fonética acústica e prosódia do português brasileiro."
-    }
-  ],
-  "pesquisadores": [
-    {
-      "nome": "Dr. João Santos",
-      "cargo": "Pesquisador Sênior",
-      "foto": "assets/images/placeholder-avatar.jpg",
-      "lattes": "https://lattes.cnpq.br/0987654321",
-      "email": "joao.santos@letras.ufrj.br",
-      "bio": "Doutor em Fonética Experimental. Atua nas áreas de análise acústica da fala e variação linguística."
+      "nome": "Carolina Gomes da Silva",
+      "instituicao": "UFPB",
+      "categoria": "coordenacao",
+      "foto": "assets/images/carolina_silva.jpeg",
+      "lattes": "http://lattes.cnpq.br/6450917807340365"
     },
     {
-      "nome": "Dra. Ana Paula Costa",
-      "cargo": "Pesquisadora",
-      "foto": "assets/images/placeholder-avatar.jpg",
-      "lattes": "https://lattes.cnpq.br/1122334455",
-      "email": "ana.costa@letras.ufrj.br",
-      "bio": "Doutora em Linguística Aplicada. Pesquisa aquisição fonológica e ensino de pronúncia."
+      "nome": "Manuella Carnaval",
+      "instituicao": "UFRJ",
+      "categoria": "coordenacao",
+      "foto": "assets/images/manuella_carnaval.jpeg",
+      "lattes": "http://lattes.cnpq.br/5169234339795314"
     },
     {
-      "nome": "Me. Carlos Oliveira",
-      "cargo": "Mestrando",
-      "foto": "assets/images/placeholder-avatar.jpg",
-      "lattes": "https://lattes.cnpq.br/5544332211",
-      "email": "carlos.oliveira@letras.ufrj.br",
-      "bio": "Mestrando em Linguística. Desenvolve pesquisa sobre percepção de sons da fala."
+      "nome": "Natalia dos Santos Figueiredo",
+      "instituicao": "UNILA",
+      "categoria": "docentes",
+      "foto": "assets/images/natalia_figueiredo.jpeg",
+      "lattes": "http://lattes.cnpq.br/3465875706380824"
+    },
+    {
+      "nome": "José Rodrigues de Mesquita Neto",
+      "instituicao": "UERN",
+      "categoria": "docentes",
+      "foto": "assets/images/jose_mesquita.jpeg",
+      "lattes": "http://lattes.cnpq.br/8407199058227431"
+    },
+    {
+      "nome": "Juliana Benicio de Andrade Dias",
+      "instituicao": "UFPB",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/juliana_dias.jpeg",
+      "lattes": "http://lattes.cnpq.br/7907813635310894"
+    },
+    {
+      "nome": "Mayra Suézia Oliveira dos Santos",
+      "instituicao": "UFPB",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/mayra_santos.jpeg",
+      "lattes": "http://lattes.cnpq.br/4073084415181213"
+    },
+    {
+      "nome": "Mikaellen KawaNy do Nascimento",
+      "instituicao": "UFPB",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/mikaellen_nascimento.jpeg",
+      "lattes": "http://lattes.cnpq.br/3368956449281390"
+    },
+    {
+      "nome": "Priscilla Batista de Almeida",
+      "instituicao": "UFPB",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/priscila_almeida.jpeg",
+      "lattes": "http://lattes.cnpq.br/1284109969120471"
+    },
+    {
+      "nome": "Daniel Almico Saraiva",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/daniel_saraiva.jpeg",
+      "lattes": "http://lattes.cnpq.br/3996706589776778"
+    },
+    {
+      "nome": "Maria Luiza de Almeida Mattos Weinstein",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/maria_luiza_weinstein.jpeg",
+      "lattes": "http://lattes.cnpq.br/2540203937814048"
+    },
+    {
+      "nome": "Paloma de Barros Moura",
+      "instituicao": "UFPB",
+      "categoria": "graduacao",
+      "foto": "assets/images/paloma_moura.jpeg",
+      "lattes": "http://lattes.cnpq.br/2291377596150650"
+    },
+    {
+      "nome": "Victor Hugo Teixeira de Souza",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/victor_souza.jpg",
+      "lattes": "http://lattes.cnpq.br/0183601960012762"
+    },
+    {
+      "nome": "Jussara Cassimiro Soares",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/jussara_soares.jpeg",
+      "lattes": "http://lattes.cnpq.br/3233006072497912"
+    },
+    {
+      "nome": "Isabelli de Lima Lacet",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/isabelli_lacet.jpeg",
+      "lattes": "http://lattes.cnpq.br/9022305811205190"
+    },
+    {
+      "nome": "Safira Dy Carly Ramos Brandão",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/safira_brandao.jpeg",
+      "lattes": "http://lattes.cnpq.br/6347327329503433"
+    },
+    {
+      "nome": "Tatiana Lacerda Alcon",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/tathiana_alcon.jpeg",
+      "lattes": "http://lattes.cnpq.br/8351323867616540"
     }
   ],
   "sobre": {

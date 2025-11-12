@@ -148,7 +148,7 @@ a:focus {
   width: 100%;
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--spacing-xl);
 }
 
 .section {
@@ -363,8 +363,307 @@ a:focus {
 }
 
 /* ========================================
-   Pesquisadores Section
+   Equipe Section (Team Members)
    ======================================== */
+
+/* Section Header with Controls */
+.section-header-with-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-header-content {
+  flex: 1;
+}
+
+/* View Toggle Buttons */
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.25rem;
+  background: var(--color-background);
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-border);
+}
+
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-light);
+}
+
+.view-toggle-btn:hover {
+  background: var(--color-background-alt);
+  color: var(--color-primary);
+}
+
+.view-toggle-btn.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.view-toggle-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.view-toggle-btn .icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Category Sections */
+.equipe-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.equipe-category {
+  margin-bottom: var(--spacing-xl);
+}
+
+.categoria-title {
+  color: var(--color-primary);
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-accent);
+}
+
+/* Base Container */
+.equipe-container {
+  margin-top: var(--spacing-lg);
+}
+
+/* Grid View */
+.equipe-container.view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+  gap: var(--spacing-lg);
+  justify-content: center;
+  justify-items: center;
+}
+
+.equipe-container.view-grid .membro-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  width: 100%;
+  max-width: 300px;
+}
+
+.equipe-container.view-grid .membro-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.equipe-container.view-grid .membro-foto {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background-color: var(--color-background-alt);
+}
+
+.equipe-container.view-grid .membro-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.equipe-container.view-grid .membro-card:hover .membro-foto img {
+  transform: scale(1.05);
+}
+
+.equipe-container.view-grid .membro-content {
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+.equipe-container.view-grid .membro-nome {
+  font-size: var(--font-size-h4);
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--color-text);
+}
+
+.equipe-container.view-grid .membro-instituicao {
+  display: block;
+  color: var(--color-text-light);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* List View */
+.equipe-container.view-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.equipe-container.view-list .membro-card {
+  display: flex;
+  flex-direction: row;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  align-items: center;
+}
+
+.equipe-container.view-list .membro-card:hover {
+  box-shadow: var(--shadow-md);
+  background: var(--color-background);
+}
+
+.equipe-container.view-list .membro-foto {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background-color: var(--color-background-alt);
+}
+
+.equipe-container.view-list .membro-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.equipe-container.view-list .membro-content {
+  padding: var(--spacing-sm) var(--spacing-md);
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.equipe-container.view-list .membro-nome {
+  font-size: var(--font-size-large);
+  margin: 0;
+  color: var(--color-text);
+}
+
+.equipe-container.view-list .membro-instituicao {
+  display: inline;
+  color: var(--color-text-light);
+  font-size: var(--font-size-small);
+  margin-left: var(--spacing-sm);
+}
+
+/* Card View */
+.equipe-container.view-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.equipe-container.view-card .membro-card {
+  display: flex;
+  flex-direction: row;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.equipe-container.view-card .membro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.equipe-container.view-card .membro-foto {
+  width: 140px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background-color: var(--color-background-alt);
+}
+
+.equipe-container.view-card .membro-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.equipe-container.view-card .membro-card:hover .membro-foto img {
+  transform: scale(1.1);
+}
+
+.equipe-container.view-card .membro-content {
+  padding: var(--spacing-md);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.equipe-container.view-card .membro-nome {
+  font-size: var(--font-size-h4);
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--color-text);
+}
+
+.equipe-container.view-card .membro-instituicao {
+  display: block;
+  color: var(--color-text-light);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Lattes Button (Common for all views) */
+.btn-lattes {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius-small);
+  font-size: var(--font-size-small);
+  transition: all var(--transition-base);
+  text-align: center;
+}
+
+.btn-lattes:hover {
+  background-color: var(--color-primary-light);
+  transform: scale(1.05);
+}
+
+.equipe-container.view-list .btn-lattes {
+  padding: var(--spacing-xs) var(--spacing-md);
+  white-space: nowrap;
+}
+
+/* Common Member Card Styles */
+.membro-foto {
+  margin: 0;
+}
+
+.membro-card {
+  position: relative;
+}
+
+/* Legacy support for old pesquisadores styles */
 .pesquisadores-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -603,6 +902,17 @@ a:focus {
 
   .hero-actions {
     flex-direction: column;
+  }
+
+  /* Team section header responsive */
+  .section-header-with-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .view-toggle {
+    justify-content: center;
+    width: 100%;
   }
 
   .pesquisadores-grid {

@@ -85,17 +85,11 @@ async function initializeSections() {
 async function renderAllSections() {
   const renderPromises = [];
 
-  // Render coordenacao (if exists)
-  if (app.data.coordenacao && app.data.coordenacao.length > 0) {
-    console.log("📋 Rendering coordenação...");
-    // For walking skeleton, we'll render coordenacao in the same section
-  }
-
-  // Render pesquisadores
-  if (app.data.pesquisadores) {
-    console.log("📋 Rendering pesquisadores...");
+  // Render equipe (team members with all categories)
+  if (app.data.equipe && app.data.equipe.length > 0) {
+    console.log("📋 Rendering equipe...");
     renderPromises.push(
-      app.sections.pesquisadores.render(app.data.pesquisadores),
+      app.sections.pesquisadores.render(app.data.equipe),
     );
   }
 
