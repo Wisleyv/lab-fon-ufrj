@@ -45,3 +45,8 @@ desktop.ini
 
 # Local sample folder for PROVALE work
 provale-sample/
+
+# External build output folder (managed separately from git)
+C:/labfonac/
+/labfonac/
+labfonac/

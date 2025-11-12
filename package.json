@@ -6,12 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
+    "build:production": "vite build --mode production",
     "preview": "vite preview",
+    "preview:staging": "vite preview --port 4173 --base /labfonac/",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src/**/*.js",
-    "format": "prettier --write \"**/*.{js,css,html,md}\""
+    "format": "prettier --write \"**/*.{js,css,html,md}\"",
+    "deploy:build": "vite build && echo Build complete! Upload C:\\labfonac via FileZilla to server"
   },
   "keywords": [
     "fonética",

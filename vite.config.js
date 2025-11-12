@@ -2,8 +2,10 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: ".",
+  base: "/labfonac/", // Subpath for deployment on both staging and production servers
   build: {
-    outDir: "dist",
+    outDir: "C:/labfonac", // Build directly to deployment folder
+    emptyOutDir: true, // Clean output directory before build
     rollupOptions: {
       output: {
         entryFileNames: "js/[name].[hash].js",
@@ -12,7 +14,7 @@ export default defineConfig({
       },
     },
     minify: "esbuild",
-    sourcemap: true,
+    sourcemap: false, // Disable sourcemaps for production
   },
   server: {
     port: 3000,
