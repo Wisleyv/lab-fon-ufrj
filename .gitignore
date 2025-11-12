@@ -42,3 +42,6 @@ tmp/
 # OS files
 Thumbs.db
 desktop.ini
+
+# Local sample folder for PROVALE work
+provale-sample/
