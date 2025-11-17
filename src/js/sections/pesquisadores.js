@@ -176,7 +176,14 @@ export class PesquisadoresSection extends SectionRenderer {
       className: `equipe-container view-${this.viewMode}`
     });
 
-    members.forEach(member => {
+    // Sort members alphabetically by name (locale-aware for Portuguese)
+    const sortedMembers = [...members].sort((a, b) => {
+      const nameA = a.nome || "";
+      const nameB = b.nome || "";
+      return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+    });
+
+    sortedMembers.forEach(member => {
       const card = this.createMemberCard(member);
       container.appendChild(card);
     });

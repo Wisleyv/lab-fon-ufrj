@@ -52,6 +52,9 @@ async function init() {
     // Render all sections
     await renderAllSections();
 
+    // Initialize mobile menu
+    initMobileMenu();
+
     app.isInitialized = true;
     console.log("✅ Application initialized successfully");
   } catch (error) {
@@ -95,6 +98,73 @@ async function renderAllSections() {
 
   await Promise.all(renderPromises);
   console.log("✅ All sections rendered");
+}
+
+/**
+ * Initialize mobile menu toggle functionality
+ */
+function initMobileMenu() {
+  const menuToggle = document.querySelector('.nav-toggle');
+  const navList = document.querySelector('.nav-list');
+
+  if (!menuToggle || !navList) {
+    console.warn('Mobile menu elements not found');
+    return;
+  }
+
+  // Toggle menu on button click
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = navList.classList.toggle('active');
+    menuToggle.classList.toggle('active');
+
+    // Update ARIA attributes
+    menuToggle.setAttribute('aria-expanded', isOpen);
+    menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+    navList.setAttribute('aria-hidden', !isOpen);
+
+    // Focus first link when opening
+    if (isOpen) {
+      const firstLink = navList.querySelector('a');
+      firstLink?.focus();
+    }
+  });
+
+  // Close menu when clicking a link
+  navList.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.main-nav') && navList.classList.contains('active')) {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // Close menu on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navList.classList.contains('active')) {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+      menuToggle.focus();
+    }
+  });
+
+  console.log('✅ Mobile menu initialized');
 }
 
 /**
