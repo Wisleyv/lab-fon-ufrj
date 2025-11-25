@@ -4,6 +4,155 @@ This document tracks development sessions, tasks completed, and time spent on th
 
 ---
 
+## Session: November 24, 2025
+
+**Branch:** `feature/local-content-editor`  
+**Commit:** `3443d42`  
+**Developer:** AI Assistant + Team
+
+### Tasks Completed
+
+#### 1. Logo and Favicon Implementation
+**Time:** ~40 minutes  
+**Status:** ✅ Complete
+
+**Objective:**
+Implement professional logo and favicon setup following modern best practices.
+
+**Implementation:**
+- **Logo Setup:**
+  - Primary: SVG format with white background for contrast on blue header
+  - Fallback: PNG with 1× and 2× srcset for retina displays
+  - Progressive enhancement using `<picture>` element
+  - Explicit width/height attributes (60×60) to prevent layout shift
+  
+- **Favicon Setup:**
+  - SVG favicon for modern browsers (scalable)
+  - PNG 32×32 favicon for legacy browser support
+  - Apple Touch Icon 180×180 for iOS devices
+  - Proper `<link>` tags with type and size attributes
+
+**Files Modified:**
+- `index.html`: Updated logo and favicon references
+
+**Assets Added:**
+- `favicon.svg` - SVG favicon
+- `favicon_32x32.png` - 32×32 PNG favicon
+- `apple-touch-icon.png` - 180×180 Apple Touch Icon
+- `labfonac_logo_300x300_(white-bckg.svg` - White background SVG logo
+- `labfonac_logo_300x300_(transp-bckg).svg` - Transparent background SVG logo
+- `labfonac-logo_300x300.png` - PNG logo 1×
+- `labfonac-logo_300x300_(white_bckg).png` - PNG logo with white background
+- `labfonac-logo_600x200_(white_bckg).svg` - Wider format SVG logo
+- `labfonac-logo_600x200_(white_bckg).png` - Wider format PNG logo
+- `lattes-square.svg` - Lattes icon for future use
+
+**Technical Highlights:**
+```html
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon_32x32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+
+<!-- Logo with progressive enhancement -->
+<picture>
+  <source type="image/svg+xml" srcset="/assets/images/labfonac_logo_300x300_(white-bckg.svg" />
+  <img src="/assets/images/labfonac-logo_300x300_(white_bckg).png"
+       srcset="/assets/images/labfonac-logo_300x300_(white_bckg).png 1x, 
+               /assets/images/labfonac-logo_300x300_(white_bckg).png 2x"
+       alt="Logo do Laboratório de Fonética Acústica UFRJ" 
+       width="60" height="60" />
+</picture>
+```
+
+**Benefits:**
+- ✅ Modern browsers get crisp SVG logo
+- ✅ Retina displays get high-quality 2× rendering
+- ✅ All devices have appropriate favicons (desktop, mobile, iOS)
+- ✅ White background provides excellent contrast on blue header
+- ✅ Prevents layout shift with explicit dimensions
+- ✅ Progressive enhancement ensures fallback compatibility
+
+**Testing:**
+- ✅ Build verified successfully
+- ✅ Local preview tested at http://localhost:4173/labfonac/
+- ✅ Logo displays with proper contrast
+- ✅ Favicon appears in browser tab
+- ✅ All assets copied to build directory
+
+**Issue Identified:**
+- Contrast issue with transparent background logo on blue header
+- **Solution:** Switched to white background logo variant
+
+---
+
+### Summary Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Total Session Time** | ~40 minutes |
+| **Files Modified** | 1 (`index.html`) |
+| **Assets Added** | 10 (logo and favicon files) |
+| **Lines Changed** | +28, -12 |
+| **Net Change** | +16 lines |
+
+---
+
+### Quality Assurance
+
+**Build Status:**
+- ✅ Production build successful
+- ✅ All assets copied to `C:\labfonac`
+- ✅ Base path `/labfonac/` correctly applied
+- ✅ Preview server verified at http://localhost:4173/labfonac/
+
+**Browser Compatibility:**
+- ✅ SVG support for modern browsers
+- ✅ PNG fallbacks for legacy browsers
+- ✅ Retina display support (1×, 2×)
+- ✅ iOS favicon support
+
+**No Regressions:**
+- ✅ All previous functionality intact
+- ✅ Mobile menu still working correctly
+- ✅ Alphabetical team sorting preserved
+- ✅ Existing styles unaffected
+
+---
+
+### Deliverables
+
+1. **Updated HTML:** Logo and favicon implementation
+2. **Image Assets:** 10 new files (logos and favicons)
+3. **Production Build:** Ready at `C:\labfonac`
+4. **Git Commit:** `3443d42` (ready to push after authentication)
+
+---
+
+### Next Steps
+
+**Immediate:**
+- [ ] Push commit to remote (requires GitHub authentication)
+- [ ] Deploy `C:\labfonac` to staging (wisley.net/labfonac)
+- [ ] Verify logo and favicon on staging server
+- [ ] Test on various devices and browsers
+
+**Issues to Discuss:**
+- User mentioned "some issues that need to be discussed" - to be addressed in next session
+
+**Future Enhancements:**
+- [ ] Consider adding Open Graph image meta tag
+- [ ] Add web manifest for PWA support
+- [ ] Optimize image file sizes if needed
+
+---
+
+**Session Completed:** November 24, 2025  
+**Status:** ✅ Ready for staging deployment  
+**Commit:** `3443d42` (local, pending push)
+
+---
+
 ## Session: November 17, 2025
 
 **Branch:** `feature/local-content-editor`  
