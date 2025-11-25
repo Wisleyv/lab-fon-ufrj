@@ -108,7 +108,10 @@ export class PesquisadoresSection extends SectionRenderer {
         title: mode.label
       });
       
-      button.innerHTML = `<span class="icon">${mode.icon}</span>`;
+      // Create icon span element safely (avoid innerHTML for security)
+      const iconSpan = createElement("span", { className: "icon" });
+      iconSpan.textContent = mode.icon;
+      button.appendChild(iconSpan);
       
       button.addEventListener('click', () => this.switchView(mode.value));
       
