@@ -3,7 +3,7 @@ Recursos humanos
 Albert Olivier Blaise Rilliard	| Doutorado |	Lattes: http://lattes.cnpq.br/7604104346087790
 Carolina Gomes da Silva | Doutorado |	Lattes: 6450917807340365
 Carolina Ribeiro Serra	| Doutorado	| Lattes: 5878437077874490
-Joao Antonio de Moraes	| Doutorado |	Lattes: 3799132338763925
+João Antonio de Moraes	| Doutorado |	Lattes: 3799132338763925
 Manuella Carnaval |	Doutorado |	Lattes: 5169234339795314
 Thiago Laurentino de Oliveira	| Doutorado |	Lattes: 4470317184826146 
 Vitor Gabriel Caldas	| Doutorado |	Lattes: 5899233718078448
