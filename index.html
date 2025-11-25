@@ -15,10 +15,10 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Laboratório de Fonética UFRJ" />
+    <meta property="og:title" content="Laboratório de Fonética Acústica UFRJ" />
     <meta
       property="og:description"
-      content="Centro de excelência em pesquisa fonética e fonológica"
+      content="Centro de excelência em pesquisa fonética acústica"
     />
 
     <title>Laboratório de Fonética UFRJ</title>
@@ -26,8 +26,10 @@
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://lattes.cnpq.br" />
 
-    <!-- Favicon - removed until favicon.ico is added to public/ folder -->
-    <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico" /> -->
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon_32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
 
     <!-- Styles -->
     <link rel="stylesheet" href="/src/css/main.css" />
@@ -67,13 +69,22 @@
       <div class="container">
         <div class="header-content">
           <div class="logo">
-            <img 
-              src="/assets/images/logo_labfonac.jpeg" 
-              alt="Logo do Laboratório de Fonética UFRJ" 
-              class="logo-image"
-            />
+            <picture>
+              <source 
+                type="image/svg+xml" 
+                srcset="/assets/images/labfonac_logo_300x300_(white-bckg.svg"
+              />
+              <img 
+                src="/assets/images/labfonac-logo_300x300_(white_bckg).png"
+                srcset="/assets/images/labfonac-logo_300x300_(white_bckg).png 1x, /assets/images/labfonac-logo_300x300_(white_bckg).png 2x"
+                alt="Logo do Laboratório de Fonética Acústica UFRJ" 
+                class="logo-image"
+                width="60"
+                height="60"
+              />
+            </picture>
             <div class="logo-text">
-              <h1>Laboratório de Fonética</h1>
+              <h1>Laboratório de Fonética Acústica</h1>
               <p class="subtitle">Universidade Federal do Rio de Janeiro</p>
             </div>
           </div>
@@ -110,7 +121,7 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="container">
           <div class="hero-content">
-            <h2 id="hero-title">Pesquisa de Excelência em Fonética</h2>
+            <h2 id="hero-title">Pesquisa de Excelência em Fonética Acústica</h2>
             <p class="hero-description">
               Desenvolvendo estudos inovadores sobre os sons da fala e
               contribuindo para o avanço da ciência linguística no Brasil.
@@ -230,7 +241,7 @@
               Email:
               <a href="mailto:labfonac@letras.ufrj.br">labfonac@letras.ufrj.br</a
               ><br />
-              Tel: (21) 3938-9600
+              Instagram: <a href="https://www.instagram.com/provaleinterinstitucional/" target="_blank" rel="noopener noreferrer">@provaleinterinstitucional</a>
             </p>
           </div>
           <div class="footer-section">
