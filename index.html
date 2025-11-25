@@ -37,11 +37,23 @@
     <!-- Module script -->
     <script type="module" src="/src/js/main.js"></script>
   </head>
-  <body>
+  <body id="top">
     <!-- Skip to main content link for accessibility -->
     <a href="#main-content" class="skip-link"
       >Pular para o conteúdo principal</a
     >
+
+    <!-- Back to Top Button -->
+    <button 
+      id="back-to-top" 
+      class="back-to-top" 
+      aria-label="Voltar ao topo"
+      title="Voltar ao topo"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
 
     <!-- Global Loading Indicator -->
     <div
@@ -68,18 +80,18 @@
     <header class="site-header" role="banner">
       <div class="container">
         <div class="header-content">
-          <div class="logo">
+          <a href="#top" class="logo" aria-label="Voltar ao início">
             <picture>
               <source 
                 type="image/svg+xml" 
-                srcset="/assets/images/labfonac_logo_300x300_(white-bckg.svg"
+                srcset="/assets/images/logo_300x130.svg"
               />
               <img 
-                src="/assets/images/labfonac-logo_300x300_(white_bckg).png"
-                srcset="/assets/images/labfonac-logo_300x300_(white_bckg).png 1x, /assets/images/labfonac-logo_300x300_(white_bckg).png 2x"
+                src="/assets/images/logo_300x130.png"
+                srcset="/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x"
                 alt="Logo do Laboratório de Fonética Acústica UFRJ" 
                 class="logo-image"
-                width="60"
+                width="130"
                 height="60"
               />
             </picture>
@@ -87,7 +99,7 @@
               <h1>Laboratório de Fonética Acústica</h1>
               <p class="subtitle">Universidade Federal do Rio de Janeiro</p>
             </div>
-          </div>
+          </a>
           <nav
             class="main-nav"
             role="navigation"
@@ -127,10 +139,9 @@
               contribuindo para o avanço da ciência linguística no Brasil.
             </p>
             <div class="hero-actions">
-              <a href="#pesquisadores" class="btn btn-primary"
-                >Conheça a Equipe</a
-              >
+              <a href="#pesquisadores" class="btn btn-primary">Equipe</a>
               <a href="#trabalhos" class="btn btn-secondary">Publicações</a>
+              <a href="#contato" class="btn btn-secondary">Contato</a>
             </div>
           </div>
         </div>
@@ -239,7 +250,7 @@
             <h3>Contato</h3>
             <p>
               Email:
-              <a href="mailto:labfonac@letras.ufrj.br">labfonac@letras.ufrj.br</a
+              <a href="mailto:labfonac@posvernaculas.letras.ufrj.br">labfonac@posvernaculas.letras.ufrj.br</a
               ><br />
               Instagram: <a href="https://www.instagram.com/provaleinterinstitucional/" target="_blank" rel="noopener noreferrer">@provaleinterinstitucional</a>
             </p>

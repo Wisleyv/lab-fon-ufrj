@@ -55,6 +55,9 @@ async function init() {
     // Initialize mobile menu
     initMobileMenu();
 
+    // Initialize back-to-top button
+    initBackToTop();
+
     app.isInitialized = true;
     console.log("✅ Application initialized successfully");
   } catch (error) {
@@ -164,7 +167,49 @@ function initMobileMenu() {
     }
   });
 
-  console.log('✅ Mobile menu initialized');
+  console.log('\u2705 Mobile menu initialized');
+}
+
+/**
+ * Initialize back-to-top button functionality
+ */
+function initBackToTop() {
+  const backToTopButton = document.getElementById('back-to-top');
+  
+  if (!backToTopButton) {
+    console.warn('Back-to-top button not found');
+    return;
+  }
+
+  // Show/hide button based on scroll position
+  const toggleButtonVisibility = () => {
+    if (window.scrollY > 300) {
+      backToTopButton.classList.add('visible');
+    } else {
+      backToTopButton.classList.remove('visible');
+    }
+  };
+
+  // Scroll to top smoothly when clicked
+  backToTopButton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // Listen to scroll events with throttling for performance
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    if (scrollTimeout) {
+      window.cancelAnimationFrame(scrollTimeout);
+    }
+    scrollTimeout = window.requestAnimationFrame(() => {
+      toggleButtonVisibility();
+    });
+  }, { passive: true });
+
+  console.log('\u2705 Back-to-top button initialized');
 }
 
 /**

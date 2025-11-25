@@ -234,7 +234,15 @@ export class PesquisadoresSection extends SectionRenderer {
         rel: "noopener noreferrer",
         className: "btn btn-lattes",
         "aria-label": `Currículo Lattes de ${nome}`
-      }, "Currículo Lattes");
+      });
+      
+      const lattesImg = createElement("img", {
+        src: "/labfonac/assets/images/curriculo_lattes_button.png",
+        alt: "Currículo Lattes",
+        className: "btn-lattes-img"
+      });
+      
+      lattesLink.appendChild(lattesImg);
       content.appendChild(lattesLink);
     }
 
