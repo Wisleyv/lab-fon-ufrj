@@ -63,6 +63,8 @@ export class SectionRenderer {
 
       if (typeof content === "string") {
         this.container.innerHTML = content;
+      } else if (content instanceof DocumentFragment) {
+        this.container.appendChild(content);
       } else if (content instanceof HTMLElement) {
         this.container.appendChild(content);
       } else if (Array.isArray(content)) {
@@ -85,7 +87,7 @@ export class SectionRenderer {
   /**
    * Template method - must be implemented by subclass
    * @param {*} data - Data to render
-   * @returns {string|HTMLElement|HTMLElement[]} Rendered content
+   * @returns {string|HTMLElement|HTMLElement[]|DocumentFragment} Rendered content
    * @throws {Error} Must be implemented by subclass
    */
   template(data) {

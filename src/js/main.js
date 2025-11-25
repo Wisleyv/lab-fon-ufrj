@@ -52,6 +52,12 @@ async function init() {
     // Render all sections
     await renderAllSections();
 
+    // Initialize mobile menu
+    initMobileMenu();
+
+    // Initialize back-to-top button
+    initBackToTop();
+
     app.isInitialized = true;
     console.log("✅ Application initialized successfully");
   } catch (error) {
@@ -85,22 +91,125 @@ async function initializeSections() {
 async function renderAllSections() {
   const renderPromises = [];
 
-  // Render coordenacao (if exists)
-  if (app.data.coordenacao && app.data.coordenacao.length > 0) {
-    console.log("📋 Rendering coordenação...");
-    // For walking skeleton, we'll render coordenacao in the same section
-  }
-
-  // Render pesquisadores
-  if (app.data.pesquisadores) {
-    console.log("📋 Rendering pesquisadores...");
+  // Render equipe (team members with all categories)
+  if (app.data.equipe && app.data.equipe.length > 0) {
+    console.log("📋 Rendering equipe...");
     renderPromises.push(
-      app.sections.pesquisadores.render(app.data.pesquisadores),
+      app.sections.pesquisadores.render(app.data.equipe),
     );
   }
 
   await Promise.all(renderPromises);
   console.log("✅ All sections rendered");
+}
+
+/**
+ * Initialize mobile menu toggle functionality
+ */
+function initMobileMenu() {
+  const menuToggle = document.querySelector('.nav-toggle');
+  const navList = document.querySelector('.nav-list');
+
+  if (!menuToggle || !navList) {
+    console.warn('Mobile menu elements not found');
+    return;
+  }
+
+  // Toggle menu on button click
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = navList.classList.toggle('active');
+    menuToggle.classList.toggle('active');
+
+    // Update ARIA attributes
+    menuToggle.setAttribute('aria-expanded', isOpen);
+    menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+    navList.setAttribute('aria-hidden', !isOpen);
+
+    // Focus first link when opening
+    if (isOpen) {
+      const firstLink = navList.querySelector('a');
+      firstLink?.focus();
+    }
+  });
+
+  // Close menu when clicking a link
+  navList.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.main-nav') && navList.classList.contains('active')) {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // Close menu on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navList.classList.contains('active')) {
+      navList.classList.remove('active');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Abrir menu');
+      navList.setAttribute('aria-hidden', 'true');
+      menuToggle.focus();
+    }
+  });
+
+  console.log('\u2705 Mobile menu initialized');
+}
+
+/**
+ * Initialize back-to-top button functionality
+ */
+function initBackToTop() {
+  const backToTopButton = document.getElementById('back-to-top');
+  
+  if (!backToTopButton) {
+    console.warn('Back-to-top button not found');
+    return;
+  }
+
+  // Show/hide button based on scroll position
+  const toggleButtonVisibility = () => {
+    if (window.scrollY > 300) {
+      backToTopButton.classList.add('visible');
+    } else {
+      backToTopButton.classList.remove('visible');
+    }
+  };
+
+  // Scroll to top smoothly when clicked
+  backToTopButton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // Listen to scroll events with throttling for performance
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    if (scrollTimeout) {
+      window.cancelAnimationFrame(scrollTimeout);
+    }
+    scrollTimeout = window.requestAnimationFrame(() => {
+      toggleButtonVisibility();
+    });
+  }, { passive: true });
+
+  console.log('\u2705 Back-to-top button initialized');
 }
 
 /**

@@ -18,7 +18,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    strictPort: true, // Don't try other ports if 3000 is busy
     open: true,
+    host: true, // Listen on all addresses
+    watch: {
+      usePolling: true, // Better file watching on Windows/OneDrive
+      interval: 100, // Check for changes every 100ms
+    },
   },
   test: {
     globals: true,

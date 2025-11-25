@@ -15,10 +15,10 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Laboratório de Fonética UFRJ" />
+    <meta property="og:title" content="Laboratório de Fonética Acústica UFRJ" />
     <meta
       property="og:description"
-      content="Centro de excelência em pesquisa fonética e fonológica"
+      content="Centro de excelência em pesquisa fonética acústica"
     />
 
     <title>Laboratório de Fonética UFRJ</title>
@@ -26,8 +26,10 @@
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://lattes.cnpq.br" />
 
-    <!-- Favicon - removed until favicon.ico is added to public/ folder -->
-    <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico" /> -->
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon_32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
 
     <!-- Styles -->
     <link rel="stylesheet" href="/src/css/main.css" />
@@ -35,11 +37,23 @@
     <!-- Module script -->
     <script type="module" src="/src/js/main.js"></script>
   </head>
-  <body>
+  <body id="top">
     <!-- Skip to main content link for accessibility -->
     <a href="#main-content" class="skip-link"
       >Pular para o conteúdo principal</a
     >
+
+    <!-- Back to Top Button -->
+    <button 
+      id="back-to-top" 
+      class="back-to-top" 
+      aria-label="Voltar ao topo"
+      title="Voltar ao topo"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
 
     <!-- Global Loading Indicator -->
     <div
@@ -66,10 +80,26 @@
     <header class="site-header" role="banner">
       <div class="container">
         <div class="header-content">
-          <div class="logo">
-            <h1>Laboratório de Fonética</h1>
-            <p class="subtitle">Universidade Federal do Rio de Janeiro</p>
-          </div>
+          <a href="#top" class="logo" aria-label="Voltar ao início">
+            <picture>
+              <source 
+                type="image/svg+xml" 
+                srcset="/assets/images/logo_300x130.svg"
+              />
+              <img 
+                src="/assets/images/logo_300x130.png"
+                srcset="/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x"
+                alt="Logo do Laboratório de Fonética Acústica UFRJ" 
+                class="logo-image"
+                width="130"
+                height="60"
+              />
+            </picture>
+            <div class="logo-text">
+              <h1>Laboratório de Fonética Acústica</h1>
+              <p class="subtitle">Universidade Federal do Rio de Janeiro</p>
+            </div>
+          </a>
           <nav
             class="main-nav"
             role="navigation"
@@ -79,12 +109,13 @@
               class="nav-toggle"
               aria-label="Abrir menu"
               aria-expanded="false"
+              aria-controls="main-navigation"
             >
               <span></span>
               <span></span>
               <span></span>
             </button>
-            <ul class="nav-list">
+            <ul class="nav-list" id="main-navigation" aria-hidden="false">
               <li><a href="#sobre">Sobre</a></li>
               <li><a href="#pesquisadores">Equipe</a></li>
               <li><a href="#trabalhos">Publicações</a></li>
@@ -102,16 +133,15 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="container">
           <div class="hero-content">
-            <h2 id="hero-title">Pesquisa de Excelência em Fonética</h2>
+            <h2 id="hero-title">Pesquisa de Excelência em Fonética Acústica</h2>
             <p class="hero-description">
               Desenvolvendo estudos inovadores sobre os sons da fala e
               contribuindo para o avanço da ciência linguística no Brasil.
             </p>
             <div class="hero-actions">
-              <a href="#pesquisadores" class="btn btn-primary"
-                >Conheça a Equipe</a
-              >
+              <a href="#pesquisadores" class="btn btn-primary">Equipe</a>
               <a href="#trabalhos" class="btn btn-secondary">Publicações</a>
+              <a href="#contato" class="btn btn-secondary">Contato</a>
             </div>
           </div>
         </div>
@@ -129,12 +159,10 @@
           </header>
           <div class="sobre-content">
             <p>
-              O Laboratório de Fonética da UFRJ é um centro de excelência
-              dedicado à pesquisa científica dos sons da fala humana. Nossa
-              equipe desenvolve estudos em fonética experimental, fonologia e
-              áreas relacionadas, contribuindo para o avanço do conhecimento
-              sobre a língua portuguesa.
-            </p>
+              Tradição e Inovação na Ciência da Fala</p>
+            <p>Estabelecido no início da década de 1990 por iniciativa do Professor João Moraes na Faculdade de Letras, o Laboratório de Fonética Acústica da UFRJ consolidou-se como um centro de excelência dedicado à pesquisa científica dos sons da fala humana.</p>
+            <p>Atualmente vinculado ao Programa de Pós-Graduação em Letras Vernáculas (PPGLEV) e sob a coordenação das professoras Manuella Carnaval (UFRJ) e Carolina Silva (UFPB), o grupo desenvolve estudos de ponta que integram Fonética Experimental, Fonologia e Prosódia — com ênfase recente em Prosódia Multimodal e suas interfaces.</p>
+            <p>Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa.</p>
             <p>
               <strong>Missão:</strong> Desenvolver pesquisas de ponta em
               fonética experimental e aplicada, formar pesquisadores
@@ -152,17 +180,20 @@
         aria-labelledby="pesquisadores-title"
       >
         <div class="container">
-          <header class="section-header">
-            <h2 id="pesquisadores-title">Nossa Equipe</h2>
-            <p class="section-description">
-              Conheça os pesquisadores que fazem parte do nosso laboratório
-            </p>
+          <header class="section-header section-header-with-controls">
+            <div class="section-header-content">
+              <h2 id="pesquisadores-title">Nossa Equipe</h2>
+              <p class="section-description">
+                Conheça os pesquisadores que fazem parte do nosso laboratório
+              </p>
+            </div>
+            <div id="view-toggle-placeholder"></div>
           </header>
 
           <!-- This container will be populated by JavaScript -->
           <div
             id="pesquisadores-container"
-            class="pesquisadores-grid"
+            class="equipe-sections"
             role="region"
             aria-label="Lista de pesquisadores"
           >
@@ -205,7 +236,7 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>Laboratório de Fonética UFRJ</h3>
+            <h3>Laboratório de Fonética Acústica UFRJ</h3>
             <p>
               Faculdade de Letras - UFRJ<br />
               Av. Horácio Macedo, 2151<br />
@@ -217,9 +248,9 @@
             <h3>Contato</h3>
             <p>
               Email:
-              <a href="mailto:labfon@letras.ufrj.br">labfon@letras.ufrj.br</a
+              <a href="mailto:labfonac@posvernaculas.letras.ufrj.br">labfonac@posvernaculas.letras.ufrj.br</a
               ><br />
-              Tel: (21) 3938-9600
+              Instagram: <a href="https://www.instagram.com/provaleinterinstitucional/" target="_blank" rel="noopener noreferrer">@provaleinterinstitucional</a>
             </p>
           </div>
           <div class="footer-section">
@@ -227,7 +258,7 @@
             <ul>
               <li>
                 <a
-                  href="https://www.ufrj.br"
+                  href="https://ufrj.br"
                   target="_blank"
                   rel="noopener noreferrer"
                   >UFRJ</a
@@ -235,7 +266,7 @@
               </li>
               <li>
                 <a
-                  href="https://www.letras.ufrj.br"
+                  href="https://portal.letras.ufrj.br/"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Faculdade de Letras</a
@@ -249,12 +280,19 @@
                   >Plataforma Lattes</a
                 >
               </li>
+              <li>
+                <a
+                  href="http://dgp.cnpq.br/dgp/espelhogrupo/2843754282197200/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Espelho do Grupo no CNPq</a>
+              </li>
             </ul>
           </div>
         </div>
         <div class="footer-bottom">
           <p>
-            &copy; 2025 Laboratório de Fonética UFRJ. Todos os direitos
+            &copy; 2025 Laboratório de Fonética Acústica | UFRJ. Todos os direitos
             reservados.
           </p>
         </div>

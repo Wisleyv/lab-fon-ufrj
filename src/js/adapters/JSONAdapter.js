@@ -90,9 +90,11 @@ export class JSONAdapter extends DataAdapter {
     if (!super.validate(data)) return false;
 
     // Check if data has expected structure
-    // For the walking skeleton, we expect at least pesquisadores
+    // Accept either new structure (equipe) or legacy structure (pesquisadores/coordenacao)
     return (
-      data.hasOwnProperty("pesquisadores") || data.hasOwnProperty("coordenacao")
+      data.hasOwnProperty("equipe") ||
+      data.hasOwnProperty("pesquisadores") || 
+      data.hasOwnProperty("coordenacao")
     );
   }
 }

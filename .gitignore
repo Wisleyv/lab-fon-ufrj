@@ -16,6 +16,11 @@ build/
 .env
 .env.local
 .env.*.local
+.env.deploy
+
+# Deployment credentials and logs
+deploy-*.log
+winscp_*.txt
 
 # Editor directories and files
 .vscode/*

@@ -1,5 +1,23 @@
 # Deployment Guide - Lab Fonética UFRJ
 
+## 🚀 Quick Automated Deployment (NEW!)
+
+**You now have automated deployment scripts!**
+
+### Option 1: PowerShell FTP Deploy (Simpler)
+```powershell
+.\deploy-staging.ps1
+```
+
+### Option 2: WinSCP Deploy (Recommended - Faster)
+```powershell
+.\deploy-winscp.ps1
+```
+
+See **Automated Deployment** section below for setup details.
+
+---
+
 ## Architecture Overview
 
 ```
@@ -56,22 +74,76 @@ git push
 
 ## Build & Deployment Workflow
 
-### Step 1: Build for Production
+### 🤖 Automated Deployment (Recommended)
+
+#### Setup Once:
+
+1. **Configure credentials** in `.env.deploy`:
+```bash
+FTP_HOST=ftp.wisley.net
+FTP_USER=your_username
+FTP_PASSWORD=your_password
+FTP_PROTOCOL=ftp    # or 'sftp' for secure connection
+REMOTE_PATH=/public_html/labfonac
+LOCAL_BUILD_PATH=C:/labfonac
+```
+
+2. **(Optional) Install WinSCP** for faster uploads:
+   - Download from https://winscp.net
+   - Install to default location
+
+#### Deploy to Staging:
+
+**Method A - PowerShell FTP (Simple):**
+```powershell
+.\deploy-staging.ps1
+```
+- Uses built-in Windows FTP
+- No additional software needed
+- Prompts for credentials if not configured
+
+**Method B - WinSCP (Faster & Recommended):**
+```powershell
+.\deploy-winscp.ps1
+```
+- Requires WinSCP installation
+- Only uploads changed files (much faster!)
+- Supports secure SFTP protocol
+- Better progress tracking
+
+**Dry Run (Test without uploading):**
+```powershell
+.\deploy-winscp.ps1 -DryRun
+```
+
+Both scripts automatically:
+1. ✅ Build the project (`npm run build:staging`)
+2. ✅ Upload all files to your server
+3. ✅ Show progress and summary
+4. ✅ Display the live URL
+
+---
+
+### 📋 Manual Deployment (Traditional Method)
+
+If you prefer manual control:
+
+#### Step 1: Build for Production
 
 ```powershell
 # Navigate to git repository
 cd 'C:\Users\vil3l\OneDrive\1 - Work\PPGLEV\Laboratorio Fonetica\Git\lab-fon-ufrj'
 
-# Build production files
-npm run build
+# Build staging files
+npm run build:staging
 
-# Or use the helper command that reminds you to upload
-npm run deploy:build
+# Or for production
+npm run build:production
 ```
 
 **Output:** Production-ready files are created in `C:\labfonac\`
 
-### Step 2: Verify Build Output
+#### Step 2: Verify Build Output
 
 ```powershell
 # Check that files were created
