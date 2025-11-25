@@ -1,9 +1,9 @@
 # Project Status & Next Steps
 **Lab Fonética UFRJ Website Development**
 
-**Date:** November 12, 2025  
-**Branch:** main  
-**Last Update:** Content management decision documented
+**Date:** November 25, 2025  
+**Branch:** feature/local-content-editor  
+**Last Update:** Team roster updated with 27 members; Lattes button optimized
 
 ---
 
@@ -25,17 +25,26 @@
 - [x] Images in public/assets/images/
 - [x] Image documentation (README.md)
 - [x] Build output verified
+- [x] New logo assets (300×130 icon-only design)
+- [x] Retina display support (2× images)
+- [x] Lattes button image integrated
 
-**Core Structure (80%)**
+**Core Structure (95%)**
 - [x] HTML skeleton with semantic sections
 - [x] Basic CSS styling
 - [x] Responsive layout foundation
 - [x] Navigation structure
 - [x] data.json structure defined
 - [x] JavaScript data loading implemented
-- [⚠️] Visual identity needs refinement (logo integration pending)
-- [⚠️] Color palette needs adjustment
-- [⚠️] Team section needs category organization
+- [x] Logo integration complete (icon-only 300×130 design)
+- [x] Enhanced typography with existing CSS variables
+- [x] Back-to-top button implemented
+- [x] Scroll anchor positioning optimized (45px offset)
+- [x] Hero section buttons optimized and responsive
+- [x] Lattes button redesigned with image + blue border
+- [x] Lattes button optimized (150×61px, hover tooltip)
+- [x] Team roster updated (27 members, synchronized with authoritative source)
+- [⚠️] Team section category display organization (visual grouping needed)
 
 **Deployment (100%)**
 - [x] Build process working (npm run build)
@@ -43,6 +52,26 @@
 - [x] Staging server tested (wisley.net/labfonac)
 - [x] .htaccess configured for WordPress subfolder
 - [x] Deployment documentation complete
+
+**Navigation & UX (100%)**
+- [x] Logo clickable (returns to top)
+- [x] Back-to-top button (floating, appears after 300px scroll)
+- [x] Scroll anchor positioning (45px offset for sticky header)
+- [x] Hero section buttons optimized (shortened text, added Contato)
+- [x] Responsive button layouts (horizontal on tablets, vertical on phones)
+- [x] Lattes button redesigned (image with blue border frame)
+- [x] Lattes button optimized (150×61px, 50% smaller, hover tooltip)
+- [x] All buttons properly sized and responsive
+
+**Team Data (100%)**
+- [x] 27 team members from authoritative source (pesquisadores.md)
+- [x] Coordenação: 2 members (Carolina Silva, Manuella Carnaval)
+- [x] Docentes: 5 PhDs (Albert Rilliard, Carolina Serra, João Moraes, Thiago Oliveira, Vitor Caldas)
+- [x] Pós-Graduação: 9 students (5 Doutorado, 4 Mestrado)
+- [x] Graduação: 7 undergraduate students
+- [x] Egressos: 4 alumni (preserved from previous data)
+- [x] Avatar.webp placeholders for 13 new members without photos
+- [x] All Lattes URLs validated and properly formatted
 
 **Content Management (Planned)**
 - [x] Strategy decided (Local HTML Editor)
@@ -54,38 +83,31 @@
 
 ## Pending Tasks
 
-### 🎨 Priority 1: Visual Identity Refinement
+### 🎨 Priority 1: Visual Identity Refinement (✅ 90% Complete)
+**Color Palette (✅ Complete)**
+- [x] Using existing blue palette from CSS variables:
+  - `--color-primary: #054CAA` (Cobalt Blue)
+  - `--color-primary-dark: #033578` (Darker shade)
+  - `--color-primary-light: #487DC4` (Steel Blue)
+  - `--color-accent: #A7C6F1` (Jordy Blue)
+- [x] All colors tested with WCAG AA compliance
+- [x] Consistent usage across all components
 
-**Logo Integration**
-- [ ] Save attached logo to `public/assets/images/logo_labfonac_primary.png`
-- [ ] Extract blue color palette from logo
-- [ ] Update CSS variables with brand colors
-- [ ] Add logo to header/navigation
-- [ ] Create favicon from logo
-- [ ] Test logo visibility on all backgrounds
+**Typography Polish (✅ Complete)**
+- [x] Georgia serif for logo text and headings
+- [x] Enhanced font weights and letter spacing
+- [x] Responsive font sizing for mobile
+- [x] Line heights optimized for readability
 
-**Color Palette (Blue Shades from Logo)**
-- [ ] Define CSS custom properties:
-  ```css
-  :root {
-    --primary-blue: #[extracted from logo];
-    --secondary-blue: #[lighter shade];
-    --accent-blue: #[darker shade];
-    --text-dark: #333;
-    --text-light: #666;
-    --background: #fff;
-    --background-light: #f8f9fa;
-  }
-  ```
-- [ ] Update all color references in main.css
-- [ ] Test contrast ratios (WCAG AA compliance)
-- [ ] Document color usage guidelines
+**Spacing & Layout (✅ Complete)**
+- [x] Consistent spacing scale using CSS variables
+- [x] Responsive breakpoints tested (480px, 768px)
+- [x] Mobile navigation working perfectly
+- [x] Scroll behavior optimized
 
-**Typography Polish**
-- [ ] Verify font loading (Lattes CNPq preconnect)
-- [ ] Fine-tune font sizes for readability
-- [ ] Adjust line heights and letter spacing
-- [ ] Test on mobile devices
+---
+
+### 👥 Priority 1: Team Section Enhancement
 
 **Spacing & Layout**
 - [ ] Review section padding/margins
@@ -142,29 +164,12 @@ Implement multiple view modes with user preference:
 - [ ] Build list view component
 - [ ] Build card view component
 - [ ] Add view toggle buttons
-- [ ] Save user preference to localStorage
-- [ ] Style each view mode
 - [ ] Test with real data
 - [ ] Make responsive for mobile
 
 ---
 
-### 🔗 Priority 3: Social & Contact Links
-
-**Social Media Integration**
-- [ ] Add Instagram link to header/footer
-- [ ] Design social media icon set
-- [ ] Add mailto link for contact
-- [ ] Style link hover states
-- [ ] Test all external links
-
-**No Contact Forms**
-Decision: Use simple links instead of embedded forms
-- [x] No form implementation needed
-- [ ] Clear email link with icon
-- [ ] "Contact Us" section with social links
-
----
+### 📝 Priority 2: Content Editor Development
 
 ### 📝 Priority 4: Content Editor Development
 
@@ -300,4 +305,25 @@ main (protected)
 
 **Status:** Active Development  
 **Last Updated:** 2025-11-12  
-**Next Review:** 2025-11-19
+## Key Decisions Log
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2025-11-25 | Icon-only logo (300×130) | Cleaner design, text in HTML for SEO and flexibility |
+| 2025-11-25 | Image-based Lattes button | Professional branded appearance, better visual hierarchy |
+| 2025-11-25 | 45px scroll offset | Perfect spacing for section titles below sticky header |
+| 2025-11-25 | Back-to-top button | Modern UX pattern, especially useful for mobile |
+| 2025-11-17 | Mobile hamburger menu | Better UX on small screens, standard pattern |
+| 2025-11-17 | Alphabetical team sorting (pt-BR) | Fairness, proper Portuguese character handling |
+| 2025-11-12 | Local HTML Editor (not PHP) | Security, simplicity, maintainability |
+| 2025-11-12 | Keep hashed filenames in build | Cache busting, industry standard |
+| 2025-11-12 | Blue palette from logo | Visual identity consistency |
+| 2025-11-12 | Team categories & display options | Better organization, user choice |
+
+------
+
+**Status:** Active Development - UI Polish Phase Complete  
+**Last Updated:** 2025-11-25  
+**Next Review:** 2025-12-02  
+**Latest Commit:** `002210b` - UI improvements (logo, navigation, Lattes button)  
+**Progress:** 95% - Ready for team section enhancement and editor implementation

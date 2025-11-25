@@ -706,7 +706,7 @@ a:focus {
 
 .btn-lattes-img {
   display: block;
-  max-width: 90px;
+  max-width: 65px;
   height: auto;
   border-radius: 2px;
 }
@@ -727,27 +727,27 @@ a:focus {
 }
 
 .equipe-container.view-list .btn-lattes-img {
-  max-width: 80px;
+  max-width: 55px;
 }
 
 /* Mobile responsive sizing */
 @media (max-width: 768px) {
   .btn-lattes-img {
-    max-width: 70px;
+    max-width: 50px;
   }
   
   .equipe-container.view-list .btn-lattes-img {
-    max-width: 65px;
+    max-width: 45px;
   }
 }
 
 @media (max-width: 480px) {
   .btn-lattes-img {
-    max-width: 60px;
+    max-width: 45px;
   }
   
   .equipe-container.view-list .btn-lattes-img {
-    max-width: 55px;
+    max-width: 40px;
   }
 }
 
