@@ -224,5 +224,52 @@
       "logo": "assets/images/logo-cnpq.png",
       "link": "https://www.cnpq.br"
     }
+  ],
+  "linhas_pesquisa": [
+    {
+      "id": "fonetica-experimental",
+      "nome": "Fonética Experimental",
+      "icon": "fa-solid fa-wave-square",
+      "estudantes": 0,
+      "pesquisadores": 3,
+      "descricao": "[Descrição da linha de pesquisa]",
+      "ordem": 1
+    },
+    {
+      "id": "prosodia-expressividade",
+      "nome": "Prosódia e Expressividade",
+      "icon": "fa-solid fa-masks-theater",
+      "estudantes": 4,
+      "pesquisadores": 4,
+      "descricao": "[Descrição da linha de pesquisa]",
+      "ordem": 2
+    },
+    {
+      "id": "prosodia-fonologia",
+      "nome": "Prosódia e Fonologia",
+      "icon": "fa-solid fa-diagram-project",
+      "estudantes": 5,
+      "pesquisadores": 3,
+      "descricao": "[Descrição da linha de pesquisa]",
+      "ordem": 3
+    },
+    {
+      "id": "prosodia-interfaces",
+      "nome": "Prosódia e Interfaces",
+      "icon": "fa-solid fa-network-wired",
+      "estudantes": 4,
+      "pesquisadores": 7,
+      "descricao": "[Descrição da linha de pesquisa]",
+      "ordem": 4
+    },
+    {
+      "id": "prosodia-multimodal",
+      "nome": "Prosódia Multimodal",
+      "icon": "fa-solid fa-photo-film",
+      "estudantes": 6,
+      "pesquisadores": 3,
+      "descricao": "[Descrição da linha de pesquisa]",
+      "ordem": 5
+    }
   ]
 }
