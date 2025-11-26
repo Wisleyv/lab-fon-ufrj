@@ -1367,6 +1367,189 @@ a:focus {
 }
 
 /* ========================================
+   Research Lines Section (Linhas de Pesquisa)
+   ======================================== */
+
+/* Container for all research lines */
+.research-lines-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Individual research line card */
+.research-line {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  border-left: 4px solid var(--color-primary);
+}
+
+.research-line:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Icon container */
+.research-line-icon {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent);
+  border-radius: 50%;
+  color: var(--color-primary-dark);
+  font-size: 1.5rem;
+  transition: all var(--transition-base);
+}
+
+.research-line:hover .research-line-icon {
+  background: var(--color-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Content area (title + description) */
+.research-line-content {
+  flex: 1;
+  min-width: 0; /* Prevent flex item overflow */
+}
+
+.research-line-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.research-line-title {
+  font-size: var(--font-size-h4);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+
+.research-line-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-light);
+  line-height: var(--line-height-base);
+  margin: 0;
+}
+
+/* Stats container (students + researchers) */
+.research-line-stats {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.research-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-background);
+  border-radius: var(--border-radius-small);
+  min-width: 80px;
+}
+
+.research-stat-number {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.research-stat-label {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+/* Empty state */
+.research-lines-empty {
+  text-align: center;
+  padding: var(--spacing-xxl);
+  color: var(--color-text-light);
+  font-size: var(--font-size-large);
+}
+
+/* Responsive - Research Lines Section */
+@media (max-width: 768px) {
+  .research-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .research-line-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+
+  .research-line-stats {
+    width: 100%;
+    justify-content: space-around;
+    gap: var(--spacing-sm);
+  }
+
+  .research-stat {
+    flex: 1;
+    min-width: 70px;
+  }
+
+  .research-stat-number {
+    font-size: var(--font-size-h4);
+  }
+}
+
+@media (max-width: 480px) {
+  .research-lines-container {
+    gap: var(--spacing-sm);
+  }
+
+  .research-line {
+    padding: var(--spacing-sm);
+  }
+
+  .research-line-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.125rem;
+  }
+
+  .research-line-title {
+    font-size: var(--font-size-h4);
+  }
+
+  .research-line-description {
+    font-size: var(--font-size-small);
+  }
+
+  .research-stat {
+    min-width: 60px;
+    padding: var(--spacing-xs);
+  }
+
+  .research-stat-number {
+    font-size: 1.5rem;
+  }
+
+  .research-stat-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* ========================================
    Responsive Design
    ======================================== */
 @media (max-width: 768px) {
