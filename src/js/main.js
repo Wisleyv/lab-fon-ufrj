@@ -6,6 +6,7 @@
 import { JSONAdapter } from "./adapters/JSONAdapter.js";
 import { PesquisadoresSection } from "./sections/pesquisadores.js";
 import { PublicacoesSection } from "./sections/publicacoes.js";
+import { LinhasPesquisaSection } from "./sections/linhas-pesquisa.js";
 
 /**
  * Application configuration
@@ -17,6 +18,7 @@ const config = {
   sections: {
     pesquisadores: "pesquisadores-container",
     publicacoes: "publicacoes-content",
+    linhas_pesquisa: "linhas-pesquisa-content",
   },
 };
 
@@ -95,6 +97,16 @@ async function initializeSections() {
     },
   );
 
+  // Initialize Linhas de Pesquisa section
+  app.sections.linhas_pesquisa = new LinhasPesquisaSection(
+    config.sections.linhas_pesquisa,
+    {
+      loadingMessage: "Carregando linhas de pesquisa...",
+      errorMessage: "Não foi possível carregar as linhas de pesquisa.",
+      emptyMessage: "Nenhuma linha de pesquisa cadastrada.",
+    },
+  );
+
   console.log("✅ Sections initialized");
 }
 
@@ -103,6 +115,14 @@ async function initializeSections() {
  */
 async function renderAllSections() {
   const renderPromises = [];
+
+  // Render linhas de pesquisa
+  if (app.data.linhas_pesquisa && app.data.linhas_pesquisa.length > 0) {
+    console.log("📋 Rendering linhas de pesquisa...");
+    renderPromises.push(
+      app.sections.linhas_pesquisa.render(app.data.linhas_pesquisa),
+    );
+  }
 
   // Render equipe (team members with all categories)
   if (app.data.equipe && app.data.equipe.length > 0) {
