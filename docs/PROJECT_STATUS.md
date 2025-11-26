@@ -3,7 +3,7 @@
 
 **Date:** November 26, 2025  
 **Branch:** main  
-**Last Update:** Research Lines section fully implemented with icons, stats, and responsive design
+**Last Update:** Navigation refinements + Publications pagination with year grouping implemented
 
 ---
 
@@ -58,6 +58,11 @@
 - [x] Responsive design with mobile-optimized controls
 - [x] Accessibility features (ARIA labels, keyboard navigation)
 - [x] Statistics panel with publication breakdown
+- [x] Pagination system (10/25/50 items per page, user-selectable)
+- [x] Year grouping (automatic when sorted by year)
+- [x] Smart page navigation with ellipsis for large counts
+- [x] Auto-scroll to section top on page change
+- [x] Persistent user preferences (items per page saved to localStorage)
 
 **Deployment (100%)**
 - [x] Build process working (npm run build)
@@ -75,6 +80,14 @@
 - [x] Lattes button redesigned (image with blue border frame)
 - [x] Lattes button optimized (150×61px, 50% smaller, hover tooltip)
 - [x] All buttons properly sized and responsive
+- [x] Dropdown submenu under "Sobre" (O Laboratório, Linhas de Pesquisa, Parcerias)
+- [x] Desktop hover-based dropdown with smooth animations
+- [x] Mobile click-based dropdown integrated with hamburger menu
+- [x] Dropdown menu styling refined (reduced padding, no text wrapping)
+- [x] Proper vertical alignment across all menu items
+- [x] Keyboard navigation support (Enter/Space keys)
+- [x] ARIA attributes for accessibility
+- [x] Contato link scrolls to footer (id="contato" added)
 
 **Team Data (100%)**
 - [x] 27 team members from authoritative source (pesquisadores.md)
@@ -344,8 +357,16 @@ main (protected)
 | 2025-11-25 | Icon-only logo (300×130) | Cleaner design, text in HTML for SEO and flexibility |
 | 2025-11-25 | Image-based Lattes button | Professional branded appearance, better visual hierarchy |
 | 2025-11-25 | 45px scroll offset | Perfect spacing for section titles below sticky header |
-| 2025-11-25 | Back-to-top button | Modern UX pattern, especially useful for mobile |ions, and responsive design  
-**Progress:** 99% - Core functionality complete; ready for production deploymentttern |
+| 2025-11-25 | Back-to-top button | Modern UX pattern, especially useful for mobile |
+| 2025-11-26 | Dropdown navigation menu | Solved crowding issue, professional pattern for submenus |
+| 2025-11-26 | Pagination with year grouping | Scalable solution for growing publications (10/25/50 per page) |
+| 2025-11-26 | Footer as contact section | No forms needed, direct email/Instagram links more accessible |
+
+---
+
+**Status:** Active Development  
+**Last Updated:** 2025-11-26  
+**Progress:** 99% - Core functionality complete; navigation optimized; pagination implemented; ready for staging deployment
 | 2025-11-17 | Alphabetical team sorting (pt-BR) | Fairness, proper Portuguese character handling |
 | 2025-11-12 | Local HTML Editor (not PHP) | Security, simplicity, maintainability |
 | 2025-11-12 | Keep hashed filenames in build | Cache busting, industry standard |

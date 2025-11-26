@@ -36,6 +36,11 @@ export class PublicacoesSection extends SectionRenderer {
     };
     this.sortBy = "year-desc"; // year-desc, year-asc, author-asc, title-asc, type
 
+    // Pagination state
+    this.currentPage = 1;
+    this.itemsPerPage = this.loadItemsPerPage();
+    this.totalPages = 1;
+
     // Cache for unique values
     this.uniqueYears = [];
     this.uniqueTypes = [];
@@ -55,6 +60,22 @@ export class PublicacoesSection extends SectionRenderer {
   saveViewMode(mode) {
     localStorage.setItem("publications-view-mode", mode);
     this.viewMode = mode;
+  }
+
+  /**
+   * Load items per page from localStorage or default to 10
+   */
+  loadItemsPerPage() {
+    const saved = localStorage.getItem("publications-items-per-page");
+    return saved ? parseInt(saved, 10) : 10;
+  }
+
+  /**
+   * Save items per page to localStorage
+   */
+  saveItemsPerPage(count) {
+    localStorage.setItem("publications-items-per-page", count);
+    this.itemsPerPage = count;
   }
 
   /**
@@ -86,6 +107,10 @@ export class PublicacoesSection extends SectionRenderer {
     // Create publications container
     const container = this.createPublicationsContainer();
     fragment.appendChild(container);
+
+    // Create pagination controls
+    const pagination = this.createPaginationControls();
+    fragment.appendChild(pagination);
 
     return fragment;
   }
@@ -188,6 +213,10 @@ export class PublicacoesSection extends SectionRenderer {
     const sortSelect = this.createSortSelect();
     bottomRow.appendChild(sortSelect);
 
+    // Items per page select
+    const itemsPerPageSelect = this.createItemsPerPageSelect();
+    bottomRow.appendChild(itemsPerPageSelect);
+
     section.appendChild(bottomRow);
 
     // Active filters display
@@ -264,6 +293,39 @@ export class PublicacoesSection extends SectionRenderer {
 
     select.value = this.sortBy;
     select.addEventListener("change", (e) => this.handleSortChange(e.target.value));
+    container.appendChild(select);
+
+    return container;
+  }
+
+  /**
+   * Creates items per page select element
+   */
+  createItemsPerPageSelect() {
+    const container = createElement("div", { className: "filter-group" });
+
+    const label = createElement("label", { for: "pub-items-per-page", className: "filter-label" }, "Por página");
+    container.appendChild(label);
+
+    const select = createElement("select", {
+      id: "pub-items-per-page",
+      className: "filter-select",
+      "aria-label": "Itens por página",
+    });
+
+    const options = [
+      { value: "10", label: "10" },
+      { value: "25", label: "25" },
+      { value: "50", label: "50" },
+    ];
+
+    options.forEach((opt) => {
+      const option = createElement("option", { value: opt.value }, opt.label);
+      select.appendChild(option);
+    });
+
+    select.value = this.itemsPerPage;
+    select.addEventListener("change", (e) => this.handleItemsPerPageChange(parseInt(e.target.value, 10)));
     container.appendChild(select);
 
     return container;
@@ -383,10 +445,75 @@ export class PublicacoesSection extends SectionRenderer {
       return;
     }
 
-    // Render each publication
-    this.filteredPublications.forEach((pub, index) => {
-      const card = this.createPublicationCard(pub, index);
-      container.appendChild(card);
+    // Calculate pagination
+    this.totalPages = Math.ceil(this.filteredPublications.length / this.itemsPerPage);
+    
+    // Ensure current page is valid
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
+
+    // Get publications for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const paginatedPublications = this.filteredPublications.slice(startIndex, endIndex);
+
+    // Group by year if sorted by year
+    if (this.sortBy.startsWith("year-")) {
+      this.renderPublicationsByYear(container, paginatedPublications);
+    } else {
+      // Render without year grouping
+      paginatedPublications.forEach((pub, index) => {
+        const card = this.createPublicationCard(pub, startIndex + index);
+        container.appendChild(card);
+      });
+    }
+
+    // Update pagination controls
+    this.updatePaginationControls();
+  }
+
+  /**
+   * Renders publications grouped by year
+   */
+  renderPublicationsByYear(container, publications) {
+    const publicationsByYear = {};
+
+    // Group publications by year
+    publications.forEach((pub) => {
+      const year = pub.imprint?.date || "sem data";
+      if (!publicationsByYear[year]) {
+        publicationsByYear[year] = [];
+      }
+      publicationsByYear[year].push(pub);
+    });
+
+    // Get sorted years
+    const years = Object.keys(publicationsByYear).sort((a, b) => {
+      if (a === "sem data") return 1;
+      if (b === "sem data") return -1;
+      return this.sortBy === "year-desc" ? Number(b) - Number(a) : Number(a) - Number(b);
+    });
+
+    // Render each year group
+    years.forEach((year) => {
+      const yearGroup = createElement("div", { className: "year-group" });
+      
+      const yearHeader = createElement("h3", { className: "year-header" }, year);
+      yearGroup.appendChild(yearHeader);
+
+      const yearContainer = createElement("div", { className: "year-publications" });
+      
+      publicationsByYear[year].forEach((pub, index) => {
+        const card = this.createPublicationCard(pub, index);
+        yearContainer.appendChild(card);
+      });
+
+      yearGroup.appendChild(yearContainer);
+      container.appendChild(yearGroup);
     });
   }
 
@@ -521,6 +648,7 @@ export class PublicacoesSection extends SectionRenderer {
    */
   handleSearch(query) {
     this.searchQuery = query.toLowerCase().trim();
+    this.currentPage = 1; // Reset to first page
     this.applyFiltersAndSort();
     this.renderPublications();
     this.updateStatistics();
@@ -533,6 +661,7 @@ export class PublicacoesSection extends SectionRenderer {
    */
   handleFilterChange(filterType, value) {
     this.filters[filterType] = value;
+    this.currentPage = 1; // Reset to first page
     this.applyFiltersAndSort();
     this.renderPublications();
     this.updateStatistics();
@@ -545,6 +674,7 @@ export class PublicacoesSection extends SectionRenderer {
    */
   handleSortChange(sortBy) {
     this.sortBy = sortBy;
+    this.currentPage = 1; // Reset to first page
     this.applyFiltersAndSort();
     this.renderPublications();
     this.announceResults();
@@ -572,6 +702,153 @@ export class PublicacoesSection extends SectionRenderer {
 
     this.renderPublications();
     this.announceViewMode();
+  }
+
+  /**
+   * Handles items per page change
+   */
+  handleItemsPerPageChange(count) {
+    this.saveItemsPerPage(count);
+    this.currentPage = 1; // Reset to first page
+    this.renderPublications();
+    this.updateStatistics();
+  }
+
+  /**
+   * Handles page change
+   */
+  handlePageChange(page) {
+    if (page < 1 || page > this.totalPages) return;
+    
+    this.currentPage = page;
+    this.renderPublications();
+    
+    // Scroll to top of publications section
+    const section = document.getElementById("trabalhos");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  /**
+   * Creates pagination controls
+   */
+  createPaginationControls() {
+    const container = createElement("div", {
+      id: "pagination-controls",
+      className: "pagination-controls",
+      role: "navigation",
+      "aria-label": "Paginação de publicações",
+    });
+
+    this.updatePaginationControls(container);
+
+    return container;
+  }
+
+  /**
+   * Updates pagination controls
+   */
+  updatePaginationControls(container = document.getElementById("pagination-controls")) {
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (this.totalPages <= 1) {
+      container.style.display = "none";
+      return;
+    }
+
+    container.style.display = "flex";
+
+    const pagination = createElement("div", { className: "pagination" });
+
+    // Previous button
+    const prevBtn = createElement("button", {
+      className: `pagination-btn ${this.currentPage === 1 ? "disabled" : ""}`,
+      "aria-label": "Página anterior",
+      disabled: this.currentPage === 1,
+      type: "button",
+    }, "‹ Anterior");
+    prevBtn.addEventListener("click", () => this.handlePageChange(this.currentPage - 1));
+    pagination.appendChild(prevBtn);
+
+    // Page numbers
+    const pageNumbers = this.calculatePageNumbers();
+    pageNumbers.forEach((page) => {
+      if (page === "...") {
+        const ellipsis = createElement("span", { className: "pagination-ellipsis" }, "...");
+        pagination.appendChild(ellipsis);
+      } else {
+        const pageBtn = createElement("button", {
+          className: `pagination-btn pagination-page ${page === this.currentPage ? "active" : ""}`,
+          "aria-label": `Página ${page}`,
+          "aria-current": page === this.currentPage ? "page" : null,
+          type: "button",
+        }, String(page));
+        pageBtn.addEventListener("click", () => this.handlePageChange(page));
+        pagination.appendChild(pageBtn);
+      }
+    });
+
+    // Next button
+    const nextBtn = createElement("button", {
+      className: `pagination-btn ${this.currentPage === this.totalPages ? "disabled" : ""}`,
+      "aria-label": "Próxima página",
+      disabled: this.currentPage === this.totalPages,
+      type: "button",
+    }, "Próxima ›");
+    nextBtn.addEventListener("click", () => this.handlePageChange(this.currentPage + 1));
+    pagination.appendChild(nextBtn);
+
+    // Page info
+    const pageInfo = createElement("div", { 
+      className: "pagination-info",
+      "aria-live": "polite",
+    }, `Página ${this.currentPage} de ${this.totalPages}`);
+    
+    container.appendChild(pagination);
+    container.appendChild(pageInfo);
+  }
+
+  /**
+   * Calculates which page numbers to display
+   */
+  calculatePageNumbers() {
+    const pages = [];
+    const totalPages = this.totalPages;
+    const currentPage = this.currentPage;
+
+    if (totalPages <= 7) {
+      // Show all pages if 7 or fewer
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+
+      // Show pages around current page
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+
+      // Always show last page
+      pages.push(totalPages);
+    }
+
+    return pages;
   }
 
   /**
