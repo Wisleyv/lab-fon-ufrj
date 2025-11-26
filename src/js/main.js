@@ -5,6 +5,7 @@
 
 import { JSONAdapter } from "./adapters/JSONAdapter.js";
 import { PesquisadoresSection } from "./sections/pesquisadores.js";
+import { PublicacoesSection } from "./sections/publicacoes.js";
 
 /**
  * Application configuration
@@ -12,8 +13,10 @@ import { PesquisadoresSection } from "./sections/pesquisadores.js";
 const config = {
   dataSource: "json",
   jsonUrl: "./data.json", // Served from public/ folder via Vite
+  publicationsUrl: "./publication_references.json",
   sections: {
     pesquisadores: "pesquisadores-container",
+    publicacoes: "publicacoes-content",
   },
 };
 
@@ -82,6 +85,16 @@ async function initializeSections() {
     },
   );
 
+  // Initialize Publicações section
+  app.sections.publicacoes = new PublicacoesSection(
+    config.sections.publicacoes,
+    {
+      loadingMessage: "Carregando publicações...",
+      errorMessage: "Não foi possível carregar as publicações.",
+      emptyMessage: "Nenhuma publicação cadastrada.",
+    },
+  );
+
   console.log("✅ Sections initialized");
 }
 
@@ -97,6 +110,22 @@ async function renderAllSections() {
     renderPromises.push(
       app.sections.pesquisadores.render(app.data.equipe),
     );
+  }
+
+  // Load and render publications
+  try {
+    console.log("📋 Loading publications...");
+    const pubAdapter = new JSONAdapter(config.publicationsUrl);
+    const pubData = await pubAdapter.fetch();
+    
+    if (pubData.references && pubData.references.length > 0) {
+      console.log("📋 Rendering publications...");
+      renderPromises.push(
+        app.sections.publicacoes.render(pubData.references),
+      );
+    }
+  } catch (error) {
+    console.error("❌ Error loading publications:", error);
   }
 
   await Promise.all(renderPromises);

@@ -89,12 +89,8 @@ export class JSONAdapter extends DataAdapter {
   validate(data) {
     if (!super.validate(data)) return false;
 
-    // Check if data has expected structure
-    // Accept either new structure (equipe) or legacy structure (pesquisadores/coordenacao)
-    return (
-      data.hasOwnProperty("equipe") ||
-      data.hasOwnProperty("pesquisadores") || 
-      data.hasOwnProperty("coordenacao")
-    );
+    // For JSON adapter, we accept any valid JSON object
+    // Individual sections can validate their specific data structure
+    return typeof data === "object" && data !== null;
   }
 }

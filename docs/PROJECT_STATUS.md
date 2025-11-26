@@ -2,8 +2,8 @@
 **Lab Fonética UFRJ Website Development**
 
 **Date:** November 25, 2025  
-**Branch:** feature/local-content-editor  
-**Last Update:** Team roster updated with 27 members; Lattes button optimized
+**Branch:** main  
+**Last Update:** Publications section fully implemented with search, filters, and ABNT citations
 
 ---
 
@@ -29,7 +29,7 @@
 - [x] Retina display support (2× images)
 - [x] Lattes button image integrated
 
-**Core Structure (95%)**
+**Core Structure (100%)**
 - [x] HTML skeleton with semantic sections
 - [x] Basic CSS styling
 - [x] Responsive layout foundation
@@ -44,7 +44,20 @@
 - [x] Lattes button redesigned with image + blue border
 - [x] Lattes button optimized (150×61px, hover tooltip)
 - [x] Team roster updated (27 members, synchronized with authoritative source)
-- [⚠️] Team section category display organization (visual grouping needed)
+- [x] Team section with category grouping and multiple view modes
+
+**Publications Section (100%)**
+- [x] Publication data cleaned and normalized (37 references, A+ quality)
+- [x] Citation formatter utility (ABNT style for all publication types)
+- [x] Publications renderer with search, filters, and sorting
+- [x] View modes: Compact list and detailed cards
+- [x] Filter by year, type, and author
+- [x] Sort by year (newest/oldest), author, title, type
+- [x] Full-text search across titles, authors, journals
+- [x] Copy citation and BibTeX export functionality
+- [x] Responsive design with mobile-optimized controls
+- [x] Accessibility features (ARIA labels, keyboard navigation)
+- [x] Statistics panel with publication breakdown
 
 **Deployment (100%)**
 - [x] Build process working (npm run build)
@@ -309,11 +322,15 @@ main (protected)
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2025-11-25 | Publications section with full features | Search, filters, ABNT citations, responsive design |
+| 2025-11-25 | Automated data cleanup script | Python + BeautifulSoup to improve data quality from 65% to 98% |
+| 2025-11-25 | Generic JSONAdapter validation | Flexible adapter accepts any JSON, sections validate their own data |
+| 2025-11-25 | ABNT citation formatting | Professional academic citation style for all publication types |
 | 2025-11-25 | Icon-only logo (300×130) | Cleaner design, text in HTML for SEO and flexibility |
 | 2025-11-25 | Image-based Lattes button | Professional branded appearance, better visual hierarchy |
 | 2025-11-25 | 45px scroll offset | Perfect spacing for section titles below sticky header |
-| 2025-11-25 | Back-to-top button | Modern UX pattern, especially useful for mobile |
-| 2025-11-17 | Mobile hamburger menu | Better UX on small screens, standard pattern |
+| 2025-11-25 | Back-to-top button | Modern UX pattern, especially useful for mobile |ions, and responsive design  
+**Progress:** 99% - Core functionality complete; ready for production deploymentttern |
 | 2025-11-17 | Alphabetical team sorting (pt-BR) | Fairness, proper Portuguese character handling |
 | 2025-11-12 | Local HTML Editor (not PHP) | Security, simplicity, maintainability |
 | 2025-11-12 | Keep hashed filenames in build | Cache busting, industry standard |

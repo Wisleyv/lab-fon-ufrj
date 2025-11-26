@@ -1,0 +1,1171 @@
+{
+  "references": [
+    {
+      "id": "ref_001",
+      "type": "special-issue",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Miranda",
+          "given_name": "L"
+        }
+      ],
+      "title": "S.; GOMES DA SILVA, CAROLINA; CARNAVAL, M. Prosódia",
+      "container": {
+        "type": "journal",
+        "title": "Revista da Abralin",
+        "volume": "23",
+        "issue": "2"
+      },
+      "subtitle": "descrição, variação e aquisição linguística",
+      "access": {
+        "url": "https://revista.abralin.org/index.php/abralin/issue/view/93",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2024"
+      }
+    },
+    {
+      "id": "ref_002",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Dias",
+          "given_name": "J. B. A."
+        }
+      ],
+      "title": "As emoções em narrações de partidas de futebol: uma análise entonacional em português e em espanhol",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/31948",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2024"
+      },
+      "container": {
+        "type": "journal",
+        "title": "B. A. As emoções em narrações de partidas de futebol: uma análise entonacional em português e em espanhol .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_003",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Soares",
+          "given_name": "J. C."
+        }
+      ],
+      "title": "Análise entonacional e pragmática de enunciados interrogativos parciais da variedade de Porto Rico",
+      "imprint": {
+        "date": "2024"
+      },
+      "container": {
+        "type": "journal",
+        "title": "C.\n    Análise entonacional e pragmática de enunciados interrogativos parciais da variedade de Porto Rico.\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_004",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M"
+        }
+      ],
+      "title": "Quando a prosódia e a pragmática se encontram",
+      "container": {
+        "type": "book",
+        "title": "A ciência da linguagem",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Matos",
+            "given_name": "Denilson Pereira de"
+          },
+          {
+            "type": "person",
+            "family_name": "Estivalet",
+            "given_name": "Gustavo"
+          },
+          {
+            "type": "person",
+            "family_name": "Aguiar",
+            "given_name": "Tiago"
+          }
+        ],
+        "subtitle": "explorações analíticas em aquisição, processamento, significação e diversidade linguística",
+        "imprint": {
+          "place": "Campinas",
+          "publisher": "Pontes Editores",
+          "date": "2024"
+        }
+      },
+      "subtitle": "possibilidades de pesquisa e desafios para o ensino",
+      "page_range": "243",
+      "imprint": {
+        "date": "2024",
+        "publisher": "Pontes Editores",
+        "place": "Campinas"
+      }
+    },
+    {
+      "id": "ref_005",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Lucena",
+          "given_name": "R"
+        }
+      ],
+      "title": "M.; CASTEDO, T. M. Análisis de la entonación de enunciados interrogativos en el español del oriente boliviano. Linguística y Literatura ,\n    v. 83, p. 90–109, 2023",
+      "container": {
+        "type": "journal",
+        "title": "Linguística y Literatura",
+        "volume": "83"
+      },
+      "access": {
+        "url": "https://revistas.udea.edu.co/index.php/lyl/article/view/353022",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2023"
+      },
+      "page_range": "90-109"
+    },
+    {
+      "id": "ref_006",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Santos",
+          "given_name": "M"
+        }
+      ],
+      "title": "S. O.; NASCIMENTO, M. K.; BRANDÃO, S. D. C. R. Entonación y pragmática en conversaciones telefónicas",
+      "container": {
+        "type": "journal",
+        "title": "Phonica",
+        "volume": "19"
+      },
+      "subtitle": "las preguntas absolutas en las variedades dominicana y puertorriqueña. Phonica ,\n    v. 19, p. 22–43, 2023",
+      "access": {
+        "url": "https://revistes.ub.edu/index.php/phonica/article/view/42306",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2023"
+      },
+      "page_range": "22-43"
+    },
+    {
+      "id": "ref_007",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Santos Figueiredo",
+          "given_name": "N"
+        }
+      ],
+      "title": "Análisis multimodal de actos de habla en español del Paraguay y de Argentina. Phonica ,\n    v. 19, p. 4–21, 2023",
+      "container": {
+        "type": "journal",
+        "title": "Phonica",
+        "volume": "19"
+      },
+      "access": {
+        "url": "https://revistes.ub.edu/index.php/phonica/article/view/42857",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2023"
+      },
+      "page_range": "4-21"
+    },
+    {
+      "id": "ref_008",
+      "type": "special-issue",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M."
+        },
+        {
+          "type": "person",
+          "family_name": "Miranda",
+          "given_name": "L"
+        }
+      ],
+      "title": "S.; MORAES, JOÃO ANTÔNIO DE; RILLIARD, A. O. B. Funções dos gestos faciais na prosódia audiovisual",
+      "container": {
+        "type": "book",
+        "title": "Linguística e estudo de gestos",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Avelar",
+            "given_name": "Maíra"
+          },
+          {
+            "type": "person",
+            "family_name": "Pacheco",
+            "given_name": "Vera"
+          },
+          {
+            "type": "person",
+            "family_name": "Oliveira",
+            "given_name": "Marian"
+          }
+        ],
+        "subtitle": "interfaces",
+        "imprint": {
+          "place": "Campinas",
+          "publisher": "Pontes",
+          "date": "2023"
+        },
+        "volume": "23",
+        "issue": "2"
+      },
+      "page_range": "11",
+      "imprint": {
+        "date": "2024"
+      }
+    },
+    {
+      "id": "ref_009",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Nascimento",
+          "given_name": "M. K."
+        }
+      ],
+      "title": "As perguntas totais em português e espanhol língua adicional: uma análise entonacional de falantes da zona da mata paraibana",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/30057?locale=pt_BR",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2023"
+      },
+      "container": {
+        "type": "journal",
+        "title": "K. As perguntas totais em português e espanhol língua adicional: uma análise entonacional de falantes da zona da mata paraibana .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_010",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Brandão",
+          "given_name": "S. C. R."
+        }
+      ],
+      "title": "Análise entonacional de atos de fala diretivos produzidos em português e em espanhol por falantes da zona da mata paraibana",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/30059?locale=pt_BR",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2023"
+      },
+      "container": {
+        "type": "journal",
+        "title": "C. R. Análise entonacional de atos de fala diretivos produzidos em português e em espanhol por falantes da zona da mata paraibana .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_011",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M."
+        },
+        {
+          "type": "person",
+          "family_name": "Moraes",
+          "given_name": "J"
+        }
+      ],
+      "title": "A.; RILLIARD, A. O. B. Focus types in Brazilian Portuguese",
+      "container": {
+        "type": "journal",
+        "title": "DELTA – Documentação de Estudos em Linguística Teórica e Aplicada",
+        "volume": "38"
+      },
+      "subtitle": "Multimodal production and perception. DELTA – Documentação de Estudos em Linguística Teórica e Aplicada ,\n    v. 38, p. 202258944–34, 2022",
+      "access": {
+        "url": "https://www.scielo.br/j/delta/a/v7bX9HSyb7jzSYChDwSR8Jw/?lang=en",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2022"
+      },
+      "page_range": "202258944-34"
+    },
+    {
+      "id": "ref_012",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M."
+        },
+        {
+          "type": "person",
+          "family_name": "Moraes",
+          "given_name": "J"
+        }
+      ],
+      "title": "A.; RILLIARD, A. O. B. Os domínios da focalização",
+      "container": {
+        "type": "journal",
+        "title": "Revista Gragoatá (UFF)",
+        "volume": "27"
+      },
+      "subtitle": "um estudo experimental",
+      "page_range": "392-418",
+      "access": {
+        "url": "https://periodicos.uff.br/gragoata/article/view/51979",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2022"
+      }
+    },
+    {
+      "id": "ref_013",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Castedo",
+          "given_name": "T"
+        }
+      ],
+      "title": "M.; LUCENA, R. M.; GOMES DA SILVA, CAROLINA. Vos",
+      "container": {
+        "type": "journal",
+        "title": "Íkala",
+        "volume": "27"
+      },
+      "subtitle": "¿joven, pobre y vulgar en el oriente boliviano? Un estudio de corpus sobre el voseo en conversaciones de WhatsApp. Íkala ,\n    v. 27, p. 393–410, 2022",
+      "access": {
+        "url": "https://revistas.udea.edu.co/index.php/ikala/article/view/347268/20808039",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2022"
+      },
+      "page_range": "393-410"
+    },
+    {
+      "id": "ref_014",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Santos",
+          "given_name": "M"
+        }
+      ],
+      "title": "S. O.; GOMES DA SILVA, CAROLINA. Práticas de oralidade em língua espanhola",
+      "container": {
+        "type": "journal",
+        "title": "Revista Letras Raras",
+        "volume": "11"
+      },
+      "subtitle": "pensando em atividades de entoação a partir de um corpus coloquial e espontâneo",
+      "page_range": "112-138",
+      "access": {
+        "url": "https://revistas.editora.ufcg.edu.br/index.php/RLR/article/view/954",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2022"
+      }
+    },
+    {
+      "id": "ref_015",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M."
+        },
+        {
+          "type": "person",
+          "family_name": "Moraes",
+          "given_name": "J"
+        }
+      ],
+      "title": "A.; RILLIARD, A. O. B. Estrutura prosódica e focalização",
+      "container": {
+        "type": "book",
+        "title": "Contribuições para a linguística brasileira – uma homenagem a Dinah Callou",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Oliveira",
+            "given_name": "Josane Moreira de"
+          },
+          {
+            "type": "person",
+            "family_name": "Mota",
+            "given_name": "Jacyra Andrade"
+          },
+          {
+            "type": "person",
+            "family_name": "Reis",
+            "given_name": "Regiane Coelho Pereira"
+          }
+        ],
+        "volume": "13"
+      },
+      "subtitle": "dados do português do Brasil",
+      "page_range": "109",
+      "imprint": {
+        "date": "2015"
+      }
+    },
+    {
+      "id": "ref_016",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Pinto",
+          "given_name": "M"
+        }
+      ],
+      "title": "S.; REBOLLO COUTO, L.; GOMES DA SILVA, CAROLINA. Entoação",
+      "container": {
+        "type": "book",
+        "title": "A oralidade no ensino de línguas estrangeiras",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Pinho",
+            "given_name": "José Ricardo Dordron de"
+          }
+        ],
+        "imprint": {
+          "place": "São Paulo",
+          "publisher": "Parábola",
+          "date": "2022"
+        }
+      },
+      "subtitle": "atividades didático-metodológicas para a educação básica",
+      "page_range": "135-144",
+      "imprint": {
+        "date": "2022",
+        "publisher": "atividades didático-metodológicas para a educação básica. In: José Ricardo Dordron de Pinho (Org.). A oralidade no ensino de línguas estrangeiras. São Paulo: Parábola",
+        "place": "Entoação"
+      }
+    },
+    {
+      "id": "ref_017",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Rebollo Couto",
+          "given_name": "L."
+        },
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Guimarães",
+          "given_name": "D"
+        }
+      ],
+      "title": "P. Entoação das perguntas no espanhol da Argentina, Chile e México",
+      "container": {
+        "type": "journal",
+        "title": "ABEHACHE",
+        "volume": "18"
+      },
+      "subtitle": "estudo comparativo. ABEHACHE ,\n    v. 18, p. 54–80, 2021",
+      "access": {
+        "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/341",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2021"
+      },
+      "page_range": "54-80"
+    },
+    {
+      "id": "ref_018",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Figueiredo",
+          "given_name": "N"
+        }
+      ],
+      "title": "S. Variação pragmática de atos de fala diretivos do espanhol na tríplice fronteira",
+      "container": {
+        "type": "journal",
+        "title": "Estudos Linguísticos e Literários",
+        "volume": "67"
+      },
+      "subtitle": "Argentina, Brasil e Paraguai. Estudos Linguísticos e Literários ,\n    v. 67, p. 14–41, 2021",
+      "access": {
+        "url": "https://periodicos.ufba.br/index.php/estudos/article/view/44098",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2021"
+      },
+      "page_range": "14-41"
+    },
+    {
+      "id": "ref_019",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Figueiredo",
+          "given_name": "N"
+        }
+      ],
+      "title": "S.; VERGARA SEMBERGMAN, E.; MURILLO BOCANEGRA, L. G. A variação prosódica no ensino de espanhol como língua pluricêntrica. ABEHACHE ,\n    v. 18, p. 81–107, 2021",
+      "container": {
+        "type": "journal",
+        "title": "ABEHACHE",
+        "volume": "18"
+      },
+      "access": {
+        "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/342",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2021"
+      },
+      "page_range": "81-107"
+    },
+    {
+      "id": "ref_020",
+      "type": "doctoral-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M"
+        }
+      ],
+      "title": "Focalização no Português do Brasil",
+      "imprint": {
+        "place": "[S.l.]",
+        "publisher": "Instituição não informada",
+        "date": "2021"
+      },
+      "genre": "Doutorado em Letras Vernáculas – Universidade Federal do Rio de Janeiro",
+      "subtitle": "um estudo multimodal .\n    (Doutorado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)",
+      "access": {
+        "url": "https://drive.google.com/file/d/1EswEZOBCB3Fw4FBMaSiIQrEOmJRO8u0o/view",
+        "access_date": "2025-11-25"
+      },
+      "container": {
+        "type": "journal",
+        "title": "Focalização no Português do Brasil: um estudo multimodal .\n    (Doutorado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)"
+      }
+    },
+    {
+      "id": "ref_021",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Almeida",
+          "given_name": "P. B. A."
+        }
+      ],
+      "title": "Análise prosódico-pragmática da ordem no filme 'María llena eres de gracia': o caso do espanhol de Bogotá",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/21592",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2021"
+      },
+      "container": {
+        "type": "journal",
+        "title": "B. A. Análise prosódico-pragmática da ordem no filme “María llena eres de gracia”: o caso do espanhol de Bogotá .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_022",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Santos",
+          "given_name": "M. S. O."
+        }
+      ],
+      "title": "Entoação e pragmática de perguntas totais em corpus conversacional e espontâneo da variedade de Porto Rico",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/20388",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2021"
+      },
+      "container": {
+        "type": "journal",
+        "title": "S. O. Entoação e pragmática de perguntas totais em corpus conversacional e espontâneo da variedade de Porto Rico .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_023",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M."
+        },
+        {
+          "type": "person",
+          "family_name": "Moraes",
+          "given_name": "J"
+        }
+      ],
+      "title": "A. Atos de fala diretivos em português e em espanhol",
+      "container": {
+        "type": "journal",
+        "title": "Revista Entrepalavras",
+        "volume": "10"
+      },
+      "subtitle": "uma análise acústica comparativa",
+      "page_range": "326-345",
+      "access": {
+        "url": "http://www.entrepalavras.ufc.br/revista/index.php/Revista/article/view/1751",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2020"
+      }
+    },
+    {
+      "id": "ref_024",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Miranda",
+          "given_name": "L"
+        }
+      ],
+      "title": "S.; GOMES DA SILVA, CAROLINA; MORAES, J. A.; RILLIARD, A. Visual and auditory cues of assertions and questions in Brazilian Portuguese and Mexican Spanish. Journal of Speech Science ,\n    v. 9, p. 73–92, 2020",
+      "container": {
+        "type": "journal",
+        "title": "Journal of Speech Science",
+        "volume": "9"
+      },
+      "access": {
+        "url": "http://dx.doi.org/10.20396/joss.v9i00.14958",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2020"
+      },
+      "page_range": "73-92"
+    },
+    {
+      "id": "ref_025",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Mesquita Neto",
+          "given_name": "J"
+        }
+      ],
+      "title": "R.; PONTES, A. L. Espanhol como língua estrangeira",
+      "container": {
+        "type": "journal",
+        "title": "ABEHACHE",
+        "volume": "1"
+      },
+      "subtitle": "uma análise entoacional da língua sob a perspectiva do sistema adaptativo complexo. ABEHACHE ,\n    v. 1, p. 28–53, 2020",
+      "access": {
+        "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/333",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2020"
+      },
+      "page_range": "28-53"
+    },
+    {
+      "id": "ref_026",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Mesquita Neto",
+          "given_name": "J"
+        }
+      ],
+      "title": "R.; PONTES, A. L. Entoação",
+      "container": {
+        "type": "journal",
+        "title": "Revista Colineares",
+        "volume": "6"
+      },
+      "subtitle": "um percurso pelos estudos comparativos entre o português brasileiro e o espanhol como língua estrangeira",
+      "page_range": "42-56",
+      "access": {
+        "url": "https://periodicos.apps.uern.br/index.php/RCOL/article/view/2508",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2019"
+      }
+    },
+    {
+      "id": "ref_027",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Oliveira",
+          "given_name": "J"
+        }
+      ],
+      "title": "S.; MESQUITA NETO, J. R. Interfonologia entoacional",
+      "container": {
+        "type": "book",
+        "title": "Espanhol na universidade",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Carvalho",
+            "given_name": "Tatiana Lourenço de"
+          },
+          {
+            "type": "person",
+            "family_name": "Júnior",
+            "given_name": "José Veranildo Lopes da Costa"
+          }
+        ],
+        "subtitle": "Pesquisas em língua e em literatura",
+        "imprint": {
+          "place": "Mossoró",
+          "publisher": "EDUERN",
+          "date": "2020"
+        },
+        "volume": "3"
+      },
+      "subtitle": "uma análise das interrogativas totais do espanhol como língua estrangeira",
+      "page_range": "13-30",
+      "imprint": {
+        "date": "2019",
+        "publisher": "uma análise das interrogativas totais do espanhol como língua estrangeira. In: Tatiana Lourenço de Carvalho; José Veranildo Lopes da Costa Júnior (Org.). Espanhol na universidade: Pesquisas em língua e em literatura .\n    Mossoró: EDUERN",
+        "place": "Interfonologia entoacional"
+      }
+    },
+    {
+      "id": "ref_028",
+      "type": "doctoral-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "C"
+        }
+      ],
+      "title": "A Prosódia de Atos de Fala no Espanhol da Cidade do México .\n    (Doutorado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)",
+      "imprint": {
+        "place": "[S.l.]",
+        "publisher": "Instituição não informada",
+        "date": "2019"
+      },
+      "genre": "Doutorado em Letras Neolatinas – Universidade Federal do Rio de Janeiro",
+      "access": {
+        "url": "https://drive.google.com/file/d/11nTTREe7WObSiIF8biWR7G92TXcCx5--/view",
+        "access_date": "2025-11-25"
+      },
+      "container": {
+        "type": "journal",
+        "title": "A Prosódia de Atos de Fala no Espanhol da Cidade do México .\n    (Doutorado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)"
+      }
+    },
+    {
+      "id": "ref_029",
+      "type": "undergraduate-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Barreto",
+          "given_name": "R. C. S."
+        }
+      ],
+      "title": "Análise entonacional de atos de fala diretivos na animação 'Metegol'",
+      "access": {
+        "url": "https://repositorio.ufpb.br/jspui/handle/123456789/16674",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2019"
+      },
+      "container": {
+        "type": "journal",
+        "title": "C. S. Análise entonacional de atos de fala diretivos na animação “Metegol” .\n    (Letras/Espanhol – Universidade Federal da Paraíba)"
+      }
+    },
+    {
+      "id": "ref_030",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Couto",
+          "given_name": "L"
+        }
+      ],
+      "title": "R.; SILVA, C. G. da; MIRANDA, L. S. Prosódia de enunciados declarativos e interrogativos totais nas variedades de Salvador, Fortaleza e Rio de Janeiro",
+      "container": {
+        "type": "journal",
+        "title": "Revista de Estudos da Linguagem",
+        "volume": "25"
+      },
+      "page_range": "1105-1142",
+      "access": {
+        "url": "http://www.periodicos.letras.ufmg.br/index.php/relin/article/view/11362",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2017"
+      }
+    },
+    {
+      "id": "ref_031",
+      "type": "special-issue",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Silva",
+          "given_name": "C."
+        },
+        {
+          "type": "person",
+          "family_name": "Miranda",
+          "given_name": "L"
+        }
+      ],
+      "title": "S.; CARNAVAL, M.; CUNHA, C. S. Command intonation in Brazilian Portuguese",
+      "container": {
+        "type": "journal",
+        "title": "Revista da Abralin",
+        "volume": "23",
+        "issue": "2"
+      },
+      "subtitle": "a dialectal description from ALiB corpus. Journal of Speech Science, v. 5, p. 29–45, 2017",
+      "imprint": {
+        "date": "2024"
+      }
+    },
+    {
+      "id": "ref_032",
+      "type": "master-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Carnaval",
+          "given_name": "M"
+        }
+      ],
+      "title": "Foco informacional e foco contrastivo no português do Brasil",
+      "imprint": {
+        "place": "[S.l.]",
+        "publisher": "Instituição não informada",
+        "date": "2017"
+      },
+      "genre": "Mestrado em Letras Vernáculas – Universidade Federal do Rio de Janeiro",
+      "subtitle": "uma abordagem prosódica .\n    (Mestrado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)",
+      "access": {
+        "url": "https://drive.google.com/file/d/1zRhcu-LSteki3L3oenwcGc9ul_iVu33B/view",
+        "access_date": "2025-11-25"
+      },
+      "container": {
+        "type": "journal",
+        "title": "Foco informacional e foco contrastivo no português do Brasil: uma abordagem prosódica .\n    (Mestrado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)"
+      }
+    },
+    {
+      "id": "ref_033",
+      "type": "article-journal",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Moraes",
+          "given_name": "J"
+        }
+      ],
+      "title": "A.; CARNAVAL, M.; COELHO, A. B. B. A manifestação prosódica do foco em interrogativas totais no Português do Brasil e sua percepção",
+      "container": {
+        "type": "journal",
+        "title": "Revista Virtual de Estudos da Linguagem",
+        "volume": "13"
+      },
+      "page_range": "170-194",
+      "access": {
+        "url": "https://revel.inf.br/files/25628f323ed484f9952532a1604fbb93.pdf",
+        "access_date": "2025-11-25"
+      },
+      "imprint": {
+        "date": "2015"
+      }
+    },
+    {
+      "id": "ref_034",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "CAROLINA"
+        },
+        {
+          "type": "person",
+          "family_name": "Rebollo Couto",
+          "given_name": "L."
+        },
+        {
+          "type": "person",
+          "family_name": "Pinto",
+          "given_name": "M"
+        },
+        {
+          "family_name": "SANTOS",
+          "given_name": "M"
+        }
+      ],
+      "title": "S. Preguntas y pedidos en portugués y en español",
+      "container": {
+        "type": "book",
+        "title": "Fonética experimental, Educación Superior e Investigación",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Martín",
+            "given_name": "Yolanda Congosto"
+          },
+          {
+            "type": "person",
+            "family_name": "Curiel",
+            "given_name": "Mª Luisa Montero"
+          },
+          {
+            "type": "person",
+            "family_name": "Plans",
+            "given_name": "Antonio Salvador"
+          }
+        ],
+        "imprint": {
+          "place": "Madrid",
+          "publisher": "Arco Libros",
+          "date": "2014"
+        },
+        "volume": "19"
+      },
+      "subtitle": "análisis de la entonación y de acentos tonales contrastivos o gradientes",
+      "page_range": "131-142",
+      "imprint": {
+        "date": "2023"
+      }
+    },
+    {
+      "id": "ref_035",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Couto",
+          "given_name": "L"
+        }
+      ],
+      "title": "R.; FERREIRA, P.; SANTOS FIGUEIREDO, N. Actitudes lingüísticas y entonación",
+      "container": {
+        "type": "book",
+        "title": "Argumentos cuantitativos y cualitativos en sociolingüística",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Butragueño",
+            "given_name": "Pedro Martín"
+          },
+          {
+            "type": "person",
+            "family_name": "Orozco",
+            "given_name": "Leonor"
+          }
+        ],
+        "imprint": {
+          "place": "Ciudad de México",
+          "publisher": "El Colegio de México",
+          "date": "2014"
+        },
+        "volume": "25"
+      },
+      "subtitle": "acentos tonales y enunciados interrogativos en el español de Buenos Aires y Montevideo",
+      "page_range": "169-196",
+      "imprint": {
+        "date": "2017"
+      }
+    },
+    {
+      "id": "ref_036",
+      "type": "chapter",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Couto",
+          "given_name": "L"
+        }
+      ],
+      "title": "R.; SANTOS FIGUEIREDO, N.; FERREIRA, P. Entonación y actitudes lingüísticas en el español de Montevideo y Buenos Aires",
+      "container": {
+        "type": "book",
+        "title": "Fonética Experimental, Educación Superior e Investigación",
+        "editors": [
+          {
+            "type": "person",
+            "family_name": "Martín",
+            "given_name": "Yolanda Congosto"
+          },
+          {
+            "type": "person",
+            "family_name": "Curiel",
+            "given_name": "María Luísa Montero"
+          },
+          {
+            "type": "person",
+            "family_name": "Plans",
+            "given_name": "Antonio Salvador"
+          }
+        ],
+        "imprint": {
+          "place": "Madrid",
+          "publisher": "Arco Libros S.L.",
+          "date": "2014"
+        },
+        "volume": "25"
+      },
+      "subtitle": "el caso de los enunciados interrogativos",
+      "page_range": "499-518",
+      "imprint": {
+        "date": "2017"
+      }
+    },
+    {
+      "id": "ref_037",
+      "type": "master-thesis",
+      "language": "pt-BR",
+      "authors": [
+        {
+          "type": "person",
+          "family_name": "Gomes Da Silva",
+          "given_name": "C"
+        }
+      ],
+      "title": "Análise entonacional e pragmática de conversas telefônicas coloquiais",
+      "imprint": {
+        "place": "[S.l.]",
+        "publisher": "Instituição não informada",
+        "date": "2014"
+      },
+      "genre": "Mestrado em Letras Neolatinas – Universidade Federal do Rio de Janeiro",
+      "subtitle": "os enunciados interrogativos totais nas variedades de Buenos Aires e Santiago do Chile .\n    (Mestrado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)",
+      "access": {
+        "url": "https://www.researchgate.net/publication/320455577_Analise_entonacional_e_pragmatica_de_conversas_telefonicas_coloquiais_os_enunciados_interrogativos_totais_nas_variedades_de_Buenos_Aires_e_Santiago_do_Chile",
+        "access_date": "2025-11-25"
+      },
+      "container": {
+        "type": "journal",
+        "title": "Análise entonacional e pragmática de conversas telefônicas coloquiais: os enunciados interrogativos totais nas variedades de Buenos Aires e Santiago do Chile .\n    (Mestrado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)"
+      }
+    }
+  ]
+}
