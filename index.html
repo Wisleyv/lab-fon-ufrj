@@ -25,6 +25,10 @@
 
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://lattes.cnpq.br" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
@@ -117,6 +121,7 @@
             </button>
             <ul class="nav-list" id="main-navigation" aria-hidden="false">
               <li><a href="#sobre">Sobre</a></li>
+              <li><a href="#linhas-pesquisa">Linhas de Pesquisa</a></li>
               <li><a href="#pesquisadores">Equipe</a></li>
               <li><a href="#trabalhos">Publicações</a></li>
               <li><a href="#parcerias">Parcerias</a></li>
@@ -169,6 +174,32 @@
               qualificados e contribuir para o avanço do conhecimento sobre a
               língua portuguesa.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Linhas de Pesquisa Section -->
+      <section
+        id="linhas-pesquisa"
+        class="section section-linhas-pesquisa"
+        aria-labelledby="linhas-pesquisa-title"
+      >
+        <div class="container">
+          <header class="section-header">
+            <h2 id="linhas-pesquisa-title">Linhas de Pesquisa</h2>
+            <p class="section-description">
+              Conheça as principais áreas de investigação do laboratório
+            </p>
+          </header>
+
+          <!-- This container will be populated by JavaScript -->
+          <div
+            id="linhas-pesquisa-content"
+            class="research-lines-container"
+            role="region"
+            aria-label="Lista de linhas de pesquisa"
+          >
+            <!-- Content loaded dynamically -->
           </div>
         </div>
       </section>
