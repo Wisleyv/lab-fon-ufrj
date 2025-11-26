@@ -301,6 +301,69 @@ a:focus {
   text-decoration: none;
 }
 
+/* Dropdown Navigation */
+.has-dropdown {
+  position: relative;
+}
+
+.has-dropdown > a {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dropdown-arrow {
+  font-size: 0.875rem;
+  transition: transform var(--transition-fast);
+}
+
+.has-dropdown:hover .dropdown-arrow,
+.has-dropdown.active .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition-fast);
+  list-style: none;
+  padding: var(--spacing-xs) 0;
+  margin-top: var(--spacing-xs);
+  z-index: 1000;
+}
+
+.has-dropdown:hover .dropdown-menu,
+.has-dropdown.active .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-menu a {
+  color: var(--color-text);
+  display: block;
+  padding: var(--spacing-xs) var(--spacing-md);
+  transition: all var(--transition-fast);
+  border-radius: 0;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
 /* Mobile menu toggle button */
 .nav-toggle {
   display: none;
@@ -1611,6 +1674,40 @@ a:focus {
 
   .main-nav li:last-child {
     border-bottom: none;
+  }
+
+  /* Mobile dropdown navigation */
+  .has-dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    position: static;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-base);
+    padding: 0;
+    margin: 0;
+  }
+
+  .has-dropdown.active .dropdown-menu {
+    max-height: 200px;
+    padding: var(--spacing-xs) 0;
+  }
+
+  .dropdown-menu a {
+    color: white;
+    padding-left: calc(var(--spacing-md) * 2);
+    background-color: transparent;
+  }
+
+  .dropdown-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
   }
 
   .main-nav a {
