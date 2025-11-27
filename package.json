@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:local": "cross-env BUILD_OUTPUT=C:/labfonac vite build",
     "build:staging": "vite build --mode staging",
     "build:production": "vite build --mode production",
     "preview": "vite preview",
@@ -27,6 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "@vitest/ui": "^3.2.4",
+    "cross-env": "^10.1.0",
     "eslint": "^9.37.0",
     "jsdom": "^27.0.0",
     "prettier": "^3.6.2",

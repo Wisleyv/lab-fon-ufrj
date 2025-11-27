@@ -4,7 +4,7 @@ export default defineConfig({
   root: ".",
   base: "/labfonac/", // Subpath for deployment on both staging and production servers
   build: {
-    outDir: "C:/labfonac", // Build directly to deployment folder
+    outDir: process.env.BUILD_OUTPUT || "dist", // Flexible output: dist for CI/Netlify, C:/labfonac for local
     emptyOutDir: true, // Clean output directory before build
     rollupOptions: {
       output: {

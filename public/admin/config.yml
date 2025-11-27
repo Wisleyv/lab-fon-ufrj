@@ -1,0 +1,101 @@
+backend:
+  name: github
+  repo: Wisleyv/lab-fon-ufrj
+  branch: main
+
+publish_mode: editorial_workflow
+
+media_folder: "public/assets/images"
+public_folder: "/assets/images"
+
+collections:
+  # Team Members (Equipe)
+  - name: "equipe"
+    label: "Equipe"
+    label_singular: "Membro da Equipe"
+    folder: "content/equipe"
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    editor:
+      preview: false
+    fields:
+      - {label: "Nome Completo", name: "nome", widget: "string", required: true}
+      - {label: "Instituição", name: "instituicao", widget: "string", required: true}
+      - {label: "Categoria", name: "categoria", widget: "select", 
+         options: ["coordenacao", "docentes", "pos_graduacao", "graduacao", "egressos"], required: true}
+      - {label: "Foto", name: "foto", widget: "image", required: false, 
+         hint: "Foto do membro (opcional - usa avatar padrão se não fornecida)"}
+      - {label: "Link Lattes", name: "lattes", widget: "string", required: true,
+         pattern: ['^http(s)?://lattes\.cnpq\.br/\d+$', 'Deve ser URL válida do Lattes CNPq']}
+
+  # Publications (Publicações)
+  - name: "publicacoes"
+    label: "Publicações"
+    label_singular: "Publicação"
+    folder: "content/publicacoes"
+    create: true
+    slug: "{{year}}-{{slug}}"
+    extension: json
+    format: json
+    editor:
+      preview: false
+    fields:
+      - {label: "Tipo", name: "type", widget: "select",
+         options: ["article", "book", "chapter", "thesis", "conference"], required: true}
+      - {label: "Título", name: "title", widget: "string", required: true}
+      - {label: "Autores", name: "authors", widget: "list", required: true,
+         hint: "Lista de autores (um por linha)"}
+      - {label: "Ano", name: "year", widget: "number", required: true, min: 1950, max: 2100}
+      - {label: "Revista/Editora", name: "journal", widget: "string", required: false}
+      - {label: "Volume", name: "volume", widget: "string", required: false}
+      - {label: "Número", name: "issue", widget: "string", required: false}
+      - {label: "Páginas", name: "pages", widget: "string", required: false}
+      - {label: "DOI", name: "doi", widget: "string", required: false,
+         pattern: ['^10\.\d{4,}/.+$', 'DOI deve começar com 10.']}
+      - {label: "URL", name: "url", widget: "string", required: false}
+
+  # Research Lines (Linhas de Pesquisa)
+  - name: "linhas_pesquisa"
+    label: "Linhas de Pesquisa"
+    label_singular: "Linha de Pesquisa"
+    folder: "content/linhas"
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    editor:
+      preview: false
+    fields:
+      - {label: "ID", name: "id", widget: "string", required: true,
+         hint: "Identificador único (sem espaços, minúsculas)"}
+      - {label: "Nome", name: "nome", widget: "string", required: true}
+      - {label: "Ícone Font Awesome", name: "icon", widget: "string", required: true,
+         hint: "Ex: fa-solid fa-wave-square"}
+      - {label: "Número de Estudantes", name: "estudantes", widget: "number", required: true, min: 0}
+      - {label: "Número de Pesquisadores", name: "pesquisadores", widget: "number", required: true, min: 0}
+      - {label: "Descrição", name: "descricao", widget: "text", required: true}
+      - {label: "Ordem de Exibição", name: "ordem", widget: "number", required: true, min: 1}
+
+  # Partnerships (Parcerias)
+  - name: "parcerias"
+    label: "Parcerias"
+    label_singular: "Parceria"
+    folder: "content/parcerias"
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    editor:
+      preview: false
+    fields:
+      - {label: "Nome da Instituição", name: "nome", widget: "string", required: true}
+      - {label: "Sigla", name: "sigla", widget: "string", required: true}
+      - {label: "Localização", name: "localizacao", widget: "string", required: true,
+         hint: "Ex: João Pessoa, PB ou Paris, França"}
+      - {label: "Tipo", name: "tipo", widget: "select",
+         options: ["universidade", "agencia-fomento", "internacional"], required: true}
+      - {label: "Descrição", name: "descricao", widget: "text", required: true}
+      - {label: "Website", name: "url", widget: "string", required: true,
+         pattern: ['^https?://.+', 'Deve ser URL válida (http:// ou https://)']}
