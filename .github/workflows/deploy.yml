@@ -1,0 +1,50 @@
+name: Deploy to University Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+        
+      # 4. Build project (consolidates content + builds with Vite)
+      - name: Build production site
+        run: npm run build
+        
+      # 5. Deploy via SFTP to university server
+      - name: Deploy to University Server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /labfonac/
+          protocol: ftps
+          port: 21
+          
+      # 6. Deployment success notification
+      - name: Deployment complete
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Site updated at: https://posvernaculas.letras.ufrj.br/labfonac"
