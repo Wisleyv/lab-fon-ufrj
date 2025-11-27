@@ -6,26 +6,268 @@
       "categoria": "coordenacao",
       "foto": "assets/images/carolina_silva.jpeg",
       "lattes": "http://lattes.cnpq.br/6450917807340365"
+    },
+    {
+      "nome": "Manuella Carnaval",
+      "instituicao": "UFRJ",
+      "categoria": "coordenacao",
+      "foto": "assets/images/manuella_carnaval.jpeg",
+      "lattes": "http://lattes.cnpq.br/5169234339795314"
+    },
+    {
+      "nome": "Albert Olivier Blaise Rilliard",
+      "instituicao": "UFRJ",
+      "categoria": "docentes",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/7604104346087790"
+    },
+    {
+      "nome": "Carolina Ribeiro Serra",
+      "instituicao": "UFRJ",
+      "categoria": "docentes",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/5878437077874490"
+    },
+    {
+      "nome": "Joao Antonio de Moraes",
+      "instituicao": "UFRJ",
+      "categoria": "docentes",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/3799132338763925"
+    },
+    {
+      "nome": "Thiago Laurentino de Oliveira",
+      "instituicao": "UFRJ",
+      "categoria": "docentes",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/4470317184826146"
+    },
+    {
+      "nome": "Vitor Gabriel Caldas",
+      "instituicao": "UFRJ",
+      "categoria": "docentes",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/5899233718078448"
+    },
+    {
+      "nome": "Brenda Gon├ºalves Tosi",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/8228431450709999"
+    },
+    {
+      "nome": "Caio Korol Gon├ºalves da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/9215729399755614"
+    },
+    {
+      "nome": "Juliana Benicio de Andrade Dias",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/juliana_dias.jpeg",
+      "lattes": "http://lattes.cnpq.br/7907813635310894"
+    },
+    {
+      "nome": "Leandro Lisboa Lopes da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/3530461459594286"
+    },
+    {
+      "nome": "Mayara Gak Assump├º├úo",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/1907886059107911"
+    },
+    {
+      "nome": "Mayra Su├®zia Oliveira dos Santos",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/mayra_santos.jpeg",
+      "lattes": "http://lattes.cnpq.br/4073084415181213"
+    },
+    {
+      "nome": "Mikaellen Kawany do Nascimento",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/mikaellen_nascimento.jpeg",
+      "lattes": "http://lattes.cnpq.br/3368956449281390"
+    },
+    {
+      "nome": "Nicole Maria dos Santos Mello",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/7359692918757774"
+    },
+    {
+      "nome": "Priscila Batista Ara├║jo de Almeida",
+      "instituicao": "UFRJ",
+      "categoria": "pos_graduacao",
+      "foto": "assets/images/priscila_almeida.jpeg",
+      "lattes": "http://lattes.cnpq.br/1284109969120471"
+    },
+    {
+      "nome": "Daniel Almico Saraiva",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/daniel_saraiva.jpeg",
+      "lattes": "http://lattes.cnpq.br/3996706589776778"
+    },
+    {
+      "nome": "Daniel Borges dos Santos",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/0154057514029577"
+    },
+    {
+      "nome": "Jhennefer C├ómara da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/5644266965616691"
+    },
+    {
+      "nome": "Maria Luiza de Almeida Mattos Weinstein",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/maria_luiza_weinstein.jpeg",
+      "lattes": "http://lattes.cnpq.br/2540203937814048"
+    },
+    {
+      "nome": "Paloma de Barros Moura",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/paloma_moura.jpeg",
+      "lattes": "http://lattes.cnpq.br/2291377596150650"
+    },
+    {
+      "nome": "Sus├ú Silva Garcia",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/avatar.webp",
+      "lattes": "http://lattes.cnpq.br/8374958077516871"
+    },
+    {
+      "nome": "Victor Hugo Teixeira de Souza",
+      "instituicao": "UFRJ",
+      "categoria": "graduacao",
+      "foto": "assets/images/victor_souza.jpeg",
+      "lattes": "http://lattes.cnpq.br/0183601960012762"
+    },
+    {
+      "nome": "Isabelli de Lima Lacet",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/isabelli_lacet.jpeg",
+      "lattes": "http://lattes.cnpq.br/9022305811205190"
+    },
+    {
+      "nome": "Jussara Cassimiro Soares",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/jussara_soares.jpeg",
+      "lattes": "http://lattes.cnpq.br/3233006072497912"
+    },
+    {
+      "nome": "Safira Dy Carly Ramos Brand├úo",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/safira_brandao.jpeg",
+      "lattes": "http://lattes.cnpq.br/6347327329503433"
+    },
+    {
+      "nome": "Tathiana Lacerda Alcon",
+      "instituicao": "UFPB",
+      "categoria": "egressos",
+      "foto": "assets/images/tathiana_alcon.jpeg",
+      "lattes": "http://lattes.cnpq.br/8351323867616540"
     }
   ],
   "linhas_pesquisa": [
     {
       "id": "fonetica-experimental",
-      "nome": "Fonética Experimental",
+      "nome": "Fon├®tica Experimental",
       "icon": "fa-solid fa-wave-square",
       "estudantes": 0,
       "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "[Descri├º├úo da linha de pesquisa]",
       "ordem": 1
+    },
+    {
+      "id": "prosodia-expressividade",
+      "nome": "Pros├│dia e Expressividade",
+      "icon": "fa-solid fa-masks-theater",
+      "estudantes": 4,
+      "pesquisadores": 4,
+      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "ordem": 2
+    },
+    {
+      "id": "prosodia-fonologia",
+      "nome": "Pros├│dia e Fonologia",
+      "icon": "fa-solid fa-diagram-project",
+      "estudantes": 5,
+      "pesquisadores": 3,
+      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "ordem": 3
+    },
+    {
+      "id": "prosodia-interfaces",
+      "nome": "Pros├│dia e Interfaces",
+      "icon": "fa-solid fa-network-wired",
+      "estudantes": 4,
+      "pesquisadores": 7,
+      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "ordem": 4
+    },
+    {
+      "id": "prosodia-multimodal",
+      "nome": "Pros├│dia Multimodal",
+      "icon": "fa-solid fa-photo-film",
+      "estudantes": 6,
+      "pesquisadores": 3,
+      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "ordem": 5
     }
   ],
   "parcerias": [
     {
-      "nome": "Universidade Federal da Paraíba",
+      "nome": "Coordena├º├úo de Aperfei├ºoamento de Pessoal de N├¡vel Superior",
+      "sigla": "CAPES",
+      "localizacao": "Bras├¡lia, DF",
+      "tipo": "agencia-fomento",
+      "descricao": "Ag├¬ncia de fomento ├á pesquisa e p├│s-gradua├º├úo",
+      "url": "https://www.gov.br/capes"
+    },
+    {
+      "nome": "Funda├º├úo Carlos Chagas Filho de Amparo ├á Pesquisa do Estado do Rio de Janeiro",
+      "sigla": "FAPERJ",
+      "localizacao": "Rio de Janeiro, RJ",
+      "tipo": "agencia-fomento",
+      "descricao": "Ag├¬ncia estadual de fomento ├á pesquisa cient├¡fica",
+      "url": "https://www.faperj.br"
+    },
+    {
+      "nome": "Laboratoire Interdisciplinaire des Sciences du Num├®rique",
+      "sigla": "LISN",
+      "localizacao": "Paris, Fran├ºa",
+      "tipo": "internacional",
+      "descricao": "Laborat├│rio interdisciplinar de ci├¬ncias digitais",
+      "url": "https://www.lisn.upsaclay.fr"
+    },
+    {
+      "nome": "Universidade Federal da Para├¡ba",
       "sigla": "UFPB",
-      "localizacao": "João Pessoa, PB",
+      "localizacao": "Jo├úo Pessoa, PB",
       "tipo": "universidade",
-      "descricao": "Parceria institucional com a Universidade Federal da Paraíba",
+      "descricao": "Parceria institucional com a Universidade Federal da Para├¡ba",
       "url": "https://www.ufpb.br"
     }
   ],
@@ -40,6 +282,539 @@
       "year": 2024,
       "journal": "Revista de Estudos da Linguagem",
       "url": "https://exemplo.com/artigo1.pdf"
+    },
+    {
+      "type": "thesis",
+      "title": "Análise entonacional e pragmática de enunciados interrogativos parciais da variedade de Porto Rico",
+      "authors": [
+        "J. C. Soares"
+      ],
+      "year": 2024,
+      "journal": "C.\n    Análise entonacional e pragmática de enunciados interrogativos parciais da variedade de Porto Rico.\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "thesis",
+      "title": "As emoções em narrações de partidas de futebol: uma análise entonacional em português e em espanhol",
+      "authors": [
+        "J. B. A. Dias"
+      ],
+      "year": 2024,
+      "journal": "B. A. As emoções em narrações de partidas de futebol: uma análise entonacional em português e em espanhol .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/31948"
+    },
+    {
+      "type": "chapter",
+      "title": "Quando a prosódia e a pragmática se encontram",
+      "authors": [
+        "CAROLINA Gomes Da Silva",
+        "M Carnaval"
+      ],
+      "year": 2024,
+      "journal": "A ciência da linguagem",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "S.; CARNAVAL, M.; CUNHA, C. S. Command intonation in Brazilian Portuguese",
+      "authors": [
+        "C. Gomes Silva",
+        "L Miranda"
+      ],
+      "year": 2024,
+      "journal": "Revista da Abralin",
+      "volume": "23",
+      "issue": "2",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "S.; GOMES DA SILVA, CAROLINA; CARNAVAL, M. Prosódia",
+      "authors": [
+        "L Miranda"
+      ],
+      "year": 2024,
+      "journal": "Revista da Abralin",
+      "volume": "23",
+      "issue": "2",
+      "pages": "",
+      "doi": "",
+      "url": "https://revista.abralin.org/index.php/abralin/issue/view/93"
+    },
+    {
+      "type": "article",
+      "title": "S.; MORAES, JOÃO ANTÔNIO DE; RILLIARD, A. O. B. Funções dos gestos faciais na prosódia audiovisual",
+      "authors": [
+        "M. Carnaval",
+        "L Miranda"
+      ],
+      "year": 2024,
+      "journal": "Linguística e estudo de gestos",
+      "volume": "23",
+      "issue": "2",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "thesis",
+      "title": "Análise entonacional de atos de fala diretivos produzidos em português e em espanhol por falantes da zona da mata paraibana",
+      "authors": [
+        "S. C. R. Brandão"
+      ],
+      "year": 2023,
+      "journal": "C. R. Análise entonacional de atos de fala diretivos produzidos em português e em espanhol por falantes da zona da mata paraibana .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/30059?locale=pt_BR"
+    },
+    {
+      "type": "article",
+      "title": "Análisis multimodal de actos de habla en español del Paraguay y de Argentina. Phonica ,\n    v. 19, p. 4–21, 2023",
+      "authors": [
+        "N Santos Figueiredo"
+      ],
+      "year": 2023,
+      "journal": "Phonica",
+      "volume": "19",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistes.ub.edu/index.php/phonica/article/view/42857"
+    },
+    {
+      "type": "thesis",
+      "title": "As perguntas totais em português e espanhol língua adicional: uma análise entonacional de falantes da zona da mata paraibana",
+      "authors": [
+        "M. K. Nascimento"
+      ],
+      "year": 2023,
+      "journal": "K. As perguntas totais em português e espanhol língua adicional: uma análise entonacional de falantes da zona da mata paraibana .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/30057?locale=pt_BR"
+    },
+    {
+      "type": "article",
+      "title": "M.; CASTEDO, T. M. Análisis de la entonación de enunciados interrogativos en el español del oriente boliviano. Linguística y Literatura ,\n    v. 83, p. 90–109, 2023",
+      "authors": [
+        "CAROLINA Gomes Da Silva",
+        "R Lucena"
+      ],
+      "year": 2023,
+      "journal": "Linguística y Literatura",
+      "volume": "83",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistas.udea.edu.co/index.php/lyl/article/view/353022"
+    },
+    {
+      "type": "article",
+      "title": "S. O.; NASCIMENTO, M. K.; BRANDÃO, S. D. C. R. Entonación y pragmática en conversaciones telefónicas",
+      "authors": [
+        "CAROLINA Gomes Da Silva",
+        "M Santos"
+      ],
+      "year": 2023,
+      "journal": "Phonica",
+      "volume": "19",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistes.ub.edu/index.php/phonica/article/view/42306"
+    },
+    {
+      "type": "chapter",
+      "title": "S. Preguntas y pedidos en portugués y en español",
+      "authors": [
+        "CAROLINA Gomes Da Silva",
+        "L. Rebollo Couto",
+        "M Pinto",
+        null
+      ],
+      "year": 2023,
+      "journal": "Fonética experimental, Educación Superior e Investigación",
+      "volume": "19",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "A.; RILLIARD, A. O. B. Focus types in Brazilian Portuguese",
+      "authors": [
+        "M. Carnaval",
+        "J Moraes"
+      ],
+      "year": 2022,
+      "journal": "DELTA – Documentação de Estudos em Linguística Teórica e Aplicada",
+      "volume": "38",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://www.scielo.br/j/delta/a/v7bX9HSyb7jzSYChDwSR8Jw/?lang=en"
+    },
+    {
+      "type": "article",
+      "title": "A.; RILLIARD, A. O. B. Os domínios da focalização",
+      "authors": [
+        "M. Carnaval",
+        "J Moraes"
+      ],
+      "year": 2022,
+      "journal": "Revista Gragoatá (UFF)",
+      "volume": "27",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://periodicos.uff.br/gragoata/article/view/51979"
+    },
+    {
+      "type": "article",
+      "title": "M.; LUCENA, R. M.; GOMES DA SILVA, CAROLINA. Vos",
+      "authors": [
+        "T Castedo"
+      ],
+      "year": 2022,
+      "journal": "Íkala",
+      "volume": "27",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistas.udea.edu.co/index.php/ikala/article/view/347268/20808039"
+    },
+    {
+      "type": "article",
+      "title": "S. O.; GOMES DA SILVA, CAROLINA. Práticas de oralidade em língua espanhola",
+      "authors": [
+        "M Santos"
+      ],
+      "year": 2022,
+      "journal": "Revista Letras Raras",
+      "volume": "11",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistas.editora.ufcg.edu.br/index.php/RLR/article/view/954"
+    },
+    {
+      "type": "chapter",
+      "title": "S.; REBOLLO COUTO, L.; GOMES DA SILVA, CAROLINA. Entoação",
+      "authors": [
+        "M Pinto"
+      ],
+      "year": 2022,
+      "journal": "A oralidade no ensino de línguas estrangeiras",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "thesis",
+      "title": "Análise prosódico-pragmática da ordem no filme 'María llena eres de gracia': o caso do espanhol de Bogotá",
+      "authors": [
+        "P. B. A. Almeida"
+      ],
+      "year": 2021,
+      "journal": "B. A. Análise prosódico-pragmática da ordem no filme “María llena eres de gracia”: o caso do espanhol de Bogotá .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/21592"
+    },
+    {
+      "type": "thesis",
+      "title": "Entoação e pragmática de perguntas totais em corpus conversacional e espontâneo da variedade de Porto Rico",
+      "authors": [
+        "M. S. O. Santos"
+      ],
+      "year": 2021,
+      "journal": "S. O. Entoação e pragmática de perguntas totais em corpus conversacional e espontâneo da variedade de Porto Rico .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/20388"
+    },
+    {
+      "type": "article",
+      "title": "Focalização no Português do Brasil",
+      "authors": [
+        "M Carnaval"
+      ],
+      "year": 2021,
+      "journal": "Focalização no Português do Brasil: um estudo multimodal .\n    (Doutorado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://drive.google.com/file/d/1EswEZOBCB3Fw4FBMaSiIQrEOmJRO8u0o/view"
+    },
+    {
+      "type": "article",
+      "title": "P. Entoação das perguntas no espanhol da Argentina, Chile e México",
+      "authors": [
+        "L. Rebollo Couto",
+        "CAROLINA Gomes Da Silva",
+        "D Guimarães"
+      ],
+      "year": 2021,
+      "journal": "ABEHACHE",
+      "volume": "18",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/341"
+    },
+    {
+      "type": "article",
+      "title": "S. Variação pragmática de atos de fala diretivos do espanhol na tríplice fronteira",
+      "authors": [
+        "N Figueiredo"
+      ],
+      "year": 2021,
+      "journal": "Estudos Linguísticos e Literários",
+      "volume": "67",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://periodicos.ufba.br/index.php/estudos/article/view/44098"
+    },
+    {
+      "type": "article",
+      "title": "S.; VERGARA SEMBERGMAN, E.; MURILLO BOCANEGRA, L. G. A variação prosódica no ensino de espanhol como língua pluricêntrica. ABEHACHE ,\n    v. 18, p. 81–107, 2021",
+      "authors": [
+        "N Figueiredo"
+      ],
+      "year": 2021,
+      "journal": "ABEHACHE",
+      "volume": "18",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/342"
+    },
+    {
+      "type": "article",
+      "title": "A. Atos de fala diretivos em português e em espanhol",
+      "authors": [
+        "CAROLINA Gomes Da Silva",
+        "M. Carnaval",
+        "J Moraes"
+      ],
+      "year": 2020,
+      "journal": "Revista Entrepalavras",
+      "volume": "10",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "http://www.entrepalavras.ufc.br/revista/index.php/Revista/article/view/1751"
+    },
+    {
+      "type": "article",
+      "title": "R.; PONTES, A. L. Espanhol como língua estrangeira",
+      "authors": [
+        "J Mesquita Neto"
+      ],
+      "year": 2020,
+      "journal": "ABEHACHE",
+      "volume": "1",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revistaabehache.com/ojs/index.php/abehache/article/view/333"
+    },
+    {
+      "type": "article",
+      "title": "S.; GOMES DA SILVA, CAROLINA; MORAES, J. A.; RILLIARD, A. Visual and auditory cues of assertions and questions in Brazilian Portuguese and Mexican Spanish. Journal of Speech Science ,\n    v. 9, p. 73–92, 2020",
+      "authors": [
+        "L Miranda"
+      ],
+      "year": 2020,
+      "journal": "Journal of Speech Science",
+      "volume": "9",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "http://dx.doi.org/10.20396/joss.v9i00.14958"
+    },
+    {
+      "type": "article",
+      "title": "A Prosódia de Atos de Fala no Espanhol da Cidade do México .\n    (Doutorado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)",
+      "authors": [
+        "C Gomes Da Silva"
+      ],
+      "year": 2019,
+      "journal": "A Prosódia de Atos de Fala no Espanhol da Cidade do México .\n    (Doutorado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://drive.google.com/file/d/11nTTREe7WObSiIF8biWR7G92TXcCx5--/view"
+    },
+    {
+      "type": "thesis",
+      "title": "Análise entonacional de atos de fala diretivos na animação 'Metegol'",
+      "authors": [
+        "R. C. S. Barreto"
+      ],
+      "year": 2019,
+      "journal": "C. S. Análise entonacional de atos de fala diretivos na animação “Metegol” .\n    (Letras/Espanhol – Universidade Federal da Paraíba)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://repositorio.ufpb.br/jspui/handle/123456789/16674"
+    },
+    {
+      "type": "article",
+      "title": "R.; PONTES, A. L. Entoação",
+      "authors": [
+        "J Mesquita Neto"
+      ],
+      "year": 2019,
+      "journal": "Revista Colineares",
+      "volume": "6",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://periodicos.apps.uern.br/index.php/RCOL/article/view/2508"
+    },
+    {
+      "type": "chapter",
+      "title": "S.; MESQUITA NETO, J. R. Interfonologia entoacional",
+      "authors": [
+        "J Oliveira"
+      ],
+      "year": 2019,
+      "journal": "Espanhol na universidade",
+      "volume": "3",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "Foco informacional e foco contrastivo no português do Brasil",
+      "authors": [
+        "M Carnaval"
+      ],
+      "year": 2017,
+      "journal": "Foco informacional e foco contrastivo no português do Brasil: uma abordagem prosódica .\n    (Mestrado em Letras Vernáculas – Universidade Federal do Rio de Janeiro)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://drive.google.com/file/d/1zRhcu-LSteki3L3oenwcGc9ul_iVu33B/view"
+    },
+    {
+      "type": "chapter",
+      "title": "R.; FERREIRA, P.; SANTOS FIGUEIREDO, N. Actitudes lingüísticas y entonación",
+      "authors": [
+        "L Couto"
+      ],
+      "year": 2017,
+      "journal": "Argumentos cuantitativos y cualitativos en sociolingüística",
+      "volume": "25",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "chapter",
+      "title": "R.; SANTOS FIGUEIREDO, N.; FERREIRA, P. Entonación y actitudes lingüísticas en el español de Montevideo y Buenos Aires",
+      "authors": [
+        "L Couto"
+      ],
+      "year": 2017,
+      "journal": "Fonética Experimental, Educación Superior e Investigación",
+      "volume": "25",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "R.; SILVA, C. G. da; MIRANDA, L. S. Prosódia de enunciados declarativos e interrogativos totais nas variedades de Salvador, Fortaleza e Rio de Janeiro",
+      "authors": [
+        "L Couto"
+      ],
+      "year": 2017,
+      "journal": "Revista de Estudos da Linguagem",
+      "volume": "25",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "http://www.periodicos.letras.ufmg.br/index.php/relin/article/view/11362"
+    },
+    {
+      "type": "article",
+      "title": "A.; CARNAVAL, M.; COELHO, A. B. B. A manifestação prosódica do foco em interrogativas totais no Português do Brasil e sua percepção",
+      "authors": [
+        "J Moraes"
+      ],
+      "year": 2015,
+      "journal": "Revista Virtual de Estudos da Linguagem",
+      "volume": "13",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://revel.inf.br/files/25628f323ed484f9952532a1604fbb93.pdf"
+    },
+    {
+      "type": "chapter",
+      "title": "A.; RILLIARD, A. O. B. Estrutura prosódica e focalização",
+      "authors": [
+        "M. Carnaval",
+        "J Moraes"
+      ],
+      "year": 2015,
+      "journal": "Contribuições para a linguística brasileira – uma homenagem a Dinah Callou",
+      "volume": "13",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": ""
+    },
+    {
+      "type": "article",
+      "title": "Análise entonacional e pragmática de conversas telefônicas coloquiais",
+      "authors": [
+        "C Gomes Da Silva"
+      ],
+      "year": 2014,
+      "journal": "Análise entonacional e pragmática de conversas telefônicas coloquiais: os enunciados interrogativos totais nas variedades de Buenos Aires e Santiago do Chile .\n    (Mestrado em Letras Neolatinas – Universidade Federal do Rio de Janeiro)",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "doi": "",
+      "url": "https://www.researchgate.net/publication/320455577_Analise_entonacional_e_pragmatica_de_conversas_telefonicas_coloquiais_os_enunciados_interrogativos_totais_nas_variedades_de_Buenos_Aires_e_Santiago_do_Chile"
     }
   ],
   "sobre": {
