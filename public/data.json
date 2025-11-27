@@ -6,223 +6,6 @@
       "categoria": "coordenacao",
       "foto": "assets/images/carolina_silva.jpeg",
       "lattes": "http://lattes.cnpq.br/6450917807340365"
-    },
-    {
-      "nome": "Manuella Carnaval",
-      "instituicao": "UFRJ",
-      "categoria": "coordenacao",
-      "foto": "assets/images/manuella_carnaval.jpeg",
-      "lattes": "http://lattes.cnpq.br/5169234339795314"
-    },
-    {
-      "nome": "Albert Olivier Blaise Rilliard",
-      "instituicao": "UFRJ",
-      "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/7604104346087790"
-    },
-    {
-      "nome": "Carolina Ribeiro Serra",
-      "instituicao": "UFRJ",
-      "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/5878437077874490"
-    },
-    {
-      "nome": "Joao Antonio de Moraes",
-      "instituicao": "UFRJ",
-      "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/3799132338763925"
-    },
-    {
-      "nome": "Thiago Laurentino de Oliveira",
-      "instituicao": "UFRJ",
-      "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/4470317184826146"
-    },
-    {
-      "nome": "Vitor Gabriel Caldas",
-      "instituicao": "UFRJ",
-      "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/5899233718078448"
-    },
-    {
-      "nome": "Brenda Gonçalves Tosi",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/8228431450709999"
-    },
-    {
-      "nome": "Caio Korol Gonçalves da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/9215729399755614"
-    },
-    {
-      "nome": "Juliana Benicio de Andrade Dias",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/juliana_dias.jpeg",
-      "lattes": "http://lattes.cnpq.br/7907813635310894"
-    },
-    {
-      "nome": "Leandro Lisboa Lopes da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/3530461459594286"
-    },
-    {
-      "nome": "Mayara Gak Assumpção",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/1907886059107911"
-    },
-    {
-      "nome": "Mayra Suézia Oliveira dos Santos",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/mayra_santos.jpeg",
-      "lattes": "http://lattes.cnpq.br/4073084415181213"
-    },
-    {
-      "nome": "Mikaellen Kawany do Nascimento",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/mikaellen_nascimento.jpeg",
-      "lattes": "http://lattes.cnpq.br/3368956449281390"
-    },
-    {
-      "nome": "Nicole Maria dos Santos Mello",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/7359692918757774"
-    },
-    {
-      "nome": "Priscila Batista Araújo de Almeida",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/priscila_almeida.jpeg",
-      "lattes": "http://lattes.cnpq.br/1284109969120471"
-    },
-    {
-      "nome": "Daniel Almico Saraiva",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/daniel_saraiva.jpeg",
-      "lattes": "http://lattes.cnpq.br/3996706589776778"
-    },
-    {
-      "nome": "Daniel Borges dos Santos",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/0154057514029577"
-    },
-    {
-      "nome": "Jhennefer Câmara da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/5644266965616691"
-    },
-    {
-      "nome": "Maria Luiza de Almeida Mattos Weinstein",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/maria_luiza_weinstein.jpeg",
-      "lattes": "http://lattes.cnpq.br/2540203937814048"
-    },
-    {
-      "nome": "Paloma de Barros Moura",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/paloma_moura.jpeg",
-      "lattes": "http://lattes.cnpq.br/2291377596150650"
-    },
-    {
-      "nome": "Susã Silva Garcia",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/8374958077516871"
-    },
-    {
-      "nome": "Victor Hugo Teixeira de Souza",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/victor_souza.jpeg",
-      "lattes": "http://lattes.cnpq.br/0183601960012762"
-    },
-    {
-      "nome": "Jussara Cassimiro Soares",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/jussara_soares.jpeg",
-      "lattes": "http://lattes.cnpq.br/3233006072497912"
-    },
-    {
-      "nome": "Isabelli de Lima Lacet",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/isabelli_lacet.jpeg",
-      "lattes": "http://lattes.cnpq.br/9022305811205190"
-    },
-    {
-      "nome": "Safira Dy Carly Ramos Brandão",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/safira_brandao.jpeg",
-      "lattes": "http://lattes.cnpq.br/6347327329503433"
-    },
-    {
-      "nome": "Tathiana Lacerda Alcon",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/tathiana_alcon.jpeg",
-      "lattes": "http://lattes.cnpq.br/8351323867616540"
-    }
-  ],
-  "sobre": {
-    "titulo": "Sobre o Laboratório",
-    "descricao": "O Laboratório de Fonética da UFRJ é um centro de excelência em pesquisa fonética e fonológica, dedicado ao estudo científico dos sons da fala humana.",
-    "missao": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
-  },
-  "trabalhos": [
-    {
-      "titulo": "Análise acústica de vogais do português brasileiro",
-      "autores": ["Maria Silva", "João Santos"],
-      "ano": 2024,
-      "veiculo": "Revista de Estudos da Linguagem",
-      "tipo": "artigo",
-      "link": "https://exemplo.com/artigo1.pdf"
-    },
-    {
-      "titulo": "Variação prosódica em dialetos do Rio de Janeiro",
-      "autores": ["Ana Paula Costa"],
-      "ano": 2023,
-      "veiculo": "Cadernos de Linguística",
-      "tipo": "artigo",
-      "link": "https://exemplo.com/artigo2.pdf"
-    }
-  ],
-  "parcerias": [
-    {
-      "nome": "Universidade de São Paulo",
-      "logo": "assets/images/logo-usp.png",
-      "link": "https://www.usp.br"
-    },
-    {
-      "nome": "CNPQ",
-      "logo": "assets/images/logo-cnpq.png",
-      "link": "https://www.cnpq.br"
     }
   ],
   "linhas_pesquisa": [
@@ -234,42 +17,6 @@
       "pesquisadores": 3,
       "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 1
-    },
-    {
-      "id": "prosodia-expressividade",
-      "nome": "Prosódia e Expressividade",
-      "icon": "fa-solid fa-masks-theater",
-      "estudantes": 4,
-      "pesquisadores": 4,
-      "descricao": "[Descrição da linha de pesquisa]",
-      "ordem": 2
-    },
-    {
-      "id": "prosodia-fonologia",
-      "nome": "Prosódia e Fonologia",
-      "icon": "fa-solid fa-diagram-project",
-      "estudantes": 5,
-      "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
-      "ordem": 3
-    },
-    {
-      "id": "prosodia-interfaces",
-      "nome": "Prosódia e Interfaces",
-      "icon": "fa-solid fa-network-wired",
-      "estudantes": 4,
-      "pesquisadores": 7,
-      "descricao": "[Descrição da linha de pesquisa]",
-      "ordem": 4
-    },
-    {
-      "id": "prosodia-multimodal",
-      "nome": "Prosódia Multimodal",
-      "icon": "fa-solid fa-photo-film",
-      "estudantes": 6,
-      "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
-      "ordem": 5
     }
   ],
   "parcerias": [
@@ -280,30 +27,47 @@
       "tipo": "universidade",
       "descricao": "Parceria institucional com a Universidade Federal da Paraíba",
       "url": "https://www.ufpb.br"
+    }
+  ],
+  "publicacoes": [
+    {
+      "type": "article",
+      "title": "Análise acústica de vogais do português brasileiro",
+      "authors": [
+        "Maria Silva",
+        "João Santos"
+      ],
+      "year": 2024,
+      "journal": "Revista de Estudos da Linguagem",
+      "url": "https://exemplo.com/artigo1.pdf"
+    }
+  ],
+  "sobre": {
+    "titulo": "Sobre o Laboratório",
+    "descricao": "O Laboratório de Fonética da UFRJ é um centro de excelência em pesquisa fonética e fonológica, dedicado ao estudo científico dos sons da fala humana.",
+    "missao": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
+  },
+  "trabalhos": [
+    {
+      "titulo": "Análise acústica de vogais do português brasileiro",
+      "autores": [
+        "Maria Silva",
+        "João Santos"
+      ],
+      "ano": 2024,
+      "veiculo": "Revista de Estudos da Linguagem",
+      "tipo": "artigo",
+      "link": "https://exemplo.com/artigo1.pdf"
     },
     {
-      "nome": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
-      "sigla": "CAPES",
-      "localizacao": "Brasília, DF",
-      "tipo": "agencia-fomento",
-      "descricao": "Agência de fomento à pesquisa e pós-graduação",
-      "url": "https://www.gov.br/capes"
-    },
-    {
-      "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
-      "sigla": "FAPERJ",
-      "localizacao": "Rio de Janeiro, RJ",
-      "tipo": "agencia-fomento",
-      "descricao": "Agência estadual de fomento à pesquisa científica",
-      "url": "https://www.faperj.br"
-    },
-    {
-      "nome": "Laboratoire Interdisciplinaire des Sciences du Numérique",
-      "sigla": "LISN",
-      "localizacao": "Paris, França",
-      "tipo": "internacional",
-      "descricao": "Laboratório interdisciplinar de ciências digitais",
-      "url": "https://www.lisn.upsaclay.fr"
+      "titulo": "Variação prosódica em dialetos do Rio de Janeiro",
+      "autores": [
+        "Ana Paula Costa"
+      ],
+      "ano": 2023,
+      "veiculo": "Cadernos de Linguística",
+      "tipo": "artigo",
+      "link": "https://exemplo.com/artigo2.pdf"
     }
   ]
 }

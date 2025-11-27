@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/build-data.js",
     "build": "vite build",
-    "build:local": "cross-env BUILD_OUTPUT=C:/labfonac vite build",
+    "build:local": "node scripts/build-data.js && cross-env BUILD_OUTPUT=C:/labfonac vite build",
     "build:staging": "vite build --mode staging",
     "build:production": "vite build --mode production",
     "preview": "vite preview",
