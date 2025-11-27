@@ -54,6 +54,15 @@
 
   /* Layout */
   --container-max-width: 1200px;
+  
+  /* Content width system - intelligent content typing */
+  --content-prose-width: 800px;  /* Text-heavy content: optimal reading (60-75 chars) */
+  --content-hero-width: 900px;   /* Hero/CTA sections: impactful, centered */
+  --content-cards-width: 1000px; /* Card grids/interactive: comfortable spacing */
+  
+  /* Legacy variable for backwards compatibility */
+  --content-max-width: 800px;
+  
   --border-radius: 8px;
   --border-radius-small: 4px;
 
@@ -150,6 +159,36 @@ a:focus {
   max-width: var(--container-max-width);
   margin: 0 auto;
   padding: 0 var(--spacing-xl);
+}
+
+/* Content width constraints - Intelligent Content Typing System */
+
+/* Text-heavy prose content (articles, paragraphs) */
+.content-prose {
+  max-width: var(--content-prose-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero sections and CTAs (punchy, impactful copy) */
+.content-hero {
+  max-width: var(--content-hero-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card grids and interactive layouts */
+.content-cards {
+  max-width: var(--content-cards-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Legacy class - maps to prose for backwards compatibility */
+.content-constrained {
+  max-width: var(--content-prose-width);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .section {
@@ -1742,12 +1781,47 @@ a:focus {
 /* ========================================
    Responsive Design
    ======================================== */
+
+/* Desktop - Enhanced vertical spacing for elegance */
+@media (min-width: 1025px) {
+  .section {
+    padding: 5rem 0; /* Increased from 4rem for better breathing room */
+  }
+}
+
+/* Tablet - Balanced layout */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 0 2rem; /* 32px - balanced for tablet */
+  }
+
+  /* Proportional scaling for tablet */
+  .content-prose,
+  .content-constrained {
+    max-width: 650px; /* ~85% of prose width */
+  }
+  
+  .content-hero {
+    max-width: 730px; /* ~85% of hero width */
+  }
+  
+  .content-cards {
+    max-width: 850px; /* ~85% of cards width */
+  }
+}
+
+/* Mobile - Tablet and below */
 @media (max-width: 768px) {
   :root {
     --font-size-h1: 2rem;
     --font-size-h2: 1.75rem;
     --font-size-h3: 1.25rem;
     --spacing-xxl: 3rem;
+  }
+
+  /* Reduce container padding for better space utilization */
+  .container {
+    padding: 0 1rem; /* 16px - maximizes mobile screen space */
   }
 
   .header-content {
@@ -1874,6 +1948,11 @@ a:focus {
 
 /* Mobile - phones only */
 @media (max-width: 480px) {
+  /* Further optimize for small screens */
+  .container {
+    padding: 0 0.75rem; /* 12px - ultra-efficient for small devices */
+  }
+
   .hero-actions {
     flex-direction: column;
     gap: var(--spacing-sm);
