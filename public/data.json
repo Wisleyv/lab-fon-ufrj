@@ -271,5 +271,39 @@
       "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 5
     }
+  ],
+  "parcerias": [
+    {
+      "nome": "Universidade Federal da Paraíba",
+      "sigla": "UFPB",
+      "localizacao": "João Pessoa, PB",
+      "tipo": "universidade",
+      "descricao": "Parceria institucional com a Universidade Federal da Paraíba",
+      "url": "https://www.ufpb.br"
+    },
+    {
+      "nome": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
+      "sigla": "CAPES",
+      "localizacao": "Brasília, DF",
+      "tipo": "agencia-fomento",
+      "descricao": "Agência de fomento à pesquisa e pós-graduação",
+      "url": "https://www.gov.br/capes"
+    },
+    {
+      "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
+      "sigla": "FAPERJ",
+      "localizacao": "Rio de Janeiro, RJ",
+      "tipo": "agencia-fomento",
+      "descricao": "Agência estadual de fomento à pesquisa científica",
+      "url": "https://www.faperj.br"
+    },
+    {
+      "nome": "Laboratoire Interdisciplinaire des Sciences du Numérique",
+      "sigla": "LISN",
+      "localizacao": "Paris, França",
+      "tipo": "internacional",
+      "descricao": "Laboratório interdisciplinar de ciências digitais",
+      "url": "https://www.lisn.upsaclay.fr"
+    }
   ]
 }

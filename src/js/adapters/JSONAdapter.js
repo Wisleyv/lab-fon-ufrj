@@ -74,11 +74,25 @@ export class JSONAdapter extends DataAdapter {
   normalize(rawData) {
     // JSON data is already in the expected format
     // Additional normalization can be added here if needed
-    return {
+    const normalized = {
       ...rawData,
       _loaded: true,
       _timestamp: new Date().toISOString(),
     };
+
+    // Normalize parcerias if present
+    if (normalized.parcerias && Array.isArray(normalized.parcerias)) {
+      normalized.parcerias = normalized.parcerias.map((parceria) => ({
+        nome: parceria.nome || "",
+        sigla: parceria.sigla || "",
+        localizacao: parceria.localizacao || "",
+        tipo: parceria.tipo || "parceria",
+        descricao: parceria.descricao || "",
+        url: parceria.url || "",
+      }));
+    }
+
+    return normalized;
   }
 
   /**

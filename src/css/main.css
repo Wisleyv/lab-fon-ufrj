@@ -1778,6 +1778,146 @@ a:focus {
   }
 }
 
+/* ============================================================
+   PARCERIAS SECTION - Typography-only Partnership Display
+   ============================================================ */
+
+.section-parcerias {
+  background: var(--color-background);
+}
+
+.parcerias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.parceria-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-base);
+}
+
+.parceria-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+.parceria-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.parceria-name-wrapper {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.parceria-nome {
+  font-size: var(--font-size-h4);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.parceria-sigla {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.parceria-localizacao {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.parceria-localizacao i {
+  color: var(--color-primary);
+  font-size: 0.875rem;
+}
+
+.parceria-descricao {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: var(--line-height-base);
+  margin: 0;
+}
+
+.parceria-link-wrapper {
+  margin-top: var(--spacing-xs);
+}
+
+.parceria-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--border-radius-small);
+  transition: all var(--transition-fast);
+}
+
+.parceria-link:hover,
+.parceria-link:focus {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.parceria-link i {
+  font-size: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .parcerias-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .parceria-card {
+    padding: var(--spacing-md);
+  }
+
+  .parceria-nome {
+    font-size: var(--font-size-h5);
+  }
+}
+
+@media (max-width: 480px) {
+  .parceria-card {
+    padding: var(--spacing-sm);
+  }
+
+  .parceria-name-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+}
+
 /* ========================================
    Responsive Design
    ======================================== */

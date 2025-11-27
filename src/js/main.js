@@ -7,6 +7,7 @@ import { JSONAdapter } from "./adapters/JSONAdapter.js";
 import { PesquisadoresSection } from "./sections/pesquisadores.js";
 import { PublicacoesSection } from "./sections/publicacoes.js";
 import { LinhasPesquisaSection } from "./sections/linhas-pesquisa.js";
+import { ParceriasSection } from "./sections/parcerias.js";
 
 /**
  * Application configuration
@@ -19,6 +20,7 @@ const config = {
     pesquisadores: "pesquisadores-container",
     publicacoes: "publicacoes-content",
     linhas_pesquisa: "linhas-pesquisa-content",
+    parcerias: "parcerias-content",
   },
 };
 
@@ -110,6 +112,16 @@ async function initializeSections() {
     },
   );
 
+  // Initialize Parcerias section
+  app.sections.parcerias = new ParceriasSection(
+    config.sections.parcerias,
+    {
+      loadingMessage: "Carregando parcerias...",
+      errorMessage: "Não foi possível carregar as parcerias.",
+      emptyMessage: "Nenhuma parceria cadastrada.",
+    },
+  );
+
   console.log("✅ Sections initialized");
 }
 
@@ -132,6 +144,14 @@ async function renderAllSections() {
     console.log("📋 Rendering equipe...");
     renderPromises.push(
       app.sections.pesquisadores.render(app.data.equipe),
+    );
+  }
+
+  // Render parcerias
+  if (app.data.parcerias && app.data.parcerias.length > 0) {
+    console.log("📋 Rendering parcerias...");
+    renderPromises.push(
+      app.sections.parcerias.render(app.data.parcerias),
     );
   }
 

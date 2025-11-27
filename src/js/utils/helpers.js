@@ -68,6 +68,10 @@ export function createElement(tag, attributes = {}, children = null) {
   Object.entries(attributes).forEach(([key, value]) => {
     if (key === "className") {
       element.className = value;
+    } else if (key === "textContent") {
+      element.textContent = value;
+    } else if (key === "innerHTML") {
+      element.innerHTML = value;
     } else if (key === "dataset") {
       Object.entries(value).forEach(([dataKey, dataValue]) => {
         element.dataset[dataKey] = dataValue;
