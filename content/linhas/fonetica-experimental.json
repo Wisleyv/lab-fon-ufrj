@@ -1,0 +1,9 @@
+{
+  "id": "fonetica-experimental",
+  "nome": "Fonética Experimental",
+  "icon": "fa-solid fa-wave-square",
+  "estudantes": 0,
+  "pesquisadores": 3,
+  "descricao": "[Descrição da linha de pesquisa]",
+  "ordem": 1
+}
