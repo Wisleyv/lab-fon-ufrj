@@ -1,9 +1,9 @@
 {
   "id": "fonetica-experimental",
-  "nome": "Fon├®tica Experimental",
+  "nome": "Fonêtica Experimental",
   "icon": "fa-solid fa-wave-square",
   "estudantes": 0,
   "pesquisadores": 3,
-  "descricao": "[Descri├º├úo da linha de pesquisa]",
+  "descricao": "[Descrição da linha de pesquisa]",
   "ordem": 1
 }

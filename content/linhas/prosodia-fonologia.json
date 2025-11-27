@@ -1,9 +1,9 @@
 {
   "id": "prosodia-fonologia",
-  "nome": "Pros├│dia e Fonologia",
+  "nome": "Prosódia e Fonologia",
   "icon": "fa-solid fa-diagram-project",
   "estudantes": 5,
   "pesquisadores": 3,
-  "descricao": "[Descri├º├úo da linha de pesquisa]",
+  "descricao": "[Descrição da linha de pesquisa]",
   "ordem": 3
 }

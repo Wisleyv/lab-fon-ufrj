@@ -50,14 +50,14 @@
       "lattes": "http://lattes.cnpq.br/5899233718078448"
     },
     {
-      "nome": "Brenda Gon├ºalves Tosi",
+      "nome": "Brenda Gonçalves Tosi",
       "instituicao": "UFRJ",
       "categoria": "pos_graduacao",
       "foto": "assets/images/avatar.webp",
       "lattes": "http://lattes.cnpq.br/8228431450709999"
     },
     {
-      "nome": "Caio Korol Gon├ºalves da Silva",
+      "nome": "Caio Korol Gonçalves da Silva",
       "instituicao": "UFRJ",
       "categoria": "pos_graduacao",
       "foto": "assets/images/avatar.webp",
@@ -78,14 +78,14 @@
       "lattes": "http://lattes.cnpq.br/3530461459594286"
     },
     {
-      "nome": "Mayara Gak Assump├º├úo",
+      "nome": "Mayara Gak Assumpção",
       "instituicao": "UFRJ",
       "categoria": "pos_graduacao",
       "foto": "assets/images/avatar.webp",
       "lattes": "http://lattes.cnpq.br/1907886059107911"
     },
     {
-      "nome": "Mayra Su├®zia Oliveira dos Santos",
+      "nome": "Mayra Suêzia Oliveira dos Santos",
       "instituicao": "UFRJ",
       "categoria": "pos_graduacao",
       "foto": "assets/images/mayra_santos.jpeg",
@@ -106,7 +106,7 @@
       "lattes": "http://lattes.cnpq.br/7359692918757774"
     },
     {
-      "nome": "Priscila Batista Ara├║jo de Almeida",
+      "nome": "Priscila Batista Araújo de Almeida",
       "instituicao": "UFRJ",
       "categoria": "pos_graduacao",
       "foto": "assets/images/priscila_almeida.jpeg",
@@ -127,7 +127,7 @@
       "lattes": "http://lattes.cnpq.br/0154057514029577"
     },
     {
-      "nome": "Jhennefer C├ómara da Silva",
+      "nome": "Jhennefer Câmara da Silva",
       "instituicao": "UFRJ",
       "categoria": "graduacao",
       "foto": "assets/images/avatar.webp",
@@ -148,7 +148,7 @@
       "lattes": "http://lattes.cnpq.br/2291377596150650"
     },
     {
-      "nome": "Sus├ú Silva Garcia",
+      "nome": "Susã Silva Garcia",
       "instituicao": "UFRJ",
       "categoria": "graduacao",
       "foto": "assets/images/avatar.webp",
@@ -176,7 +176,7 @@
       "lattes": "http://lattes.cnpq.br/3233006072497912"
     },
     {
-      "nome": "Safira Dy Carly Ramos Brand├úo",
+      "nome": "Safira Dy Carly Ramos Brandão",
       "instituicao": "UFPB",
       "categoria": "egressos",
       "foto": "assets/images/safira_brandao.jpeg",
@@ -193,81 +193,81 @@
   "linhas_pesquisa": [
     {
       "id": "fonetica-experimental",
-      "nome": "Fon├®tica Experimental",
+      "nome": "Fonêtica Experimental",
       "icon": "fa-solid fa-wave-square",
       "estudantes": 0,
       "pesquisadores": 3,
-      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 1
     },
     {
       "id": "prosodia-expressividade",
-      "nome": "Pros├│dia e Expressividade",
+      "nome": "Prosódia e Expressividade",
       "icon": "fa-solid fa-masks-theater",
       "estudantes": 4,
       "pesquisadores": 4,
-      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 2
     },
     {
       "id": "prosodia-fonologia",
-      "nome": "Pros├│dia e Fonologia",
+      "nome": "Prosódia e Fonologia",
       "icon": "fa-solid fa-diagram-project",
       "estudantes": 5,
       "pesquisadores": 3,
-      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 3
     },
     {
       "id": "prosodia-interfaces",
-      "nome": "Pros├│dia e Interfaces",
+      "nome": "Prosódia e Interfaces",
       "icon": "fa-solid fa-network-wired",
       "estudantes": 4,
       "pesquisadores": 7,
-      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 4
     },
     {
       "id": "prosodia-multimodal",
-      "nome": "Pros├│dia Multimodal",
+      "nome": "Prosódia Multimodal",
       "icon": "fa-solid fa-photo-film",
       "estudantes": 6,
       "pesquisadores": 3,
-      "descricao": "[Descri├º├úo da linha de pesquisa]",
+      "descricao": "[Descrição da linha de pesquisa]",
       "ordem": 5
     }
   ],
   "parcerias": [
     {
-      "nome": "Coordena├º├úo de Aperfei├ºoamento de Pessoal de N├¡vel Superior",
+      "nome": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
       "sigla": "CAPES",
-      "localizacao": "Bras├¡lia, DF",
+      "localizacao": "Brasília, DF",
       "tipo": "agencia-fomento",
-      "descricao": "Ag├¬ncia de fomento ├á pesquisa e p├│s-gradua├º├úo",
+      "descricao": "Agência de fomento à pesquisa e pós-graduação",
       "url": "https://www.gov.br/capes"
     },
     {
-      "nome": "Funda├º├úo Carlos Chagas Filho de Amparo ├á Pesquisa do Estado do Rio de Janeiro",
+      "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
       "sigla": "FAPERJ",
       "localizacao": "Rio de Janeiro, RJ",
       "tipo": "agencia-fomento",
-      "descricao": "Ag├¬ncia estadual de fomento ├á pesquisa cient├¡fica",
+      "descricao": "Agência estadual de fomento à pesquisa científica",
       "url": "https://www.faperj.br"
     },
     {
-      "nome": "Laboratoire Interdisciplinaire des Sciences du Num├®rique",
+      "nome": "Laboratoire Interdisciplinaire des Sciences du Numérique",
       "sigla": "LISN",
-      "localizacao": "Paris, Fran├ºa",
+      "localizacao": "Paris, França",
       "tipo": "internacional",
-      "descricao": "Laborat├│rio interdisciplinar de ci├¬ncias digitais",
+      "descricao": "Laboratório interdisciplinar de ciências digitais",
       "url": "https://www.lisn.upsaclay.fr"
     },
     {
-      "nome": "Universidade Federal da Para├¡ba",
+      "nome": "Universidade Federal da Paraíba",
       "sigla": "UFPB",
-      "localizacao": "Jo├úo Pessoa, PB",
+      "localizacao": "João Pessoa, PB",
       "tipo": "universidade",
-      "descricao": "Parceria institucional com a Universidade Federal da Para├¡ba",
+      "descricao": "Parceria institucional com a Universidade Federal da Paraíba",
       "url": "https://www.ufpb.br"
     }
   ],
