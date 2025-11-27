@@ -40,7 +40,7 @@ jobs:
           local-dir: ./dist/
           server-dir: /labfonac/
           protocol: ftps
-          port: 21
+          port: 2100
           
       # 6. Deployment success notification
       - name: Deployment complete
