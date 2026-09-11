@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "Website do Laboratório de Fonética da UFRJ",
   "type": "module",
+  "main": "desktop/main.cjs",
   "scripts": {
     "dev": "vite",
+    "dev:editor": "vite --open /editor.html",
+    "editor:dev": "concurrently -k \"vite --host 127.0.0.1 --port 3000 --strictPort false\" \"cross-env LABFON_EDITOR_DEV=true electron .\"",
+    "editor:build": "cross-env LABFON_EDITOR_BUILD=true vite build && electron-builder --dir",
     "prebuild": "node scripts/build-data.js",
     "build": "vite build",
     "build:local": "node scripts/build-data.js && cross-env BUILD_OUTPUT=C:/labfonac vite build",
@@ -15,6 +19,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "editor:smoke:ftp": "node scripts/editor-smoke-ftp.cjs",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write \"**/*.{js,css,html,md}\"",
     "deploy:build": "vite build && echo Build complete! Upload C:\\labfonac via FileZilla to server"
@@ -27,13 +32,38 @@
   ],
   "author": "Laboratório de Fonética UFRJ",
   "license": "MIT",
+  "build": {
+    "appId": "br.ufrj.labfon.editor",
+    "productName": "Lab-FON Editor",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "dist/**/*",
+      "package.json",
+      "node_modules/basic-ftp/**/*"
+    ],
+    "win": {
+      "target": [
+        "dir"
+      ]
+    }
+  },
   "devDependencies": {
     "@vitest/ui": "^3.2.4",
+    "concurrently": "^10.0.5",
     "cross-env": "^10.1.0",
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9.37.0",
+    "ftp-srv": "^4.6.3",
     "jsdom": "^27.0.0",
     "prettier": "^3.6.2",
     "vite": "^7.1.9",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "basic-ftp": "^6.2.1"
   }
 }

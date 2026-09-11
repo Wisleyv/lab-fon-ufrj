@@ -4,23 +4,25 @@
  */
 
 import { JSONAdapter } from "./adapters/JSONAdapter.js";
-import { PesquisadoresSection } from "./sections/pesquisadores.js";
-import { PublicacoesSection } from "./sections/publicacoes.js";
-import { LinhasPesquisaSection } from "./sections/linhas-pesquisa.js";
-import { ParceriasSection } from "./sections/parcerias.js";
+import { applyPageComposition } from "./page/composition.js";
+import { renderPageNavigation } from "./page/navigation.js";
+import {
+  createSectionRenderer,
+  getSectionDefinition,
+  SECTION_REGISTRY,
+  isRenderableSection,
+} from "./page/section-registry.js";
+import { applySiteContent } from "./site-content.js";
+import { initHeaderScroll } from "./header-scroll.js";
 
 /**
  * Application configuration
  */
 const config = {
   dataSource: "json",
-  jsonUrl: "./data.json", // Served from public/ folder via Vite
-  publicationsUrl: "./publication_references.json",
-  sections: {
-    pesquisadores: "pesquisadores-container",
-    publicacoes: "publicacoes-content",
-    linhas_pesquisa: "linhas-pesquisa-content",
-    parcerias: "parcerias-content",
+  dataSources: {
+    site: "./data.json", // Served from public/ folder via Vite
+    publications: "./publication_references.json",
   },
 };
 
@@ -29,6 +31,8 @@ const config = {
  */
 const app = {
   data: null,
+  dataSources: {},
+  pageComposition: null,
   sections: {},
   isInitialized: false,
 };
@@ -44,14 +48,27 @@ async function init() {
     showGlobalLoading(true);
 
     // Fetch data
-    const adapter = new JSONAdapter(config.jsonUrl);
+    const adapter = new JSONAdapter(config.dataSources.site);
     app.data = await adapter.fetch();
+    app.dataSources.site = app.data;
 
     if (app.data.error) {
       throw new Error(app.data.message);
     }
 
     console.log("✅ Data loaded successfully:", app.data);
+
+    // Apply data-driven page composition before rendering dynamic sections
+    app.pageComposition = applyPageComposition(document, app.data.page);
+    renderPageNavigation({
+      documentRef: document,
+      composition: app.pageComposition,
+      registry: SECTION_REGISTRY,
+    });
+    applySiteContent(document, app.data.site, {
+      assetBase: import.meta.env.BASE_URL,
+      visibleSectionAnchors: getVisibleSectionAnchors(app.pageComposition),
+    });
 
     // Initialize sections
     await initializeSections();
@@ -67,6 +84,7 @@ async function init() {
 
     // Initialize back-to-top button
     initBackToTop();
+    initHeaderScroll();
 
     app.isInitialized = true;
     console.log("✅ Application initialized successfully");
@@ -78,49 +96,34 @@ async function init() {
   }
 }
 
+function getVisibleSectionAnchors(composition) {
+  const anchors = new Set(["#contato"]);
+
+  composition.sections
+    .filter((section) => section.enabled)
+    .forEach((section) => {
+      const definition = getSectionDefinition(section.type);
+      const sectionId = definition?.sectionId || section.id;
+
+      if (sectionId) {
+        anchors.add(`#${sectionId}`);
+      }
+    });
+
+  return anchors;
+}
+
 /**
  * Initialize all section renderers
  */
 async function initializeSections() {
-  // Initialize Pesquisadores section
-  app.sections.pesquisadores = new PesquisadoresSection(
-    config.sections.pesquisadores,
-    {
-      loadingMessage: "Carregando equipe...",
-      errorMessage: "Não foi possível carregar a equipe.",
-      emptyMessage: "Nenhum membro da equipe cadastrado.",
-    },
-  );
+  app.sections = {};
 
-  // Initialize Publicações section
-  app.sections.publicacoes = new PublicacoesSection(
-    config.sections.publicacoes,
-    {
-      loadingMessage: "Carregando publicações...",
-      errorMessage: "Não foi possível carregar as publicações.",
-      emptyMessage: "Nenhuma publicação cadastrada.",
-    },
-  );
-
-  // Initialize Linhas de Pesquisa section
-  app.sections.linhas_pesquisa = new LinhasPesquisaSection(
-    config.sections.linhas_pesquisa,
-    {
-      loadingMessage: "Carregando linhas de pesquisa...",
-      errorMessage: "Não foi possível carregar as linhas de pesquisa.",
-      emptyMessage: "Nenhuma linha de pesquisa cadastrada.",
-    },
-  );
-
-  // Initialize Parcerias section
-  app.sections.parcerias = new ParceriasSection(
-    config.sections.parcerias,
-    {
-      loadingMessage: "Carregando parcerias...",
-      errorMessage: "Não foi possível carregar as parcerias.",
-      emptyMessage: "Nenhuma parceria cadastrada.",
-    },
-  );
+  app.pageComposition.sections
+    .filter((section) => section.enabled && isRenderableSection(section.type))
+    .forEach((section) => {
+      app.sections[section.id] = createSectionRenderer(section.type);
+    });
 
   console.log("✅ Sections initialized");
 }
@@ -131,213 +134,235 @@ async function initializeSections() {
 async function renderAllSections() {
   const renderPromises = [];
 
-  // Render linhas de pesquisa
-  if (app.data.linhas_pesquisa && app.data.linhas_pesquisa.length > 0) {
-    console.log("📋 Rendering linhas de pesquisa...");
-    renderPromises.push(
-      app.sections.linhas_pesquisa.render(app.data.linhas_pesquisa),
-    );
-  }
-
-  // Render equipe (team members with all categories)
-  if (app.data.equipe && app.data.equipe.length > 0) {
-    console.log("📋 Rendering equipe...");
-    renderPromises.push(
-      app.sections.pesquisadores.render(app.data.equipe),
-    );
-  }
-
-  // Render parcerias
-  if (app.data.parcerias && app.data.parcerias.length > 0) {
-    console.log("📋 Rendering parcerias...");
-    renderPromises.push(
-      app.sections.parcerias.render(app.data.parcerias),
-    );
-  }
-
-  // Load and render publications
-  try {
-    console.log("📋 Loading publications...");
-    const pubAdapter = new JSONAdapter(config.publicationsUrl);
-    const pubData = await pubAdapter.fetch();
-    
-    if (pubData.references && pubData.references.length > 0) {
-      console.log("📋 Rendering publications...");
-      renderPromises.push(
-        app.sections.publicacoes.render(pubData.references),
-      );
+  for (const section of app.pageComposition.sections) {
+    if (!section.enabled || !isRenderableSection(section.type)) {
+      continue;
     }
-  } catch (error) {
-    console.error("❌ Error loading publications:", error);
+
+    const definition = getSectionDefinition(section.type);
+    const sectionRenderer = app.sections[section.id];
+    const sectionData = await getSectionData(definition);
+
+    if (hasSectionData(sectionData)) {
+      console.log(`📋 Rendering ${definition.label}...`);
+      renderPromises.push(sectionRenderer.render(sectionData));
+    }
   }
 
   await Promise.all(renderPromises);
   console.log("✅ All sections rendered");
 }
 
+function hasSectionData(sectionData) {
+  if (Array.isArray(sectionData)) {
+    return sectionData.length > 0;
+  }
+
+  return Boolean(sectionData && typeof sectionData === "object");
+}
+
+/**
+ * Gets the data array used by a registered section.
+ * @param {Object} sectionDefinition - Section registry entry
+ * @returns {Promise<Array|null>} Section data
+ */
+async function getSectionData(sectionDefinition) {
+  if (sectionDefinition.dataSource === "publications") {
+    try {
+      console.log("📋 Loading publications...");
+      const pubAdapter = new JSONAdapter(config.dataSources.publications);
+      const pubData = await pubAdapter.fetch();
+      app.dataSources.publications = pubData;
+      return pubData[sectionDefinition.dataKey] || null;
+    } catch (error) {
+      console.error("❌ Error loading publications:", error);
+      return null;
+    }
+  }
+
+  const dataSource = app.dataSources[sectionDefinition.dataSource] || app.data;
+  return dataSource[sectionDefinition.dataKey] || null;
+}
+
 /**
  * Initialize mobile menu toggle functionality
  */
 function initMobileMenu() {
-  const menuToggle = document.querySelector('.nav-toggle');
-  const navList = document.querySelector('.nav-list');
+  const menuToggle = document.querySelector(".nav-toggle");
+  const navList = document.querySelector(".nav-list");
 
   if (!menuToggle || !navList) {
-    console.warn('Mobile menu elements not found');
+    console.warn("Mobile menu elements not found");
     return;
   }
 
   // Toggle menu on button click
-  menuToggle.addEventListener('click', (e) => {
+  menuToggle.addEventListener("click", (e) => {
     e.stopPropagation();
-    const isOpen = navList.classList.toggle('active');
-    menuToggle.classList.toggle('active');
+    const isOpen = navList.classList.toggle("active");
+    menuToggle.classList.toggle("active");
 
     // Update ARIA attributes
-    menuToggle.setAttribute('aria-expanded', isOpen);
-    menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
-    navList.setAttribute('aria-hidden', !isOpen);
+    menuToggle.setAttribute("aria-expanded", isOpen);
+    menuToggle.setAttribute(
+      "aria-label",
+      isOpen ? "Fechar menu" : "Abrir menu",
+    );
+    navList.setAttribute("aria-hidden", !isOpen);
 
     // Focus first link when opening
     if (isOpen) {
-      const firstLink = navList.querySelector('a');
+      const firstLink = navList.querySelector("a");
       firstLink?.focus();
     }
   });
 
   // Close menu when clicking navigation links (but not dropdown parent links)
-  navList.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', (e) => {
+  navList.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", (e) => {
       // Don't close menu if this is a dropdown parent link
-      const isDropdownParent = link.closest('.has-dropdown') && 
-                               link.getAttribute('aria-haspopup') === 'true';
-      
+      const isDropdownParent =
+        link.closest(".has-dropdown") &&
+        link.getAttribute("aria-haspopup") === "true";
+
       // Only close menu for actual navigation links or submenu items
       if (!isDropdownParent) {
-        navList.classList.remove('active');
-        menuToggle.classList.remove('active');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.setAttribute('aria-label', 'Abrir menu');
-        navList.setAttribute('aria-hidden', 'true');
+        navList.classList.remove("active");
+        menuToggle.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Abrir menu");
+        navList.setAttribute("aria-hidden", "true");
       }
     });
   });
 
   // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.main-nav') && navList.classList.contains('active')) {
-      navList.classList.remove('active');
-      menuToggle.classList.remove('active');
-      menuToggle.setAttribute('aria-expanded', 'false');
-      menuToggle.setAttribute('aria-label', 'Abrir menu');
-      navList.setAttribute('aria-hidden', 'true');
+  document.addEventListener("click", (e) => {
+    if (
+      !e.target.closest(".main-nav") &&
+      navList.classList.contains("active")
+    ) {
+      navList.classList.remove("active");
+      menuToggle.classList.remove("active");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Abrir menu");
+      navList.setAttribute("aria-hidden", "true");
     }
   });
 
   // Close menu on ESC key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navList.classList.contains('active')) {
-      navList.classList.remove('active');
-      menuToggle.classList.remove('active');
-      menuToggle.setAttribute('aria-expanded', 'false');
-      menuToggle.setAttribute('aria-label', 'Abrir menu');
-      navList.setAttribute('aria-hidden', 'true');
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navList.classList.contains("active")) {
+      navList.classList.remove("active");
+      menuToggle.classList.remove("active");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Abrir menu");
+      navList.setAttribute("aria-hidden", "true");
       menuToggle.focus();
     }
   });
 
-  console.log('\u2705 Mobile menu initialized');
+  console.log("\u2705 Mobile menu initialized");
 }
 
 /**
  * Initialize dropdown navigation
  */
 function initDropdownNav() {
-  const dropdownItems = document.querySelectorAll('.has-dropdown');
+  const dropdownItems = document.querySelectorAll(".has-dropdown");
 
-  dropdownItems.forEach(item => {
-    const link = item.querySelector('a');
-    const menu = item.querySelector('.dropdown-menu');
+  dropdownItems.forEach((item) => {
+    const link = item.querySelector("a");
+    const menu = item.querySelector(".dropdown-menu");
 
     if (!link || !menu) return;
 
     // Handle mobile click to toggle dropdown
-    link.addEventListener('click', (e) => {
+    link.addEventListener("click", (e) => {
       // On mobile (when nav-toggle is visible), toggle dropdown
-      const navToggle = document.querySelector('.nav-toggle');
-      if (navToggle && window.getComputedStyle(navToggle).display !== 'none') {
+      const navToggle = document.querySelector(".nav-toggle");
+      if (navToggle && window.getComputedStyle(navToggle).display !== "none") {
         e.preventDefault();
         e.stopPropagation();
-        
+
         // Close other dropdowns
-        dropdownItems.forEach(otherItem => {
+        dropdownItems.forEach((otherItem) => {
           if (otherItem !== item) {
-            otherItem.classList.remove('active');
-            otherItem.querySelector('a')?.setAttribute('aria-expanded', 'false');
+            otherItem.classList.remove("active");
+            otherItem
+              .querySelector("a")
+              ?.setAttribute("aria-expanded", "false");
           }
         });
 
         // Toggle current dropdown
-        const isOpen = item.classList.toggle('active');
-        link.setAttribute('aria-expanded', isOpen);
+        const isOpen = item.classList.toggle("active");
+        link.setAttribute("aria-expanded", isOpen);
       }
     });
 
     // Handle keyboard navigation
-    link.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        const navToggle = document.querySelector('.nav-toggle');
-        if (navToggle && window.getComputedStyle(navToggle).display !== 'none') {
+    link.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        const navToggle = document.querySelector(".nav-toggle");
+        if (
+          navToggle &&
+          window.getComputedStyle(navToggle).display !== "none"
+        ) {
           e.preventDefault();
-          item.classList.toggle('active');
+          item.classList.toggle("active");
         }
       }
     });
   });
 
-  console.log('\u2705 Dropdown navigation initialized');
+  console.log("\u2705 Dropdown navigation initialized");
 }
 
 /**
  * Initialize back-to-top button functionality
  */
 function initBackToTop() {
-  const backToTopButton = document.getElementById('back-to-top');
-  
+  const backToTopButton = document.getElementById("back-to-top");
+
   if (!backToTopButton) {
-    console.warn('Back-to-top button not found');
+    console.warn("Back-to-top button not found");
     return;
   }
 
   // Show/hide button based on scroll position
   const toggleButtonVisibility = () => {
     if (window.scrollY > 300) {
-      backToTopButton.classList.add('visible');
+      backToTopButton.classList.add("visible");
     } else {
-      backToTopButton.classList.remove('visible');
+      backToTopButton.classList.remove("visible");
     }
   };
 
   // Scroll to top smoothly when clicked
-  backToTopButton.addEventListener('click', () => {
+  backToTopButton.addEventListener("click", () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   });
 
   // Listen to scroll events with throttling for performance
   let scrollTimeout;
-  window.addEventListener('scroll', () => {
-    if (scrollTimeout) {
-      window.cancelAnimationFrame(scrollTimeout);
-    }
-    scrollTimeout = window.requestAnimationFrame(() => {
-      toggleButtonVisibility();
-    });
-  }, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (scrollTimeout) {
+        window.cancelAnimationFrame(scrollTimeout);
+      }
+      scrollTimeout = window.requestAnimationFrame(() => {
+        toggleButtonVisibility();
+      });
+    },
+    { passive: true },
+  );
 
-  console.log('\u2705 Back-to-top button initialized');
+  console.log("\u2705 Back-to-top button initialized");
 }
 
 /**

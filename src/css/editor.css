@@ -1,0 +1,347 @@
+:root {
+  --editor-bg: #f4f7f3;
+  --editor-surface: #ffffff;
+  --editor-ink: #1f2d22;
+  --editor-muted: #506155;
+  --editor-accent: #1f6f43;
+  --editor-border: #d5dfd8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(
+    circle at top right,
+    #e7f1ea 0%,
+    var(--editor-bg) 60%
+  );
+  color: var(--editor-ink);
+}
+
+.editor-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.editor-header {
+  margin-bottom: 1rem;
+}
+
+.editor-title {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.editor-subtitle {
+  margin: 0.4rem 0 0;
+  color: var(--editor-muted);
+}
+
+.editor-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.editor-nav-btn {
+  border: 1px solid var(--editor-border);
+  background: var(--editor-surface);
+  color: var(--editor-ink);
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.95rem;
+}
+
+.editor-nav-btn.is-active {
+  border-color: var(--editor-accent);
+  color: var(--editor-accent);
+  font-weight: 600;
+}
+
+.editor-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.editor-panel {
+  background: var(--editor-surface);
+  border: 1px solid var(--editor-border);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.editor-panel h2 {
+  margin: 0;
+}
+
+.editor-source-modes {
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.editor-source-modes legend {
+  color: var(--editor-muted);
+  font-size: 0.9rem;
+}
+
+.editor-source-group {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.editor-source-group.is-hidden {
+  display: none;
+}
+
+.editor-input {
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+}
+
+.editor-source-error {
+  min-height: 1.25rem;
+  margin: 0;
+  color: #9f1f1f;
+  font-size: 0.92rem;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.editor-btn {
+  border-radius: 999px;
+  border: 1px solid var(--editor-border);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.92rem;
+}
+
+.editor-btn-primary {
+  background: var(--editor-accent);
+  border-color: var(--editor-accent);
+  color: #fff;
+}
+
+.editor-btn-secondary {
+  background: var(--editor-surface);
+  color: var(--editor-ink);
+}
+
+.editor-status {
+  margin: 0.75rem 0;
+}
+
+.editor-hints {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--editor-muted);
+}
+
+.editor-section-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.editor-section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  padding: 0.65rem;
+}
+
+.editor-section-label {
+  font-weight: 600;
+}
+
+.editor-section-actions,
+.editor-add-section {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.editor-add-section {
+  margin-bottom: 1rem;
+}
+
+.editor-composition-diagnostics {
+  min-height: 1.25rem;
+  color: var(--editor-muted);
+  font-size: 0.92rem;
+}
+
+.editor-diagnostics-list {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.editor-diagnostic-error {
+  color: #9f1f1f;
+}
+
+.editor-diagnostic-warning {
+  color: #7a5b00;
+}
+
+.editor-composition-preview {
+  max-height: 32rem;
+  overflow: auto;
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.editor-build-diagnostics {
+  max-height: 12rem;
+  overflow: auto;
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #f8faf8;
+  color: var(--editor-muted);
+  white-space: pre-wrap;
+}
+
+.editor-build-diagnostics:empty {
+  display: none;
+}
+
+.editor-generated-site-preview {
+  width: 100%;
+  min-height: 32rem;
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  margin-top: 0.75rem;
+}
+
+.editor-generated-site-preview[hidden] {
+  display: none;
+}
+
+.editor-publish-form {
+  display: grid;
+  grid-template-columns: minmax(8rem, max-content) minmax(0, 1fr);
+  gap: 0.6rem 0.75rem;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+
+.editor-publish-form .editor-inline {
+  grid-column: 2;
+}
+
+.editor-remote-browser {
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.editor-remote-browser.is-hidden {
+  display: none;
+}
+
+.editor-remote-listing {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.editor-remote-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+}
+
+.editor-remote-entry-name {
+  font-weight: 600;
+  margin-right: auto;
+}
+
+.editor-content-summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.editor-content-group {
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.editor-content-group h3 {
+  margin: 0 0 0.4rem;
+}
+
+.editor-content-group ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.editor-preview-main {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.editor-preview-section {
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.editor-preview-section h3 {
+  margin: 0 0 0.5rem;
+}
+
+.editor-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 1rem;
+}
+
+.editor-fallback-error {
+  margin: 2rem auto;
+  max-width: 680px;
+  border: 1px solid #ce3e3e;
+  background: #fff2f2;
+  color: #7f1414;
+  border-radius: 12px;
+  padding: 1rem;
+}
+/* Content forms retain the existing editor controls and spacing. */
+#editor-content-form fieldset {
+  min-width: 0;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #c6cbd0;
+}
+#editor-content-form label { display: block; margin-top: 8px; }
+#editor-content-form textarea { min-height: 96px; resize: vertical; }
+#editor-content-form .editor-input:not([type="checkbox"]) { width: 100%; }
+#editor-content-editing { min-width: 0; }
+#editor-content-editing select { max-width: 100%; }

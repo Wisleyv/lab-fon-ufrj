@@ -1,0 +1,9 @@
+{
+  "id": "prosodia-ensino",
+  "nome": "Prosódia e Ensino",
+  "icon": "fa-solid fa-chalkboard-user",
+  "estudantes": 0,
+  "pesquisadores": 0,
+  "descricao": "Esta linha de pesquisa tem como proposta a aplicação das pesquisas prosódicas ao ensino de língua materna e/ou adicional.",
+  "ordem": 6
+}

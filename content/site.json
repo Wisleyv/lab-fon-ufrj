@@ -1,0 +1,118 @@
+{
+  "header": {
+    "logo": {
+      "source": "/assets/images/logo_300x130.svg",
+      "fallback": "/assets/images/logo_300x130.png",
+      "srcset": "/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x",
+      "alt": "Logo do Laboratório de Fonética Acústica UFRJ"
+    },
+    "title": "Laboratório de Fonética Acústica",
+    "subtitle": "Universidade Federal do Rio de Janeiro"
+  },
+  "hero": {
+    "title": "Pesquisa de Excelência em Fonética Acústica",
+    "description": "Desenvolvendo estudos inovadores sobre os sons da fala e contribuindo para o avanço da ciência linguística no Brasil.",
+    "actions": [
+      {
+        "label": "Equipe",
+        "href": "#pesquisadores",
+        "style": "primary"
+      },
+      {
+        "label": "Publicações",
+        "href": "#trabalhos",
+        "style": "secondary"
+      },
+      {
+        "label": "Contato",
+        "href": "#contato",
+        "style": "secondary"
+      }
+    ]
+  },
+  "sobre": {
+    "title": "Sobre o Laboratório",
+    "paragraphs": [
+      "Tradição e Inovação na Ciência da Fala",
+      "Estabelecido no início da década de 1990 por iniciativa do Professor João Moraes na Faculdade de Letras, o Laboratório de Fonética Acústica da UFRJ consolidou-se como um centro de excelência dedicado à pesquisa científica dos sons da fala humana.",
+      "Atualmente vinculado ao Programa de Pós-Graduação em Letras Vernáculas (PPGLEV) e sob a coordenação das professoras Manuella Carnaval (UFRJ) e Carolina Silva (UFPB), o grupo desenvolve estudos de ponta que integram Fonética Experimental, Fonologia e Prosódia — com ênfase recente em Prosódia Multimodal e suas interfaces.",
+      "Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa.",
+      {
+        "label": "Missão:",
+        "text": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
+      }
+    ]
+  },
+  "footer": {
+    "sections": [
+      {
+        "title": "Laboratório de Fonética Acústica UFRJ",
+        "lines": [
+          "Faculdade de Letras - UFRJ",
+          "Av. Horácio Macedo, 2151",
+          "Cidade Universitária",
+          "Rio de Janeiro - RJ"
+        ]
+      },
+      {
+        "title": "Contato",
+        "contacts": [
+          {
+            "label": "Email",
+            "href": "mailto:labfonac@posvernaculas.letras.ufrj.br",
+            "text": "labfonac@posvernaculas.letras.ufrj.br"
+          },
+          {
+            "label": "Instagram",
+            "href": "https://www.instagram.com/provaleinterinstitucional/",
+            "text": "@provaleinterinstitucional"
+          }
+        ]
+      },
+      {
+        "title": "Links Úteis",
+        "links": [
+          {
+            "label": "UFRJ",
+            "href": "https://ufrj.br"
+          },
+          {
+            "label": "Faculdade de Letras",
+            "href": "https://portal.letras.ufrj.br/"
+          },
+          {
+            "label": "Plataforma Lattes",
+            "href": "https://lattes.cnpq.br"
+          },
+          {
+            "label": "Espelho do Grupo no CNPq",
+            "href": "http://dgp.cnpq.br/dgp/espelhogrupo/2843754282197200/"
+          }
+        ]
+      }
+    ],
+    "institutionalCredits": [
+      {
+        "label": "Laboratório",
+        "name": "Laboratório de Fonética Acústica UFRJ"
+      },
+      {
+        "label": "PPGLEV",
+        "name": "Programa de Pós-Graduação em Letras Vernáculas"
+      },
+      {
+        "label": "UFRJ",
+        "name": "Universidade Federal do Rio de Janeiro"
+      },
+      {
+        "label": "CNPq",
+        "name": ""
+      }
+    ],
+    "coordination": {
+      "lab": [],
+      "extensionProject": []
+    },
+    "bottomText": "© 2025 Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."
+  }
+}

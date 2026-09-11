@@ -6,6 +6,9 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Build output
+/.sanitization-backup/
+/release/
+/release-verify/
 dist/
 build/
 .output/
@@ -21,6 +24,7 @@ build/
 # Deployment credentials and logs
 deploy-*.log
 winscp_*.txt
+docs/ftp_access.md
 
 # Editor directories and files
 .vscode/*

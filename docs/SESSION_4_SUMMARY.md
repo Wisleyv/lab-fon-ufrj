@@ -1,6 +1,6 @@
 # Session 4: Backend/CMS Implementation
 **Date:** November 27, 2025  
-**Duration:** ~5 hours  
+**Duration:** 5,6 hours  
 **Branch:** main  
 **Commits:** `1f6a645` → `6668bfc`  
 **Focus:** GitHub-based CMS Implementation with Netlify

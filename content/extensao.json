@@ -1,0 +1,19 @@
+{
+  "projects": [
+    {
+      "id": "provale-em-extensao",
+      "projectType": "Projeto de Extensão",
+      "title": "PROVALE em Extensão",
+      "image": null,
+      "minibio": "",
+      "complementaryText": "",
+      "coordination": [],
+      "socialLinks": [],
+      "instagram": {
+        "enabled": false,
+        "source": null,
+        "provider": null
+      }
+    }
+  ]
+}
