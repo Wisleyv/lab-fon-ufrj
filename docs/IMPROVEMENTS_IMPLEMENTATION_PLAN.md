@@ -18,7 +18,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
-| Equipe media | CORRECTIONS IMPLEMENTED; GUI RETEST PENDING | Visible canonical Save/Discard, guarded project close, shared no-photo state/removal; reported clean-state symptom not reproduced automatically |
+| Equipe media | PARTIAL MANUAL ACCEPTANCE: 18/20 | At `42f845c`, all other tested behavior provisionally accepted; item 10 intermittent first-reopen discrepancy and item 13 member-specific missing Remove remain undiagnosed |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -32,6 +32,46 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### Checkpoint 42f845c Manual Retest Wrap-Up
+
+Branch: `chore/verified-editor-cleanup-plan-2026-09-11`. Latest implementation checkpoint: `42f845c`. This entry records the maintainer's completed disposable-local-project retest, not a new agent test run. It supersedes the pending-full-retest instructions in the historical entries below.
+
+**Automated baseline retained:** 169 focused tests / 10 files passed; 336 full-suite tests / 29 files passed; web/editor production build passed. No tests or builds were rerun for this documentation-only wrap-up. Production FTP/publication remains untouched.
+
+**Manual status: effectively 18/20 checklist areas pass. Equipe media is NOT fully manually accepted yet.** All other tested behavior is provisionally accepted; do not reopen those areas without a concrete regression. The maintainer's original annotations remain in [EQUIPE_PHOTO_PICKER_RETEST.md](EQUIPE_PHOTO_PICKER_RETEST.md), including the item-13 screenshot reference. Some individual checklist lines have no inline Pass label; the 18/20 summary comes from the authoritative wrap-up prompt, not inferred checkmarks.
+
+Accepted behavior:
+
+- Supported-file picker, current preview/path, visible Save/Discard above the fields, content Save and local JSON destination feedback; explicit project close, generally working reopen, Revisar/build, and copied images in source/build output.
+- Shared no-photo placeholder; Remove for other custom-photo members; dirty-close cancellation; Discard restoring a custom photo; saving removal as `"foto": ""`; close/reopen/build preserving saved no-photo state; old custom binaries retained.
+- Picker cancellation and unsupported-file validation; keyboard/focus, narrow-window and 200% zoom checks.
+
+#### Observation A: First Reopen Discrepancy (Item 10)
+
+On the first attempt, after `Salvar conteúdo`, `Fechar projeto`, and reopening the same local project, the supposedly saved replacement photo was not restored; the old placeholder returned. After reopening and selecting a new JPG image, the JSON then updated correctly.
+
+Record this as an **intermittent/manual persistence discrepancy requiring targeted reproduction**. It is not yet diagnosed: do not label it a confirmed persistence bug, cache bug, user error, stale build output, or fixed. Automated full-editor tests already prove selection -> dirty -> canonical Save -> JSON write/read-back/reopen; the first manual reopen contradicted that expected path, while a later manual replacement/save updated JSON correctly. Both pieces of evidence must be preserved.
+
+#### Observation B: Missing Remove for Mayara (Item 13)
+
+`Remover foto` is missing only for **Mayara Gak Assumpção**, while the same action is present and works for other custom-photo members. This is also **not yet diagnosed**. A visible portrait does not establish that the stored reference is custom.
+
+The current rule intentionally hides Remove for no-photo state, empty `foto`, and legacy shared placeholder `assets/images/avatar.webp`. Mayara's actual stored value and its classification must be inspected next session, not assumed from her name or visible portrait. No member JSON, predicate, or screenshot was investigated during this wrap-up.
+
+#### Next Session: Targeted Diagnostic/Fix Slice
+
+Recommended reasoning: **Medium**. Escalate to High only if the reopen discrepancy proves to involve conflicting persistence/project-loader architecture. Follow this order and stop at this slice:
+
+1. **Reproduce Mayara's missing Remove first.** Identify her exact `content/equipe/<record>.json` in the tested project; capture stored `foto`, normalized photo state, legacy-placeholder detection, `hasCustomPhoto` or equivalent predicate, and preview resolution. Distinguish empty/missing, `assets/images/avatar.webp`, managed UUID, other legacy/custom path, and misclassification. A genuine custom photo must expose Remove. If the record is actually a shared placeholder, hiding Remove is correct; consider only a narrowly justified no-photo-state clarity correction. If a valid legacy custom path is misclassified, fix the predicate narrowly. Add a regression test for the data shape, never a name-specific exception.
+2. **Trace the first-reopen discrepancy with one known member in a disposable copy.** Before editing capture member stable ID/name, exact JSON path, initial `foto`, and active project root. Select a replacement; capture its displayed UUID path and dirty state; click Save; capture the exact save-status destination; immediately read that exact disk file and record `foto`. Close with `Fechar projeto`, reopen the same root, identify which JSON file the editor loads for that member, and compare loaded `foto` against disk.
+3. **Diagnose from evidence, not guesses.** Disk correct but editor old points toward loader/cache/record mapping; disk unchanged points toward save submission/selected-record/draft binding; a different save-status destination points toward member-to-file identity mapping. Check wrong JSON inspection, duplicate/legacy member records, older snapshots and an unsaved first replacement only as hypotheses. Add logging/tests only as needed to isolate the concrete path.
+4. **Fix only the proven cause.** Do not rewrite the picker, asset-copy service, placeholder semantics, project-close workflow or entire persistence layer unless reproduction implicates that component. Preserve existing abstractions and user edits.
+5. **Retest the two unresolved cases plus a short smoke test.** Verify Mayara/custom-photo Remove behavior; replacement -> Save -> close -> reopen with the same UUID/photo; one ordinary removal/save; and one build/review smoke test. Declare full manual acceptance only after the maintainer confirms those cases pass, not from automation alone.
+
+No Parcerias/Site media, C3, Instagram, packaging/release, production FTP/source update or public publication in that session. A new feature slice begins only after these two Equipe observations are closed and separately authorized. Replacing the shared placeholder asset is not part of this wrap-up.
+
+Working-tree handoff: pre-existing annotated retest/prompt/workspace files, three modified Equipe records, generated `public/data.json`, and untracked images/documents were left unchanged and excluded from this documentation commit. Their presence is not diagnostic evidence of either observation. This wrap-up changes only the implementation plan, records existing results, and halts without starting diagnosis or implementation.
 
 ### September 13 Equipe Save, Close and No-Photo Follow-Up
 
@@ -357,4 +397,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **manual Equipe photo-picker retest in the existing disposable project**, using [EQUIPE_PHOTO_PICKER_RETEST.md](EQUIPE_PHOTO_PICKER_RETEST.md). The `f8064e2` focused-form checklist is already accepted. Only after the new retest, propose separately authorized Parcerias logo-field/picker work. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **targeted diagnosis of Mayara's missing Remove action, then the first-reopen persistence discrepancy**, following the `42f845c` wrap-up above with Medium reasoning. The 18/20 other checklist areas are provisionally accepted, and the `f8064e2` focused-form checklist remains accepted. Retest only the two unresolved cases plus the specified smoke checks. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
