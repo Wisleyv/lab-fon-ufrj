@@ -49,7 +49,7 @@ function createWindow({ BrowserWindow }) {
   });
 
   if (isDev) {
-    window.loadURL("http://127.0.0.1:3000/editor.html");
+    window.loadURL("http://127.0.0.1:3000/labfonac/editor.html");
     return;
   }
 
@@ -1550,7 +1550,7 @@ function classifyFtpError(error) {
   };
 }
 
-if (require.main === module) {
+if (require.main === module || (process.versions.electron && process.type === "browser")) {
   const { app, BrowserWindow, dialog, ipcMain, safeStorage } = require("electron");
   configureAppServices({ app, safeStorage });
 

@@ -145,6 +145,7 @@ function createProjectSummary(directory, validation) {
     path: directory.path || directory.name || "",
     status: validation.status,
     valid: validation.valid,
+    source: directory.provenance?.source === "remote-ftp" ? "remote-ftp" : "local",
   };
 }
 

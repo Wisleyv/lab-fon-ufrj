@@ -272,13 +272,13 @@ describe("Editor Composition UI", () => {
     ).toBe(true);
 
     await document.getElementById("editor-preview-composition").click();
-    const previewSections = Array.from(
+    const previewSections = () => Array.from(
       document.querySelectorAll(
         "#editor-composition-preview #main-content > [data-page-section]",
       ),
     ).map((section) => section.dataset.pageSection);
 
-    expect(previewSections).toEqual(["sobre", "parcerias", "linhas_pesquisa"]);
+    await vi.waitFor(() => expect(previewSections()).toEqual(["sobre", "parcerias", "linhas_pesquisa"]));
 
     await document.getElementById("editor-save-composition").click();
     await Promise.resolve();

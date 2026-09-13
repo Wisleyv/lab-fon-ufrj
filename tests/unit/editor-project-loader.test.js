@@ -54,6 +54,13 @@ const directory = {
 };
 
 describe("editor project loader", () => {
+  it.each([undefined, { source: "remote-ftp" }])("retains the session origin for remote readiness (%j)", async (provenance) => {
+    const host = createMemoryDesktopHost(createProjectFiles(), { directory });
+    const result = await loadEditorSiteModel(host, { ...directory, provenance });
+    expect(result.ok).toBe(true);
+    expect(result.project.source).toBe(provenance ? "remote-ftp" : "local");
+    expect(result.model.project.source).toBe(result.project.source);
+  });
   it("detects a valid Lab-FON source project", async () => {
     const host = createMemoryDesktopHost(createProjectFiles(), { directory });
 

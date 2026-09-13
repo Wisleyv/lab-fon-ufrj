@@ -5,13 +5,14 @@ import { validatePageComposition } from "../page/composition.js";
 
 const BLOCK_LABELS = { heading: "Subtítulo", paragraph: "Parágrafo", list: "Lista", link: "Link", button: "Botão de navegação" };
 
-export function createCustomSectionEditor({ store, update, insertionTarget, saveButton, discardButton }) {
+export function createCustomSectionEditor({ store, update, insertionTarget, saveButton, discardButton, onEditContent = () => {} }) {
   const page = createElement("div", { className: "editor-custom-page" });
   const content = createElement("section", { className: "editor-panel", "aria-labelledby": "editor-custom-content-title" });
   content.append(createElement("h2", { id: "editor-custom-content-title" }, "Seções personalizadas"));
   const select = createElement("select", { id: "editor-custom-select", className: "editor-input", "aria-label": "Seção personalizada" });
   const metadata = createElement("div");
   const blocks = createElement("div", { id: "editor-custom-blocks" });
+  const currentTitle = createElement("h3", { id: "editor-custom-current-title" });
   const blockType = createElement("select", { id: "editor-custom-block-type", className: "editor-input", "aria-label": "Tipo de bloco" });
   for (const [value, label] of Object.entries(BLOCK_LABELS)) blockType.append(createElement("option", { value }, label));
   let changing = false;
@@ -52,6 +53,7 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
       title.value = ""; label.value = ""; visible.checked = true; creation.open = false;
       selectedId = store.getState().draftComposition.sections.find((entry) => !before.sections.some((old) => old.id === entry.id))?.id;
       render(true);
+      onEditContent();
     }
   }), button("Cancelar", "editor-custom-cancel", () => { title.value = ""; label.value = ""; visible.checked = true; creation.open = false; }));
   page.append(creation, createElement("h3", {}, "Identificação da seção personalizada"), metadata);
@@ -72,7 +74,7 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
   const save = button("Salvar página", "editor-custom-save", () => saveButton.click());
   const discard = button("Descartar alterações da página", "editor-custom-discard", () => discardButton.click());
   const status = createElement("p", { role: "status", className: "editor-status" });
-  content.append(select, blocks, blockType, add, save, discard, status);
+  content.append(select, currentTitle, blocks, blockType, add, save, discard, status);
   select.addEventListener("change", () => { selectedId = select.value; render(true); });
 
   function render(force = false) {
@@ -81,6 +83,8 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
     const instances = draft?.sections.filter((section) => section.type === "custom") || [];
     if (!instances.some((section) => section.id === selectedId)) selectedId = instances[0]?.id;
     const section = selected();
+    content.hidden = instances.length === 0;
+    currentTitle.textContent = section ? `Conteúdo: ${section.title || "Sem título"}` : "";
     if (!changing && (force || lastDraft !== draft)) {
       select.replaceChildren(...instances.map((entry, index) => createElement("option", { value: entry.id }, `${index + 1}. ${entry.title || "Sem título"}${entry.enabled ? "" : " (desabilitada)"}`)));
       select.value = selectedId || "";
@@ -92,6 +96,7 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
         metaSelect.value = selectedId;
         metaSelect.addEventListener("change", () => { selectedId = metaSelect.value; render(true); });
         metadata.append(metaSelect);
+        metadata.append(button("Editar conteúdo", "editor-custom-edit-content", onEditContent));
         field(metadata, "Título", section.title, (value) => commit({ title: value }), { id: "editor-custom-title" });
         field(metadata, "Rótulo de navegação (opcional)", section.navigation.label || "", (value) => {
           const navigation = { ...selected().navigation }; delete navigation.label;

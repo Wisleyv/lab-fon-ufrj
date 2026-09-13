@@ -17,7 +17,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | B3 | DEFERRED | Session-level agent/interface constraint; not a production blocker |
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
-| C2 | IMPLEMENTED - MANUAL ACCEPTANCE PENDING | Automated/local verification complete; desktop visual and interaction acceptance still required |
+| C2 | PARTIAL MANUAL ACCEPTANCE - RETEST PENDING | Persistence, IDs, ordering, disable/re-enable and generated builds manually confirmed; content access, inline preview and local/remote corrections implemented and automatically verified |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -26,11 +26,35 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 
 C2 verification from the preceding implementation run: 101 focused tests passed; the full suite passed once (278 tests / 26 files); `npm run build` passed for web and editor. Two independent UUID-based custom instances passed shared preview/public rendering and save/read-back/reopen checks. Disabled instances retain their content; unsupported schema/custom data is refused. `content/page.json` remains unchanged and unversioned, with no demonstration custom sections. Version 2 is staged only on explicit custom creation; legacy saves do not automatically upgrade.
 
-This checkpoint review changes documentation only. Source/test changes match the preceding verified handoff; no full-suite or build rerun is needed. Browser screenshot verification was unavailable in C2 and is not claimed. Manual-acceptance labels for A4/B1/B2 reflect the maintainer's accepted session state, not a new browser test. Existing checkout/production composition divergence and About/footer coordination discrepancy remain unresolved release inputs, not silently reconciled content. No new implementation defect was identified in this scoped checkpoint review.
+The earlier Git-only checkpoint review changed documentation only and reused the preceding verification results. The subsequent acceptance corrections and new verification are recorded below. Browser screenshot verification was unavailable in C2 and is not claimed. Manual-acceptance labels for A4/B1/B2 reflect the maintainer's accepted session state, not a new browser test. Existing checkout/production composition divergence and About/footer coordination discrepancy remain unresolved release inputs, not silently reconciled content.
 
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 13 Manual Acceptance Follow-up
+
+The maintainer's [manual report](C2-manual-acceptance-report-2026-09-13.md) supersedes the earlier unattempted/pending description. Testing in a disposable desktop project confirmed existing content editing, canonical version-2 persistence with distinct IDs, ordering, save/reopen, disable/re-enable retention and successful Revisar output. C2 is partially accepted, not fully accepted: the custom block editor is not evident, the inline preview remains stale, and local-project remote-update feedback can remain in progress. Earlier automated counts remain historical evidence, not proof of these manual scenarios.
+
+Pre-C3 correction sequence:
+
+1. Expose the existing custom block editor for the selected instance and make current selection clear.
+2. Refresh the existing inline preview from draft changes, including invalid-draft and async-render handling.
+3. Distinguish local from retrieved projects and prevent local-only projects entering remote update/publication; verify deterministic operation completion with mocks.
+4. Separate follow-up: focused item/logical-group selection, nested-array presentation, save/discard protection and consistent button hierarchy. Existing collection record selection already guards dirty changes; reuse it.
+5. Separate follow-up: native image picker/copy and relative asset paths for Equipe, optional Parcerias logos and actual Site image fields. Accessibility alt text must remain text; verify field semantics before media changes.
+
+This run completes only corrections 1-3 before a checkpoint. B3 contextual help remains deferred under the higher-priority session interface constraint; normal action labels, errors and status outcomes remain permissible. No C3, Instagram, dependency upgrade, packaging or production operation is authorized as a side effect. Repeat desktop acceptance after the corrections; no agent-performed GUI result is claimed.
+
+Correction result: **1-3 IMPLEMENTED; DESKTOP RETEST PENDING.** The custom editor was below the long built-in form, not missing from the schema. Creation now opens Conteudo with the new instance selected and focused; the custom panel precedes the built-in form, identifies the edited title, and Pagina has an explicit Editar conteudo action. Existing whole-page Save/Discard and independent custom block arrays are unchanged. The existing preview renderer now follows draft/model changes with serialized/coalesced refreshes; invalid drafts clear stale output instead of rendering a reduced composition.
+
+The project loader now retains local versus retrieved-FTP origin. Explicitly local projects cannot enter remote-source update or publication, even with a saved ready profile; they can still save/build/review locally. Retrieved projects retain source-update-before-build behavior. Operation results that are missing/malformed become terminal failures instead of throwing while the UI remains busy; success, failure and rejection are covered with mocks. This prevents the reported local action path, but does not claim reproduction of a real server/network hang or cancellation of an unfinished network transfer.
+
+This checkpoint also includes the prior two-line Electron startup correction and its tests: the imported development entry initializes the desktop window, and its URL includes `/labfonac/editor.html`. No dependency changes or packaging were needed.
+
+Verification: **128 focused tests passed (7 files); 289 full-suite tests passed once (27 files); web/editor production build passed once.** Existing full-suite FTP tests used disposable local fixtures only. No manual GUI checks were performed by the agent. Canonical editorial content, production `/source/` and public `/` remain untouched.
+
+Exact retest, using a fresh disposable copy of this correction checkpoint (not the old e2d26ac copy): create two custom sections and confirm automatic Conteudo selection; edit all five block types independently; use Pagina's Editar conteudo action; rename/reorder/disable/re-enable and watch inline preview without clicking Preview; enter invalid text/URL and confirm stale preview is replaced by an error; save/reopen and use Revisar; confirm local remote-action buttons are disabled with a local-project reason. Check keyboard focus, narrow desktop window and 200% zoom. Do not connect to production. After this retest, correction 4 (focused forms and button hierarchy) is the next implementation slice; media support remains correction 5.
 
 The requested direction is appropriate: improve the maintained site and editor without reopening the static-hosting, desktop bridge, or FTP architecture. However, not every proposed change is equally small. Website content, footer binding, insertion placement, and tab navigation can be isolated; repeatable custom sections cross several existing contracts and need a separate design gate.
 

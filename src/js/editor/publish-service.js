@@ -413,6 +413,8 @@ export function getPublicationReadiness(state) {
     };
   }
 
+  if (state.openedProject.source === "local") return localProjectRemoteUnavailable();
+
   if (state.compositionDirty || state.contentDirty || state.contentSaving) {
     return {
       ok: false,
@@ -459,8 +461,14 @@ export function getRetrievalReadiness(state, profile, password) {
 export function getSourceUpdateReadiness(state, profile, password) {
   const ready = getEditingReadiness(state);
   if (!ready.ok) return ready;
+  if (state.openedProject.source === "local") return localProjectRemoteUnavailable();
   if (state.contentDirty || state.compositionDirty) return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve as alterações antes de atualizar o projeto remoto." };
   return getProfileReadiness(profile, password);
+}
+
+function localProjectRemoteUnavailable() {
+  return { ok: false, code: "REMOTE_PROJECT_REQUIRED", stage: "not_started",
+    message: "Projeto local: atualização remota e publicação indisponíveis nesta sessão." };
 }
 
 function normalizePort(value) {

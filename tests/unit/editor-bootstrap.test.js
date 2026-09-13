@@ -8,6 +8,56 @@ import { createMemoryDesktopHost } from "../../src/js/editor/desktop-host.js";
 
 const STORAGE_KEY = "labfon.editor.lastSource";
 
+describe("manual acceptance operation regressions", () => {
+  const profile = { host: "ftp.example.edu", port: 21, username: "editor", remoteSourcePath: "/source", remotePublishPath: "/", secure: true, hasPassword: true };
+
+  it("does not enter remote operations for a local-only project, even with a saved ready profile", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.updateRemoteProjectSource = vi.fn();
+    host.publishGeneratedSite = vi.fn();
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: host });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "local", path: "C:/fixture" },
+        publish: { status: "ready", profile }, build: { status: "success" } });
+      for (const id of ["editor-update-remote-source", "editor-publish-site"]) {
+        const button = document.getElementById(id);
+        expect(button.disabled).toBe(true);
+        expect(document.getElementById(`${id}-reason`).textContent).toContain("Projeto local");
+        button.click();
+      }
+      expect(host.updateRemoteProjectSource).not.toHaveBeenCalled();
+      expect(host.publishGeneratedSite).not.toHaveBeenCalled();
+      expect(app.store.getState().publish.status).toBe("ready");
+      expect(document.getElementById("editor-session-project").textContent).toBe("local aberto");
+    } finally { app.destroy(); }
+  });
+
+  it.each(["success", "failure", "throw", "malformed"])("settles remote source-update state after %s without a build prerequisite", async (outcome) => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.updateRemoteProjectSource = vi.fn(async () => {
+      if (outcome === "throw") throw new Error("Simulated failure");
+      if (outcome === "malformed") return undefined;
+      return { ok: outcome === "success", code: "FIXTURE_RESULT", message: "Fixture result" };
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: host });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
+        publish: { status: "configured", profile }, build: { status: "idle" } });
+      document.getElementById("editor-update-remote-source").click();
+      expect(app.store.getState().publish.status).toBe("publishing");
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe(outcome === "success" ? "configured" : "failed"));
+      expect(document.getElementById("editor-publish-status").textContent).not.toContain("Atualizando projeto remoto...");
+      expect(document.getElementById("editor-update-remote-source").disabled).toBe(false);
+      expect(host.updateRemoteProjectSource).toHaveBeenCalledOnce();
+    } finally { app.destroy(); confirm.mockRestore(); }
+  });
+});
+
 async function waitForCondition(predicate) {
   for (let index = 0; index < 20; index += 1) {
     if (predicate()) return;
@@ -517,7 +567,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
       status: "valid",
     });
     expect(document.getElementById("editor-project-status").textContent).toBe(
-      "Projeto aberto (válido): C:/lab-fon-ufrj",
+      "Projeto local aberto (válido): C:/lab-fon-ufrj",
     );
     expect(
       document.getElementById("editor-section-list").textContent,

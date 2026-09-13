@@ -225,8 +225,13 @@ describe("C2 editor shared ownership", () => {
       get("editor-custom-discard").click();
       expect(app.store.getState().draftComposition.schemaVersion).toBeUndefined();
       for (const name of ["Custom A", "Custom B"]) {
+        get("editor-tab-page").click();
         input(get("editor-custom-new-title"), name);
         get("editor-custom-create").click();
+        expect(get("editor-tab-content").getAttribute("aria-selected")).toBe("true");
+        expect(document.activeElement).toBe(get("editor-custom-select"));
+        expect(get("editor-tabpanel-content").firstElementChild.contains(get("editor-custom-add-block"))).toBe(true);
+        expect(get("editor-custom-current-title").textContent).toContain(name);
       }
       expect(custom(app.store.getState().draftComposition)).toHaveLength(2);
       expect(service.getSavedComposition().schemaVersion).toBeUndefined();
@@ -264,6 +269,49 @@ describe("C2 editor shared ownership", () => {
       expect(app.store.getState().draftComposition).toBe(draft);
       expect(app.store.getState().loadedComposition).toBe(baseline);
       expect(app.store.getState().compositionDirty).toBe(true);
+    } finally { app.destroy(); }
+  });
+
+  it("edits independent instances and refreshes preview from draft changes without a preview click", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const initial = two();
+    const service = createMemoryCompositionService(initial);
+    const app = initEditorApp({ compositionService: service });
+    const get = (id) => document.getElementById(id);
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "local", path: "C:/fixture" } });
+      const [a, b] = custom(app.store.getState().draftComposition);
+      const preview = get("editor-composition-preview");
+      const ids = () => [...preview.querySelectorAll('[data-page-section="custom"]')].map((node) => node.id);
+      await vi.waitFor(() => expect(ids()).toEqual([a.id, b.id]));
+      get("editor-custom-select").value = b.id;
+      get("editor-custom-select").dispatchEvent(new Event("change"));
+      const textarea = get("editor-custom-blocks").querySelector("textarea");
+      textarea.value = "Independent B draft";
+      textarea.dispatchEvent(new Event("input", { bubbles: true }));
+      await vi.waitFor(() => expect(preview.querySelector(`[id="${b.id}"]`).textContent).toContain("Independent B draft"));
+      expect(custom(app.store.getState().draftComposition)[0].content).toEqual(a.content);
+      const title = get("editor-custom-title");
+      title.value = "Renamed B"; title.dispatchEvent(new Event("input", { bubbles: true }));
+      await vi.waitFor(() => expect(preview.querySelector(`[id="${b.id}-title"]`).textContent).toBe("Renamed B"));
+      expect(get("editor-custom-select").value).toBe(b.id);
+      get("editor-tab-page").click();
+      get("editor-custom-edit-content").click();
+      expect(get("editor-tab-content").getAttribute("aria-selected")).toBe("true");
+      // Rapid state updates must leave the newest order/content visible.
+      app.store.setState({ draftComposition: moveSection(moveSection(app.store.getState().draftComposition, b.id, "up"), b.id, "up") });
+      app.store.setState({ draftComposition: removeSection(app.store.getState().draftComposition, a.id) });
+      await vi.waitFor(() => expect(ids()).toEqual([b.id]));
+      app.store.setState({ draftComposition: enableCustomSection(app.store.getState().draftComposition, a.id, { afterSectionId: b.id }) });
+      await vi.waitFor(() => expect(ids()).toEqual([b.id, a.id]));
+      const invalid = updateCustomSection(app.store.getState().draftComposition, b.id, { title: "" });
+      app.store.setState({ draftComposition: invalid });
+      await vi.waitFor(() => expect(preview.querySelectorAll('[data-page-section="custom"]')).toHaveLength(0));
+      expect(preview.textContent).toContain("campos inválidos");
+      get("editor-custom-discard").click();
+      await vi.waitFor(() => expect(ids()).toEqual([a.id, b.id]));
+      expect(service.getSavedComposition()).toEqual(initial);
     } finally { app.destroy(); }
   });
 });

@@ -315,7 +315,11 @@ function updateDraftComposition(store, createNextComposition, allowInvalid = fal
 }
 
 async function operationResult(promise) {
-  try { return await promise; }
+  try {
+    const result = await promise;
+    return result && typeof result.ok === "boolean" ? result
+      : { ok: false, code: "EDITOR_OPERATION_INVALID_RESULT", message: "A operação não retornou um resultado válido." };
+  }
   catch (error) { return { ok: false, code: "EDITOR_OPERATION_FAILED", message: error instanceof Error ? error.message : "Não foi possível concluir a operação." }; }
 }
 
@@ -878,7 +882,12 @@ function createLayout(
   const insertionTarget = () => positionSelect.value === "" ? undefined : { afterSectionId: positionSelect.value === "start" ? null : positionSelect.value.slice(6) };
   const customEditor = createCustomSectionEditor({ store, insertionTarget,
     update: (next, allowInvalid) => updateDraftComposition(store, next, allowInvalid),
-    saveButton: saveCompositionButton, discardButton: discardCompositionButton });
+    saveButton: saveCompositionButton, discardButton: discardCompositionButton,
+    onEditContent: () => {
+      selectTab(2);
+      customEditor.content.scrollIntoView?.({ block: "start" });
+      documentRef.getElementById("editor-custom-select").focus();
+    } });
   compositionCard.insertBefore(customEditor.page, compositionActions);
   main.appendChild(contentEditor.element);
 
@@ -1008,7 +1017,7 @@ function createLayout(
   const panelContents = [
     [remoteCard],
     [projectRemote, statusCard, advanced],
-    [contentEditor.element, customEditor.content, contentCard],
+    [customEditor.content, contentEditor.element, contentCard],
     [compositionCard, previewCard],
     [buildCard],
     [publishCard],
@@ -1122,7 +1131,7 @@ function createLayout(
     if (state.openedProject) {
       const status =
         state.openedProject.status === "valid" ? "válido" : "inválido";
-      statusText.textContent = `Projeto aberto (${status}): ${state.openedProject.path}`;
+      statusText.textContent = `Projeto ${state.openedProject.source === "remote-ftp" ? "remoto" : "local"} aberto (${status}): ${state.openedProject.path}`;
       return;
     }
 
@@ -1143,6 +1152,48 @@ function createLayout(
     }
 
     statusText.textContent = "Nenhum projeto aberto.";
+  };
+
+  let previewDisposed = false;
+  let previewRunning = false;
+  let previewPending = false;
+  let lastPreviewDraft;
+  let lastPreviewModel;
+  const refreshDraftPreview = async () => {
+    previewPending = true;
+    if (previewRunning || previewDisposed) return;
+    previewRunning = true;
+    previewContainer.setAttribute("aria-busy", "true");
+    try {
+      // Serialize renders and coalesce edits so an older async render cannot win.
+      while (previewPending && !previewDisposed) {
+        previewPending = false;
+        const state = store.getState();
+        if (!state.draftComposition) { previewContainer.replaceChildren(); continue; }
+        const validation = validatePageComposition(state.draftComposition);
+        if (!validation.valid) {
+          previewContainer.textContent = "Prévia indisponível: a página contém campos inválidos.";
+          continue;
+        }
+        try {
+          await renderCompositionPreview({ documentRef, container: previewContainer,
+            composition: validation.composition,
+            previewData: state.editorSiteModel ? { editorSiteModel: state.editorSiteModel } : previewData,
+            registry: SECTION_REGISTRY });
+        } catch {
+          previewContainer.textContent = "Não foi possível atualizar a prévia da página.";
+        }
+      }
+    } finally {
+      previewRunning = false;
+      previewContainer.setAttribute("aria-busy", "false");
+    }
+  };
+  const updateDraftPreview = (state) => {
+    if (lastPreviewDraft === state.draftComposition && lastPreviewModel === state.editorSiteModel) return;
+    lastPreviewDraft = state.draftComposition;
+    lastPreviewModel = state.editorSiteModel;
+    void refreshDraftPreview();
   };
 
   const updateCompositionUi = (state) => {
@@ -1567,15 +1618,7 @@ function createLayout(
     store.setState({ diagnostics: validation.diagnostics });
     if (!validation.valid) return;
 
-    await renderCompositionPreview({
-      documentRef,
-      container: previewContainer,
-      composition: validation.composition,
-      previewData: store.getState().editorSiteModel
-        ? { editorSiteModel: store.getState().editorSiteModel }
-        : previewData,
-      registry: SECTION_REGISTRY,
-    });
+    await refreshDraftPreview();
   });
 
   discardCompositionButton.addEventListener("click", () => {
@@ -1992,6 +2035,11 @@ function createLayout(
     showPublishFeedbackIn(publishCard);
     const state = store.getState();
     const profile = state.publish?.profile || readPublishProfileFromForm();
+    const readiness = getSourceUpdateReadiness(state, profile, publishPasswordInput.value);
+    if (!readiness.ok) {
+      store.setState({ publish: { ...state.publish, status: "failed", message: readiness.message, summary: null } });
+      return;
+    }
 
     if (!state.openedProject || state.openedProject.status !== "valid") {
       store.setState({
@@ -2101,7 +2149,7 @@ function createLayout(
     discardCompositionButton.disabled = !editing.ok || !state.compositionDirty;
     const values = {
       server: state.remote?.status === "connected" ? "conectado nesta sessão" : "não verificado",
-      project: state.openedProject?.status === "valid" ? "aberto" : state.openedProject ? "inválido" : "nenhum",
+      project: state.openedProject?.status === "valid" ? state.openedProject.source === "remote-ftp" ? "remoto aberto" : "local aberto" : state.openedProject ? "inválido" : "nenhum",
       changes: state.contentDirty || state.compositionDirty ? "não salvas" : "nenhuma não salva",
       source: state.receipts.source ? "atualizado nesta sessão" : "estado desconhecido",
       build: state.build?.status === "stale" ? "desatualizada" : state.build?.status === "running" ? "gerando" : state.build?.status === "success" ? "atual" : "não gerada",
@@ -2130,6 +2178,7 @@ function createLayout(
   const unsubscribePublish = store.subscribe(updatePublishUi);
   const unsubscribeRemote = store.subscribe(updateRemoteUi);
   const unsubscribeOperations = store.subscribe(updateOperationUi);
+  const unsubscribePreview = store.subscribe(updateDraftPreview);
   updateStatus(store.getState());
   updateCompositionUi(store.getState());
   updateProjectContentUi(store.getState());
@@ -2137,6 +2186,7 @@ function createLayout(
   updatePublishUi(store.getState());
   updateRemoteUi(store.getState());
   updateOperationUi(store.getState());
+  updateDraftPreview(store.getState());
 
   publishController.loadProfile().then((result) => {
     if (!result.ok || !result.profile || store.getState().publish?.profile) return;
@@ -2155,6 +2205,8 @@ function createLayout(
   return {
     element: wrapper,
     unsubscribe() {
+      previewDisposed = true;
+      unsubscribePreview();
       contentEditor.destroy();
       unsubscribeStatus();
       unsubscribeComposition();
