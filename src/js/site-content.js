@@ -115,7 +115,78 @@ function applyFooterContent(documentRef, footer = {}, options = {}) {
     });
   }
 
-  setText(documentRef, "[data-site-footer-bottom]", footer.bottomText);
+  if (footerContent) {
+    footerContent.querySelector(".footer-coordination")?.remove();
+    const coordination = createFooterCoordination(footer.coordination);
+    if (coordination) footerContent.appendChild(coordination);
+    footerContent.classList.toggle("has-coordination", Boolean(coordination));
+
+    const parent = footerContent.parentElement;
+    parent?.querySelector("[data-site-footer-credits]")?.remove();
+    const credits = createFooterCredits(footer.institutionalCredits);
+    if (credits) footerContent.after(credits);
+  }
+
+  setText(documentRef, "[data-site-footer-bottom]", formatCopyright(footer.bottomText));
+}
+
+function formatCopyright(text) {
+  if (typeof text !== "string" || !/^©\s+/.test(text)) return text;
+  // Accept the former literal prefix without rewriting years inside editable wording.
+  const wording = text.replace(/^©\s+(?:\d{4}(?:[–-]\d{4})?\s+)?/, "");
+  const startYear = 2025;
+  const currentYear = new Date().getFullYear();
+  const period = currentYear > startYear ? `${startYear}–${currentYear}` : String(startYear);
+  return `© ${period} ${wording}`;
+}
+
+function createFooterCoordination(coordination = {}) {
+  const column = createElement("div", {
+    className: "footer-section footer-coordination",
+  });
+  for (const [key, label] of [
+    ["lab", "Coordenação do Laboratório"],
+    ["extensionProject", "Coordenação do PROVALE em Extensão"],
+  ]) {
+    const people = Array.isArray(coordination?.[key])
+      ? coordination[key].filter((person) => typeof person?.name === "string" && person.name.trim())
+      : [];
+    if (!people.length) continue;
+    const group = createElement("div", { className: "footer-coordination-group" });
+    group.appendChild(createElement("h4", {}, label));
+    const list = createElement("ul");
+    for (const person of people) {
+      const item = createElement("li");
+      item.textContent = [person.name, person.role, person.institution]
+        .filter((value) => typeof value === "string" && value.trim()).join(" - ");
+      list.appendChild(item);
+    }
+    group.appendChild(list);
+    column.appendChild(group);
+  }
+  if (!column.childElementCount) return null;
+  column.prepend(createElement("h3", {}, "Coordenação"));
+  return column;
+}
+
+function createFooterCredits(credits) {
+  if (!Array.isArray(credits)) return null;
+  const list = createElement("ul", {
+    className: "footer-credits",
+    "data-site-footer-credits": "",
+    "aria-label": "Créditos institucionais",
+  });
+  for (const credit of credits) {
+    const parts = [credit?.label, credit?.name]
+      .filter((value) => typeof value === "string" && value.trim());
+    if (!parts.length) continue;
+    const item = createElement("li");
+    const label = parts[0];
+    if (typeof credit.href === "string" && getSafeURL(credit.href)) item.appendChild(createFooterLink(label, credit.href));
+    else item.textContent = label;
+    list.appendChild(item);
+  }
+  return list.childElementCount ? list : null;
 }
 
 function createFooterSection(documentRef, section, options = {}) {

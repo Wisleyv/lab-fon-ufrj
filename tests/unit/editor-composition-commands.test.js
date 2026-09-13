@@ -26,6 +26,52 @@ const composition = {
 };
 
 describe("Editor Composition Commands", () => {
+  const activeIds = (page) => page.sections.filter((section) => section.enabled).map((section) => section.id);
+  it.each([
+    [null, ["parcerias", "sobre", "linhas-pesquisa", "pesquisadores", "publicacoes"]],
+    ["linhas-pesquisa", ["sobre", "linhas-pesquisa", "parcerias", "pesquisadores", "publicacoes"]],
+    ["publicacoes", ["sobre", "linhas-pesquisa", "pesquisadores", "publicacoes", "parcerias"]],
+  ])("re-enables at the chosen active position after %s without mutation", (afterSectionId, expected) => {
+    const draft = removeSection(composition, "parcerias");
+    draft.sections.find((section) => section.id === "parcerias").navigation = { visible: true, label: "Apoio" };
+    const before = JSON.stringify(draft);
+    const result = addSection(draft, "parcerias", undefined, { afterSectionId });
+    expect(activeIds(result)).toEqual(expected);
+    expect(result.sections.filter((section) => section.type === "parcerias")).toHaveLength(1);
+    expect(result.sections.find((section) => section.id === "parcerias").navigation.label).toBe("Apoio");
+    expect(JSON.stringify(draft)).toBe(before);
+  });
+
+  it("inserts an absent registered section and keeps disabled entries out of placement semantics", () => {
+    const draft = removeSection(composition, "linhas-pesquisa");
+    const result = addSection(draft, "extension", undefined, { afterSectionId: "sobre" });
+    expect(activeIds(result)).toEqual(["sobre", "extensao", "pesquisadores", "publicacoes", "parcerias"]);
+    expect(result.sections.find((section) => section.id === "linhas-pesquisa").enabled).toBe(false);
+  });
+
+  it("preserves append and original re-enable positions when target is omitted", () => {
+    expect(activeIds(addSection(composition, "extension")).at(-1)).toBe("extensao");
+    expect(activeIds(addSection(removeSection(composition, "linhas-pesquisa"), "linhas_pesquisa"))).toEqual(activeIds(composition));
+  });
+
+  it.each(["missing", "linhas-pesquisa", "parcerias"])("rejects invalid target %s without changing input", (afterSectionId) => {
+    const draft = removeSection(removeSection(composition, "parcerias"), "linhas-pesquisa");
+    const before = JSON.stringify(draft);
+    const result = addSection(draft, "parcerias", undefined, { afterSectionId });
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics[0].code).toBe("SECTION_INSERTION_INVALID");
+    expect(JSON.stringify(draft)).toBe(before);
+  });
+
+  it("rejects corrupt duplicate targets before normalization can discard them", () => {
+    const draft = removeSection(composition, "parcerias");
+    draft.sections.push({ ...draft.sections[0] });
+    const before = JSON.stringify(draft);
+    expect(addSection(draft, "parcerias", undefined, { afterSectionId: "sobre" }).ok).toBe(false);
+    expect(JSON.stringify(draft)).toBe(before);
+    expect(addSection(composition, "sobre", undefined, { afterSectionId: null }).ok).toBe(false);
+  });
+
   it("moves a section and makes order deterministic", () => {
     const moved = moveSection(composition, "parcerias", "up");
 

@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createDefaultPageComposition } from "../src/js/page/default-composition.js";
+import { normalizePageComposition } from "../src/js/page/composition.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,12 +42,9 @@ export function readPageComposition(contentDir = CONTENT_DIR) {
     return createDefaultPageComposition();
   }
 
-  try {
-    return JSON.parse(fs.readFileSync(pagePath, "utf8"));
-  } catch (error) {
-    console.warn(`⚠️  Page composition could not be read: ${error.message}`);
-    return createDefaultPageComposition();
-  }
+  const page = JSON.parse(fs.readFileSync(pagePath, "utf8"));
+  normalizePageComposition(page);
+  return page;
 }
 
 export function readJsonFile(filePath, fallback = {}) {

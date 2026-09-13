@@ -1,8 +1,12 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { applySiteContent } from "../../src/js/site-content.js";
+import fs from "node:fs";
 
 describe("site content binding", () => {
+  afterEach(() => vi.useRealTimers());
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2025, 6, 1));
     document.body.innerHTML = `
       <picture>
         <source data-site-logo-source>
@@ -176,6 +180,78 @@ describe("site content binding", () => {
     expect(
       document.querySelector("[data-site-footer-bottom]").textContent,
     ).toBe("");
+  });
+
+  it("binds canonical coordination as the fourth column and credits outside the columns", () => {
+    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+    applySiteContent(document, site);
+    const columns = document.querySelector("[data-site-footer-content]");
+    expect(columns.children).toHaveLength(4);
+    expect(columns.lastElementChild.classList.contains("footer-coordination")).toBe(true);
+    expect([...columns.querySelectorAll(".footer-coordination-group")].map((group) => [...group.querySelectorAll("li")].map((li) => li.textContent))).toEqual([
+      ["João Moraes", "Manuella Carnaval"],
+      ["Carolina Gomes da Silva", "Manuella Carnaval", "Juliana Dias"],
+    ]);
+    expect([...document.querySelectorAll(".footer-credits li")].map((li) => li.textContent)).toEqual(["LabFonAc-UFRJ", "PPGLEV", "UFRJ"]);
+    expect(document.querySelector("footer").textContent).not.toMatch(/CNPq|Conselho Nacional de Desenvolvimento/);
+    expect(columns.contains(document.querySelector(".footer-credits"))).toBe(false);
+    expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(site.footer.bottomText.replace("© ", "© 2025 "));
+  });
+
+  it.each([2025, 2026, 2031])("calculates the copyright range at render time in %i, including legacy literals", (year) => {
+    vi.setSystemTime(new Date(year, 6, 1));
+    const wording = "Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados.";
+    for (const prefix of ["© ", "© 2025 ", "© 2026 ", "© 2025–2026 "]) {
+      const site = { footer: { bottomText: prefix + wording } };
+      applySiteContent(document, site);
+      expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(`© ${year === 2025 ? "2025" : `2025–${year}`} ${wording}`);
+      expect(site.footer.bottomText).toBe(prefix + wording);
+    }
+  });
+
+  it("preserves custom bottom wording and renders safe linked or name-only legacy credits", () => {
+    applySiteContent(document, { footer: { bottomText: "Arquivo 2020", institutionalCredits: [
+      { label: "UFRJ", name: "Expanded name", href: "https://ufrj.br" },
+      { name: "Legacy name" }, { label: "Unsafe", href: "javascript:alert(1)" },
+    ] } });
+    expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe("Arquivo 2020");
+    expect([...document.querySelectorAll(".footer-credits li")].map((li) => li.textContent)).toEqual(["UFRJ", "Legacy name", "Unsafe"]);
+    expect(document.querySelector(".footer-credits a").getAttribute("href")).toBe("https://ufrj.br/");
+    expect(document.querySelectorAll(".footer-credits a")).toHaveLength(1);
+  });
+
+  it("rebinds without duplicates and removes absent optional groups on older data", () => {
+    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+    applySiteContent(document, site);
+    applySiteContent(document, site);
+    expect(document.querySelectorAll(".footer-coordination")).toHaveLength(1);
+    expect(document.querySelectorAll(".footer-credits")).toHaveLength(1);
+    delete site.footer.coordination;
+    delete site.footer.institutionalCredits;
+    applySiteContent(document, site);
+    expect(document.querySelectorAll(".footer-section")).toHaveLength(3);
+    expect(document.querySelector(".footer-coordination, .footer-credits, .has-coordination")).toBeNull();
+  });
+
+  it("skips empty or malformed optional values without empty headings", () => {
+    for (const coordination of [undefined, null, {}, { lab: null, extensionProject: [null, {}, { name: " " }] }]) {
+      applySiteContent(document, { footer: { sections: [], coordination, institutionalCredits: [null, {}, { label: " ", name: "" }] } });
+      expect(document.querySelector("footer h3, footer h4, .footer-credits")).toBeNull();
+    }
+  });
+
+  it("renders optional text safely while preserving existing contact and link filtering", () => {
+    const unsafe = '<img src=x onerror="alert(1)">';
+    applySiteContent(document, { footer: {
+      sections: [{ title: "Links", links: [{ label: "Hidden", href: "#trabalhos" }, { label: "Unsafe", href: "javascript:alert(1)" }, { label: "Contato", href: "#contato" }] }],
+      coordination: { lab: [{ name: unsafe, role: "Coordenação", institution: "UFRJ" }] },
+      institutionalCredits: [{ label: unsafe, name: "Instituição" }],
+    } }, { visibleSectionAnchors: new Set(["#contato"]) });
+    expect(document.querySelector("footer img, footer script")).toBeNull();
+    expect(document.querySelector(".footer-coordination li").textContent).toBe(`${unsafe} - Coordenação - UFRJ`);
+    expect(document.querySelector("a[href='#trabalhos'], a[href^='javascript:']")).toBeNull();
+    expect(document.querySelector("a[href='#contato']")).not.toBeNull();
+    expect(document.querySelectorAll(".footer-coordination-group")).toHaveLength(1);
   });
 
   it("resolves logo sources and resolution variants below the deployment base", () => {

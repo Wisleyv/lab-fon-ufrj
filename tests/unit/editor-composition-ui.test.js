@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { initEditorApp } from "../../src/js/editor/bootstrap.js";
 import { createMemoryCompositionService } from "../../src/js/editor/composition-service.js";
 import { createMemoryDesktopHost } from "../../src/js/editor/desktop-host.js";
@@ -142,6 +142,55 @@ function createFailingProjectHost(options) {
 }
 
 describe("Editor Composition UI", () => {
+  it.each([
+    ["start", ["parcerias", "sobre", "linhas-pesquisa"]],
+    ["after:sobre", ["sobre", "parcerias", "linhas-pesquisa"]],
+    ["after:linhas-pesquisa", ["sobre", "linhas-pesquisa", "parcerias"]],
+  ])("inserts at %s and reuses composition order in preview and navigation", async (position, expected) => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const page = { ...initialComposition, sections: initialComposition.sections.map((section) => ({
+      ...section, enabled: section.type !== "parcerias", navigation: { visible: true },
+    })).concat({ id: "extensao", type: "extension", enabled: false, order: 4 }) };
+    const service = createMemoryCompositionService(page);
+    const app = initEditorApp({ compositionService: service, previewData });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", path: "C:/memory-project" } });
+      const select = document.getElementById("editor-add-section-position");
+      expect([...select.options].map((option) => option.value)).toEqual(["", "start", "after:sobre", "after:linhas-pesquisa"]);
+      select.value = position;
+      document.getElementById("editor-add-section-select").value = "parcerias";
+      document.getElementById("editor-add-section").click();
+      const activeIds = () => app.store.getState().draftComposition.sections.filter((section) => section.enabled).map((section) => section.id);
+      expect(activeIds()).toEqual(expected);
+      document.getElementById("editor-preview-composition").click();
+      await vi.waitFor(() => expect(document.querySelectorAll("#editor-composition-preview [data-page-section]")).toHaveLength(3));
+      expect([...document.querySelectorAll("#editor-composition-preview [data-page-section]")].map((node) => node.id)).toEqual(expected);
+      expect([...document.querySelectorAll("#editor-composition-preview #main-navigation > li > a")].map((node) => node.getAttribute("href"))).toEqual([...expected.map((id) => `#${id}`), "#contato"]);
+      expect(document.querySelector("#editor-composition-preview #extensao")).toBeNull();
+      document.getElementById("editor-save-composition").click();
+      await vi.waitFor(() => expect(app.store.getState().compositionDirty).toBe(false));
+      expect((await service.loadComposition()).sections.filter((section) => section.enabled).map((section) => section.id)).toEqual(expected);
+    } finally { app.destroy(); }
+  });
+
+  it("reports a stale placement without changing draft or baseline", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(initialComposition) });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", path: "C:/memory-project" } });
+      document.getElementById("editor-add-section-position").value = "after:parcerias";
+      document.querySelector('[data-section-id="parcerias"] button:nth-child(3)').click();
+      const before = app.store.getState();
+      document.getElementById("editor-add-section-select").value = "parcerias";
+      document.getElementById("editor-add-section").click();
+      expect(app.store.getState().draftComposition).toBe(before.draftComposition);
+      expect(app.store.getState().loadedComposition).toBe(before.loadedComposition);
+      expect(app.store.getState().diagnostics[0].code).toBe("SECTION_INSERTION_INVALID");
+    } finally { app.destroy(); }
+  });
+
   it("loads current composition as separate saved and draft state", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const app = initEditorApp({
@@ -182,6 +231,7 @@ describe("Editor Composition UI", () => {
     });
 
     await app.ready;
+    app.store.setState({ openedProject: { status: "valid", path: "C:/memory-project" } });
 
     document
       .querySelector(

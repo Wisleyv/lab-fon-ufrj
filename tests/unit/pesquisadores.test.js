@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { PesquisadoresSection } from "../../src/js/sections/pesquisadores.js";
 import { EQUIPE_CATEGORIES } from "../../src/js/sections/equipe-categories.js";
+import fs from "node:fs/promises";
 
 describe("PesquisadoresSection", () => {
   let section;
@@ -23,6 +24,44 @@ describe("PesquisadoresSection", () => {
   });
 
   describe("Alphabetical Sorting", () => {
+    it("renders the canonical founder first without changing identity or other categories", async () => {
+      const files = await fs.readdir("content/equipe");
+      const people = await Promise.all(files.filter((file) => file.endsWith(".json")).map(async (file) => JSON.parse(await fs.readFile(`content/equipe/${file}`, "utf8"))));
+      const founder = JSON.parse(await fs.readFile("content/equipe/joao-antonio-de-moraes.json", "utf8"));
+      expect(founder).toMatchObject({ nome: "João Moraes", categoria: "docentes", badge: "Fundador", priority: 0, foto: "assets/images/avatar.webp", lattes: "http://lattes.cnpq.br/3799132338763925" });
+      await section.render(people);
+      const names = [...container.querySelectorAll("#categoria-docentes-panel .membro-nome")].map((node) => node.textContent);
+      expect(names[0]).toBe("João Moraes");
+      expect(names.slice(1)).toEqual(people.filter((person) => person.categoria === "docentes" && person !== people.find((p) => p.nome === founder.nome)).map((p) => p.nome).sort((a, b) => a.localeCompare(b, "pt-BR", { sensitivity: "base" })));
+      expect(container.querySelectorAll(".membro-card")).toHaveLength(people.length);
+      expect(container.querySelectorAll("#categoria-egressos-panel .membro-card")).toHaveLength(people.filter((p) => p.categoria === "egressos").length);
+      container.querySelector("#categoria-docentes-trigger").click();
+      expect(container.querySelector("#categoria-docentes-panel").hidden).toBe(false);
+      for (const mode of ["grid", "list", "card"]) {
+        section.switchView(mode);
+        expect(container.querySelector(".membro-badge").textContent).toBe("Fundador");
+        expect(container.querySelector(".membro-badge").hasAttribute("aria-hidden")).toBe(false);
+      }
+    });
+
+    it("merges legacy founders once, orders priority ties in Portuguese and ignores priority outside Docentes", async () => {
+      const people = [
+        { nome: "Zélia", categoria: "fundador" },
+        { nome: "Álvaro", categoria: "docentes", priority: 0, badge: '<img src=x onerror="alert(1)">' },
+        { nome: "Bruna", categoria: "docentes" },
+        { nome: "Ana", categoria: "docentes", priority: "0" },
+        { nome: "Zeca", categoria: "egressos", priority: 0 },
+        { nome: "Alice", categoria: "egressos", priority: 999 },
+      ];
+      await section.render(people);
+      expect(container.querySelector("#categoria-fundador-trigger")).toBeNull();
+      expect([...container.querySelectorAll("#categoria-docentes-panel .membro-nome")].map((e) => e.textContent)).toEqual(["Álvaro", "Zélia", "Ana", "Bruna"]);
+      expect([...container.querySelectorAll("#categoria-egressos-panel .membro-nome")].map((e) => e.textContent)).toEqual(["Alice", "Zeca"]);
+      expect(container.querySelectorAll(".membro-card")).toHaveLength(6);
+      expect(container.querySelector(".membro-badge img")).toBeNull();
+      expect(container.querySelectorAll(".membro-badge")[1].textContent).toBe("Fundador");
+      expect(people[0].categoria).toBe("fundador");
+    });
     it("should sort members alphabetically within each category", async () => {
       const testData = [
         { nome: "Zé Silva", categoria: "docentes", instituicao: "UFRJ" },

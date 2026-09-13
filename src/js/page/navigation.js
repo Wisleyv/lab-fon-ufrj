@@ -1,10 +1,5 @@
-import { getSectionDefinition } from "./section-registry.js";
+import { getSectionAnchor } from "./section-registry.js";
 import { createElement } from "../utils/helpers.js";
-
-function getSectionAnchor(section, registry) {
-  const definition = getSectionDefinition(section.type, registry);
-  return definition?.sectionId || section.id;
-}
 
 function findSectionByType(composition, type) {
   return composition.sections.find(
@@ -40,7 +35,7 @@ function createNavItem(section, composition, registry, documentRef) {
   if (children.length > 0) {
     item.className = "has-dropdown";
     const link = createNavLink(
-      section.navigation.label,
+      section.navigation.label || section.title,
       getSectionAnchor(section, registry),
     );
     link.setAttribute("aria-haspopup", "true");
@@ -63,7 +58,7 @@ function createNavItem(section, composition, registry, documentRef) {
 
   item.appendChild(
     createNavLink(
-      section.navigation.label,
+      section.navigation.label || section.title,
       getSectionAnchor(section, registry),
     ),
   );
@@ -81,8 +76,9 @@ export function renderPageNavigation({
   composition,
   registry,
   containerId = "main-navigation",
+  root = documentRef,
 }) {
-  const navList = documentRef.getElementById(containerId);
+  const navList = root.querySelector(`[id="${containerId}"]`);
   if (!navList || !composition) return [];
 
   const navigationSections = getNavigationSections(composition);

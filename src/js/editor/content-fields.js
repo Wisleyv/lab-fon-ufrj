@@ -30,7 +30,10 @@ export const CONTENT_DATASETS = {
   equipe: {
     label: "Equipe", empty: { nome: "", instituicao: "", categoria: "docentes", foto: "assets/images/avatar.webp", lattes: "" },
     fields: [text("nome", "Nome", true), text("instituicao", "Instituição", true),
-      { key: "categoria", label: "Categoria", options: EQUIPE_CATEGORIES.map((c) => c.id) }, url("foto", "Foto"), url("lattes", "Currículo Lattes")],
+      { key: "categoria", label: "Categoria", options: EQUIPE_CATEGORIES.map((c) => c.id) },
+      { ...text("badge", "Distinção"), maxLength: 40 },
+      { key: "priority", label: "Prioridade em Docentes", type: "number", optional: true, max: 999 },
+      url("foto", "Foto"), url("lattes", "Currículo Lattes")],
   },
   linhasPesquisa: {
     label: "Linhas de Pesquisa", empty: { id: "", nome: "", descricao: "", icon: "fa-solid fa-flask", estudantes: 0, pesquisadores: 0, ordem: 1 },
@@ -57,7 +60,8 @@ export function validateContent(value, fields) {
   for (const field of fields) {
     const item = value?.[field.key];
     if (field.required && (typeof item !== "string" || !item.trim())) errors.push(`${field.label}: campo obrigatório.`);
-    if (field.type === "number" && (!Number.isInteger(item) || item < 0)) errors.push(`${field.label}: use um inteiro não negativo.`);
+    if (field.type === "number" && !(field.optional && item === undefined) && (!Number.isInteger(item) || item < 0 || item > (field.max ?? Infinity))) errors.push(`${field.label}: use um inteiro entre 0 e ${field.max ?? "o limite permitido"}.`);
+    if (field.maxLength && item !== undefined && (typeof item !== "string" || item.length > field.maxLength)) errors.push(`${field.label}: use até ${field.maxLength} caracteres.`);
     if (field.type === "url" && item && !/^(https?:\/\/|mailto:|#|\/?(?:assets\/|images\/))/.test(item)) errors.push(`${field.label}: endereço inválido.`);
     if (field.key === "id" && item && !/^[a-z0-9][a-z0-9_-]*$/.test(item)) errors.push("Identificador: use letras minúsculas, números e hífens.");
     if (field.type === "list") {

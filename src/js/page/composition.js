@@ -1,5 +1,7 @@
 import { createDefaultPageComposition } from "./default-composition.js";
 import { SECTION_REGISTRY, getSectionDefinition } from "./section-registry.js";
+import { hasOnlyKeys, validCustomSection, normalizeCustomSection } from "./custom-schema.js";
+import { createCustomSectionElement } from "../sections/custom.js";
 
 function hasSections(page) {
   return Array.isArray(page?.sections) && page.sections.length > 0;
@@ -29,6 +31,8 @@ function normalizeSections(page, registry, diagnostics) {
   const source = hasSections(page) ? page : createDefaultPageComposition();
   const seenIds = new Set();
   const seenUniqueTypes = new Set();
+  const anchors = new Set(["top", "contato", ...Object.values(registry).map((definition) => definition.sectionId).filter(Boolean),
+    ...source.sections.filter((section) => section?.type === "custom").map((section) => section.id)]);
 
   return source.sections
     .map((section, index) => {
@@ -81,6 +85,23 @@ function normalizeSections(page, registry, diagnostics) {
 
       seenIds.add(id);
 
+      if (section.type === "custom") {
+        if (page.schemaVersion !== 2 || !validCustomSection(section, anchors)) {
+          diagnostics.push(createDiagnostic("PAGE_CUSTOM_INVALID", "A seção personalizada contém dados inválidos ou não suportados.", section));
+          return null;
+        }
+        return normalizeCustomSection(section);
+      }
+      if (id.startsWith("custom-") ||
+          !hasOnlyKeys(section, ["id", "type", "enabled", "order", "navigation", "presentation", "lifecycle"]) ||
+          (section.navigation !== undefined && !hasOnlyKeys(section.navigation, ["visible", "label", "children"])) ||
+          (section.presentation !== undefined && !hasOnlyKeys(section.presentation, ["variant"])) ||
+          (section.lifecycle !== undefined && !hasOnlyKeys(section.lifecycle, ["status"])) ||
+          (section.navigation?.children !== undefined && (!Array.isArray(section.navigation.children) ||
+            section.navigation.children.some((child) => !hasOnlyKeys(child, ["label", "type", "targetId"]))))) {
+        diagnostics.push(createDiagnostic("PAGE_SECTION_UNSUPPORTED_FIELD", "A seção contém campos não suportados.", section));
+      }
+
       if (definition.unique && seenUniqueTypes.has(section.type)) {
         diagnostics.push(
           createDiagnostic(
@@ -120,6 +141,19 @@ function normalizeSections(page, registry, diagnostics) {
 
 export function validatePageComposition(page, registry = SECTION_REGISTRY) {
   const diagnostics = [];
+  if (!hasOnlyKeys(page, ["schemaVersion", "kind", "sections"]) ||
+      (page.schemaVersion !== undefined && page.schemaVersion !== 1 && page.schemaVersion !== 2) ||
+      (page.kind !== undefined && page.kind !== "single-page")) {
+    diagnostics.push(createDiagnostic("PAGE_SCHEMA_UNSUPPORTED", "A versão ou os campos da página não são suportados."));
+  }
+  if (page?.schemaVersion === 2 && Array.isArray(page.sections)) {
+    const custom = page.sections.filter((section) => section?.type === "custom");
+    if (page.sections.length > 100 || custom.length > 50 ||
+        custom.reduce((count, section) => count + (section.content?.blocks?.length || 0), 0) > 500 ||
+        new TextEncoder().encode(`${JSON.stringify(page, null, 2)}\n`).length > 1048576) {
+      diagnostics.push(createDiagnostic("PAGE_LIMIT_EXCEEDED", "A página excede os limites de conteúdo."));
+    }
+  }
 
   if (!hasSections(page)) {
     diagnostics.push(
@@ -131,6 +165,7 @@ export function validatePageComposition(page, registry = SECTION_REGISTRY) {
   }
 
   const normalized = {
+    ...(page?.schemaVersion !== undefined ? { schemaVersion: page.schemaVersion } : {}),
     kind: page?.kind || "single-page",
     sections: normalizeSections(page, registry, diagnostics).map(
       (section, index) => ({
@@ -139,6 +174,10 @@ export function validatePageComposition(page, registry = SECTION_REGISTRY) {
       }),
     ),
   };
+  if (page?.schemaVersion === 2 && new TextEncoder().encode(`${JSON.stringify(normalized, null, 2)}\n`).length > 1048576 &&
+      !diagnostics.some((item) => item.code === "PAGE_LIMIT_EXCEEDED")) {
+    diagnostics.push(createDiagnostic("PAGE_LIMIT_EXCEEDED", "A página excede os limites de conteúdo."));
+  }
 
   return {
     valid: diagnostics.length === 0,
@@ -148,16 +187,24 @@ export function validatePageComposition(page, registry = SECTION_REGISTRY) {
 }
 
 export function normalizePageComposition(page, registry = SECTION_REGISTRY) {
-  return validatePageComposition(page, registry).composition;
+  const result = validatePageComposition(page === undefined ? createDefaultPageComposition() : page, registry);
+  if (!result.valid) {
+    const error = new Error(result.diagnostics.map((item) => item.message).join(" "));
+    error.diagnostics = result.diagnostics;
+    throw error;
+  }
+  return result.composition;
 }
 
 export function applyPageComposition(
   documentRef,
   page,
   registry = SECTION_REGISTRY,
+  root = documentRef,
 ) {
   const composition = normalizePageComposition(page, registry);
-  const main = documentRef.getElementById("main-content");
+  const find = (id) => root.querySelector(`[id="${id}"]`);
+  const main = find("main-content");
 
   if (!main) {
     return composition;
@@ -170,7 +217,7 @@ export function applyPageComposition(
   );
 
   Object.values(registry).forEach((definition) => {
-    const element = documentRef.getElementById(definition.sectionId);
+    const element = definition.sectionId ? find(definition.sectionId) : null;
     if (!element) return;
 
     const isActive = activeTypes.has(definition.type);
@@ -179,13 +226,15 @@ export function applyPageComposition(
   });
 
   const orderedSections = documentRef.createDocumentFragment();
+  main.querySelectorAll('[data-page-section="custom"]').forEach((element) => element.remove());
 
   composition.sections.forEach((section) => {
     if (!section.enabled) return;
 
     const definition = getSectionDefinition(section.type, registry);
-    const element = definition
-      ? documentRef.getElementById(definition.sectionId)
+    const element = section.type === "custom"
+      ? createCustomSectionElement(documentRef, section)
+      : definition ? find(definition.sectionId)
       : null;
 
     if (element) {

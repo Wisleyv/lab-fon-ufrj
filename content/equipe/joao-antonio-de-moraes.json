@@ -1,5 +1,7 @@
 {
-  "nome": "Joao Antonio de Moraes",
+  "nome": "João Moraes",
+  "badge": "Fundador",
+  "priority": 0,
   "instituicao": "UFRJ",
   "categoria": "docentes",
   "foto": "assets/images/avatar.webp",

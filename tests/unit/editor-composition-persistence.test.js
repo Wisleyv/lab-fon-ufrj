@@ -94,6 +94,21 @@ function getEnabledByType(composition, type) {
 }
 
 describe("editor composition persistence", () => {
+  it.each([null, "sobre", "publicacoes"])("persists explicit placement after %s through write, verification and a fresh service", async (afterSectionId) => {
+    const project = await createTemporaryProject();
+    try {
+      const host = createNodeFileHost();
+      const service = createProjectCompositionService({ host, directory: project.directory });
+      const draft = addSection(await service.loadComposition(), "extension", undefined, { afterSectionId });
+      const result = await service.saveComposition(draft);
+      expect(result.ok).toBe(true);
+      const expected = draft.sections.filter((section) => section.enabled).map((section) => section.id);
+      expect((await project.readPageComposition()).sections.filter((section) => section.enabled).map((section) => section.id)).toEqual(expected);
+      const reopened = createProjectCompositionService({ host, directory: project.directory });
+      expect(await reopened.loadComposition()).toEqual(result.composition);
+    } finally { await project.cleanup(); }
+  });
+
   it("loads composition from the canonical content/page.json target", async () => {
     const host = createHost();
     const service = createProjectCompositionService({ host, directory });

@@ -1,4 +1,4 @@
-import { normalizePageComposition } from "../page/composition.js";
+import { normalizePageComposition, validatePageComposition } from "../page/composition.js";
 
 const REQUIRED_MARKERS = [
   "package.json",
@@ -88,6 +88,12 @@ export async function loadEditorSiteModel(host, directory) {
     loaded[key] = result.data;
   }
 
+  const pageValidation = validatePageComposition(loaded.page);
+  if (!pageValidation.valid) {
+    return { ok: false, model: null,
+      project: createProjectSummary(directory, { ...validation, status: "invalid", valid: false }),
+      diagnostics: [...diagnostics, ...pageValidation.diagnostics] };
+  }
   const model = {
     project: createProjectSummary(directory, validation),
     page: normalizePageComposition(loaded.page),

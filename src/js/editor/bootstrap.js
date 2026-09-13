@@ -12,23 +12,29 @@ import {
   moveSection,
   removeSection,
   restoreDraftComposition,
+  enableCustomSection,
 } from "./composition-commands.js";
 import { renderCompositionPreview } from "./composition-preview.js";
 import {
   createBrowserCompositionService,
   createProjectCompositionService,
 } from "./composition-service.js";
-import { createBuildController } from "./build-service.js";
+import { createBuildController, getGeneratedPreviewReadiness } from "./build-service.js";
 import { createDesktopHost } from "./desktop-host.js";
 import { createContentEditor } from "./content-editor.js";
+import { createCustomSectionEditor } from "./custom-section-editor.js";
 import { loadEditorSiteModel } from "./project-loader.js";
 import {
   createEmptyPublishProfile,
   createPublishController,
   normalizeRemotePath,
   sanitizePublishProfile,
+  getProfileReadiness,
+  getRetrievalReadiness,
+  getSourceUpdateReadiness,
+  getPublicationReadiness,
 } from "./publish-service.js";
-import { createEditorStore, createInitialEditorState } from "./state.js";
+import { createEditorStore, createInitialEditorState, getBusyReadiness, getEditingReadiness } from "./state.js";
 
 const SOURCE_STORAGE_KEY = "labfon.editor.lastSource";
 const DEFAULT_BUILD_STATE = {
@@ -190,7 +196,7 @@ function renderSectionList(documentRef, store, listContainer, addSelect) {
       createElement(
         "span",
         { className: "editor-section-label" },
-        `${index + 1}. ${getCompositionLabel(section.type)} (${section.enabled ? "habilitada" : "desabilitada"})`,
+        `${index + 1}. ${section.title || getCompositionLabel(section.type)} (${section.enabled ? "habilitada" : "desabilitada"})`,
       ),
     );
 
@@ -248,8 +254,9 @@ function renderSectionList(documentRef, store, listContainer, addSelect) {
     listContainer.appendChild(item);
   });
 
-  const availableTypes = getAvailableSectionTypes(composition);
-  if (availableTypes.length === 0) {
+  const availableTypes = validatePageComposition(composition).valid ? getAvailableSectionTypes(composition) : [];
+  const disabledCustom = composition.sections.filter((section) => section.type === "custom" && !section.enabled);
+  if (availableTypes.length === 0 && disabledCustom.length === 0) {
     addSelect.appendChild(
       createElement("option", { value: "" }, "Nenhuma seção disponível"),
     );
@@ -263,17 +270,23 @@ function renderSectionList(documentRef, store, listContainer, addSelect) {
       createElement("option", { value: type }, getCompositionLabel(type)),
     );
   });
+  disabledCustom.forEach((section) => addSelect.append(createElement("option", { value: section.id }, `Reativar: ${section.title}`)));
 }
 
 function getLoadedBaseline(state) {
   return state.loadedComposition || state.savedComposition || null;
 }
 
-function updateDraftComposition(store, createNextComposition) {
+function updateDraftComposition(store, createNextComposition, allowInvalid = false) {
+  if (!getEditingReadiness(store.getState()).ok) return;
   const nextComposition = createNextComposition();
+  if (nextComposition.ok === false) {
+    store.setState({ diagnostics: nextComposition.diagnostics });
+    return;
+  }
   const validation = validatePageComposition(nextComposition);
 
-  if (!validation.valid) {
+  if (!validation.valid && !allowInvalid) {
     store.setState({ diagnostics: validation.diagnostics });
     return;
   }
@@ -282,9 +295,10 @@ function updateDraftComposition(store, createNextComposition) {
   const baseline = getLoadedBaseline(state);
 
   store.setState({
-    draftComposition: createDraftComposition(validation.composition),
+    compositionOutcome: null,
+    draftComposition: validation.valid ? createDraftComposition(validation.composition) : nextComposition,
     compositionDirty: baseline
-      ? !compositionsEqual(validation.composition, baseline)
+      ? !validation.valid || !compositionsEqual(validation.composition, baseline)
       : true,
     build:
       state.build?.status === "success"
@@ -298,6 +312,11 @@ function updateDraftComposition(store, createNextComposition) {
         : state.build,
     diagnostics: validation.diagnostics,
   });
+}
+
+async function operationResult(promise) {
+  try { return await promise; }
+  catch (error) { return { ok: false, code: "EDITOR_OPERATION_FAILED", message: error instanceof Error ? error.message : "Não foi possível concluir a operação." }; }
 }
 
 function createLayout(
@@ -320,54 +339,24 @@ function createLayout(
   const wrapper = createElement("div", { className: "editor-shell" });
 
   const header = createElement("header", { className: "editor-header" }, [
-    createElement("h1", { className: "editor-title" }, "Lab-FON Editor"),
-    createElement(
-      "p",
-      { className: "editor-subtitle" },
-      "Fluxo inicial: abrir projeto local ou FTP sem alterar arquivos de origem.",
-    ),
+    createElement("img", { className: "editor-brand-mark", src: `${import.meta.env.BASE_URL}assets/images/logo_300x130.png`, alt: "", width: "92", height: "40" }),
+    createElement("h1", { className: "editor-title" }, "Editor Labfonac"),
   ]);
 
-  const nav = createElement("nav", {
+  const nav = createElement("div", {
     className: "editor-nav",
+    role: "tablist",
     "aria-label": "Navegação do editor",
   });
 
   const navItems = [
-    { key: "home", label: "Início" },
-    { key: "open", label: "Projeto local" },
-    { key: "remote", label: "Projeto remoto" },
-    { key: "editor", label: "Editor" },
-    { key: "validation", label: "Geração" },
-    { key: "publish", label: "Publicação" },
+    { key: "connect", label: "Conectar" },
+    { key: "project", label: "Projeto" },
+    { key: "content", label: "Conteúdo" },
+    { key: "page", label: "Página" },
+    { key: "review", label: "Revisar" },
+    { key: "publish", label: "Publicar" },
   ];
-
-  navItems.forEach((item) => {
-    const isCurrent = item.key === "home";
-    const button = createElement(
-      "button",
-      {
-        type: "button",
-        className: `editor-nav-btn ${isCurrent ? "is-active" : ""}`,
-        "data-view": item.key,
-        "aria-current": isCurrent ? "page" : "false",
-      },
-      item.label,
-    );
-    button.addEventListener("click", () => {
-      nav.querySelectorAll(".editor-nav-btn").forEach((navButton) => {
-        navButton.classList.toggle("is-active", navButton === button);
-        navButton.setAttribute(
-          "aria-current",
-          navButton === button ? "page" : "false",
-        );
-      });
-      documentRef
-        .getElementById(`editor-view-${item.key}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    nav.appendChild(button);
-  });
 
   const main = createElement("main", {
     className: "editor-main",
@@ -399,21 +388,10 @@ function createLayout(
       type: "button",
       className: "editor-btn editor-btn-primary",
     },
-    "Open project",
+    "Abrir projeto local",
   );
   statusCard.appendChild(openProjectButton);
 
-  const hintList = createElement("ul", { className: "editor-hints" }, [
-    createElement("li", {}, "Fluxo principal: abrir projeto remoto por FTP."),
-    createElement(
-      "li",
-      {},
-      "Opção avançada: abrir uma cópia local do projeto editável.",
-    ),
-    createElement("li", {}, "A pasta dist é saída gerada, não projeto editável."),
-  ]);
-
-  statusCard.appendChild(hintList);
   main.appendChild(statusCard);
 
   const sourceCard = createElement("section", {
@@ -581,13 +559,13 @@ function createLayout(
     "aria-labelledby": "editor-remote-title",
   });
   remoteCard.appendChild(
-    createElement("h2", { id: "editor-remote-title" }, "Projeto remoto"),
+    createElement("h2", { id: "editor-remote-title" }, "Conexão"),
   );
   remoteCard.appendChild(
     createElement(
       "p",
       { className: "editor-status" },
-      "Conecte-se primeiro; a pasta remota é escolhida navegando pelo servidor, não digitada às cegas.",
+      "Dados de acesso ao servidor FTP.",
     ),
   );
   const publishStatus = createElement(
@@ -834,6 +812,11 @@ function createLayout(
     className: "editor-input",
     "aria-label": "Seção disponível para adicionar",
   });
+  const positionSelect = createElement("select", {
+    id: "editor-add-section-position", className: "editor-input",
+  });
+  const positionField = createElement("label", { for: positionSelect.id }, "Posição ");
+  positionField.appendChild(positionSelect);
   const addButton = createElement(
     "button",
     {
@@ -844,6 +827,7 @@ function createLayout(
     "Adicionar seção",
   );
   addRow.appendChild(addSelect);
+  addRow.appendChild(positionField);
   addRow.appendChild(addButton);
   compositionCard.appendChild(addRow);
 
@@ -866,7 +850,7 @@ function createLayout(
       type: "button",
       className: "editor-btn editor-btn-primary",
     },
-    "Salvar composição",
+    "Salvar página",
   );
   const discardCompositionButton = createElement(
     "button",
@@ -875,7 +859,7 @@ function createLayout(
       type: "button",
       className: "editor-btn editor-btn-secondary",
     },
-    "Descartar alterações",
+    "Descartar alterações da página",
   );
   compositionActions.appendChild(previewButton);
   compositionActions.appendChild(discardCompositionButton);
@@ -891,6 +875,11 @@ function createLayout(
   compositionCard.appendChild(compositionDiagnostics);
   main.appendChild(compositionCard);
   const contentEditor = createContentEditor({ host: desktopHost, store });
+  const insertionTarget = () => positionSelect.value === "" ? undefined : { afterSectionId: positionSelect.value === "start" ? null : positionSelect.value.slice(6) };
+  const customEditor = createCustomSectionEditor({ store, insertionTarget,
+    update: (next, allowInvalid) => updateDraftComposition(store, next, allowInvalid),
+    saveButton: saveCompositionButton, discardButton: discardCompositionButton });
+  compositionCard.insertBefore(customEditor.page, compositionActions);
   main.appendChild(contentEditor.element);
 
   const buildCard = createElement("section", {
@@ -950,13 +939,6 @@ function createLayout(
   publishCard.appendChild(
     createElement("h2", { id: "editor-publish-title" }, "Publicação"),
   );
-  publishCard.appendChild(
-    createElement(
-      "p",
-      { className: "editor-status" },
-      "Etapa final: publica o site gerado na pasta remota configurada em Projeto remoto.",
-    ),
-  );
   const publishSiteActions = createElement("div", { className: "editor-actions" });
   const updateRemoteSourceButton = createElement(
     "button",
@@ -1015,7 +997,82 @@ function createLayout(
   previewCard.appendChild(previewContainer);
   main.appendChild(previewCard);
 
+  const advanced = createElement("details", { id: "editor-project-advanced", className: "editor-advanced" });
+  advanced.appendChild(createElement("summary", {}, "Opções avançadas"));
+  advanced.append(openProjectButton, sourceCard);
+
+  const projectRemote = createElement("section", { id: "editor-project-remote", className: "editor-panel" });
+  projectRemote.append(createElement("h2", {}, "Projeto remoto"), remoteBrowser, publishRoleForm, openRemoteProjectButton);
+
+  // Move existing nodes once; switching tabs never recreates controls or touches the store.
+  const panelContents = [
+    [remoteCard],
+    [projectRemote, statusCard, advanced],
+    [contentEditor.element, customEditor.content, contentCard],
+    [compositionCard, previewCard],
+    [buildCard],
+    [publishCard],
+  ];
+  const panels = navItems.map((item, index) => {
+    const panel = createElement("div", {
+      id: `editor-tabpanel-${item.key}`, className: "editor-tab-panel", role: "tabpanel",
+      "aria-labelledby": `editor-tab-${item.key}`, tabindex: "0",
+    });
+    panel.append(...panelContents[index]);
+    return panel;
+  });
+  // Keep the existing feedback nodes with the operation's tab, without changing workflow state.
+  const publishFeedback = createElement("div", { className: "editor-operation-feedback" });
+  publishFeedback.append(publishStatus, publishDiagnostics);
+  const showPublishFeedbackIn = (panel) => panel.appendChild(publishFeedback);
+  showPublishFeedbackIn(publishCard);
+  main.replaceChildren(...panels);
+  const tabs = navItems.map((item) => createElement("button", {
+    id: `editor-tab-${item.key}`, type: "button", role: "tab", className: "editor-nav-btn",
+    "data-view": item.key, "aria-controls": `editor-tabpanel-${item.key}`,
+  }, item.label));
+  const selectTab = (index, focus = true) => {
+    tabs.forEach((tab, position) => {
+      const selected = position === index;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      tab.classList.toggle("is-active", selected);
+      panels[position].hidden = !selected;
+      panels[position].toggleAttribute("inert", !selected);
+    });
+    if (focus) tabs[index].focus();
+  };
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectTab(index));
+    tab.addEventListener("keydown", (event) => {
+      const next = { ArrowRight: (index + 1) % tabs.length, ArrowLeft: (index + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      selectTab(next);
+    });
+    nav.appendChild(tab);
+  });
+  selectTab(0, false);
+
+  const summary = createElement("dl", { id: "editor-session-status", className: "editor-session-status", "aria-label": "Estado da sessão" });
+  const summaryValues = {};
+  for (const [key, label] of [["server", "Servidor"], ["project", "Projeto"], ["changes", "Alterações locais"], ["source", "Projeto remoto"], ["build", "Prévia"], ["publication", "Publicação"]]) {
+    const value = createElement("dd", { id: `editor-session-${key}` });
+    summaryValues[key] = value;
+    summary.appendChild(createElement("div", {}, [createElement("dt", {}, label), value]));
+  }
+  const operationReasons = new Map();
+  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, updateRemoteSourceButton, publishSiteButton]) {
+    const reason = createElement("p", { id: `${button.id}-reason`, className: "editor-operation-reason" });
+    const operation = createElement("div", { className: "editor-operation" });
+    button.setAttribute("aria-describedby", reason.id);
+    button.before(operation);
+    operation.append(button, reason);
+    operationReasons.set(button, reason);
+  }
+
   wrapper.appendChild(header);
+  wrapper.appendChild(summary);
   wrapper.appendChild(nav);
   wrapper.appendChild(main);
 
@@ -1089,6 +1146,19 @@ function createLayout(
   };
 
   const updateCompositionUi = (state) => {
+    const selectedPosition = positionSelect.value;
+    const positions = [
+      createElement("option", { value: "" }, "Posição padrão"),
+      createElement("option", { value: "start" }, "No início"),
+      ...(state.draftComposition?.sections || []).filter((section) => section.enabled).map((section) =>
+        createElement("option", { value: `after:${section.id}` }, `Após ${section.title || getCompositionLabel(section.type)}`)),
+    ];
+    // Retain a stale choice so the command reports it instead of silently moving elsewhere.
+    if (selectedPosition && !positions.some((option) => option.value === selectedPosition)) {
+      positions.push(createElement("option", { value: selectedPosition }, "Posição indisponível"));
+    }
+    positionSelect.replaceChildren(...positions);
+    positionSelect.value = selectedPosition;
     const compositionStatus = documentRef.getElementById(
       "editor-composition-status",
     );
@@ -1103,13 +1173,9 @@ function createLayout(
     const activeCount = state.draftComposition.sections.filter(
       (section) => section.enabled,
     ).length;
-    compositionStatus.textContent = state.compositionDirty
+    compositionStatus.textContent = state.compositionOutcome || (state.compositionDirty
       ? `${activeCount} seções no rascunho. Há alterações não salvas.`
-      : `${activeCount} seções carregadas.`;
-    saveCompositionButton.disabled =
-      !state.compositionDirty || activeCompositionService.canSave !== true;
-    discardCompositionButton.disabled = !state.compositionDirty;
-
+      : `${activeCount} seções carregadas.`);
     renderSectionList(documentRef, store, sectionList, addSelect);
     renderDiagnostics(documentRef, compositionDiagnostics, state.diagnostics);
   };
@@ -1118,20 +1184,17 @@ function createLayout(
     const readiness = buildController.getReadiness();
     const build = state.build || DEFAULT_BUILD_STATE;
 
-    generateSiteButton.disabled =
-      build.status === "running" || readiness.ok !== true;
-    previewGeneratedSiteButton.disabled = build.status !== "success";
-
     if (build.status === "running") {
       buildStatus.textContent = "Gerando site...";
-    } else if (!readiness.ok && build.status !== "success") {
+    } else if (!readiness.ok && build.status === "idle") {
       buildStatus.textContent = readiness.message;
     } else {
       buildStatus.textContent = build.message;
     }
 
     buildDiagnostics.textContent = build.output || "";
-    generatedPreviewFrame.hidden = !build.previewUrl;
+    generatedPreviewFrame.hidden = !build.previewUrl || !getGeneratedPreviewReadiness(state).ok;
+    if (!build.previewUrl) generatedPreviewFrame.removeAttribute("src");
     if (build.previewUrl && generatedPreviewFrame.src !== build.previewUrl) {
       generatedPreviewFrame.src = build.previewUrl;
     }
@@ -1167,27 +1230,13 @@ function createLayout(
 
   const updatePublishUi = (state) => {
     const publish = state.publish || DEFAULT_PUBLISH_STATE;
-    const projectReady =
-      state.openedProject && state.openedProject.status === "valid";
-
     publishStatus.textContent = publish.message;
-    testFtpConnectionButton.disabled = publish.status === "testing";
-    openRemoteProjectButton.disabled =
-      publish.status === "testing" || publish.status === "retrieving";
-    testFtpConnectionButton.title = "";
-    savePublishProfileButton.disabled = publish.status === "testing";
-    publishSiteButton.disabled =
-      publish.status === "publishing" ||
-      publish.status !== "ready" ||
-      state.build?.status !== "success" ||
-      state.compositionDirty ||
-      state.contentDirty || state.contentSaving ||
-      !projectReady;
-    publishSiteButton.title = projectReady
-      ? ""
-      : "Abra um projeto Lab-FON válido antes de publicar.";
 
-    if (publish.summary) {
+    if (publish.summary && !["failed", "error", "publishing"].includes(publish.status)) {
+      if (publish.summary.remoteSourceUpdated !== undefined) {
+        publishDiagnostics.textContent = publish.summary.remoteSourceUpdated ? `Projeto remoto atualizado: ${publish.summary.remoteSourcePath}` : "";
+        return;
+      }
       if (publish.summary.uploadedCount !== undefined) {
         publishDiagnostics.textContent = `Site published successfully\nDestination: ${publish.summary.remoteRoot}\nFiles uploaded: ${publish.summary.uploadedCount}/${publish.summary.fileCount}\nManifest: ${publish.summary.manifestPath}`;
         return;
@@ -1202,7 +1251,8 @@ function createLayout(
       return;
     }
 
-    renderDiagnostics(documentRef, publishDiagnostics, publish.diagnostics);
+    if (publish.diagnostics?.length) renderDiagnostics(documentRef, publishDiagnostics, publish.diagnostics);
+    else publishDiagnostics.replaceChildren();
   };
 
   const renderRemoteListing = (remote) => {
@@ -1248,6 +1298,7 @@ function createLayout(
         );
         useSourceButton.addEventListener("click", () => {
           publishRemoteSourcePathInput.value = targetPath;
+          profileChanged();
         });
 
         const usePublishButton = createElement(
@@ -1257,6 +1308,7 @@ function createLayout(
         );
         usePublishButton.addEventListener("click", () => {
           publishRemotePathInput.value = targetPath;
+          profileChanged();
         });
 
         row.appendChild(openButton);
@@ -1271,15 +1323,13 @@ function createLayout(
   const updateRemoteUi = (state) => {
     const remote = state.remote || DEFAULT_REMOTE_STATE;
     connectStatus.textContent = remote.message;
-    connectFtpButton.disabled =
-      remote.status === "connecting" || remote.status === "listing";
     remoteBrowser.classList.toggle("is-hidden", remote.status === "idle");
-    remoteUpButton.disabled = !remote.currentPath || remote.currentPath === "/";
     remoteBreadcrumb.textContent = remote.currentPath || "/";
     renderRemoteListing(remote);
   };
 
   const loadRemoteDirectory = async (targetPath) => {
+    if (!getBusyReadiness(store.getState()).ok) return;
     const profile = readPublishProfileFromForm();
     const normalizedPath = normalizeRemotePath(targetPath || "/") || "/";
     store.setState({
@@ -1290,11 +1340,11 @@ function createLayout(
       },
     });
 
-    const result = await publishController.listDirectory(
+    const result = await operationResult(publishController.listDirectory(
       profile,
       publishPasswordInput.value,
       normalizedPath,
-    );
+    ));
 
     if (!result.ok) {
       store.setState({
@@ -1441,6 +1491,7 @@ function createLayout(
         ? createDraftComposition(loadedComposition)
         : null,
       compositionDirty: false,
+      compositionOutcome: null,
       build: {
         status: "idle",
         message: "Gere o site depois de salvar as alterações.",
@@ -1463,11 +1514,14 @@ function createLayout(
   };
 
   openProjectButton.addEventListener("click", async () => {
+    if (openProjectButton.disabled) return;
     if (store.getState().contentDirty || store.getState().contentSaving || store.getState().compositionDirty) {
       sourceError.textContent = "Salve ou descarte as alterações antes de abrir outro projeto.";
       return;
     }
     sourceError.textContent = "";
+    store.setState({ projectOpening: true });
+    try {
     const selection = await desktopHost.openProjectDirectory();
 
     if (!selection.ok) {
@@ -1486,6 +1540,9 @@ function createLayout(
     }
 
     await activateProjectDirectory(selection.directory);
+    } catch (error) {
+      sourceError.textContent = error.message || "Não foi possível abrir o projeto.";
+    } finally { store.setState({ projectOpening: false }); }
   });
 
   cancelSourceButton.addEventListener("click", () => {
@@ -1496,15 +1553,19 @@ function createLayout(
   addButton.addEventListener("click", () => {
     if (!addSelect.value) return;
     updateDraftComposition(store, () =>
-      addSection(store.getState().draftComposition, addSelect.value),
+      addSelect.value.startsWith("custom-")
+        ? enableCustomSection(store.getState().draftComposition, addSelect.value, insertionTarget())
+        : addSection(store.getState().draftComposition, addSelect.value, SECTION_REGISTRY, insertionTarget()),
     );
   });
 
   previewButton.addEventListener("click", async () => {
+    if (!getEditingReadiness(store.getState()).ok) return;
     const validation = validatePageComposition(
       store.getState().draftComposition,
     );
     store.setState({ diagnostics: validation.diagnostics });
+    if (!validation.valid) return;
 
     await renderCompositionPreview({
       documentRef,
@@ -1518,17 +1579,20 @@ function createLayout(
   });
 
   discardCompositionButton.addEventListener("click", () => {
+    if (!getEditingReadiness(store.getState()).ok) return;
     const baseline = getLoadedBaseline(store.getState());
     if (!baseline) return;
 
     store.setState({
       draftComposition: restoreDraftComposition(baseline),
+      compositionOutcome: "Alterações descartadas.",
       compositionDirty: false,
       diagnostics: [],
     });
   });
 
   saveCompositionButton.addEventListener("click", async () => {
+    if (saveCompositionButton.disabled || !getEditingReadiness(store.getState()).ok) return;
     if (!store.getState().compositionDirty) {
       return;
     }
@@ -1542,11 +1606,13 @@ function createLayout(
     }
 
     const previousState = store.getState();
-    const result = await activeCompositionService.saveComposition(
-      validation.composition,
-    );
+    store.setState({ compositionSaving: true, compositionOutcome: "Salvando composição..." });
+    let result;
+    try { result = await activeCompositionService.saveComposition(validation.composition); }
+    catch (error) { result = { ok: false, message: error.message, code: "COMPOSITION_SAVE_FAILED" }; }
     if (!result.ok) {
       store.setState({
+        compositionSaving: false, compositionOutcome: result.message,
         draftComposition: previousState.draftComposition,
         loadedComposition: previousState.loadedComposition,
         savedComposition: previousState.savedComposition,
@@ -1565,6 +1631,7 @@ function createLayout(
 
     const savedComposition = createDraftComposition(result.composition);
     store.setState({
+      compositionSaving: false, compositionOutcome: "Salvo neste computador.",
       savedComposition,
       loadedComposition: createDraftComposition(savedComposition),
       draftComposition: createDraftComposition(savedComposition),
@@ -1581,6 +1648,7 @@ function createLayout(
   });
 
   generateSiteButton.addEventListener("click", async () => {
+    if (generateSiteButton.disabled) return;
     const readiness = buildController.getReadiness();
     if (!readiness.ok) {
       store.setState({
@@ -1595,6 +1663,8 @@ function createLayout(
       return;
     }
 
+    const revision = store.getState().revision;
+    const building = buildController.runBuild();
     store.setState({
       build: {
         status: "running",
@@ -1605,13 +1675,15 @@ function createLayout(
       },
     });
 
-    const result = await buildController.runBuild();
+    const result = await operationResult(building);
+    const current = revision === store.getState().revision;
 
     store.setState({
+      receipts: { ...store.getState().receipts, build: result.ok && current ? { revision } : null },
       build: {
-        status: result.ok ? "success" : "failed",
+        status: !current ? "stale" : result.ok ? "success" : "failed",
         message: result.ok
-          ? "Site generated successfully."
+          ? current ? "Prévia gerada." : "Prévia desatualizada. Gere o site novamente."
           : result.message || "Site generation failed.",
         diagnostics: result.diagnostics || [],
         output: result.output || "",
@@ -1621,7 +1693,14 @@ function createLayout(
   });
 
   previewGeneratedSiteButton.addEventListener("click", async () => {
-    const result = await buildController.previewGeneratedSite();
+    if (previewGeneratedSiteButton.disabled) return;
+    const revision = store.getState().revision;
+    const previewing = buildController.previewGeneratedSite();
+    store.setState({ previewOpening: true });
+    let result;
+    try { result = await operationResult(previewing); }
+    finally { store.setState({ previewOpening: false }); }
+    if (revision !== store.getState().revision) return;
 
     if (!result.ok) {
       store.setState({
@@ -1646,6 +1725,7 @@ function createLayout(
   });
 
   connectFtpButton.addEventListener("click", async () => {
+    if (connectFtpButton.disabled) return;
     const profile = readPublishProfileFromForm();
     store.setState({
       remote: {
@@ -1657,10 +1737,10 @@ function createLayout(
       },
     });
 
-    const result = await publishController.connect(
+    const result = await operationResult(publishController.connect(
       profile,
       publishPasswordInput.value,
-    );
+    ));
 
     if (!result.ok) {
       store.setState({
@@ -1711,11 +1791,17 @@ function createLayout(
   });
 
   savePublishProfileButton.addEventListener("click", async () => {
+    if (savePublishProfileButton.disabled) return;
+    showPublishFeedbackIn(remoteCard);
     const profile = readPublishProfileFromForm();
-    const result = await publishController.saveProfile(
+    const saving = publishController.saveProfile(
       profile,
       publishPasswordInput.value,
     );
+    store.setState({ profileSaving: true });
+    let result;
+    try { result = await operationResult(saving); }
+    finally { store.setState({ profileSaving: false }); }
 
     if (!result.ok) {
       store.setState({
@@ -1749,6 +1835,8 @@ function createLayout(
   });
 
   testFtpConnectionButton.addEventListener("click", async () => {
+    if (testFtpConnectionButton.disabled) return;
+    showPublishFeedbackIn(remoteCard);
     const profile = readPublishProfileFromForm();
     store.setState({
       publish: {
@@ -1760,10 +1848,10 @@ function createLayout(
       },
     });
 
-    const result = await publishController.testConnection(
+    const result = await operationResult(publishController.testConnection(
       profile,
       publishPasswordInput.value,
-    );
+    ));
 
     store.setState({
       publish: {
@@ -1794,7 +1882,10 @@ function createLayout(
   });
 
   openRemoteProjectButton.addEventListener("click", async () => {
+    if (openRemoteProjectButton.disabled) return;
+    showPublishFeedbackIn(projectRemote);
     const profile = readPublishProfileFromForm();
+    const retrieval = publishController.retrieveRemoteProject(profile, publishPasswordInput.value);
     store.setState({
       publish: {
         status: "retrieving",
@@ -1805,10 +1896,7 @@ function createLayout(
       },
     });
 
-    const result = await publishController.retrieveRemoteProject(
-      profile,
-      publishPasswordInput.value,
-    );
+    const result = await operationResult(retrieval);
 
     if (!result.ok) {
       store.setState({
@@ -1850,6 +1938,8 @@ function createLayout(
   });
 
   publishSiteButton.addEventListener("click", async () => {
+    if (publishSiteButton.disabled) return;
+    showPublishFeedbackIn(publishCard);
     const state = store.getState();
     const profile = state.publish?.profile || readPublishProfileFromForm();
     const confirmed = (documentRef.defaultView || window).confirm(
@@ -1872,14 +1962,16 @@ function createLayout(
       },
     });
 
-    const result = await publication;
+    const result = await operationResult(publication);
+    const current = state.revision === store.getState().revision && JSON.stringify(profile) === JSON.stringify(store.getState().publish.profile);
 
     store.setState({
+      receipts: { ...store.getState().receipts, publication: result.ok && current ? { revision: state.revision } : null },
       publish: {
         ...store.getState().publish,
         status: result.ok ? "success" : "failed",
         message: result.ok
-          ? "Site published successfully."
+          ? current ? "Site publicado nesta sessão." : "Publicação concluída para o contexto anterior. Estado atual não verificado."
           : result.message || "Falha ao publicar o site.",
         diagnostics: result.ok
           ? []
@@ -1890,12 +1982,14 @@ function createLayout(
                 message: result.message,
               },
             ],
-        summary: result.manifest || store.getState().publish.summary,
+        summary: result.ok && current ? result.manifest || null : null,
       },
     });
   });
 
   updateRemoteSourceButton.addEventListener("click", async () => {
+    if (updateRemoteSourceButton.disabled) return;
+    showPublishFeedbackIn(publishCard);
     const state = store.getState();
     const profile = state.publish?.profile || readPublishProfileFromForm();
 
@@ -1904,13 +1998,13 @@ function createLayout(
         publish: {
           ...state.publish,
           status: "failed",
-          message: "Abra um projeto Lab-FON válido antes de atualizar o projeto remoto.",
+          message: "Abra um projeto Labfonac válido antes de atualizar o projeto remoto.",
           diagnostics: [
             {
               code: "REMOTE_PROJECT_LOCAL_INVALID",
               severity: "error",
               message:
-                "Abra um projeto Lab-FON válido antes de atualizar o projeto remoto.",
+                "Abra um projeto Labfonac válido antes de atualizar o projeto remoto.",
             },
           ],
         },
@@ -1924,6 +2018,7 @@ function createLayout(
 
     if (!confirmed) return;
 
+    const updating = publishController.updateRemoteProjectSource(state.openedProject, profile, publishPasswordInput.value);
     store.setState({
       publish: {
         ...state.publish,
@@ -1933,18 +2028,16 @@ function createLayout(
       },
     });
 
-    const result = await publishController.updateRemoteProjectSource(
-      state.openedProject,
-      profile,
-      publishPasswordInput.value,
-    );
+    const result = await operationResult(updating);
+    const current = state.revision === store.getState().revision && JSON.stringify(profile) === JSON.stringify(store.getState().publish.profile);
 
     store.setState({
+      receipts: { ...store.getState().receipts, source: result.ok && current ? { revision: state.revision } : null },
       publish: {
         ...store.getState().publish,
         status: result.ok ? "configured" : "failed",
         message: result.ok
-          ? "Projeto remoto atualizado."
+          ? current ? "Projeto remoto atualizado." : "Atualização concluída para o contexto anterior. Estado atual não verificado."
           : result.message || "Falha ao atualizar o projeto remoto.",
         diagnostics: result.ok
           ? []
@@ -1956,8 +2049,7 @@ function createLayout(
               },
             ],
         summary: {
-          ...(store.getState().publish.summary || {}),
-          remoteSourceUpdated: result.ok,
+          remoteSourceUpdated: result.ok && current,
           remoteSourcePath: profile.remoteSourcePath,
           remotePublishPath: profile.remotePublishPath,
         },
@@ -1967,21 +2059,87 @@ function createLayout(
 
   hydrateFromSource(store.getState().projectSource);
 
+  const updateOperationUi = (state) => {
+    const busy = getBusyReadiness(state);
+    const editing = getEditingReadiness(state);
+    const profile = readPublishProfileFromForm();
+    const password = publishPasswordInput.value;
+    const unavailable = (message) => ({ ok: false, message });
+    const apply = (button, readiness) => {
+      button.disabled = !readiness.ok;
+      const reason = operationReasons.get(button);
+      if (reason) {
+        reason.textContent = readiness.ok ? "" : readiness.message;
+        reason.hidden = readiness.ok;
+      }
+    };
+    apply(connectFtpButton, busy.ok ? getProfileReadiness(profile, password, true) : busy);
+    apply(testFtpConnectionButton, busy.ok ? getProfileReadiness(profile, password) : busy);
+    const connectionReason = operationReasons.get(connectFtpButton);
+    const testReason = operationReasons.get(testFtpConnectionButton);
+    const sharedReason = !connectionReason.hidden && !testReason.hidden && connectionReason.textContent === testReason.textContent;
+    testReason.hidden = testReason.hidden || sharedReason;
+    testFtpConnectionButton.setAttribute("aria-describedby", sharedReason ? connectionReason.id : testReason.id);
+    apply(openRemoteProjectButton, getRetrievalReadiness(state, profile, password));
+    apply(openProjectButton, !busy.ok ? busy : state.contentDirty || state.compositionDirty ? unavailable("Salve ou descarte as alterações antes de abrir outro projeto.") : busy);
+    apply(saveCompositionButton, !editing.ok ? editing : !state.compositionDirty ? unavailable("Nenhuma alteração para salvar.") : !activeCompositionService.canSave ? unavailable("Abra o projeto no aplicativo desktop para salvar.") : !validatePageComposition(state.draftComposition).valid ? unavailable("Corrija a composição antes de salvar.") : editing);
+    apply(generateSiteButton, buildController.getReadiness());
+    apply(previewGeneratedSiteButton, getGeneratedPreviewReadiness(state));
+    apply(updateRemoteSourceButton, getSourceUpdateReadiness(state, state.publish?.profile || profile, password));
+    apply(publishSiteButton, getPublicationReadiness(state));
+    savePublishProfileButton.disabled = !busy.ok;
+    for (const input of [...publishForm.querySelectorAll("input"), ...publishRoleForm.querySelectorAll("input")]) input.disabled = !busy.ok;
+    for (const button of [remoteReloadButton, useCurrentAsSourceButton, useCurrentAsPublishButton]) button.disabled = !busy.ok || state.remote?.status !== "connected";
+    remoteUpButton.disabled = !busy.ok || state.remote?.status !== "connected" || state.remote?.currentPath === "/";
+    remoteListing.querySelectorAll("button").forEach((button) => { button.disabled = !busy.ok; });
+    const validComposition = !!state.draftComposition && validatePageComposition(state.draftComposition).valid;
+    sectionList.querySelectorAll("button,input").forEach((node) => { if (!editing.ok || !validComposition) node.disabled = true; });
+    addSelect.disabled = !editing.ok || !addSelect.value;
+    addButton.disabled = !editing.ok || !addSelect.value || !validComposition;
+    positionSelect.disabled = !editing.ok || !validComposition;
+    previewButton.disabled = !editing.ok || !validComposition;
+    discardCompositionButton.disabled = !editing.ok || !state.compositionDirty;
+    const values = {
+      server: state.remote?.status === "connected" ? "conectado nesta sessão" : "não verificado",
+      project: state.openedProject?.status === "valid" ? "aberto" : state.openedProject ? "inválido" : "nenhum",
+      changes: state.contentDirty || state.compositionDirty ? "não salvas" : "nenhuma não salva",
+      source: state.receipts.source ? "atualizado nesta sessão" : "estado desconhecido",
+      build: state.build?.status === "stale" ? "desatualizada" : state.build?.status === "running" ? "gerando" : state.build?.status === "success" ? "atual" : "não gerada",
+      publication: state.receipts.publication ? "publicada nesta sessão" : "não realizada no contexto atual",
+    };
+    for (const [key, value] of Object.entries(values)) if (summaryValues[key].textContent !== value) summaryValues[key].textContent = value;
+    customEditor.render();
+  };
+  const profileChanged = (event) => {
+    showPublishFeedbackIn(event && publishForm.contains(event.target) ? remoteCard : projectRemote);
+    store.setState({
+      receipts: { ...store.getState().receipts, source: null, publication: null },
+      ...(event && publishForm.contains(event.target) ? { remote: { ...DEFAULT_REMOTE_STATE } } : {}),
+      publish: { ...store.getState().publish, profile: readPublishProfileFromForm(), status: "configured", summary: null, message: "Destino alterado. Teste a conexão." },
+    });
+  };
+  publishForm.addEventListener("input", profileChanged);
+  publishRoleForm.addEventListener("input", profileChanged);
+  useCurrentAsSourceButton.addEventListener("click", profileChanged);
+  useCurrentAsPublishButton.addEventListener("click", profileChanged);
+
   const unsubscribeStatus = store.subscribe(updateStatus);
   const unsubscribeComposition = store.subscribe(updateCompositionUi);
   const unsubscribeProjectContent = store.subscribe(updateProjectContentUi);
   const unsubscribeBuild = store.subscribe(updateBuildUi);
   const unsubscribePublish = store.subscribe(updatePublishUi);
   const unsubscribeRemote = store.subscribe(updateRemoteUi);
+  const unsubscribeOperations = store.subscribe(updateOperationUi);
   updateStatus(store.getState());
   updateCompositionUi(store.getState());
   updateProjectContentUi(store.getState());
   updateBuildUi(store.getState());
   updatePublishUi(store.getState());
   updateRemoteUi(store.getState());
+  updateOperationUi(store.getState());
 
   publishController.loadProfile().then((result) => {
-    if (!result.ok || !result.profile) return;
+    if (!result.ok || !result.profile || store.getState().publish?.profile) return;
     hydratePublishProfile(result.profile);
     store.setState({
       publish: {
@@ -2004,6 +2162,7 @@ function createLayout(
       unsubscribeBuild();
       unsubscribePublish();
       unsubscribeRemote();
+      unsubscribeOperations();
     },
   };
 }

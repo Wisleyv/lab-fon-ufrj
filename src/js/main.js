@@ -122,7 +122,7 @@ async function initializeSections() {
   app.pageComposition.sections
     .filter((section) => section.enabled && isRenderableSection(section.type))
     .forEach((section) => {
-      app.sections[section.id] = createSectionRenderer(section.type);
+      app.sections[section.id] = createSectionRenderer(section.type, SECTION_REGISTRY, { section, composition: app.pageComposition });
     });
 
   console.log("✅ Sections initialized");
@@ -141,7 +141,7 @@ async function renderAllSections() {
 
     const definition = getSectionDefinition(section.type);
     const sectionRenderer = app.sections[section.id];
-    const sectionData = await getSectionData(definition);
+    const sectionData = section.type === "custom" ? section : await getSectionData(definition);
 
     if (hasSectionData(sectionData)) {
       console.log(`📋 Rendering ${definition.label}...`);

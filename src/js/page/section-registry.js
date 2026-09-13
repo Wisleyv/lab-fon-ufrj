@@ -3,8 +3,10 @@ import { LinhasPesquisaSection } from "../sections/linhas-pesquisa.js";
 import { ParceriasSection } from "../sections/parcerias.js";
 import { PesquisadoresSection } from "../sections/pesquisadores.js";
 import { PublicacoesSection } from "../sections/publicacoes.js";
+import { CustomSection } from "../sections/custom.js";
 
 export const SECTION_REGISTRY = {
+  custom: { type: "custom", label: "Seção personalizada", Renderer: CustomSection, unique: false },
   sobre: {
     type: "sobre",
     label: "Sobre",
@@ -90,15 +92,19 @@ export const SECTION_REGISTRY = {
 };
 
 export function getSectionDefinition(type, registry = SECTION_REGISTRY) {
-  return registry[type] || null;
+  return Object.hasOwn(registry, type) ? registry[type] : null;
 }
 
 export function isRenderableSection(type, registry = SECTION_REGISTRY) {
   const definition = getSectionDefinition(type, registry);
-  return Boolean(definition?.Renderer && definition?.containerId);
+  return Boolean(definition?.Renderer && (definition?.containerId || type === "custom"));
 }
 
-export function createSectionRenderer(type, registry = SECTION_REGISTRY) {
+export function getSectionAnchor(section, registry = SECTION_REGISTRY) {
+  return getSectionDefinition(section.type, registry)?.sectionId || section.id;
+}
+
+export function createSectionRenderer(type, registry = SECTION_REGISTRY, { section, composition, root } = {}) {
   const definition = getSectionDefinition(type, registry);
 
   if (!definition) {
@@ -110,7 +116,11 @@ export function createSectionRenderer(type, registry = SECTION_REGISTRY) {
   }
 
   return new definition.Renderer(
-    definition.containerId,
-    definition.rendererOptions,
+    type === "custom" ? `${section.id}-content` : definition.containerId,
+    { ...definition.rendererOptions, root,
+      anchors: new Set(["top", "contato", ...Object.values(registry).map((entry) => entry.sectionId).filter(Boolean),
+        ...(composition?.sections || []).map((entry) => getSectionAnchor(entry, registry))]),
+      activeAnchors: new Set(["top", "contato", ...(composition?.sections || []).filter((entry) => entry.enabled).map((entry) => getSectionAnchor(entry, registry))]),
+    },
   );
 }

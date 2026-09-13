@@ -83,17 +83,13 @@
           {
             "label": "Plataforma Lattes",
             "href": "https://lattes.cnpq.br"
-          },
-          {
-            "label": "Espelho do Grupo no CNPq",
-            "href": "http://dgp.cnpq.br/dgp/espelhogrupo/2843754282197200/"
           }
         ]
       }
     ],
     "institutionalCredits": [
       {
-        "label": "Laboratório",
+        "label": "LabFonAc-UFRJ",
         "name": "Laboratório de Fonética Acústica UFRJ"
       },
       {
@@ -103,16 +99,19 @@
       {
         "label": "UFRJ",
         "name": "Universidade Federal do Rio de Janeiro"
-      },
-      {
-        "label": "CNPq",
-        "name": ""
       }
     ],
     "coordination": {
-      "lab": [],
-      "extensionProject": []
+      "lab": [
+        { "name": "João Moraes" },
+        { "name": "Manuella Carnaval" }
+      ],
+      "extensionProject": [
+        { "name": "Carolina Gomes da Silva" },
+        { "name": "Manuella Carnaval" },
+        { "name": "Juliana Dias" }
+      ]
     },
-    "bottomText": "© 2025 Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."
+    "bottomText": "© Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."
   }
 }

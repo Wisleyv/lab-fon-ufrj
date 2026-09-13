@@ -388,7 +388,7 @@ function resolveProjectPath(rootPath, relativePath) {
 
 async function openProjectDirectory({ dialog }) {
   const result = await dialog.showOpenDialog({
-    title: "Abrir projeto Lab-FON",
+    title: "Abrir projeto Labfonac",
     properties: ["openDirectory"],
   });
 
@@ -857,7 +857,7 @@ async function retrieveRemoteProject(_event, profile, password) {
       code: "REMOTE_PROJECT_RETRIEVED",
       message: "Projeto remoto carregado.",
       directory: {
-        name: "Lab-FON remoto",
+        name: "Labfonac remoto",
         path: activeWorkspace,
         provenance,
       },

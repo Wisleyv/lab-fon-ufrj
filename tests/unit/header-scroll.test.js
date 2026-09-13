@@ -1,5 +1,48 @@
 import { expect, it, vi } from "vitest";
 import { initHeaderScroll } from "../../src/js/header-scroll.js";
+import fs from "node:fs";
+import { applySiteContent } from "../../src/js/site-content.js";
+
+it("keeps one semantic header with adjacent identity and existing navigation controls", () => {
+  const html = fs.readFileSync("index.html", "utf8");
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+  const header = parsed.querySelector(".site-header");
+  document.body.replaceChildren(document.importNode(header, true));
+  const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+  applySiteContent(document, site);
+  const layout = document.querySelector(".header-content");
+  expect([...layout.children].map((node) => node.className)).toEqual(["logo", "logo-text", "main-nav"]);
+  expect(document.querySelectorAll("header, h1")).toHaveLength(2);
+  expect(document.querySelector("h1").textContent).toBe(site.header.title);
+  expect(document.querySelector(".subtitle").textContent).toBe(site.header.subtitle);
+  expect(document.querySelector("a.logo").getAttribute("href")).toBe("#top");
+  expect(document.querySelector(".logo-image").alt).toBe(site.header.logo.alt);
+  const toggle = document.querySelector(".nav-toggle");
+  expect(document.getElementById(toggle.getAttribute("aria-controls"))).not.toBeNull();
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  expect(document.querySelector(".has-dropdown > a").getAttribute("aria-haspopup")).toBe("true");
+});
+it("measures responsive anchor clearance and retains the passive 24px threshold with cleanup", () => {
+  document.body.innerHTML = '<header class="site-header"></header>';
+  const header = document.querySelector("header");
+  header.getBoundingClientRect = () => ({ height: 156 });
+  let resize, scroll, frame;
+  const disconnect = vi.fn();
+  const win = { scrollY: 24, ResizeObserver: class { constructor(fn) { resize = fn; } observe() {} disconnect() { disconnect(); } },
+    addEventListener: vi.fn((_name, fn) => { scroll = fn; }), removeEventListener: vi.fn(), requestAnimationFrame: vi.fn((fn) => { frame = fn; return 1; }), cancelAnimationFrame: vi.fn() };
+  const dispose = initHeaderScroll(document, win);
+  expect(win.addEventListener).toHaveBeenCalledWith("scroll", expect.any(Function), { passive: true });
+  expect(header.classList.contains("is-scrolled")).toBe(false);
+  expect(document.documentElement.style.getPropertyValue("--header-offset")).toBe("156px");
+  win.scrollY = 25; scroll(); scroll();
+  expect(win.requestAnimationFrame).toHaveBeenCalledTimes(1);
+  frame();
+  expect(header.classList.contains("is-scrolled")).toBe(true);
+  header.getBoundingClientRect = () => ({ height: 100 }); resize();
+  expect(document.documentElement.style.getPropertyValue("--header-offset")).toBe("100px");
+  dispose(); expect(disconnect).toHaveBeenCalledOnce();
+  expect(document.documentElement.style.getPropertyValue("--header-offset")).toBe("");
+});
 it("enlarges at the top, compacts after scrolling and restores at the top", () => {
   document.body.innerHTML = '<header class="site-header"></header>';
   let listener;

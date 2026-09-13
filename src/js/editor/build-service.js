@@ -1,3 +1,4 @@
+import { getBusyReadiness } from "./state.js";
 const REQUIRED_ARTIFACTS = ["dist/index.html", "dist/data.json"];
 
 export function createBuildController({ host, getState } = {}) {
@@ -32,14 +33,10 @@ export function createBuildController({ host, getState } = {}) {
     async previewGeneratedSite() {
       const state = getState();
 
-      if (state.build.status !== "success") {
-        return {
-          ok: false,
-          code: "GENERATED_PREVIEW_UNAVAILABLE",
-          message: "Gere o site antes de abrir a prévia publicada localmente.",
-        };
+      const readiness = getGeneratedPreviewReadiness(state);
+      if (!readiness.ok) {
+        return readiness;
       }
-
       if (typeof host.previewGeneratedSite !== "function") {
         return {
           ok: false,
@@ -54,11 +51,13 @@ export function createBuildController({ host, getState } = {}) {
 }
 
 export function getBuildReadiness(state) {
+  const busy = getBusyReadiness(state);
+  if (!busy.ok) return busy;
   if (!state.openedProject || state.openedProject.status !== "valid") {
     return {
       ok: false,
       code: "BUILD_PROJECT_INVALID",
-      message: "Abra um projeto Lab-FON válido antes de gerar o site.",
+      message: "Abra um projeto Labfonac válido antes de gerar o site.",
     };
   }
 
@@ -70,7 +69,7 @@ export function getBuildReadiness(state) {
     };
   }
 
-  const blockingDiagnostics = state.diagnostics.filter(
+  const blockingDiagnostics = (state.diagnostics || []).filter(
     (diagnostic) => diagnostic.severity === "error",
   );
 
@@ -84,6 +83,12 @@ export function getBuildReadiness(state) {
   }
 
   return { ok: true };
+}
+
+export function getGeneratedPreviewReadiness(state) {
+  const ready = getBuildReadiness(state);
+  if (!ready.ok) return ready;
+  return state.build?.status === "success" ? { ok: true } : { ok: false, code: "GENERATED_PREVIEW_UNAVAILABLE", message: "Gere uma versão atual do site antes de abrir a prévia." };
 }
 
 export async function validateGeneratedSite(host, directory) {

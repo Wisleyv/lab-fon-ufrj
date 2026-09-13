@@ -1,8 +1,34 @@
 # Improvements Implementation Plan
 
-Status: proposal only; no implementation or deployment authorized by this document.
+Status: development checkpoint through C2, September 13, 2026. Implementation status is recorded below; this document does not authorize packaging or production deployment.
 
 Request: [improvements.md](improvements.md). Baseline: September 7 production milestone and September 11 [sanitization report](SANITIZATION_REPORT_2026-09-11.md).
+
+## Current Checkpoint
+
+| Slice | Status | Checkpoint evidence / remaining gate |
+| --- | --- | --- |
+| A1 | COMPLETE | Supplied PROVALE text and CNPq record, with preservation tests |
+| A2 | COMPLETE | Structured footer coordination, credits and copyright binding with tests |
+| A3 | COMPLETE | Founder metadata, Docentes ordering and editor round-trip coverage |
+| A4 | COMPLETE; manually accepted | Centered expanded identity and compact-on-scroll behavior; earlier handoff pending notes are historical |
+| B1 | COMPLETE; manually accepted | Six accessible tabs and advanced local open, with draft-preservation tests |
+| B2 | COMPLETE; manually accepted | Readiness guards, revision-bound receipts, compact status and Labfonac identity refinements |
+| B3 | DEFERRED | Session-level agent/interface constraint; not a production blocker |
+| C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
+| C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
+| C2 | IMPLEMENTED - MANUAL ACCEPTANCE PENDING | Automated/local verification complete; desktop visual and interaction acceptance still required |
+| C3 | NOT STARTED | Additional controlled blocks/layouts |
+| D | NOT STARTED | Instagram integration |
+| Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
+
+**C2 production gate: do not upload projects containing `schemaVersion: 2` / custom sections to production `/source/` until a compatible Editor Labfonac package is ready, maintainers have upgraded, and a pre-feature editable-source backup has been made. Older packaged editors may strip unknown custom data during normalization. Do not publish a checkout build as a substitute.**
+
+C2 verification from the preceding implementation run: 101 focused tests passed; the full suite passed once (278 tests / 26 files); `npm run build` passed for web and editor. Two independent UUID-based custom instances passed shared preview/public rendering and save/read-back/reopen checks. Disabled instances retain their content; unsupported schema/custom data is refused. `content/page.json` remains unchanged and unversioned, with no demonstration custom sections. Version 2 is staged only on explicit custom creation; legacy saves do not automatically upgrade.
+
+This checkpoint review changes documentation only. Source/test changes match the preceding verified handoff; no full-suite or build rerun is needed. Browser screenshot verification was unavailable in C2 and is not claimed. Manual-acceptance labels for A4/B1/B2 reflect the maintainer's accepted session state, not a new browser test. Existing checkout/production composition divergence and About/footer coordination discrepancy remain unresolved release inputs, not silently reconciled content. No new implementation defect was identified in this scoped checkpoint review.
+
+Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
 
@@ -13,6 +39,8 @@ The requested direction is appropriate: improve the maintained site and editor w
 This planning run inspected only relevant content, meeting notes, composition/rendering/editor modules, associated tests, and the sanitization handoff. It did not inspect the live site, reconnect FTP, verify Meta's current embed support, run tests/builds, or change application files. The 176-test result is the recorded sanitization baseline, not a new result from this planning run.
 
 ## Findings and Reuse Boundaries
+
+The findings below describe the original planning baseline; the checkpoint table above supersedes their implementation-status implications. Original rationale and constraints remain applicable.
 
 | Area | Current evidence | Reuse / consequence |
 | --- | --- | --- |
@@ -59,6 +87,8 @@ Resolve only the inputs needed for the next slice:
 
 ### A1. Supplied PROVALE Text and CNPq Record (Low Risk)
 
+**Status: COMPLETE.** Existing content/partner schema reused; supplied text and CNPq covered by tests.
+
 Changes: `content/extensao.json`, a new `content/parcerias/cnpq.json`; relevant content/extension/partner tests only if needed. Use the existing editor forms for intended remote editorial changes; do not replace the whole retrieved `content/` tree with checkout data.
 
 - Populate PROVALE `minibio` verbatim, retaining project ID and nesting. Leave unrelated fields untouched.
@@ -68,6 +98,8 @@ Changes: `content/extensao.json`, a new `content/parcerias/cnpq.json`; relevant 
 **Tests/exit:** exact paragraph preserved, one CNPq record, existing partners unchanged, no duplicate IDs, escaping intact, and preview with production-composition fixture. No renderer rewrite for a fifth partner.
 
 ### A2. Footer Data Binding (Low-Medium Risk)
+
+**Status: COMPLETE.** Coordination, credits and copyright refinements implemented and tested.
 
 Changes: `site-content.js`, `main.css`, approved values in `content/site.json`; reuse `content-fields.js` controls. Extend `site-content.test.js` and relevant editor-content coverage.
 
@@ -79,6 +111,8 @@ Changes: `site-content.js`, `main.css`, approved values in `content/site.json`; 
 
 ### A3. Founder-First Docentes (Medium Risk)
 
+**Status: COMPLETE.** Existing founder record carries badge/priority; ordering and editor persistence tested.
+
 Changes: `pesquisadores.js`, existing founder record, `content-fields.js`, and team/content tests. Change `equipe-categories.js` only if required for backward-compatible grouping; do not remove legacy categories globally.
 
 - Keep Portuguese keys already in use. Add optional `badge` and numeric `priority` metadata, with explicit defaults for older records; expose them through the editor with validation.
@@ -88,6 +122,8 @@ Changes: `pesquisadores.js`, existing founder record, `content-fields.js`, and t
 **Tests/exit:** metadata survives form save; founder first, remaining docentes alphabetical; missing priority compatible; tie ordering deterministic; badge safe; all view modes, accordion counts/keyboard behavior and Egressos preserved. If tests assert the old separate founder group, update only those expectations explicitly superseded by this request.
 
 ### A4. Stronger Logo/Header (Medium Visual Risk)
+
+**Status: COMPLETE; manually accepted.** Expanded centered identity and compact scroll state implemented; historical handoff sizing/pending notes do not override this checkpoint.
 
 Changes: `main.css`; `header-scroll.js` only if a measured threshold/layout issue requires it. Tests: `header-scroll.test.js` plus targeted browser checks.
 
@@ -101,6 +137,8 @@ Changes: `main.css`; `header-scroll.js` only if a measured threshold/layout issu
 
 ### B1. Real Tabs and Advanced Local Open (Medium Risk)
 
+**Status: COMPLETE; manually accepted.** Accessible tabs retain control/draft ownership; advanced local open remains available.
+
 Changes: `bootstrap.js`, `state.js` only as needed for selected tab, `editor.css`; existing bootstrap/composition/content UI tests. Extract small view-building helpers only where they prevent duplication; no wholesale bootstrap rewrite.
 
 - Six always-visible tabs: Conectar, Projeto, Conteudo, Pagina, Revisar, Publicar. Use Portuguese accents in actual UI labels.
@@ -111,6 +149,8 @@ Changes: `bootstrap.js`, `state.js` only as needed for selected tab, `editor.css
 **Exit:** cross-tab navigation preserves content/composition drafts and in-flight operations; hidden panels are not focusable; no duplicate handlers/IPC calls; clean/no-project/offline states usable. Existing save/retrieval/publish guard behavior remains intact.
 
 ### B2. Operation Availability and Status (Medium Risk)
+
+**Status: COMPLETE; manually accepted.** Shared readiness, revision-bound receipts and compact status presentation implemented and tested.
 
 Reuse `getBuildReadiness`, publication readiness, remote state, and existing controllers. Keep operation preconditions out of a parallel workflow engine.
 
@@ -133,6 +173,8 @@ Reuse `getBuildReadiness`, publication readiness, remote state, and existing con
 
 ### B3. Portuguese Labels and Accessible Help (Low Risk)
 
+**Status:** Deferred -- blocked by session-level agent constraint; not a production blocker.
+
 Use concise action labels, field-level validation, disabled-action reasons, persistent outcome messages, and an accessible contextual help control. Put longer "what happens next" explanations in help, not repeated instructional banners or a new onboarding system. Essential errors must not exist only in tooltips. Preserve machine-readable diagnostic codes while translating user-facing messages; do not translate server error details destructively.
 
 **Exit:** keyboard/touch help access, Escape/close and focus return, meaningful status announcements without repeated screen-reader chatter. Save, source update and publish remain unambiguous.
@@ -140,6 +182,8 @@ Use concise action labels, field-level validation, disabled-action reasons, pers
 ## Phase C - Constrained New Sections (Highest Risk; Design Gate First)
 
 ### C0. Approve the Data and Compatibility Contract
+
+**Status: COMPLETE.** `docs/CUSTOM_SECTION_CONTRACT.md` was approved by the C2 implementation prompt; preserve its schema, ownership and rollout decisions.
 
 Recommended smallest model: a repeatable `custom` section in existing `content/page.json`, with stable instance `id`, `title`, current navigation/enabled/order fields, `presentation.variant`, and a validated `content.blocks` array. Keep initial custom content in that single canonical file to reuse composition Save/read-back and avoid introducing cross-file transactions/deletion ledgers. Public rendering receives this content through the existing consolidated page data/adapter, never direct filesystem access.
 
@@ -153,6 +197,8 @@ Older installed editors cannot be made safe retroactively by adding a version ma
 
 ### C1. Insertion Placement for Registered Sections (Low-Medium Risk, Can Precede C0)
 
+**Status: COMPLETE.** Optional active-instance insertion targets preserve omitted-target behavior, with command/UI/persistence coverage.
+
 Changes: `composition-commands.js`, the existing composition controls in `bootstrap.js`, command/UI tests.
 
 Add an optional insertion target to existing add/enable behavior, including a beginning position; preserve old append/re-enable behavior when omitted. Keep up/down controls. Disabled entries must not make visible placement misleading; validate stale/missing targets and prevent duplicates.
@@ -160,6 +206,8 @@ Add an optional insertion target to existing add/enable behavior, including a be
 **Exit:** insertion before first/after last/middle, re-enable, save/read-back, and order after retrieval preserve the intended active sequence. No custom schema required for this slice.
 
 ### C2. One Custom Text Section End to End, Then Multiple Instances
+
+**Status: IMPLEMENTED - MANUAL ACCEPTANCE PENDING.** Version-2 validation, immutable UUID identities, Page creation/metadata/placement, Content block editing and shared whole-page save/discard are implemented. Heading, paragraph, list, safe link and CTA blocks use controlled DOM rendering. Two-instance, compatibility, URL, disabled-content and read-back failure tests passed; see checkpoint verification above. No real custom content, packaging or production rollout was performed.
 
 Likely files: `page/composition.js`, `page/section-registry.js`, `page/navigation.js`, `main.js`, `editor/composition-commands.js`, `editor/composition-preview.js`, `editor/composition-service.js`, composition UI, plus one renderer extending `SectionRenderer`. Touch `project-loader.js`/`scripts/build-data.js` only if actual page-data preservation requires it; no parallel data loader.
 
@@ -172,6 +220,8 @@ Likely files: `page/composition.js`, `page/section-registry.js`, `page/navigatio
 
 ### C3. Remaining Constrained Blocks and Layouts
 
+**Status: NOT STARTED.** Requires a separate authorized slice after C2 acceptance.
+
 Add one block/layout at a time after C2 passes. Images accept existing approved asset paths or validated URLs with required alternative text and bounded dimensions; no file manager or new upload system. Check `/labfonac/` and packaged-preview bases. Eager-load the header logo; lazy-load appropriate below-fold images.
 
 Specify the minimal grouping semantics for the requested cards layout before implementing it; do not improvise nested arbitrary layout containers. Text and wide layouts remain predefined CSS choices. Test long content, disabled blocks, responsive rendering and complete save/read-back preservation for each increment.
@@ -179,6 +229,8 @@ Specify the minimal grouping semantics for the requested cards layout before imp
 The embed block should reuse Phase D's restricted Instagram representation. Do not open it to arbitrary providers or clipboard HTML. Optional active website navigation can be a separate IntersectionObserver slice later, with existing menu/scroll behavior preserved; it is not a release gate.
 
 ## Phase D - Instagram, Independent of Custom Sections
+
+**Status: NOT STARTED.** Provider/input verification and implementation remain future work.
 
 May run after A/B and before C if PROVALE social integration is the higher priority. Existing Extensao fields are the smaller extension point.
 
@@ -193,6 +245,8 @@ Changes: extension form fields and `extensao.js`, a narrowly scoped normalizer/l
 **Exit:** normalizer rejection matrix, script deduplication, unique IDs, offline/timeouts, external-link fallback, preserved project content, and browser/packaged preview acceptance. Unit tests mock the provider; one real public example validates actual support before rollout. Reuse in custom embed blocks only afterward.
 
 ## Integrated Acceptance and Release Gate
+
+**Status: NOT STARTED for the custom-section schema.** C2 manual desktop acceptance, compatible-package validation, maintainer upgrades and pre-feature backup precede any production `/source/` update or publication. Existing older releases are not C2-compatible verification evidence.
 
 After each chosen run, use focused tests while editing, then one full `npx vitest run` and one production build. Repackage once when code shipped in the editor changes; content-only edits do not justify repackaging. Run narrower checks between slices, not the entire release workflow repeatedly.
 
@@ -216,4 +270,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: approve the first implementation slice, recommended **A1 (supplied PROVALE text and CNPq through the existing schema)**, resolve its CNPq input, and establish the local baseline. Until then, this file is the only deliverable; no code, content, package, GitHub or FTP operation is requested.
+Next exact action: **manual C2 desktop visual/interaction acceptance using a disposable local project**. Create two custom sections, edit all five block types, rename/place/reorder, disable/re-enable, test navigation/keyboard focus and long text, save/read-back/reopen, and verify whole-page discard plus failed-save draft retention. Record acceptance before proposing a separately authorized compatible-package/backup rollout run. Do not begin C3, B3, Instagram, packaging or production FTP automatically.

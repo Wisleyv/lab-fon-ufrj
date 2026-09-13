@@ -1,3 +1,4 @@
+import { getBusyReadiness, getEditingReadiness } from "./state.js";
 export const DEFAULT_FTP_PORT = 2100;
 
 export function createEmptyPublishProfile() {
@@ -261,9 +262,8 @@ export function createPublishController({ host, getState } = {}) {
     },
 
     async retrieveRemoteProject(profile, password) {
-      if (getState().contentDirty || getState().contentSaving || getState().compositionDirty) {
-        return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve ou descarte as alterações antes de recuperar o projeto." };
-      }
+      const readiness = getRetrievalReadiness(getState(), profile, password);
+      if (!readiness.ok) return readiness;
       const validation = validatePublishProfile(profile, {
         requirePassword: true,
         hasPassword: Boolean(password || profile.hasPassword),
@@ -320,9 +320,8 @@ export function createPublishController({ host, getState } = {}) {
     },
 
     async updateRemoteProjectSource(directory, profile, password) {
-      if (getState().contentDirty || getState().contentSaving || getState().compositionDirty) {
-        return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve as alterações antes de atualizar o projeto remoto." };
-      }
+      const readiness = getSourceUpdateReadiness(getState(), profile, password);
+      if (!readiness.ok) return readiness;
       const validation = validatePublishProfile(profile, {
         requirePassword: true,
         hasPassword: Boolean(password || profile.hasPassword),
@@ -396,7 +395,7 @@ export function getPublishReadiness(state) {
     return {
       ok: false,
       code: "PUBLISH_PROJECT_INVALID",
-      message: "Abra um projeto Lab-FON válido antes de testar a publicação.",
+      message: "Abra um projeto Labfonac válido antes de testar a publicação.",
     };
   }
 
@@ -404,6 +403,8 @@ export function getPublishReadiness(state) {
 }
 
 export function getPublicationReadiness(state) {
+  const busy = getBusyReadiness(state);
+  if (!busy.ok) return busy;
   const projectReadiness = getPublishReadiness(state);
   if (!projectReadiness.ok) {
     return {
@@ -440,6 +441,26 @@ export function getPublicationReadiness(state) {
   }
 
   return { ok: true };
+}
+
+export function getProfileReadiness(profile, password, connectionOnly = false) {
+  const validate = connectionOnly ? validateConnectionProfile : validatePublishProfile;
+  const result = validate(profile, { requirePassword: true, hasPassword: Boolean(password || profile?.hasPassword) });
+  return result.valid ? { ok: true } : { ok: false, code: "PUBLISH_PROFILE_INVALID", message: result.diagnostics[0].message, diagnostics: result.diagnostics };
+}
+
+export function getRetrievalReadiness(state, profile, password) {
+  const busy = getBusyReadiness(state);
+  if (!busy.ok) return busy;
+  if (state.contentDirty || state.compositionDirty) return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve ou descarte as alterações antes de recuperar o projeto." };
+  return getProfileReadiness(profile, password);
+}
+
+export function getSourceUpdateReadiness(state, profile, password) {
+  const ready = getEditingReadiness(state);
+  if (!ready.ok) return ready;
+  if (state.contentDirty || state.compositionDirty) return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve as alterações antes de atualizar o projeto remoto." };
+  return getProfileReadiness(profile, password);
 }
 
 function normalizePort(value) {

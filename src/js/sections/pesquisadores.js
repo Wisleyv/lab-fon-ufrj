@@ -148,7 +148,7 @@ export class PesquisadoresSection extends SectionRenderer {
    */
   groupByCategory(equipe) {
     return equipe.reduce((acc, member) => {
-      const cat = member.categoria || "outros";
+      const cat = member.categoria === "fundador" ? "docentes" : member.categoria || "outros";
       if (!acc[cat]) {
         acc[cat] = [];
       }
@@ -216,6 +216,12 @@ export class PesquisadoresSection extends SectionRenderer {
 
     // Sort members alphabetically by name (locale-aware for Portuguese)
     const sortedMembers = [...members].sort((a, b) => {
+      if (categoria === "docentes") {
+        const priority = (member) => Number.isInteger(member.priority) && member.priority >= 0 && member.priority <= 999
+          ? member.priority : member.categoria === "fundador" ? 0 : 1000;
+        const difference = priority(a) - priority(b);
+        if (difference) return difference;
+      }
       const nameA = a.nome || "";
       const nameB = b.nome || "";
       return nameA.localeCompare(nameB, "pt-BR", { sensitivity: "base" });
@@ -334,6 +340,9 @@ export class PesquisadoresSection extends SectionRenderer {
     );
 
     content.appendChild(h4);
+    const badge = typeof member.badge === "string" && member.badge.trim()
+      ? member.badge : member.categoria === "fundador" ? "Fundador" : "";
+    if (badge) content.appendChild(createElement("span", { className: "membro-badge" }, badge));
     content.appendChild(instSpan);
 
     // Lattes link

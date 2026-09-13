@@ -4,6 +4,23 @@
  */
 
 export class HTMLSanitizer {
+  static isSafeCustomURL(value, anchors = new Set()) {
+    if (typeof value !== "string" || !value || value.length > 2048 ||
+        value !== value.trim() || /[\u0000-\u0020\u007f-\u009f\\]/u.test(value)) return false;
+    if (value.startsWith("#")) return anchors.has(value.slice(1));
+    try {
+      const url = new URL(value);
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        return /^https?:\/\//i.test(value) && !!url.hostname && !url.username && !url.password;
+      }
+      if (url.protocol === "mailto:") {
+        const address = decodeURIComponent(url.pathname);
+        return !url.search && !url.hash && /^[A-Za-z0-9.!#$'*+\-/=?^_`{|}~]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(address);
+      }
+    } catch { /* Invalid URLs are refused, never repaired. */ }
+    return false;
+  }
+
   /**
    * Escapes all HTML special characters
    * @param {string} str - String to sanitize

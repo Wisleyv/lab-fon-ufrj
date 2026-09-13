@@ -84,17 +84,13 @@
             {
               "label": "Plataforma Lattes",
               "href": "https://lattes.cnpq.br"
-            },
-            {
-              "label": "Espelho do Grupo no CNPq",
-              "href": "http://dgp.cnpq.br/dgp/espelhogrupo/2843754282197200/"
             }
           ]
         }
       ],
       "institutionalCredits": [
         {
-          "label": "Laboratório",
+          "label": "LabFonAc-UFRJ",
           "name": "Laboratório de Fonética Acústica UFRJ"
         },
         {
@@ -104,17 +100,30 @@
         {
           "label": "UFRJ",
           "name": "Universidade Federal do Rio de Janeiro"
-        },
-        {
-          "label": "CNPq",
-          "name": ""
         }
       ],
       "coordination": {
-        "lab": [],
-        "extensionProject": []
+        "lab": [
+          {
+            "name": "João Moraes"
+          },
+          {
+            "name": "Manuella Carnaval"
+          }
+        ],
+        "extensionProject": [
+          {
+            "name": "Carolina Gomes da Silva"
+          },
+          {
+            "name": "Manuella Carnaval"
+          },
+          {
+            "name": "Juliana Dias"
+          }
+        ]
       },
-      "bottomText": "© 2025 Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."
+      "bottomText": "© Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."
     }
   },
   "page": {
@@ -247,7 +256,9 @@
       "lattes": "http://lattes.cnpq.br/5878437077874490"
     },
     {
-      "nome": "Joao Antonio de Moraes",
+      "nome": "João Moraes",
+      "badge": "Fundador",
+      "priority": 0,
       "instituicao": "UFRJ",
       "categoria": "docentes",
       "foto": "assets/images/avatar.webp",
@@ -472,6 +483,14 @@
       "tipo": "agencia-fomento",
       "descricao": "Agência de fomento à pesquisa e pós-graduação",
       "url": "https://www.gov.br/capes"
+    },
+    {
+      "nome": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
+      "sigla": "CNPq",
+      "localizacao": "",
+      "tipo": "agencia-fomento",
+      "descricao": "",
+      "url": "https://www.gov.br/cnpq/pt-br/"
     },
     {
       "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
@@ -1051,7 +1070,7 @@
         "projectType": "Projeto de Extensão",
         "title": "PROVALE em Extensão",
         "image": null,
-        "minibio": "",
+        "minibio": "O projeto Prosódia, Variação e Ensino, mais conhecido como Provale em extensão, surge como projeto de extensão vinculado ao Laboratório de Fonética Acústica. Institucionalizado como projeto na Pró-reitoria de Extensão da Universidade Federal da Paraíba (PJ144-2026), seu objetivo é promover a divulgação científica e o ensino da prosódia por meio de metodologias ativas, integrando estudantes de graduação e pós-graduação na construção e compartilhamento de saberes com a comunidade acadêmica e externa. A metodologia foca no “fazer para aprender”, envolvendo parcerias interinstitucionais (UFPB, UFRJ e Linguisticamente Falando) na criação de artefatos educativos e midiáticos. Espera-se, como resultado, promover a autonomia investigativa e a popularização da ciência linguística, gerando evidências tangíveis de aprendizagem e um impacto social significativo através da comunicação acessível e dinâmica.",
         "complementaryText": "",
         "coordination": [],
         "socialLinks": [],

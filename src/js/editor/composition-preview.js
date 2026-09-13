@@ -1,10 +1,11 @@
-import { applyPageComposition } from "../page/composition.js";
+import { applyPageComposition, normalizePageComposition } from "../page/composition.js";
 import { renderPageNavigation } from "../page/navigation.js";
 import {
   SECTION_REGISTRY,
   createSectionRenderer,
   getSectionDefinition,
   isRenderableSection,
+  getSectionAnchor,
 } from "../page/section-registry.js";
 import { createElement } from "../utils/helpers.js";
 import { applySiteContent } from "../site-content.js";
@@ -75,7 +76,7 @@ export async function renderCompositionPreview({
   if (!container) return null;
 
   container.innerHTML = "";
-  const normalized = applyPageComposition(documentRef, composition, registry);
+  const normalized = normalizePageComposition(composition, registry);
 
   const nav = createElement("nav", {
     className: "editor-preview-nav",
@@ -91,7 +92,7 @@ export async function renderCompositionPreview({
   });
 
   const previewSections = normalized.sections
-    .filter((section) => section.enabled)
+    .filter((section) => section.enabled && section.type !== "custom")
     .map((section) => getSectionDefinition(section.type, registry))
     .filter(Boolean);
 
@@ -100,6 +101,7 @@ export async function renderCompositionPreview({
   });
 
   container.appendChild(main);
+  applyPageComposition(documentRef, normalized, registry, container);
   if (previewData.editorSiteModel?.site) {
     const hero = createElement("section", { className: "editor-preview-section" });
     hero.append(
@@ -112,7 +114,7 @@ export async function renderCompositionPreview({
     footer.append(createElement("div", { "data-site-footer-content": "" }), createElement("p", { "data-site-footer-bottom": "" }));
     main.appendChild(footer);
     applySiteContent({ querySelector: (selector) => container.querySelector(selector), createTextNode: (text) => documentRef.createTextNode(text) }, previewData.editorSiteModel.site, {
-      visibleSectionAnchors: new Set(["#contato", ...previewSections.map((definition) => `#${definition.sectionId}`)]),
+      visibleSectionAnchors: new Set(["#contato", ...normalized.sections.filter((section) => section.enabled).map((section) => `#${getSectionAnchor(section, registry)}`)]),
     });
   }
 
@@ -120,13 +122,14 @@ export async function renderCompositionPreview({
     documentRef,
     composition: normalized,
     registry,
+    root: container,
   });
   const renderPromises = normalized.sections
     .filter((section) => section.enabled && isRenderableSection(section.type))
     .map((section) => {
       const definition = registry[section.type];
-      const renderer = createSectionRenderer(section.type, registry);
-      const data = getPreviewData(definition, previewData);
+      const renderer = createSectionRenderer(section.type, registry, { section, composition: normalized, root: container });
+      const data = section.type === "custom" ? section : getPreviewData(definition, previewData);
       return renderer.render(data);
     });
 

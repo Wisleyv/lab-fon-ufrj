@@ -1,5 +1,6 @@
 import { createElement as el } from "../utils/helpers.js";
 import { CONTENT_DATASETS, validateContent } from "./content-fields.js";
+import { getEditingReadiness } from "./state.js";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -18,21 +19,33 @@ export function createContentEditor({ host, store }) {
   const remove = button("editor-content-remove", "Remover registro");
   const cancel = button("editor-content-cancel", "Descartar alterações");
   const save = button("editor-content-save", "Salvar conteúdo", "submit");
+  const reason = el("p", { id: "editor-content-save-reason", className: "editor-operation-reason" });
+  save.setAttribute("aria-describedby", reason.id);
   actions.append(add, remove, cancel, save);
-  form.append(fields, actions);
+  form.append(fields, actions, reason);
   element.append(chooser, recordsSelect, form, status);
   let directory = null, records = [], selected = null, draft = null, baselineModel = null, busy = false;
   let inputId = 0;
   const schema = () => CONTENT_DATASETS[chooser.value];
+  const validationErrors = () => {
+    const errors = draft === null ? [] : validateContent(draft, schema().fields);
+    if (draft?.id && records.some((r) => r.name !== selected?.name && r.value.id === draft.id)) errors.push("Identificador já utilizado.");
+    return errors;
+  };
 
   function setControls() {
     const dirty = store.getState().contentDirty;
-    chooser.disabled = recordsSelect.disabled = busy || dirty;
-    add.disabled = busy || dirty || schema().singleton || !directory;
-    remove.disabled = busy || dirty || schema().singleton || !selected;
-    cancel.disabled = busy || !dirty;
-    save.disabled = busy || !dirty;
-    fields.querySelectorAll("input,textarea,select,button").forEach((node) => { node.disabled = busy; });
+    const ready = getEditingReadiness(store.getState());
+    const blocked = busy || !ready.ok;
+    const errors = dirty ? validationErrors() : [];
+    chooser.disabled = recordsSelect.disabled = blocked || dirty;
+    add.disabled = blocked || dirty || schema().singleton || !directory;
+    remove.disabled = blocked || dirty || schema().singleton || !selected;
+    cancel.disabled = blocked || !dirty;
+    save.disabled = blocked || !dirty || errors.length > 0;
+    reason.textContent = !ready.ok ? ready.message : busy ? "Aguarde a operação em andamento." : !dirty ? "Nenhuma alteração para salvar." : errors.join(" ");
+    reason.hidden = !save.disabled;
+    fields.querySelectorAll("input,textarea,select,button").forEach((node) => { node.disabled = blocked; });
   }
 
   function markDraft() {
@@ -86,8 +99,11 @@ export function createContentEditor({ host, store }) {
         else input.value = object[field.key] ?? "";
         if (field.required) input.required = true;
         if (field.type === "number") { input.min = "0"; input.step = "1"; }
+        if (field.max !== undefined) input.max = String(field.max);
+        if (field.maxLength) input.maxLength = field.maxLength;
         input.addEventListener("input", () => {
-          object[field.key] = field.type === "checkbox" ? input.checked : field.type === "number" ? Number(input.value) : input.value;
+          if (field.optional && field.type === "number" && input.value === "") delete object[field.key];
+          else object[field.key] = field.type === "checkbox" ? input.checked : field.type === "number" ? Number(input.value) : input.value;
           markDraft();
         });
         parent.append(el("label", { for: id }, field.label), input);
@@ -108,8 +124,8 @@ export function createContentEditor({ host, store }) {
   }
 
   async function load() {
-    if (!directory || !host.readContentDataset) { status.textContent = "Abra o projeto no aplicativo desktop."; return; }
-    busy = true; setControls();
+    if (directory?.status !== "valid" || !host.readContentDataset) { status.textContent = "Abra o projeto no aplicativo desktop."; setControls(); return; }
+    busy = true; store.setState({ contentLoading: true }); setControls();
     try {
       records = await host.readContentDataset(directory, chooser.value);
       recordsSelect.replaceChildren(...records.map((r) => el("option", { value: r.name }, r.value.nome || r.value.hero?.title || schema().label)));
@@ -119,7 +135,7 @@ export function createContentEditor({ host, store }) {
     } catch (error) {
       records = []; selected = draft = null; fields.replaceChildren();
       status.textContent = `Não foi possível abrir: ${error.message}`;
-    } finally { busy = false; setControls(); }
+    } finally { busy = false; store.setState({ contentLoading: false }); setControls(); }
   }
   chooser.addEventListener("change", load);
   recordsSelect.addEventListener("change", selectRecord);
@@ -131,9 +147,8 @@ export function createContentEditor({ host, store }) {
   });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (busy || !store.getState().contentDirty) return;
-    const errors = draft === null ? [] : validateContent(draft, schema().fields);
-    if (draft?.id && records.some((r) => r.name !== selected?.name && r.value.id === draft.id)) errors.push("Identificador já utilizado.");
+    if (busy || !getEditingReadiness(store.getState()).ok || !store.getState().contentDirty) return;
+    const errors = validationErrors();
     if (errors.length) { status.textContent = errors.join(" "); return; }
     busy = true; store.setState({ contentSaving: true }); setControls();
     try {
@@ -151,6 +166,7 @@ export function createContentEditor({ host, store }) {
       directory = state.openedProject;
       void load();
     }
+    setControls();
   });
   setControls();
   return { element, destroy: unsubscribe };

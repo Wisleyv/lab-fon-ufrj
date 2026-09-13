@@ -1,9 +1,35 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { ExtensaoSection } from "../../src/js/sections/extensao.js";
+import fs from "node:fs";
+import { renderCompositionPreview } from "../../src/js/editor/composition-preview.js";
 
 describe("ExtensaoSection", () => {
   beforeEach(() => {
     document.body.innerHTML = '<div id="extensao-content"></div>';
+  });
+
+  it("preserves the supplied paragraph verbatim in a production-composition preview", async () => {
+    const extension = JSON.parse(fs.readFileSync("content/extensao.json", "utf8"));
+    const supplied = fs.readFileSync("docs/update_site_labfon.md", "utf8")
+      .split(/\r?\n/).find((line) => line.startsWith("O projeto Prosódia, Variação e Ensino,"));
+    expect(supplied).toBeTruthy();
+    expect(extension.projects[0].minibio).toBe(supplied);
+    const composition = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
+    composition.sections.forEach((section) => {
+      section.enabled = section.type === "extension";
+    });
+    document.body.innerHTML = '<div id="preview"></div>';
+    await renderCompositionPreview({ documentRef: document, container: document.querySelector("#preview"), composition, previewData: { site: { extensao: extension } } });
+    expect(document.querySelector("#extensao .extension-project-minibio").textContent).toBe(supplied);
+    expect(document.querySelector(".extension-project-type").textContent).toBe("Projeto de Extensão");
+    expect(document.querySelector(".extension-empty-text")).toBeNull();
+    expect([...document.querySelectorAll("nav a")].map((a) => a.textContent)).toEqual(["Extensão", "Contato"]);
+  });
+
+  it("does not execute presentation markup", async () => {
+    await new ExtensaoSection("extensao-content").render({ projects: [{ id: "safe", title: "Projeto", minibio: '<img src=x onerror="alert(1)">Texto' }] });
+    expect(document.querySelector(".extension-project-minibio img")).toBeNull();
+    expect(document.querySelector(".extension-project-minibio").textContent).toContain("Texto");
   });
 
   it("renders PROVALE as project content inside Extensão", async () => {

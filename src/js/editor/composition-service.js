@@ -12,6 +12,12 @@ function cloneComposition(composition) {
 
 const CANONICAL_COMPOSITION_PATH = "content/page.json";
 
+function normalizePersistedComposition(raw) {
+  const result = validatePageComposition(raw);
+  if (!result.valid) throw new Error(result.diagnostics.map((item) => item.message).join(" "));
+  return result.composition;
+}
+
 export function createBrowserCompositionService({
   dataUrl = "./data.json",
 } = {}) {
@@ -76,7 +82,7 @@ export function createProjectCompositionService({
     filePath,
 
     async loadComposition() {
-      return normalizePageComposition(await host.readJson(directory, filePath));
+      return normalizePersistedComposition(await host.readJson(directory, filePath));
     },
 
     async saveComposition(composition) {
@@ -105,7 +111,7 @@ export function createProjectCompositionService({
       }
 
       try {
-        const verified = normalizePageComposition(
+        const verified = normalizePersistedComposition(
           await host.readJson(directory, filePath),
         );
 
@@ -149,7 +155,7 @@ function getErrorMessage(error) {
 function summarizeCompositionState(composition) {
   return Object.fromEntries(
     normalizePageComposition(composition).sections.map((section) => [
-      section.type,
+      section.type === "custom" ? section.id : section.type,
       section.enabled,
     ]),
   );

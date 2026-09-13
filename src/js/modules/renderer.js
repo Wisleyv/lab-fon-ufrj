@@ -28,7 +28,9 @@ export class SectionRenderer {
    * @returns {boolean} True if container found
    */
   init() {
-    this.container = document.getElementById(this.containerId);
+    this.container = this.options.root
+      ? this.options.root.querySelector(`[id="${this.containerId}"]`)
+      : document.getElementById(this.containerId);
     if (!this.container) {
       console.warn(`Container #${this.containerId} not found`);
       return false;
