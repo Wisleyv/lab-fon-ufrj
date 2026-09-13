@@ -9,12 +9,15 @@ export function createCustomSectionElement(documentRef, section) {
   element.setAttribute("aria-labelledby", `${section.id}-title`);
   const inner = documentRef.createElement("div");
   inner.className = "container";
+  const prose = documentRef.createElement("div");
+  prose.className = "content-prose";
   const title = documentRef.createElement("h2");
   title.id = `${section.id}-title`;
   title.textContent = section.title;
   const content = documentRef.createElement("div");
   content.id = `${section.id}-content`;
-  inner.append(title, content);
+  prose.append(title, content);
+  inner.append(prose);
   element.append(inner);
   return element;
 }

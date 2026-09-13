@@ -10,10 +10,11 @@ const nativeRequire = createRequire(entry);
 async function loadEntry(electronProcess, development = true) {
   const loadURL = vi.fn();
   const loadFile = vi.fn();
+  const webContents = { on: vi.fn(), getZoomLevel: vi.fn(() => 0), setZoomLevel: vi.fn() };
   const electron = {
     app: { whenReady: vi.fn(() => Promise.resolve()), on: vi.fn() },
     ipcMain: { handle: vi.fn() },
-    BrowserWindow: vi.fn(function () { return { loadURL, loadFile }; }),
+    BrowserWindow: vi.fn(function () { return { loadURL, loadFile, webContents }; }),
   };
   const require = vi.fn((name) => name === "electron" ? electron : nativeRequire(name));
   // Electron's development launcher imports the CJS entry, rather than making it require.main.
@@ -25,10 +26,36 @@ async function loadEntry(electronProcess, development = true) {
       type: electronProcess ? "browser" : undefined, platform: "win32" },
   });
   await Promise.resolve();
-  return { electron, loadURL, loadFile, require };
+  return { electron, loadURL, loadFile, webContents, require };
 }
 
 describe("desktop entry startup", () => {
+  it.each([["NumpadAdd", 0.5], ["NumpadSubtract", -0.5]])("handles Ctrl+%s exactly once", async (code, step) => {
+    const { webContents } = await loadEntry(true);
+    const handler = webContents.on.mock.calls.find(([event]) => event === "before-input-event")[1];
+    webContents.getZoomLevel.mockReturnValue(1);
+    const event = { preventDefault: vi.fn() };
+    handler(event, { type: "keyDown", control: true, code });
+    expect(event.preventDefault).toHaveBeenCalledOnce();
+    expect(webContents.setZoomLevel).toHaveBeenCalledExactlyOnceWith(1 + step);
+    handler(event, { type: "keyUp", control: true, code });
+    expect(webContents.setZoomLevel).toHaveBeenCalledOnce();
+  });
+
+  it("leaves top-row zoom/reset, ordinary typing, AltGr and composition input untouched", async () => {
+    const { webContents } = await loadEntry(true);
+    const handler = webContents.on.mock.calls.find(([event]) => event === "before-input-event")[1];
+    const event = { preventDefault: vi.fn() };
+    for (const input of [
+      { code: "Equal", shift: true }, { code: "Minus" }, { code: "Digit0" },
+      { code: "NumpadAdd", control: false }, { code: "NumpadSubtract", control: false },
+      { code: "NumpadAdd", alt: true }, { code: "NumpadAdd", meta: true },
+      { code: "NumpadAdd", isComposing: true },
+    ]) handler(event, { type: "keyDown", control: true, ...input });
+    expect(webContents.setZoomLevel).not.toHaveBeenCalled();
+    expect(event.preventDefault).not.toHaveBeenCalled();
+  });
+
   it("starts the imported Electron entry at Vite's editor base path", async () => {
     const result = await loadEntry(true);
     expect(result.electron.BrowserWindow).toHaveBeenCalledOnce();

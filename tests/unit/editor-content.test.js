@@ -140,3 +140,139 @@ it("keeps form edits reversible and preserves the draft when saving fails", asyn
   expect(store.getState().editorSiteModel.equipe[0].nome).toBe("Original");
   editor.destroy();
 });
+
+it.each(["equipe", "parcerias", "linhasPesquisa"])("focuses one %s record and protects selection until save/discard", async (dataset) => {
+  let records = ["First", "Second"].map((nome, index) => ({ name: `${index}.json`, value: {
+    ...structuredClone(CONTENT_DATASETS[dataset].empty), nome, instituicao: "UFRJ", id: `item-${index}`, descricao: "Description",
+  } }));
+  const host = {
+    readContentDataset: vi.fn(async () => structuredClone(records)),
+    saveContentRecord: vi.fn(async (_directory, _dataset, name, _previous, value) => {
+      records = records.filter((record) => record.name !== name);
+      if (value) records.push({ name, value: structuredClone(value) });
+      return { ok: true };
+    }),
+  };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  const get = (id) => document.getElementById(id);
+  const select = (node, value) => { node.value = value; node.dispatchEvent(new Event("change")); };
+  const nameInput = () => get("content-field-root.nome");
+  try {
+    get("editor-content-dataset").value = dataset;
+    store.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { [dataset]: records.map((record) => record.value) } });
+    await vi.waitFor(() => expect(nameInput()?.value).toBe("First"));
+    expect(document.querySelectorAll('#editor-content-form input[id$=".nome"]')).toHaveLength(1);
+    select(get("editor-content-record"), "1.json");
+    expect(nameInput().value).toBe("Second");
+    nameInput().value = "Edited"; nameInput().dispatchEvent(new Event("input", { bubbles: true }));
+    select(get("editor-content-record"), "0.json");
+    expect(get("editor-content-record").value).toBe("1.json");
+    expect(nameInput().value).toBe("Edited");
+    select(get("editor-content-dataset"), "site");
+    expect(get("editor-content-dataset").value).toBe(dataset);
+    get("editor-content-cancel").click();
+    expect(nameInput().value).toBe("Second");
+    get("editor-content-add").click();
+    expect(get("editor-content-record").selectedOptions[0].textContent).toBe("Novo registro");
+    get("editor-content-cancel").click();
+    expect(nameInput().value).toBe("Second");
+    nameInput().value = "Saved"; nameInput().dispatchEvent(new Event("input", { bubbles: true }));
+    get("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(store.getState().contentSaving).toBe(false));
+    expect(records.find((record) => record.name === "1.json").value.nome).toBe("Saved");
+    expect(get("editor-content-record").value).toBe("1.json");
+    expect(get("editor-content-save").classList.contains("editor-btn-primary")).toBe(true);
+    expect(get("editor-content-remove").classList.contains("editor-btn-danger")).toBe(true);
+  } finally { editor.destroy(); }
+});
+
+it("focuses Site groups and one nested link, preserving add/remove/reorder through canonical read-back", async () => {
+  const root = await fixture();
+  const original = JSON.parse(await fs.readFile("content/site.json", "utf8"));
+  await fs.writeFile(path.join(root, "content/site.json"), JSON.stringify(original));
+  const host = {
+    readContentDataset: (_directory, dataset) => readContentDataset(null, root, dataset),
+    saveContentRecord: (_directory, dataset, name, previous, next) => saveContentRecord(null, root, dataset, name, previous, next),
+  };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  const get = (id) => document.getElementById(id);
+  const group = (value) => [...document.querySelectorAll('[aria-label="Grupo de campos"]')].find((node) => [...node.options].some((option) => option.value === value));
+  const select = (node, value) => { node.value = value; node.dispatchEvent(new Event("change")); };
+  const save = async () => {
+    expect(get("editor-content-save").disabled).toBe(false);
+    get("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(store.getState().contentSaving).toBe(false));
+    expect(store.getState().contentDirty).toBe(false);
+    return (await readContentDataset(null, root, "site"))[0].value;
+  };
+  try {
+    store.setState({ openedProject: { path: root, status: "valid" }, editorSiteModel: { site: original } });
+    await vi.waitFor(() => expect(group("hero")).toBeDefined());
+    expect(get("content-field-root.header.title")).not.toBeNull();
+    expect(get("content-field-root.hero.title")).toBeNull();
+    group("hero").focus();
+    select(group("hero"), "hero");
+    expect(document.activeElement).toBe(group("hero"));
+    select(group("actions"), "actions");
+    expect(document.querySelectorAll("#editor-content-form fieldset")).toHaveLength(0);
+    const links = () => document.querySelector('[aria-label="Links"]');
+    expect(links().options.length).toBe(original.hero.actions.length);
+    select(links(), "1");
+    const label = get("content-field-root.hero.actions.1.label");
+    expect(get("content-field-root.hero.actions.0.label")).toBeNull();
+    label.value = "Pending"; label.dispatchEvent(new Event("input", { bubbles: true }));
+    select(links(), "0"); expect(links().value).toBe("1");
+    expect(group("hero").disabled).toBe(true);
+    expect((await readContentDataset(null, root, "site"))[0].value).toEqual(original);
+    get("editor-content-cancel").click();
+    expect(get("content-field-root.hero.actions.1.label").value).toBe(original.hero.actions[1].label);
+    document.querySelector('[aria-label="Subir Links"]').click();
+    expect(links().value).toBe("0");
+    let saved = await save();
+    expect(saved.hero.actions[0]).toEqual(original.hero.actions[1]);
+    const add = [...document.querySelectorAll("button")].find((node) => node.textContent === "Adicionar Links");
+    add.click();
+    expect(links().value).toBe(String(original.hero.actions.length));
+    saved = await save();
+    expect(saved.hero.actions).toHaveLength(original.hero.actions.length + 1);
+    document.querySelector('[aria-label="Remover Links"]').click();
+    saved = await save();
+    expect(saved.hero.actions).toHaveLength(original.hero.actions.length);
+    expect(saved.header).toEqual(original.header);
+    expect(saved.footer).toEqual(original.footer);
+    expect(validateContent(saved, CONTENT_DATASETS.site.fields)).toEqual([]);
+  } finally { editor.destroy(); }
+});
+
+it("focuses extension projects and materializes optional groups only on edit", async () => {
+  const original = { projects: [
+    { id: "one", title: "One", projectType: "Extension", image: null, socialLinks: [] },
+    { id: "two", title: "Two", projectType: "Extension", image: null, socialLinks: [] },
+  ] };
+  const host = { readContentDataset: async () => [{ name: "extensao.json", value: structuredClone(original) }] };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  const get = (id) => document.getElementById(id);
+  const select = (node, value) => { node.value = value; node.dispatchEvent(new Event("change")); };
+  try {
+    get("editor-content-dataset").value = "extensao";
+    store.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { extensao: original } });
+    await vi.waitFor(() => expect(get("content-field-root.projects.0.title")).not.toBeNull());
+    expect(get("content-field-root.projects.1.title")).toBeNull();
+    select(document.querySelector('[aria-label="Projetos"]'), "1");
+    select(document.querySelector('[aria-label="Grupo de campos"]'), "image");
+    expect(store.getState().contentDirty).toBeFalsy();
+    expect(store.getState().editorSiteModel.extensao.projects[1].image).toBeNull();
+    const input = get("content-field-root.projects.1.image.alt");
+    input.value = "Alternative"; input.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(store.getState().editorSiteModel.extensao.projects[1].image).toEqual({ alt: "Alternative" });
+    expect(store.getState().editorSiteModel.extensao.projects[0]).toEqual(original.projects[0]);
+    get("editor-content-cancel").click();
+    expect(store.getState().editorSiteModel.extensao).toEqual(original);
+  } finally { editor.destroy(); }
+});

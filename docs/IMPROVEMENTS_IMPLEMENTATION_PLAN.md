@@ -17,7 +17,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | B3 | DEFERRED | Session-level agent/interface constraint; not a production blocker |
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
-| C2 | PARTIAL MANUAL ACCEPTANCE - RETEST PENDING | Persistence, IDs, ordering, disable/re-enable and generated builds manually confirmed; content access, inline preview and local/remote corrections implemented and automatically verified |
+| C2 | CORE MANUALLY ACCEPTED; FOCUSED-FORM RETEST PENDING | Maintainer confirmed the 2e0378b corrections; unified content selection, focused forms, width, save destination, keypad zoom and buttons now automatically verified |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -31,6 +31,25 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 13 Unified Content and Focused Forms
+
+The updated follow-up prompt reports successful manual retesting of `2e0378b`: custom editing, independent instances, automatic draft preview, persistence/reopen, Revisar, and local/remote gating are confirmed. The earlier correction and pending-acceptance descriptions below are historical. Existing C2 ownership, schema and remote safeguards were not reopened.
+
+This follow-up completes the six requested local-editor fixes:
+
+- One Conteudo selector now includes all built-in datasets and each custom instance, using its immutable ID and a numbered title. Disabled custom instances remain editable and identifiable. Only the selected built-in or custom editor is shown. Pagina's Editar conteudo and new-section creation route through this selector.
+- Equipe, Parcerias and Linhas de Pesquisa reuse their existing single-record selection. Site and Extensao now use focused logical-group and nested-item selectors through `focused-fields.js`, including nested Links, footer groups and extension projects. Optional objects remain absent/null until edited; canonical schemas and save/read-back services are unchanged.
+- Pending edits block item/group navigation until explicit Save/Discard. Creating another custom section also requires resolving pending changes. Nested add/remove/reorder remain explicit draft operations. Selector/reorder rerenders preserve keyboard focus where possible. Custom blocks remain a flat set of block fieldsets within the one selected custom instance; they are not nested dataset frames.
+- Custom public/preview sections now use `.container > .content-prose`, matching existing prose sections instead of using the wider outer container alone. Link/CTA text wraps within its available width. No new fixed width or editorial data change was introduced.
+- Successful page save identifies the local project path, distinguishes a retrieved project's local working copy, and explicitly reports no FTP transfer. Source update/publication remain separate operations.
+- Electron handles Ctrl+NumpadAdd/Subtract using `before-input-event`; default top-row/reset handling is untouched. Consuming the handled event prevents a second menu zoom step. Ordinary keypad typing, AltGr, Meta and composing input are not intercepted. Primary/secondary/destructive button styles reuse editor colors and existing disabled/focus semantics.
+
+Verification: **136 focused tests passed (7 files); 300 full-suite tests passed once (27 files); `npm run build` passed once for both web and editor.** The full suite's FTP/build fixtures are disposable local tests, not production operations. The existing local preview responds on port 4177; no browser screenshot or actual Electron keyboard acceptance was performed by the agent. Follow [the focused-form retest guide](EDITOR_FOCUSED_FORMS_RETEST.md), preserving the existing disposable project's content.
+
+Normal Portuguese labels and outcome/error statuses were implemented. B3 contextual instructional help remains **Deferred -- blocked by session-level agent constraint; not a production blocker.** Media pickers, C3, Instagram, dependency upgrades, packaging, real FTP/source update and production publication were not started.
+
+Next implementation slice, only after this retest is accepted and separately authorized: a narrowly scoped Equipe photo picker using the existing relative-asset and desktop-host boundaries. Parcerias/Site media controls require their own field-semantic review; do not batch them with C3 or Instagram.
 
 ### September 13 Manual Acceptance Follow-up
 
@@ -294,4 +313,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **manual C2 desktop visual/interaction acceptance using a disposable local project**. Create two custom sections, edit all five block types, rename/place/reorder, disable/re-enable, test navigation/keyboard focus and long text, save/read-back/reopen, and verify whole-page discard plus failed-save draft retention. Record acceptance before proposing a separately authorized compatible-package/backup rollout run. Do not begin C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **manual focused-form desktop retest in the existing disposable project**, using [EDITOR_FOCUSED_FORMS_RETEST.md](EDITOR_FOCUSED_FORMS_RETEST.md). Preserve the already accepted C2 behaviors while checking unified selection, dirty navigation, Site/Extensao nested items, custom width, local save destination, keypad zoom and button/focus behavior. Only after acceptance, propose the separately authorized Equipe photo-picker slice. Do not begin media work, C3, B3, Instagram, packaging or production FTP automatically.

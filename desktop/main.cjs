@@ -48,6 +48,15 @@ function createWindow({ BrowserWindow }) {
     },
   });
 
+  window.webContents.on("before-input-event", (event, input) => {
+    if (input.type !== "keyDown" || !input.control || input.alt || input.meta || input.isComposing) return;
+    const direction = input.code === "NumpadAdd" ? 1 : input.code === "NumpadSubtract" ? -1 : 0;
+    if (!direction) return;
+    // Prevent the menu from applying a second zoom step to this same key event.
+    event.preventDefault();
+    window.webContents.setZoomLevel(window.webContents.getZoomLevel() + direction * 0.5);
+  });
+
   if (isDev) {
     window.loadURL("http://127.0.0.1:3000/labfonac/editor.html");
     return;

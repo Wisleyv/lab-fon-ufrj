@@ -142,6 +142,22 @@ function createFailingProjectHost(options) {
 }
 
 describe("Editor Composition UI", () => {
+  it.each(["local", "remote-ftp"])("reports the local page-save destination for %s projects", async (source) => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(initialComposition) });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", path: "C:\\Temp\\labfonac-c2", source } });
+      document.querySelector('[data-section-id="parcerias"] button').click();
+      document.getElementById("editor-save-composition").click();
+      await vi.waitFor(() => expect(app.store.getState().compositionDirty).toBe(false));
+      expect(app.store.getState().compositionOutcome).toBe(
+        `Página salva ${source === "local" ? "no projeto local" : "na cópia local do projeto remoto"}: C:\\Temp\\labfonac-c2. Nenhum envio por FTP.`);
+      expect(app.store.getState().receipts.source).toBeNull();
+      expect(app.store.getState().receipts.publication).toBeNull();
+    } finally { app.destroy(); }
+  });
+
   it.each([
     ["start", ["parcerias", "sobre", "linhas-pesquisa"]],
     ["after:sobre", ["sobre", "parcerias", "linhas-pesquisa"]],

@@ -5,11 +5,10 @@ import { validatePageComposition } from "../page/composition.js";
 
 const BLOCK_LABELS = { heading: "Subtítulo", paragraph: "Parágrafo", list: "Lista", link: "Link", button: "Botão de navegação" };
 
-export function createCustomSectionEditor({ store, update, insertionTarget, saveButton, discardButton, onEditContent = () => {} }) {
+export function createCustomSectionEditor({ store, update, insertionTarget, saveButton, discardButton, onEditContent = () => {}, onSelect = () => {} }) {
   const page = createElement("div", { className: "editor-custom-page" });
-  const content = createElement("section", { className: "editor-panel", "aria-labelledby": "editor-custom-content-title" });
-  content.append(createElement("h2", { id: "editor-custom-content-title" }, "Seções personalizadas"));
-  const select = createElement("select", { id: "editor-custom-select", className: "editor-input", "aria-label": "Seção personalizada" });
+  const content = createElement("div", { "aria-labelledby": "editor-custom-current-title" });
+  const select = createElement("select", { id: "editor-custom-page-select", className: "editor-input", "aria-label": "Seção personalizada" });
   const metadata = createElement("div");
   const blocks = createElement("div", { id: "editor-custom-blocks" });
   const currentTitle = createElement("h3", { id: "editor-custom-current-title" });
@@ -19,6 +18,10 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
   let lastDraft;
   let selectedId;
   const selected = () => store.getState().draftComposition?.sections.find((section) => section.id === selectedId);
+  select.addEventListener("change", () => {
+    if (store.getState().contentDirty || store.getState().compositionDirty) { select.value = selectedId; return; }
+    onSelect(select.value);
+  });
   const commit = (changes) => {
     changing = true;
     try { update(() => updateCustomSection(store.getState().draftComposition, selectedId, changes), true); }
@@ -53,7 +56,7 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
       title.value = ""; label.value = ""; visible.checked = true; creation.open = false;
       selectedId = store.getState().draftComposition.sections.find((entry) => !before.sections.some((old) => old.id === entry.id))?.id;
       render(true);
-      onEditContent();
+      onEditContent(selectedId, true);
     }
   }), button("Cancelar", "editor-custom-cancel", () => { title.value = ""; label.value = ""; visible.checked = true; creation.open = false; }));
   page.append(creation, createElement("h3", {}, "Identificação da seção personalizada"), metadata);
@@ -74,8 +77,10 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
   const save = button("Salvar página", "editor-custom-save", () => saveButton.click());
   const discard = button("Descartar alterações da página", "editor-custom-discard", () => discardButton.click());
   const status = createElement("p", { role: "status", className: "editor-status" });
-  content.append(select, currentTitle, blocks, blockType, add, save, discard, status);
-  select.addEventListener("change", () => { selectedId = select.value; render(true); });
+  save.className = "editor-btn editor-btn-primary";
+  const actions = createElement("div", { className: "editor-actions" });
+  actions.append(add, save, discard);
+  content.append(currentTitle, blocks, blockType, actions, status);
 
   function render(force = false) {
     const state = store.getState();
@@ -83,7 +88,6 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
     const instances = draft?.sections.filter((section) => section.type === "custom") || [];
     if (!instances.some((section) => section.id === selectedId)) selectedId = instances[0]?.id;
     const section = selected();
-    content.hidden = instances.length === 0;
     currentTitle.textContent = section ? `Conteúdo: ${section.title || "Sem título"}` : "";
     if (!changing && (force || lastDraft !== draft)) {
       select.replaceChildren(...instances.map((entry, index) => createElement("option", { value: entry.id }, `${index + 1}. ${entry.title || "Sem título"}${entry.enabled ? "" : " (desabilitada)"}`)));
@@ -91,12 +95,8 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
       metadata.replaceChildren();
       blocks.replaceChildren();
       if (section) {
-        const metaSelect = select.cloneNode(true);
-        metaSelect.removeAttribute("id");
-        metaSelect.value = selectedId;
-        metaSelect.addEventListener("change", () => { selectedId = metaSelect.value; render(true); });
-        metadata.append(metaSelect);
-        metadata.append(button("Editar conteúdo", "editor-custom-edit-content", onEditContent));
+        metadata.append(select);
+        metadata.append(button("Editar conteúdo", "editor-custom-edit-content", () => onEditContent(selectedId)));
         field(metadata, "Título", section.title, (value) => commit({ title: value }), { id: "editor-custom-title" });
         field(metadata, "Rótulo de navegação (opcional)", section.navigation.label || "", (value) => {
           const navigation = { ...selected().navigation }; delete navigation.label;
@@ -121,6 +121,7 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
               render(true);
             });
             action.title = name; action.setAttribute("aria-label", name);
+            if (!offset) action.className = "editor-btn editor-btn-danger";
             action.dataset.edge = String((offset === -1 && index === 0) || (offset === 1 && index === section.content.blocks.length - 1));
             row.append(action);
           }
@@ -140,10 +141,11 @@ export function createCustomSectionEditor({ store, update, insertionTarget, save
     add.disabled = !editable || !section || section.content.blocks.length >= 100;
     blockType.disabled = !editable || !section;
     const valid = draft && validatePageComposition(draft).valid;
-    creation.querySelector("#editor-custom-create").disabled = !editable || !valid;
+    creation.querySelector("#editor-custom-create").disabled = !editable || !valid || state.contentDirty || state.compositionDirty;
+    select.disabled = !editable || state.contentDirty || state.compositionDirty;
     save.disabled = !editable || !state.compositionDirty || !valid || saveButton.disabled;
     discard.disabled = !editable || !state.compositionDirty;
     status.textContent = state.compositionOutcome || (!valid && section ? "Há campos inválidos na página." : "");
   }
-  return { page, content, render };
+  return { page, content, render, select(id) { selectedId = id; render(true); } };
 }

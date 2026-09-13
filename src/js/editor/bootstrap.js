@@ -878,16 +878,18 @@ function createLayout(
   });
   compositionCard.appendChild(compositionDiagnostics);
   main.appendChild(compositionCard);
-  const contentEditor = createContentEditor({ host: desktopHost, store });
   const insertionTarget = () => positionSelect.value === "" ? undefined : { afterSectionId: positionSelect.value === "start" ? null : positionSelect.value.slice(6) };
   const customEditor = createCustomSectionEditor({ store, insertionTarget,
     update: (next, allowInvalid) => updateDraftComposition(store, next, allowInvalid),
     saveButton: saveCompositionButton, discardButton: discardCompositionButton,
-    onEditContent: () => {
+    onSelect: (id) => contentEditor.selectItem(id),
+    onEditContent: (id, created = false) => {
       selectTab(2);
-      customEditor.content.scrollIntoView?.({ block: "start" });
-      documentRef.getElementById("editor-custom-select").focus();
+      contentEditor.selectItem(id, { fromPage: true, created });
+      contentEditor.element.scrollIntoView?.({ block: "start" });
+      documentRef.getElementById("editor-content-dataset").focus();
     } });
+  const contentEditor = createContentEditor({ host: desktopHost, store, customEditor });
   compositionCard.insertBefore(customEditor.page, compositionActions);
   main.appendChild(contentEditor.element);
 
@@ -1017,7 +1019,7 @@ function createLayout(
   const panelContents = [
     [remoteCard],
     [projectRemote, statusCard, advanced],
-    [customEditor.content, contentEditor.element, contentCard],
+    [contentEditor.element, contentCard],
     [compositionCard, previewCard],
     [buildCard],
     [publishCard],
@@ -1673,8 +1675,11 @@ function createLayout(
     }
 
     const savedComposition = createDraftComposition(result.composition);
+    const project = previousState.openedProject;
+    const saveDestination = project?.source === "remote-ftp" ? "cópia local do projeto remoto" : "projeto local";
     store.setState({
-      compositionSaving: false, compositionOutcome: "Salvo neste computador.",
+      compositionSaving: false,
+      compositionOutcome: `Página salva ${project?.source === "remote-ftp" ? "na" : "no"} ${saveDestination}${project?.path ? `: ${project.path}` : ""}. Nenhum envio por FTP.`,
       savedComposition,
       loadedComposition: createDraftComposition(savedComposition),
       draftComposition: createDraftComposition(savedComposition),

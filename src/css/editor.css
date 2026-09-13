@@ -180,9 +180,13 @@ body {
 }
 
 .editor-btn-secondary {
-  background: var(--editor-surface);
+  background: #e9eef5;
   color: var(--editor-ink);
 }
+
+.editor-btn-secondary:not(:disabled):hover { background: #dbe5f0; border-color: #78899e; }
+.editor-btn-danger { background: #fff2f2; border-color: #b44242; color: #8b2020; }
+.editor-btn-danger:not(:disabled):hover { background: #f8dddd; border-color: #8b2020; }
 
 .editor-status {
   margin: 0.75rem 0;
@@ -378,18 +382,20 @@ body {
   border-radius: 12px;
   padding: 1rem;
 }
-/* Content forms retain the existing editor controls and spacing. */
-#editor-content-form fieldset {
+.editor-focused-group,
+.editor-focused-item {
   min-width: 0;
-  margin: 12px 0;
-  padding: 12px;
-  border: 1px solid #c6cbd0;
+  margin-block: 0.75rem;
 }
 #editor-content-form label { display: block; margin-top: 8px; }
 #editor-content-form textarea { min-height: 96px; resize: vertical; }
 #editor-content-form .editor-input:not([type="checkbox"]) { width: 100%; }
 #editor-content-editing { min-width: 0; }
 #editor-content-editing select { max-width: 100%; }
+#editor-content-editing > select { width: 100%; }
+#editor-content-editing [hidden] { display: none; }
+#editor-content-editing .editor-actions { margin-block: 0.75rem; }
+#editor-content-editing [role="status"] { overflow-wrap: anywhere; }
 .editor-session-status {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

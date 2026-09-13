@@ -153,6 +153,8 @@ describe("C2 shared rendering and persistence", () => {
     for (const section of custom(page)) await createSectionRenderer("custom", SECTION_REGISTRY, { section, composition: page }).render(section);
     const publicA = document.getElementById(a.id);
     const html = publicA.outerHTML;
+    expect(publicA.querySelector(":scope > .container > .content-prose > h2")).not.toBeNull();
+    expect(publicA.querySelector(`[id="${a.id}-content"]`).parentElement.className).toBe("content-prose");
     expect(publicA.querySelector("script")).toBeNull();
     expect(publicA.querySelector("p").textContent).toBe(blocks[1].text);
     expect(publicA.querySelectorAll("h2,h3,ol,a")).toHaveLength(5);
@@ -211,6 +213,59 @@ describe("C2 shared rendering and persistence", () => {
 });
 
 describe("C2 editor shared ownership", () => {
+  it("unifies built-ins and duplicate-title instances, guards dirty navigation and routes from Page", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const initial = two();
+    const [a, b] = custom(initial);
+    b.title = a.title;
+    const service = createMemoryCompositionService(initial);
+    const app = initEditorApp({ compositionService: service });
+    const get = (id) => document.getElementById(id);
+    const choose = (value) => { get("editor-content-dataset").value = value; get("editor-content-dataset").dispatchEvent(new Event("change")); };
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "local", path: "C:/fixture" } });
+      const chooser = get("editor-content-dataset");
+      expect([...chooser.options].slice(0, 5).map((option) => option.value)).toEqual(["site", "equipe", "linhasPesquisa", "parcerias", "extensao"]);
+      expect([...chooser.options].filter((option) => option.value.startsWith("custom-")).map((option) => option.textContent)).toEqual(["1. Custom A", "2. Custom A"]);
+      expect(get("editor-custom-select")).toBeNull();
+      choose(a.id);
+      expect(get("editor-content-form").hidden).toBe(true);
+      expect(get("editor-custom-blocks").parentElement.hidden).toBe(false);
+      const text = get("editor-custom-blocks").querySelector("textarea");
+      text.value = "A draft"; text.dispatchEvent(new Event("input", { bubbles: true }));
+      choose(b.id);
+      expect(chooser.value).toBe(a.id);
+      expect(get("editor-content-selection-status").textContent).toContain("bloqueada");
+      expect(custom(app.store.getState().draftComposition)[0].content.blocks[1].text).toBe("A draft");
+      expect(custom(app.store.getState().draftComposition)[1].content).toEqual(b.content);
+      get("editor-custom-save").click();
+      await vi.waitFor(() => expect(app.store.getState().compositionDirty).toBe(false));
+      choose(b.id);
+      expect(chooser.value).toBe(b.id);
+      choose("equipe");
+      expect(get("editor-content-form").hidden).toBe(false);
+      expect(get("editor-custom-blocks").parentElement.hidden).toBe(true);
+      get("editor-tab-page").click();
+      get("editor-custom-edit-content").click();
+      expect(chooser.value).toBe(b.id);
+      expect(get("editor-tab-content").getAttribute("aria-selected")).toBe("true");
+      expect(document.activeElement).toBe(chooser);
+      const title = get("editor-custom-title");
+      title.value = "Renamed B"; title.dispatchEvent(new Event("input", { bubbles: true }));
+      expect(chooser.value).toBe(b.id);
+      expect(chooser.selectedOptions[0].textContent).toContain("Renamed B");
+      choose("site"); expect(chooser.value).toBe(b.id);
+      get("editor-custom-discard").click();
+      choose("site"); expect(chooser.value).toBe("site");
+      app.store.setState({ contentDirty: true });
+      choose(a.id); expect(chooser.value).toBe("site");
+      expect(get("editor-custom-create").disabled).toBe(true);
+      expect(get("editor-custom-save").classList.contains("editor-btn-primary")).toBe(true);
+      expect(get("editor-custom-blocks").querySelector('[aria-label="Remover bloco"]').classList.contains("editor-btn-danger")).toBe(true);
+    } finally { app.destroy(); }
+  });
+
   it("creates two instances, edits all block types, saves and discards through the page owner", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const service = createMemoryCompositionService(legacy);
@@ -229,13 +284,19 @@ describe("C2 editor shared ownership", () => {
         input(get("editor-custom-new-title"), name);
         get("editor-custom-create").click();
         expect(get("editor-tab-content").getAttribute("aria-selected")).toBe("true");
-        expect(document.activeElement).toBe(get("editor-custom-select"));
+        expect(document.activeElement).toBe(get("editor-content-dataset"));
         expect(get("editor-tabpanel-content").firstElementChild.contains(get("editor-custom-add-block"))).toBe(true);
         expect(get("editor-custom-current-title").textContent).toContain(name);
+        if (name === "Custom A") {
+          expect(service.getSavedComposition().schemaVersion).toBeUndefined();
+          expect(get("editor-custom-create").disabled).toBe(true);
+          get("editor-custom-save").click();
+          await vi.waitFor(() => expect(app.store.getState().compositionDirty).toBe(false));
+        }
       }
       expect(custom(app.store.getState().draftComposition)).toHaveLength(2);
-      expect(service.getSavedComposition().schemaVersion).toBeUndefined();
-      const id = get("editor-custom-select").value;
+      expect(custom(service.getSavedComposition())).toHaveLength(1);
+      const id = get("editor-content-dataset").value;
       for (const block of blocks) {
         get("editor-custom-block-type").value = block.type;
         get("editor-custom-add-block").click();
@@ -256,7 +317,7 @@ describe("C2 editor shared ownership", () => {
       expect(app.store.getState().contentDirty).toBe(true);
       expect(custom(await service.loadComposition())).toHaveLength(2);
       input(get("editor-custom-title"), "Renamed");
-      expect(get("editor-custom-select").value).toBe(id);
+      expect(get("editor-content-dataset").value).toBe(id);
       get("editor-custom-discard").click();
       expect(app.store.getState().draftComposition).toEqual(await service.loadComposition());
       expect(app.store.getState().contentDirty).toBe(true);
@@ -285,8 +346,8 @@ describe("C2 editor shared ownership", () => {
       const preview = get("editor-composition-preview");
       const ids = () => [...preview.querySelectorAll('[data-page-section="custom"]')].map((node) => node.id);
       await vi.waitFor(() => expect(ids()).toEqual([a.id, b.id]));
-      get("editor-custom-select").value = b.id;
-      get("editor-custom-select").dispatchEvent(new Event("change"));
+      get("editor-content-dataset").value = b.id;
+      get("editor-content-dataset").dispatchEvent(new Event("change"));
       const textarea = get("editor-custom-blocks").querySelector("textarea");
       textarea.value = "Independent B draft";
       textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -295,7 +356,7 @@ describe("C2 editor shared ownership", () => {
       const title = get("editor-custom-title");
       title.value = "Renamed B"; title.dispatchEvent(new Event("input", { bubbles: true }));
       await vi.waitFor(() => expect(preview.querySelector(`[id="${b.id}-title"]`).textContent).toBe("Renamed B"));
-      expect(get("editor-custom-select").value).toBe(b.id);
+      expect(get("editor-content-dataset").value).toBe(b.id);
       get("editor-tab-page").click();
       get("editor-custom-edit-content").click();
       expect(get("editor-tab-content").getAttribute("aria-selected")).toBe("true");
