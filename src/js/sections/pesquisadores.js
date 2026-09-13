@@ -6,6 +6,7 @@
 import { SectionRenderer } from "../modules/renderer.js";
 import { HTMLSanitizer } from "../utils/sanitizer.js";
 import { createElement } from "../utils/helpers.js";
+import { resolveTeamPhoto, isCustomTeamPhoto, TEAM_PLACEHOLDER_URL } from "./team-photo.js";
 import {
   EQUIPE_CATEGORIES,
   getEquipeCategoryMap,
@@ -312,7 +313,7 @@ export class PesquisadoresSection extends SectionRenderer {
     const nome = HTMLSanitizer.sanitize(member.nome || "Nome não informado");
     const instituicao = HTMLSanitizer.sanitize(member.instituicao || "");
     const lattesUrl = HTMLSanitizer.sanitizeURL(member.lattes);
-    const foto = member.foto || "/assets/images/placeholder-avatar.jpg";
+    const foto = resolveTeamPhoto(member.foto);
 
     const card = createElement("article", {
       className: "membro-card",
@@ -324,8 +325,14 @@ export class PesquisadoresSection extends SectionRenderer {
     const figure = createElement("figure", { className: "membro-foto" });
     const img = createElement("img", {
       src: foto,
-      alt: `Foto de ${nome}`,
+      alt: isCustomTeamPhoto(member.foto) ? `Foto de ${nome}` : "",
       loading: "lazy",
+    });
+    img.addEventListener("error", () => {
+      if (img.getAttribute("src") !== TEAM_PLACEHOLDER_URL) {
+        img.src = TEAM_PLACEHOLDER_URL;
+        img.alt = "";
+      }
     });
     figure.appendChild(img);
 

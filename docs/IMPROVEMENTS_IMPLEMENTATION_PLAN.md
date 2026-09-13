@@ -18,7 +18,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
-| Equipe media | IMPLEMENTED; MANUAL RETEST PENDING | Restricted native photo picker, managed copies, form preview and canonical Save/Discard verified automatically |
+| Equipe media | CORRECTIONS IMPLEMENTED; GUI RETEST PENDING | Visible canonical Save/Discard, guarded project close, shared no-photo state/removal; reported clean-state symptom not reproduced automatically |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -32,6 +32,30 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 13 Equipe Save, Close and No-Photo Follow-Up
+
+Continues from `5948297` on the same feature branch. The maintainer confirmed native selection/copy/preview but reported unchanged JSON with a clean global status, no evident content Save, no explicit project close and no valid no-photo/removal flow. This supersedes the earlier media slice's removal deferral; it does not change the accepted `f8064e2` C2 status.
+
+Before implementation, a disposable full-bootstrap fixture with the real canonical content store showed the managed path, `contentDirty: true`, global `nao salvas`, and an enabled, non-hidden `Salvar conteudo`. Clicking that actual button wrote the exact path and cleared dirty state. JSON staying unchanged before Save is intentional. The reported clean-state defect was NOT reproduced and its runtime cause is not established; do not claim it is diagnosed or manually accepted. Existing save/discard actions were below the fields and now lead the form, without a second persistence mechanism.
+
+- Photo changes/removal still use the existing selected-record draft and `saveContentRecord`; the picker never writes JSON. Verified saves return the actual record path for local status. Integration tests cover global dirty state, save-button submission, discard, member independence, failed save, exact JSON and reopen, with page-composition state separate.
+- Projeto now provides `Fechar projeto`. Clean close clears project/model/drafts/review/receipts; dirty close offers discard confirmation or cancellation so the user can return to normal Save/Discard. No implicit save, upload or deletion occurs. Busy operations block close. Native close revokes sender-scoped image authorization and stops the generated preview server. Reopening uses the existing advanced local-open action.
+- Missing/empty `foto` is the canonical no-photo state; new members and explicit `Remover foto` use `""`. One project-owned neutral `public/assets/images/team-placeholder.svg` is resolved under the build base and copied normally into `dist/assets/images/`. No UUID placeholder copies or binary deletions are created. Removal previews immediately, stays draft-only until Save, and is reversible with Discard.
+- Visual inspection identified `avatar.webp` as an old faceless illustrated shared placeholder, not a member photograph. Its reference and all custom references remain unchanged on load/unrelated edits. Missing images fall back visually without rewriting JSON. The remove action is hidden for existing shared-placeholder/no-photo records. No canonical member files were rewritten.
+- The shared helper supports both Vite and plain Node imports. The first full run caught six fixture build/publication failures caused by reading `import.meta.env` unguarded; the Node-safe fallback fixed these. This concrete failure justified one full-suite rerun. An earlier focused build-fixture assertion was corrected to identify a member by name rather than assume collection order.
+
+Final verification: **169 focused tests / 10 files passed; 336 full-suite tests / 29 files passed; one `npm run build` passed for web and editor.** Shared placeholder source/build hashes match, and the existing local port-4177 preview serves editor/placeholder successfully. The full suite uses only disposable/mock or loopback FTP targets, not production. The retest guide's two PowerShell blocks were parsed without executing the update against the disposable copy. Native GUI interaction, visual layout, image decoding and 200% zoom remain manual; no packaging was run.
+
+Changed files for this slice:
+
+- Desktop: `desktop/content-store.cjs`, `desktop/image-assets.cjs`, `desktop/main.cjs`, `desktop/preload.cjs`.
+- Editor: `src/js/editor/bootstrap.js`, `content-editor.js`, `content-fields.js`, `desktop-host.js`, `image-field.js`, `state.js`.
+- Public rendering/asset: `src/js/sections/pesquisadores.js`, `src/js/sections/team-photo.js`, `public/assets/images/team-placeholder.svg`.
+- Tests: `tests/unit/editor-photo-integration.test.js`, `tests/unit/image-assets.test.js`, `tests/unit/pesquisadores.test.js`.
+- Documentation: this plan and `docs/EQUIPE_PHOTO_PICKER_RETEST.md`.
+
+Next exact action: follow the updated 20-point [retest guide](EQUIPE_PHOTO_PICKER_RETEST.md) in `C:\Temp\labfonac-c2`, preserving its content/assets. Verify the exact application checkpoint and opened project path if clean-state feedback recurs. Do not start Parcerias/Site media, C3, Instagram, packaging, production FTP/source update or publication. Any next media implementation requires separate authorization after this retest.
 
 ### September 13 Equipe Photo Picker
 

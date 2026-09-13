@@ -1,20 +1,20 @@
-# Equipe Photo Picker Retest
+# Equipe Photo Persistence and No-Photo Retest
 
-This tests the photo-picker checkpoint following manually accepted `f8064e2`. Use the new commit from the completion report, not `f8064e2`. No FTP connection or publication is needed.
+Use the new completion-report commit on `chore/verified-editor-cleanup-plan-2026-09-11`, not `5948297`. The earlier picker retest found acceptance blockers; native dialog/copy success was not complete acceptance. No FTP connection or publication is needed.
 
-## Update Code Only
+## Update the Existing Disposable Copy
 
-1. Save or discard current edits, close Electron, and stop the old `npm run editor:dev` process with Ctrl+C.
-2. In PowerShell in the maintained Git checkout (not the disposable folder), verify the current commit and branch:
+1. Save or discard edits, close Electron, and stop its old `npm run editor:dev` terminal with Ctrl+C.
+2. Open PowerShell in the maintained Git checkout and verify:
 
 ```powershell
 git status --short --branch
 git log -1 --oneline
 ```
 
-The branch must be `chore/verified-editor-cleanup-plan-2026-09-11`, and HEAD must match the new completion-report commit. Existing uncommitted prompts/workspace files are excluded by the export.
+HEAD must match the new completion-report commit. Do not export an older checkpoint. Uncommitted prompts and workspace files are excluded by Git archive.
 
-3. The following replaces application code only in the existing `C:\Temp\labfonac-c2` copy. It preserves `content/`, `public/` (including photos), installed dependencies and other project files. Preserve any independently edited application code in the disposable folder before continuing. All listed files must be exported, including the new native helper and preload changes:
+3. Run the following there. It updates application code and the single new shared asset in `C:\Temp\labfonac-c2`. It does NOT replace `content/`, other photos, dependencies, or project metadata. A uniquely named archive backs up the disposable application's existing code. Preserve any independently edited code before continuing.
 
 ```powershell
 $source = (git rev-parse --show-toplevel).Trim()
@@ -22,49 +22,62 @@ $target = 'C:\Temp\labfonac-c2'
 if (-not (Test-Path -LiteralPath "$target\package.json")) {
     throw 'Disposable project not found. Stop here.'
 }
-$archive = Join-Path $env:TEMP "labfonac-photo-code-$([guid]::NewGuid()).zip"
-$code = @(
-    'desktop/main.cjs'
-    'desktop/preload.cjs'
-    'desktop/image-assets.cjs'
-    'src/js/editor/content-editor.js'
-    'src/js/editor/desktop-host.js'
-    'src/js/editor/focused-fields.js'
-    'src/js/editor/image-field.js'
-    'src/js/editor/state.js'
-    'src/css/editor.css'
-)
+$placeholder = 'public\assets\images\team-placeholder.svg'
+if (Test-Path -LiteralPath "$target\$placeholder") {
+    if ((Get-FileHash -LiteralPath "$target\$placeholder").Hash -ne
+        (Get-FileHash -LiteralPath "$source\$placeholder").Hash) {
+        throw 'A different placeholder already exists. Preserve it before continuing.'
+    }
+}
+$backup = Join-Path $env:TEMP "labfonac-code-before-photo-fix-$([guid]::NewGuid()).zip"
+Compress-Archive -LiteralPath "$target\src", "$target\desktop" -DestinationPath $backup -ErrorAction Stop
+Write-Host "Previous disposable code: $backup"
+$archive = Join-Path $env:TEMP "labfonac-photo-fix-$([guid]::NewGuid()).zip"
+$code = @('src', 'desktop', 'public/assets/images/team-placeholder.svg')
 git -C $source archive --format=zip --output=$archive HEAD @code
 if ($LASTEXITCODE -ne 0) { throw 'Code export failed. Stop here.' }
-Expand-Archive -LiteralPath $archive -DestinationPath $target -Force
+Expand-Archive -LiteralPath $archive -DestinationPath $target -Force -ErrorAction Stop
 Set-Location -LiteralPath $target
 npm run editor:dev
 ```
 
-No dependency installation is necessary. Restart Electron rather than relying on browser hot reload: main/preload code changed. If port 3000 is occupied or no Electron window appears, stop and report the terminal output instead of testing an uncertain instance.
+No dependency installation is needed. Run npm from the disposable folder containing `package.json`. A fresh Electron instance is required because main/preload changed. A browser at port 3000 is not proof that Electron launched. If the port is occupied or no desktop window appears, stop and report the terminal output rather than testing an uncertain instance.
 
-4. In Electron, use Projeto's advanced local-open action and choose `C:\Temp\labfonac-c2` itself. Do not select `dist/`. The disposable copy must already contain the accepted `f8064e2` code from the previous retest.
+4. In Electron: Projeto -> Opcoes avancadas -> Abrir projeto local. Choose `C:\Temp\labfonac-c2` itself, never `dist/`. Confirm the local project path before editing. Application code and the selected editable project can otherwise be different directories.
 
 ## Checklist
 
-1. Open Conteudo, select Equipe, and select a member with an existing photo. Confirm the current preview and stored relative path appear, without a required raw-path input.
-2. Choose Alterar foto (Carregar foto for a record without a photo). Select a disposable JPG/JPEG, PNG or WebP image, at most 20 MB. Confirm the new preview and dirty state.
-3. Discard changes. Confirm the old path/photo returns and the member record is unchanged.
-4. Select the image again and Save using the existing content-save button. Confirm successful local save, then switch members and verify their photos remain independent.
-5. Close/reopen the project through advanced local open and confirm the saved photo persists.
-6. In Revisar, generate and open the updated site. Confirm the existing Equipe card displays the new photo without a layout redesign.
-7. Inspect the edited member's JSON under `content/equipe/`: `foto` must be `assets/images/image-<uuid>.png`, `.jpg` or `.webp`, never the original `C:\...` source path. The copied file must exist under `public/assets/images/` and, after building, under `dist/assets/images/`.
-8. Open the picker and cancel it. No new dirty state or photo change should occur. Existing unsaved edits must remain intact.
-9. Select Todos os arquivos in the native dialog and try a disposable unsupported file (for example `.txt` or `.svg`). Confirm a Portuguese error and no content change. A renamed non-image `.png` must also be rejected by the signature check.
-10. Check a member with no photo or a missing image reference. The form must remain editable; a missing image reports Imagem indisponivel and can be replaced. Do not delete shared photos to create this test.
-11. Check keyboard access/focus return, narrow-window controls and 200% zoom around the new preview, path and picker button. Other controls must be blocked while native selection is pending.
+Record pass/fail/not tested for each item, the exact commit, and screenshots for any visual issue. Labels below refer to the Portuguese UI, with accents as displayed there.
 
-Record pass/fail/not tested, the exact commit, and screenshots for any visual defect. Actual native dialog, image decoding and visual acceptance remain manual; automated tests cover the bridge, signatures, confinement, persistence and disposable build output.
+1. Open Conteudo, select Equipe, and select a member with a custom photo. An `avatar.webp` reference is an old shared placeholder, not a custom photo. If necessary, select and save a disposable photo first to establish a custom-photo baseline.
+2. Confirm the preview and relative path, plus visible `Salvar conteudo` and `Descartar alteracoes` above the fields. Save must be disabled while clean.
+3. Click `Alterar foto`; choose a disposable JPG/JPEG, PNG or WebP, at most 20 MB.
+4. Confirm a new `assets/images/image-<uuid>.<extension>` path and preview, with the same member selected.
+5. Confirm global local-changes status says `nao salvas` and content reports unsaved changes. At this point JSON must still contain the old reference.
+6. Confirm `Salvar conteudo` is enabled. `Salvar pagina` is a separate page-composition operation and is not needed here.
+7. Click `Salvar conteudo`. Confirm the local destination path and clean status, with no FTP message.
+8. Inspect the exact `content/equipe/<record>.json` named in the save status. Its `foto` must equal the UUID path, never the source `C:\...` path or a `file://` URL. Another member's JSON must remain unchanged.
+9. Open Projeto and click `Fechar projeto`. Confirm no active project, empty content/preview state, and no files deleted.
+10. Reopen through Projeto -> Opcoes avancadas -> Abrir projeto local, choosing the same disposable root. Return to the same member and confirm the saved path/photo.
+11. In Revisar generate the site and open its preview. Confirm the new photo; the binary must exist in both `public/assets/images/` and `dist/assets/images/`.
+12. Select a no-photo member (or use the removal steps below to create one). Confirm the shared neutral placeholder and no broken image. `Remover foto` is hidden for no-photo and legacy shared-placeholder records.
+13. Select a custom-photo member and click the destructive `Remover foto` action. Note the original file path first.
+14. Confirm immediate shared placeholder, empty reference, dirty content/global status, and enabled Save. Try `Fechar projeto` and CANCEL the confirmation: the project and draft must stay open, allowing normal Save or Discard. Do not accept discard yet.
+15. Return to Conteudo and click `Descartar alteracoes`. Confirm the original custom reference/photo returns and JSON is unchanged.
+16. Remove again and click `Salvar conteudo`. Confirm the record now contains `"foto": ""`, with a truthful saved path and clean status.
+17. Close using `Fechar projeto`, reopen, generate, and review again. Confirm the placeholder in editor and generated site. `dist/assets/images/team-placeholder.svg` must exist. Closing Electron is an optional additional persistence check, not a substitute for project close.
+18. Confirm the old custom image file still exists. Test confirmed dirty-close separately with a disposable draft: accepting discard closes without saving and leaves JSON/assets unchanged. Repeat cancellation with an unsaved page-composition draft.
+19. Cancel the native picker: no photo/dirty-state change. Try Todos os arquivos with an unsupported `.txt`/`.svg` and a non-image renamed `.png`: an error must leave content unchanged. A missing legacy photo must remain editable with a fallback, without rewriting its reference.
+20. Check keyboard access and focus after selection/removal, narrow desktop windows, and 200% zoom. Save/Discard, long paths, and photo actions must remain reachable without overlapping. Other operations, including close, must be blocked while the picker is pending.
 
-## Persistence Notes
+## Persistence and Diagnosis
 
-Selecting a file copies it immediately using a new UUID filename. Only normal Save changes the member's JSON. Discard restores the reference but intentionally leaves the unused copy; replacements do not overwrite/delete old or shared assets. There is no image cleanup, cropping, resizing or compression in this slice.
+The complete editor fixture at `5948297` already marked selection dirty and persisted the exact path through the real content store on Save. The reported clean-state symptom was not reproduced; do not claim its cause was established or GUI acceptance achieved. Save controls were below the fields; they now lead the focused form. If the symptom recurs, capture the Electron terminal, visible project path, selected member, global/content status before and after selection, and the exact JSON file inspected.
 
-Validation checks extension, file size and file signature, not a complete image decode. An otherwise corrupted image may show as unavailable in preview; choose a valid replacement. Existing photo references are not rewritten during unrelated edits. Removal is deferred because the renderer's existing no-photo fallback points to an absent placeholder asset.
+The picker copies a binary immediately but never writes JSON. Normal content Save uses verified `desktop/content-store.cjs` persistence. Discard restores the reference and intentionally leaves newly copied unused binaries. Removing a photo only clears the reference; there is no asset deletion or garbage collection.
 
-Parcerias/Site pickers, C3, Instagram, packaging and production operations are not part of this retest.
+No-photo semantics: absent/empty `foto` resolves to `assets/images/team-placeholder.svg` under the current build base. New records and explicit removal use an empty string. The project-owned SVG is shared by all such members, never copied into UUID files. Existing `assets/images/avatar.webp` is an old abstract shared placeholder; it and valid custom references remain unchanged on load/unrelated edits. Missing images fall back visually without normalizing JSON. No member files were bulk rewritten.
+
+Automation covers full-editor draft/global status, actual save-button submission, canonical read-back, close/cancel/reopen, bridge revocation, placeholder rendering and disposable build output. Native dialog interaction, image decoding, visual layout and zoom acceptance remain manual.
+
+Parcerias/Site media, C3, Instagram, packaging, FTP/source update and public publication remain outside this retest.

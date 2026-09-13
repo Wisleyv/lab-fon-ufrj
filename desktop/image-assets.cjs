@@ -52,6 +52,7 @@ function createImageAssetService({ dialog, validateProject, createId = randomUUI
     return { project, root: await fs.realpath(root) };
   }
   return {
+    forgetProject(event) { projects.delete(event.sender); },
     rememberProject(event, result) {
       if (result.ok && result.directory?.path) projects.set(event.sender, { path: path.resolve(result.directory.path) });
       return result;

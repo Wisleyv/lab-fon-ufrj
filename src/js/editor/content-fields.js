@@ -28,7 +28,7 @@ export const CONTENT_DATASETS = {
     ],
   },
   equipe: {
-    label: "Equipe", empty: { nome: "", instituicao: "", categoria: "docentes", foto: "assets/images/avatar.webp", lattes: "" },
+    label: "Equipe", empty: { nome: "", instituicao: "", categoria: "docentes", foto: "", lattes: "" },
     fields: [text("nome", "Nome", true), text("instituicao", "Instituição", true),
       { key: "categoria", label: "Categoria", options: EQUIPE_CATEGORIES.map((c) => c.id) },
       { ...text("badge", "Distinção"), maxLength: 40 },

@@ -1011,6 +1011,11 @@ function createLayout(
   const advanced = createElement("details", { id: "editor-project-advanced", className: "editor-advanced" });
   advanced.appendChild(createElement("summary", {}, "Opções avançadas"));
   advanced.append(openProjectButton, sourceCard);
+  const closeProjectButton = createElement("button", {
+    id: "editor-close-project", type: "button", className: "editor-btn editor-btn-secondary",
+  }, "Fechar projeto");
+  const closeProjectStatus = createElement("p", { id: "editor-close-project-status", role: "status" });
+  statusCard.append(closeProjectButton, closeProjectStatus);
 
   const projectRemote = createElement("section", { id: "editor-project-remote", className: "editor-panel" });
   projectRemote.append(createElement("h2", {}, "Projeto remoto"), remoteBrowser, publishRoleForm, openRemoteProjectButton);
@@ -1524,6 +1529,7 @@ function createLayout(
   });
 
   const activateProjectDirectory = async (directory) => {
+    closeProjectStatus.textContent = "";
     const result = await loadEditorSiteModel(desktopHost, directory);
     const loadedComposition = result.model
       ? createDraftComposition(result.model.page)
@@ -1596,6 +1602,27 @@ function createLayout(
     } catch (error) {
       sourceError.textContent = error.message || "Não foi possível abrir o projeto.";
     } finally { store.setState({ projectOpening: false }); }
+  });
+
+  closeProjectButton.addEventListener("click", async () => {
+    const state = store.getState();
+    if (!state.openedProject || !getBusyReadiness(state).ok) return;
+    if ((state.contentDirty || state.compositionDirty) &&
+      !documentRef.defaultView.confirm("Descartar as alterações não salvas e fechar o projeto? Cancele para continuar editando ou salvar.")) return;
+    store.setState({ projectOpening: true });
+    try {
+      const result = await desktopHost.closeProject?.();
+      if (result && !result.ok) throw new Error(result.message || "Não foi possível fechar o projeto.");
+      activeCompositionService = compositionService;
+      const initial = createInitialEditorState();
+      store.reset({ ...initial, publish: { ...initial.publish, profile: state.publish?.profile || null,
+        status: state.publish?.profile ? "configured" : "unconfigured" } });
+      sourceError.textContent = "";
+      hydrateFromSource(null);
+      closeProjectStatus.textContent = "Projeto fechado. Arquivos locais preservados.";
+      selectTab(1);
+    } catch (error) { closeProjectStatus.textContent = error.message || "Não foi possível fechar o projeto."; }
+    finally { store.setState({ projectOpening: false }); }
   });
 
   cancelSourceButton.addEventListener("click", () => {
@@ -2114,6 +2141,7 @@ function createLayout(
 
   const updateOperationUi = (state) => {
     const busy = getBusyReadiness(state);
+    closeProjectButton.disabled = !state.openedProject || !busy.ok;
     const editing = getEditingReadiness(state);
     const profile = readPublishProfileFromForm();
     const password = publishPasswordInput.value;

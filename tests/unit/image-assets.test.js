@@ -9,6 +9,7 @@ import { promisify } from "node:util";
 import { consolidateData } from "../../scripts/build-data.js";
 import { PesquisadoresSection } from "../../src/js/sections/pesquisadores.js";
 import { createNativeDesktopHost } from "../../src/js/editor/desktop-host.js";
+import { TEAM_PLACEHOLDER_PATH, TEAM_PLACEHOLDER_URL } from "../../src/js/sections/team-photo.js";
 const require = createRequire(import.meta.url);
 const { createImageAssetService } = require("../../desktop/image-assets.cjs");
 const { validateLocalEditableProject } = require("../../desktop/main.cjs");
@@ -123,17 +124,21 @@ describe("restricted image asset service", () => {
     const member = { nome: "Example", instituicao: "UFRJ", categoria: "docentes", foto: result.path };
     await saveContentRecord(null, root, "equipe", "member.json", null, member);
     expect((await readContentDataset(null, root, "equipe"))[0].value).toEqual(member);
+    await saveContentRecord(null, root, "equipe", "no-photo.json", null, { nome: "No photo", foto: "" });
+    await fs.copyFile(path.join("public", TEAM_PLACEHOLDER_PATH), path.join(root, "public", TEAM_PLACEHOLDER_PATH));
     const data = consolidateData({ contentDir: path.join(root, "content"), outputFile: path.join(root, "public/data.json") });
-    expect(data.equipe[0].foto).toBe(result.path);
+    expect(data.equipe.find((entry) => entry.nome === member.nome).foto).toBe(result.path);
     await fs.writeFile(path.join(root, "index.html"), '<html><body><div id="team"></div></body></html>');
     await promisify(execFile)(process.execPath, [path.resolve("node_modules/vite/bin/vite.js"), "build", root, "--logLevel", "silent"], { cwd: root });
     expect(await fs.readFile(path.join(root, "dist", result.path))).toEqual(PNG);
+    expect(await fs.readFile(path.join(root, "dist", TEAM_PLACEHOLDER_PATH), "utf8")).toBe(await fs.readFile(path.join("public", TEAM_PLACEHOLDER_PATH), "utf8"));
     const output = JSON.parse(await fs.readFile(path.join(root, "dist/data.json"), "utf8"));
     document.body.innerHTML = '<div id="team"></div>';
     const renderer = new PesquisadoresSection("team");
     document.getElementById("team").append(renderer.template(output.equipe));
     expect(document.querySelector("#team img").getAttribute("src")).toBe(result.path);
     expect(document.querySelector("#team img").alt).toBe("Foto de Example");
+    expect(document.querySelectorAll("#team .membro-foto img")[1].getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
     expect(JSON.stringify(output)).not.toContain(root);
   });
 });
@@ -150,6 +155,8 @@ it("exposes only approved image operations through preload and the native host a
   await host.readProjectImage({ path: "project" }, "assets/images/photo.png");
   expect(invoke).toHaveBeenLastCalledWith("labfon:readProjectImage", "project", "assets/images/photo.png");
   expect(bridge.copyFile).toBeUndefined();
+  await host.closeProject();
+  expect(invoke).toHaveBeenLastCalledWith("labfon:closeProject");
 });
 
 it("wires native project selection to the sender-scoped image handlers", async () => {
@@ -176,4 +183,8 @@ it("wires native project selection to the sender-scoped image handlers", async (
   expect(image.ok).toBe(true);
   expect(image.path).not.toContain(source);
   expect((await handlers.get("labfon:readProjectImage")(event, root, image.path)).previewUrl).toBe(image.previewUrl);
+  expect((await handlers.get("labfon:closeProject")(event)).ok).toBe(true);
+  expect((await handlers.get("labfon:readProjectImage")(event, root, image.path)).ok).toBe(false);
+  expect((await handlers.get("labfon:selectProjectImage")(event, root)).ok).toBe(false);
+  expect(await fs.readFile(path.join(root, "public", image.path))).toEqual(PNG);
 });

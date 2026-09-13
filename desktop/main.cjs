@@ -1568,6 +1568,11 @@ if (require.main === module || (process.versions.electron && process.type === "b
   ipcMain.handle("labfon:openProjectDirectory", async (event) => images.rememberProject(event, await openProjectDirectory({ dialog })));
   ipcMain.handle("labfon:selectProjectImage", (event, root) => images.selectProjectImage(event, root));
   ipcMain.handle("labfon:readProjectImage", (event, root, publicPath) => images.readProjectImage(event, root, publicPath));
+  ipcMain.handle("labfon:closeProject", async (event) => {
+    images.forgetProject(event);
+    await stopGeneratedPreviewServer();
+    return { ok: true };
+  });
   ipcMain.handle("labfon:pathExists", pathExists);
   ipcMain.handle("labfon:readTextFile", readTextFile);
   ipcMain.handle("labfon:readJsonFiles", readJsonFiles);

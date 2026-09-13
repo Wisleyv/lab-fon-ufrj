@@ -7,8 +7,27 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { PesquisadoresSection } from "../../src/js/sections/pesquisadores.js";
 import { EQUIPE_CATEGORIES } from "../../src/js/sections/equipe-categories.js";
 import fs from "node:fs/promises";
+import { TEAM_PLACEHOLDER_URL, resolveTeamPhoto } from "../../src/js/sections/team-photo.js";
 
 describe("PesquisadoresSection", () => {
+  it("uses one shared placeholder for empty photos and failed legacy images without rewriting references", () => {
+    const renderer = new PesquisadoresSection("unused");
+    for (const foto of [undefined, "", "   "]) {
+      const card = renderer.createMemberCard({ nome: "Test", foto });
+      expect(card.querySelector("img").getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
+      expect(card.querySelector("img").alt).toBe("");
+    }
+    for (const foto of ["assets/images/avatar.webp", "/assets/images/custom.jpg", "https://example.org/photo.png"]) {
+      expect(resolveTeamPhoto(foto)).toBe(foto);
+      const member = { nome: "Test", foto };
+      const img = renderer.createMemberCard(member).querySelector("img");
+      img.dispatchEvent(new Event("error"));
+      expect(img.getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
+      expect(member.foto).toBe(foto);
+      img.dispatchEvent(new Event("error"));
+      expect(img.getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
+    }
+  });
   let section;
   let container;
 

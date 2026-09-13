@@ -26,8 +26,8 @@ export function createContentEditor({ host, store, customEditor }) {
   const reason = el("p", { id: "editor-content-save-reason", className: "editor-operation-reason" });
   save.setAttribute("aria-describedby", reason.id);
   actions.append(add, remove, cancel, save);
-  form.append(fields, actions, reason);
-  element.append(chooser, recordsSelect, form, status);
+  form.append(actions, reason, status, fields);
+  element.append(chooser, recordsSelect, form);
   if (customEditor) element.append(customEditor.content);
   let directory = null, records = [], selected = null, draft = null, baselineModel = null, busy = false;
   let dataset = chooser.value, activeItem = dataset, lastComposition, previousRecordName;
@@ -187,7 +187,7 @@ export function createContentEditor({ host, store, customEditor }) {
       selected = draft ? { name } : null;
       store.setState({ contentDirty: false });
       await load();
-      status.textContent = "Conteúdo salvo e verificado localmente.";
+      status.textContent = result.path ? `Conteúdo salvo localmente em: ${result.path}` : "Conteúdo salvo e verificado localmente.";
     } catch (error) { status.textContent = `Não foi possível salvar: ${error.message}`; }
     finally { busy = false; store.setState({ contentSaving: false }); setControls(); }
   });
@@ -197,7 +197,7 @@ export function createContentEditor({ host, store, customEditor }) {
       directory = state.openedProject;
       dataset = CONTENT_DATASETS[chooser.value] ? chooser.value : "site";
       activeItem = dataset; chooser.value = dataset;
-      selected = draft = null; navigation.clear();
+      selected = draft = baselineModel = null; records = []; recordsSelect.replaceChildren(); navigation.clear();
       void load();
     }
     refreshOptions();

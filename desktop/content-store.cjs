@@ -74,7 +74,7 @@ async function saveContentRecord(_event, root, key, name, expected, value) {
     if (!isDeepStrictEqual(value, verified)) throw new Error("Falha na verificação do conteúdo salvo.");
     if (value === null) await fs.unlink(temporary);
     else await fs.rm(deletionFile, { force: true });
-    return { ok: true, value: verified };
+    return { ok: true, value: verified, path: file };
   } catch (error) {
     if (changed) {
       if (previous === null) await fs.unlink(file);
