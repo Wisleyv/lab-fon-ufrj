@@ -2,7 +2,7 @@
 
 September 13, 2026. Applies to the focused-form checkpoint following `2e0378b` on `chore/verified-editor-cleanup-plan-2026-09-11`.
 
-Automated verification: 136 focused tests / 7 files; 300 full-suite tests / 27 files; web/editor build passed. Actual desktop, keypad and visual acceptance remain manual.
+Automated verification at `f8064e2`: 136 focused tests / 7 files; 300 full-suite tests / 27 files; web/editor build passed. The maintainer subsequently accepted this entire manual checklist. See the [acceptance record](C2-manual-acceptance-report-2026-09-13.md). The next checklist is the [Equipe photo-picker retest](EQUIPE_PHOTO_PICKER_RETEST.md); the commands below are historical instructions for the focused-form checkpoint.
 
 ## Update the Existing Disposable Copy
 

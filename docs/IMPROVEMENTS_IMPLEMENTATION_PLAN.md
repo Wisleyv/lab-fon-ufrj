@@ -17,7 +17,8 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | B3 | DEFERRED | Session-level agent/interface constraint; not a production blocker |
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
-| C2 | CORE MANUALLY ACCEPTED; FOCUSED-FORM RETEST PENDING | Maintainer confirmed the 2e0378b corrections; unified content selection, focused forms, width, save destination, keypad zoom and buttons now automatically verified |
+| C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
+| Equipe media | IMPLEMENTED; MANUAL RETEST PENDING | Restricted native photo picker, managed copies, form preview and canonical Save/Discard verified automatically |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -31,6 +32,25 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 13 Equipe Photo Picker
+
+The maintainer explicitly accepted checkpoint `f8064e2`, including unified selection, focused forms/dirty guards, custom routing/content/preview/layout, local-save feedback, local remote-action gating, keypad/top-row zoom, button/focus behavior, narrow-window/200% zoom and generated review. This user-observed acceptance is recorded in [the manual report](C2-manual-acceptance-report-2026-09-13.md). It is not a new agent GUI claim.
+
+The first media slice is Equipe only. Existing photos live in `public/assets/images/`; the existing `foto` field stores `assets/images/...`, and Vite copies public assets unchanged into `dist/`. Neither the schema nor the public team-card renderer was changed. There was no existing image-import helper; the native `image-assets.cjs` service and focused-field override now provide that reusable boundary without adding dependencies or another asset tree.
+
+- Main remembers the project opened/retrieved by each Electron sender. Only that project's image operations are allowed; renderer requests cannot choose arbitrary source/destination files. Preload exposes select/read-image operations, not filesystem APIs. Existing isolation settings are unchanged.
+- The native dialog accepts JPG/JPEG, PNG and WebP; the helper checks extension, regular-file size (maximum 20 MB) and signature. This is bounded type validation, not a complete image decoder or image-processing pipeline.
+- Copies use `public/assets/images/image-<uuid>.<ext>` and exclusive creation, retrying collisions without overwriting another asset. Persisted paths use forward slashes and never contain the original absolute filename. Asset-directory links/junctions and preview traversal are refused.
+- The selected Equipe form shows the current photo, a read-only relative-path value, and Carregar foto/Alterar foto. Missing/unresolvable photos report a non-destructive unavailable status. Existing references, including valid external URLs, are retained on unrelated edits; native preview reads only the active project's image assets and does not fetch external URLs in main.
+- Selection copies the binary immediately but changes only the content draft. Normal Save/read-back persists `foto`; Discard restores the prior reference. Old/shared/unused copies are deliberately retained. Pending selection uses existing global readiness guards, and disposed fields ignore late results.
+- Photo removal is deferred: the current renderer's empty-photo fallback points to absent `placeholder-avatar.jpg`. No new removal semantics, asset deletion or public-layout redesign were introduced.
+
+Verification: **141 focused tests passed (7 files); 329 full-suite tests passed once (28 files); web/editor production build passed once.** Fixture coverage includes bridge wiring, active-root confinement, cancellation, signature/size rejection, collisions, legacy/no-photo states, failed saves, discard/reopen, member independence, canonical build-data and real Vite asset copying. Existing full-suite FTP fixtures stayed local and disposable. The existing port-4177 preview serves the current built editor; actual native dialogs/image decoding/visual acceptance remain manual.
+
+Use [EQUIPE_PHOTO_PICKER_RETEST.md](EQUIPE_PHOTO_PICKER_RETEST.md) to update application code in `C:\Temp\labfonac-c2` while preserving content/assets. No real project photos or content were modified by this implementation. Parcerias/Site media, C3, Instagram, packaging, real FTP/source update and publication were not started. B3 remains deferred by the session-level constraint, not a production blocker.
+
+Next exact action: complete this Equipe manual retest. After acceptance and separate authorization, the next media slice is to establish Parcerias' logo-field semantics and apply the same restricted picker; do not silently add fields or roll this into Site/C3 work.
 
 ### September 13 Unified Content and Focused Forms
 
@@ -250,7 +270,7 @@ Add an optional insertion target to existing add/enable behavior, including a be
 
 ### C2. One Custom Text Section End to End, Then Multiple Instances
 
-**Status: IMPLEMENTED - MANUAL ACCEPTANCE PENDING.** Version-2 validation, immutable UUID identities, Page creation/metadata/placement, Content block editing and shared whole-page save/discard are implemented. Heading, paragraph, list, safe link and CTA blocks use controlled DOM rendering. Two-instance, compatibility, URL, disabled-content and read-back failure tests passed; see checkpoint verification above. No real custom content, packaging or production rollout was performed.
+**Status: LOCAL C2/UX MANUALLY ACCEPTED at f8064e2.** Version-2 validation, immutable UUID identities, Page creation/metadata/placement, Content block editing and shared whole-page save/discard are implemented. Heading, paragraph, list, safe link and CTA blocks use controlled DOM rendering. Two-instance, compatibility, URL, disabled-content and read-back failure tests passed; see checkpoint verification above. The maintainer accepted the subsequent focused-form correction checklist. Compatible packaging and production rollout remain unperformed gates.
 
 Likely files: `page/composition.js`, `page/section-registry.js`, `page/navigation.js`, `main.js`, `editor/composition-commands.js`, `editor/composition-preview.js`, `editor/composition-service.js`, composition UI, plus one renderer extending `SectionRenderer`. Touch `project-loader.js`/`scripts/build-data.js` only if actual page-data preservation requires it; no parallel data loader.
 
@@ -313,4 +333,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **manual focused-form desktop retest in the existing disposable project**, using [EDITOR_FOCUSED_FORMS_RETEST.md](EDITOR_FOCUSED_FORMS_RETEST.md). Preserve the already accepted C2 behaviors while checking unified selection, dirty navigation, Site/Extensao nested items, custom width, local save destination, keypad zoom and button/focus behavior. Only after acceptance, propose the separately authorized Equipe photo-picker slice. Do not begin media work, C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **manual Equipe photo-picker retest in the existing disposable project**, using [EQUIPE_PHOTO_PICKER_RETEST.md](EQUIPE_PHOTO_PICKER_RETEST.md). The `f8064e2` focused-form checklist is already accepted. Only after the new retest, propose separately authorized Parcerias logo-field/picker work. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.

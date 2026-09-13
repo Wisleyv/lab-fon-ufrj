@@ -1,4 +1,15 @@
 # Lab-FON Editor — Manual C2 Acceptance Report and Usability Findings
+
+## Acceptance Update: f8064e2
+
+The maintainer's subsequent follow-up reports that checkpoint `f8064e2` passed the disposable-project manual checklist. This records user-observed acceptance, not new agent-performed GUI testing.
+
+Confirmed: unified content selection; custom-instance routing and independent content; focused forms and Save/Discard guards; inline preview; local save destination; local/remote gating; generated custom-section width; keypad and top-row zoom; button hierarchy and keyboard focus; narrow-window/200% zoom; and generated-site review.
+
+The local C2/UX correction slice is manually accepted. Compatible packaging and any production rollout remain separate, unperformed gates. The Equipe photo picker added afterward requires its own [manual retest](EQUIPE_PHOTO_PICKER_RETEST.md).
+
+The original report below describes `e2d26ac` and is retained as historical evidence; its unresolved-issue assessment is superseded by this acceptance update.
+
 **Date:** 2026-09-13\
 **Checkpoint under test:** `e2d26ac`\
 **Branch:** `chore/verified-editor-cleanup-plan-2026-09-11`\

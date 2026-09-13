@@ -276,3 +276,114 @@ it("focuses extension projects and materializes optional groups only on edit", a
     expect(store.getState().editorSiteModel.extensao).toEqual(original);
   } finally { editor.destroy(); }
 });
+
+describe("Equipe managed photo form", () => {
+  const previewUrl = "data:image/png;base64,iVBORw0KGgo=";
+  const photo = "assets/images/image-00000000-0000-4000-8000-000000000001.png";
+  async function openPhotoEditor(original = { nome: "Original", instituicao: "UFRJ", foto: "assets/images/legacy.jpeg" }) {
+    const root = await fixture();
+    const other = { nome: "Other", instituicao: "UFRJ", foto: "assets/images/shared.webp" };
+    await saveContentRecord(null, root, "equipe", "first.json", null, original);
+    await saveContentRecord(null, root, "equipe", "second.json", null, other);
+    const host = {
+      readContentDataset: (_root, dataset) => readContentDataset(null, root, dataset),
+      saveContentRecord: vi.fn((_root, dataset, name, previous, next) => saveContentRecord(null, root, dataset, name, previous, next)),
+      selectProjectImage: vi.fn(async () => ({ ok: true, path: photo, previewUrl })),
+      readProjectImage: vi.fn(async () => ({ ok: true, previewUrl })),
+    };
+    const store = createEditorStore();
+    const editor = createContentEditor({ host, store });
+    document.body.replaceChildren(editor.element);
+    document.getElementById("editor-content-dataset").value = "equipe";
+    store.setState({ openedProject: { path: root, status: "valid" }, editorSiteModel: { equipe: [original, other] } });
+    await vi.waitFor(() => expect(document.querySelector(".editor-image-field button")).not.toBeNull());
+    return { root, original, other, host, store, editor };
+  }
+  const choose = () => document.querySelector(".editor-image-field button");
+  const output = () => document.querySelector(".editor-image-field output");
+  const get = (id) => document.getElementById(id);
+  it("previews existing photos, replaces only the draft, discards, saves and reopens independently", async () => {
+    const { root, original, other, host, store, editor } = await openPhotoEditor();
+    try {
+      await vi.waitFor(() => expect(document.querySelector(".editor-image-field img").getAttribute("src")).toBe(previewUrl));
+      expect(choose().textContent).toBe("Alterar foto");
+      expect(output().textContent).toBe(original.foto);
+      expect(get("content-field-root.foto")).toBeNull();
+      choose().click();
+      expect(store.getState().imageSelecting).toBe(true);
+      expect(get("editor-content-record").disabled).toBe(true);
+      expect(getBuildReadiness(store.getState()).ok).toBe(false);
+      await vi.waitFor(() => expect(store.getState().imageSelecting).toBe(false));
+      expect(store.getState().contentDirty).toBe(true);
+      expect(output().textContent).toBe(photo);
+      expect((await readContentDataset(null, root, "equipe"))[0].value).toEqual(original);
+      expect(host.saveContentRecord).not.toHaveBeenCalled();
+      get("editor-content-cancel").click();
+      expect(output().textContent).toBe(original.foto);
+      expect(store.getState().editorSiteModel.equipe[0]).toEqual(original);
+      choose().click();
+      await vi.waitFor(() => expect(store.getState().imageSelecting).toBe(false));
+      get("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+      await vi.waitFor(() => expect(store.getState().contentSaving).toBe(false));
+      expect(store.getState().contentDirty).toBe(false);
+      const saved = await readContentDataset(null, root, "equipe");
+      expect(saved[0].value).toEqual({ ...original, foto: photo });
+      expect(saved[1].value).toEqual(other);
+      const record = get("editor-content-record");
+      record.value = "second.json"; record.dispatchEvent(new Event("change"));
+      expect(output().textContent).toBe(other.foto);
+      store.setState({ openedProject: { path: root, status: "valid" } });
+      await vi.waitFor(() => expect(output()?.textContent).toBe(photo));
+      expect(JSON.stringify(saved)).not.toContain(root);
+    } finally { editor.destroy(); }
+  });
+  it.each(["cancel", "unsupported", "throw"])("keeps existing content intact after picker %s", async (outcome) => {
+    const { original, host, store, editor } = await openPhotoEditor();
+    try {
+      if (outcome === "throw") host.selectProjectImage.mockRejectedValue(new Error("Disk failed"));
+      else host.selectProjectImage.mockResolvedValue(outcome === "cancel" ? { ok: false, cancelled: true } : { ok: false, message: "Formato não aceito." });
+      choose().click();
+      await vi.waitFor(() => expect(store.getState().imageSelecting).toBe(false));
+      expect(store.getState().contentDirty).toBeFalsy();
+      expect(output().textContent).toBe(original.foto);
+      expect(host.saveContentRecord).not.toHaveBeenCalled();
+      expect(choose().disabled).toBe(false);
+    } finally { editor.destroy(); }
+  });
+  it("keeps no-photo and missing-photo records editable without rewriting legacy paths", async () => {
+    const { host, store, editor } = await openPhotoEditor({ nome: "No photo", instituicao: "UFRJ" });
+    try {
+      expect(choose().textContent).toBe("Carregar foto");
+      expect(output().textContent).toBe("");
+      host.readProjectImage.mockResolvedValue({ ok: false });
+      const record = get("editor-content-record");
+      record.value = "second.json"; record.dispatchEvent(new Event("change"));
+      await vi.waitFor(() => expect(document.querySelector(".editor-image-field [role=status]").textContent).toBe("Imagem indisponível."));
+      expect(store.getState().contentDirty).toBeFalsy();
+      expect(output().textContent).toBe("assets/images/shared.webp");
+      expect(choose().disabled).toBe(false);
+    } finally { editor.destroy(); }
+  });
+  it("keeps the replacement draft after a failed save", async () => {
+    const { host, store, editor } = await openPhotoEditor();
+    try {
+      choose().click();
+      await vi.waitFor(() => expect(store.getState().imageSelecting).toBe(false));
+      host.saveContentRecord.mockRejectedValue(new Error("Write failed"));
+      get("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+      await vi.waitFor(() => expect(store.getState().contentSaving).toBe(false));
+      expect(store.getState().contentDirty).toBe(true);
+      expect(output().textContent).toBe(photo);
+    } finally { editor.destroy(); }
+  });
+  it("ignores a late picker result after the editor is destroyed", async () => {
+    const { host, store, editor } = await openPhotoEditor();
+    let finish;
+    host.selectProjectImage.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    choose().click();
+    editor.destroy();
+    finish({ ok: true, path: photo, previewUrl });
+    await vi.waitFor(() => expect(store.getState().imageSelecting).toBe(false));
+    expect(store.getState().contentDirty).toBeFalsy();
+  });
+});

@@ -87,7 +87,7 @@ export function createEditorStore(initialState = createInitialEditorState()) {
 }
 
 export function getBusyReadiness(state) {
-  const busy = state.contentLoading || state.contentSaving || state.compositionSaving || state.projectOpening || state.profileSaving || state.previewOpening ||
+  const busy = state.imageSelecting || state.contentLoading || state.contentSaving || state.compositionSaving || state.projectOpening || state.profileSaving || state.previewOpening ||
     state.build?.status === "running" || ["connecting", "listing"].includes(state.remote?.status) ||
     ["testing", "retrieving", "publishing"].includes(state.publish?.status);
   return busy ? { ok: false, code: "EDITOR_BUSY", message: "Aguarde a operação em andamento." } : { ok: true };

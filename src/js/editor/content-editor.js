@@ -2,6 +2,7 @@ import { createElement as el } from "../utils/helpers.js";
 import { CONTENT_DATASETS, validateContent } from "./content-fields.js";
 import { getEditingReadiness } from "./state.js";
 import { renderFocusedFields } from "./focused-fields.js";
+import { createImageField } from "./image-field.js";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -31,6 +32,8 @@ export function createContentEditor({ host, store, customEditor }) {
   let directory = null, records = [], selected = null, draft = null, baselineModel = null, busy = false;
   let dataset = chooser.value, activeItem = dataset, lastComposition, previousRecordName;
   const navigation = new Map();
+  let imageFields = [];
+  const disposeFields = () => { imageFields.forEach((field) => field.destroy()); imageFields = []; };
   const schema = () => CONTENT_DATASETS[dataset];
   const isCustom = () => !CONTENT_DATASETS[activeItem];
   const validationErrors = () => {
@@ -71,9 +74,20 @@ export function createContentEditor({ host, store, customEditor }) {
 
   function render() {
     const focusKey = fields.ownerDocument.activeElement?.dataset.focusKey;
+    disposeFields();
     fields.replaceChildren();
     if (draft) renderFocusedFields(fields, draft, schema().fields, {
       navigation, change: markDraft, render, button, dirty: () => store.getState().contentDirty,
+      renderField: (field, object) => {
+        if (dataset !== "equipe" || field.key !== "foto") return null;
+        const imageField = createImageField({ host, directory, value: object.foto, alt: object.nome ? `Foto de ${object.nome}` : "Foto",
+          canEdit: () => !busy && getEditingReadiness(store.getState()).ok,
+          onBusy: (imageSelecting) => store.setState({ imageSelecting }),
+          onChange: (value) => { object.foto = value; markDraft(); },
+        });
+        imageFields.push(imageField);
+        return imageField.element;
+      },
     });
     setControls();
     if (focusKey) {
@@ -101,7 +115,7 @@ export function createContentEditor({ host, store, customEditor }) {
       selectRecord();
       status.textContent = "Conteúdo carregado.";
     } catch (error) {
-      records = []; selected = draft = null; fields.replaceChildren();
+      records = []; selected = draft = null; disposeFields(); fields.replaceChildren();
       status.textContent = `Não foi possível abrir: ${error.message}`;
     } finally { busy = false; store.setState({ contentLoading: false }); setControls(); }
   }
@@ -143,7 +157,7 @@ export function createContentEditor({ host, store, customEditor }) {
   element.insertBefore(selectionStatus, recordsSelect);
   chooser.addEventListener("change", () => selectItem(chooser.value));
   recordsSelect.addEventListener("change", () => {
-    if (store.getState().contentDirty || busy) { recordsSelect.value = selected?.name || (draft ? "__new__" : ""); return; }
+    if (store.getState().contentDirty || busy || !getEditingReadiness(store.getState()).ok) { recordsSelect.value = selected?.name || (draft ? "__new__" : ""); return; }
     navigation.clear(); selectRecord();
   });
   add.addEventListener("click", () => {
@@ -179,6 +193,7 @@ export function createContentEditor({ host, store, customEditor }) {
   });
   const unsubscribe = store.subscribe((state) => {
     if (state.openedProject !== directory) {
+      disposeFields(); fields.replaceChildren();
       directory = state.openedProject;
       dataset = CONTENT_DATASETS[chooser.value] ? chooser.value : "site";
       activeItem = dataset; chooser.value = dataset;
@@ -190,5 +205,5 @@ export function createContentEditor({ host, store, customEditor }) {
     setControls();
   });
   setControls();
-  return { element, selectItem, destroy: unsubscribe };
+  return { element, selectItem, destroy() { disposeFields(); unsubscribe(); } };
 }

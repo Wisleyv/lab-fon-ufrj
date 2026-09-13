@@ -184,6 +184,12 @@ export function createBrowserDesktopHost(windowRef = window) {
 
 export function createNativeDesktopHost(nativeBridge) {
   return {
+    selectProjectImage(directory) {
+      return nativeBridge.selectProjectImage(directory.path);
+    },
+    readProjectImage(directory, publicPath) {
+      return nativeBridge.readProjectImage(directory.path, publicPath);
+    },
     readContentDataset(directory, key) {
       return nativeBridge.readContentDataset(directory.path, key);
     },

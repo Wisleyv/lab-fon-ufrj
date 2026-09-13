@@ -5,6 +5,7 @@ const http = require("node:http");
 const path = require("node:path");
 const ftp = require("basic-ftp");
 const { readContentDataset, saveContentRecord, readContentDeletions } = require("./content-store.cjs");
+const { createImageAssetService } = require("./image-assets.cjs");
 const { Writable } = require("node:stream");
 const { isDeepStrictEqual } = require("node:util");
 
@@ -1068,10 +1069,10 @@ async function verifyContentDeletions(client, projectRoot, remoteSourcePath) {
   return deletions;
 }
 
-async function validateLocalEditableProject(rootPath) {
+async function validateLocalEditableProject(rootPath, { requireLockfile = true } = {}) {
   const required = [
     "package.json",
-    "package-lock.json",
+    ...(requireLockfile ? ["package-lock.json"] : []),
     "content/page.json",
     "content/site.json",
     "scripts/build-data.js",
@@ -1563,9 +1564,10 @@ if (require.main === module || (process.versions.electron && process.type === "b
   const { app, BrowserWindow, dialog, ipcMain, safeStorage } = require("electron");
   configureAppServices({ app, safeStorage });
 
-  ipcMain.handle("labfon:openProjectDirectory", () =>
-    openProjectDirectory({ dialog }),
-  );
+  const images = createImageAssetService({ dialog, validateProject: (root) => validateLocalEditableProject(root, { requireLockfile: false }) });
+  ipcMain.handle("labfon:openProjectDirectory", async (event) => images.rememberProject(event, await openProjectDirectory({ dialog })));
+  ipcMain.handle("labfon:selectProjectImage", (event, root) => images.selectProjectImage(event, root));
+  ipcMain.handle("labfon:readProjectImage", (event, root, publicPath) => images.readProjectImage(event, root, publicPath));
   ipcMain.handle("labfon:pathExists", pathExists);
   ipcMain.handle("labfon:readTextFile", readTextFile);
   ipcMain.handle("labfon:readJsonFiles", readJsonFiles);
@@ -1580,7 +1582,7 @@ if (require.main === module || (process.versions.electron && process.type === "b
   ipcMain.handle("labfon:connectFtp", connectFtp);
   ipcMain.handle("labfon:listRemoteDirectory", listRemoteDirectory);
   ipcMain.handle("labfon:publishGeneratedSite", publishGeneratedSite);
-  ipcMain.handle("labfon:retrieveRemoteProject", retrieveRemoteProject);
+  ipcMain.handle("labfon:retrieveRemoteProject", async (event, ...args) => images.rememberProject(event, await retrieveRemoteProject(event, ...args)));
   ipcMain.handle("labfon:initializeRemoteProjectSource", initializeRemoteProjectSource);
   ipcMain.handle("labfon:updateRemoteProjectSource", updateRemoteProjectSource);
 

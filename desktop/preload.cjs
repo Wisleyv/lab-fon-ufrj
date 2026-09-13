@@ -1,6 +1,12 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("labfonDesktopHost", {
+  selectProjectImage(rootPath) {
+    return ipcRenderer.invoke("labfon:selectProjectImage", rootPath);
+  },
+  readProjectImage(rootPath, publicPath) {
+    return ipcRenderer.invoke("labfon:readProjectImage", rootPath, publicPath);
+  },
   openProjectDirectory() {
     return ipcRenderer.invoke("labfon:openProjectDirectory");
   },
