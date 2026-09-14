@@ -42,7 +42,7 @@ export const CONTENT_DATASETS = {
   },
   parcerias: {
     label: "Parcerias", empty: { nome: "", sigla: "", localizacao: "", tipo: "instituicao", descricao: "", url: "" },
-    fields: [text("nome", "Nome", true), text("sigla", "Sigla"), text("localizacao", "Localização"), text("tipo", "Tipo", true), area("descricao", "Descrição"), url("url", "Site")],
+    fields: [text("nome", "Nome", true), text("sigla", "Sigla"), text("localizacao", "Localização"), text("tipo", "Tipo", true), area("descricao", "Descrição"), url("url", "Site"), url("logo", "Logo")],
   },
   extensao: {
     label: "Extensão", singleton: true,

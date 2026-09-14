@@ -18,7 +18,9 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
-| Equipe media | SEMANTIC CORRECTION IMPLEMENTED; TARGETED RETEST PENDING | Sole no-photo visual is team-placeholder.svg; avatar.webp is an assigned/removable image. Earlier 18/20 provisional acceptance retained; reopen discrepancy remains separate |
+| Equipe media | MANUALLY ACCEPTED at 311109c | Maintainer passed all 13 canonical no-photo checks; historical reopen discrepancy not reproduced, no cause/fix claimed |
+| Parcerias media | IMPLEMENTED; MANUAL RETEST PENDING | Optional logo, shared picker, canonical content Save/Discard/Remove and restrained generated-site rendering |
+| Site media | NOT STARTED | Next separately authorized media consumer after Parcerias acceptance |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -32,6 +34,26 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 14 Parcerias Managed Logos
+
+Starts at `311109c` on `chore/verified-editor-cleanup-plan-2026-09-11`. The maintainer reports all 13 canonical no-photo checks passed, so **Equipe media is manually accepted**. Its earlier pending-acceptance notes below are historical. The separate reopen discrepancy remains **not reproduced after targeted trace; no cause established; no fix claimed** and is not reopened without new evidence.
+
+All five current Parcerias records have `nome`, `sigla`, `localizacao`, `tipo`, `descricao` and `url`, with no prior logo/image field or referenced SVG requirement. An optional string `logo` now uses the same public image-path convention. Absent remains absent through unrelated saves; explicit removal stores `""`. Neither state renders an image or placeholder. No partner JSON, shared image, or unrelated member data was migrated or modified.
+
+The existing `createImageField` accepts a small `kind` presentation option, defaulting to the unchanged photo presentation. Logo mode supplies Carregar/Alterar/Remover logo, institution-name editor preview alt text, and a hidden preview when absent/removed/unavailable. The focused Parcerias form uses the existing dataset draft, dirty/readiness guards, Save/Discard and verified `saveContentRecord` owner. Replacement/removal changes only the selected draft until explicit Save. Removed/replaced/discarded binaries stay on disk.
+
+Main/preload/host selection, signature/size checks, confinement, UUID collision-safe copying and asset naming are unchanged. Supported imports remain JPG/JPEG, PNG and WebP up to 20 MB, never SVG. New saved references are `assets/images/image-<uuid>.<ext>` with binaries under `public/assets/images/`, copied normally into `dist/assets/images/`. No second asset system, new dependency or alternate persistence service was introduced.
+
+The Parcerias renderer adds an optional logo within the existing header/card. Name, acronym, location, description and website link behavior remain intact. Bounded 160x80 dimensions, max-width:100% and object-fit:contain prevent stretching/cropping or oversized logo presentation. The public image is decorative (`alt=""`) because the institution name is adjacent; filenames are never alternative text. Missing/invalid references remain text-only, and load failures remove the image without a generic placeholder. No section redesign was performed.
+
+Verification: **116 focused tests passed / 7 files; 356 full-suite tests passed once / 29 files; web/editor production build passed once.** Full-editor fixtures cover absent-logo preservation during unrelated Save, selected-draft/global dirty state, canonical local destination, independent partners, replace/discard, remove/save/reopen, old binary preservation, cancel/unsupported/absolute-path rejection, and unchanged Equipe behavior. Renderer tests cover no-logo/invalid-logo text-only behavior, names/links/descriptions, dimensions, decorative alt and failure handling. A real disposable Vite build verifies logo JSON/asset output and both generated-data rendering states. Existing full-suite FTP fixtures were mock/disposable or loopback only, not production.
+
+The already-edited `public/data.json` was preserved byte-for-byte around the build. All unrelated user changes, including both annotated Equipe checklists, remain untouched and excluded from this commit. Native GUI interaction, real logo decoding, responsive visual layout and 200% zoom are **pending maintainer retest**, not automated acceptance claims.
+
+Changed application files: `src/js/editor/image-field.js`, `src/js/editor/content-editor.js`, `src/js/editor/content-fields.js`, `src/js/sections/parcerias.js`, `src/css/main.css`. Tests: `editor-photo-integration.test.js`, `image-assets.test.js`, `parcerias.test.js`. Documentation: this plan and [PARCERIAS_LOGO_RETEST.md](PARCERIAS_LOGO_RETEST.md). The guide updates only those five application files in `C:\Temp\labfonac-c2`, preserving content/assets, and supplies 15 focused checks. Its PowerShell block was syntax-checked without executing the disposable update.
+
+Next exact action: Parcerias manual logo retest. After acceptance and separate authorization, the remaining next media slice is **Site image controls**. Site media, C3, Instagram, packaging/release, FTP/source update, public production publication, bulk media migration and asset cleanup were not started.
 
 ### September 14 Canonical No-Photo Correction
 
@@ -436,4 +458,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **maintainer 13-point canonical no-photo retest**, following [EQUIPE_PHOTO_TARGETED_TRACE.md](EQUIPE_PHOTO_TARGETED_TRACE.md). Avatar is now an assigned/removable image, not a special no-photo state. The intermittent reopen discrepancy remains not reproduced after targeted trace, with no cause/fix claimed. Preserve the prior unrelated acceptance; do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **maintainer Parcerias logo retest**, following [PARCERIAS_LOGO_RETEST.md](PARCERIAS_LOGO_RETEST.md). Equipe media at `311109c` is manually accepted; do not repeat its checklist. The historical reopen discrepancy remains not reproduced, with no cause/fix claimed. After Parcerias acceptance, propose separately authorized Site image controls. Do not start C3, B3, Instagram, packaging or production FTP automatically.

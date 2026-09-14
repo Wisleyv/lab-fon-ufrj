@@ -20,13 +20,14 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await fs.rm(root, { recursive: true, force: true });
 });
 
-async function fixture(foto = "assets/images/custom.png") {
+async function fixture(foto = "assets/images/custom.png", dataset = "equipe") {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "labfon-photo-app-")); roots.push(root);
-  for (const folder of ["content/equipe", "public/assets/images", "scripts"]) await fs.mkdir(path.join(root, folder), { recursive: true });
+  for (const folder of [`content/${dataset}`, "public/assets/images", "scripts"]) await fs.mkdir(path.join(root, folder), { recursive: true });
   const page = { kind: "single-page", sections: [{ id: "pesquisadores", type: "equipe", enabled: true, order: 1 }] };
-  const first = { nome: "First", instituicao: "UFRJ", categoria: "docentes", foto };
-  const other = { nome: "Other", instituicao: "UFRJ", foto: "assets/images/avatar.webp" };
-  for (const [name, value] of Object.entries({ "package.json": {}, "content/page.json": page, "content/site.json": {}, "content/equipe/first.json": first, "content/equipe/other.json": other })) {
+  const first = dataset === "equipe" ? { nome: "First", instituicao: "UFRJ", categoria: "docentes", foto } :
+    { nome: "First", tipo: "instituicao", descricao: "Original", url: "https://example.org", ...(foto ? { logo: foto } : {}) };
+  const other = dataset === "equipe" ? { nome: "Other", instituicao: "UFRJ", foto: "assets/images/avatar.webp" } : { nome: "Other", tipo: "instituicao", logo: "assets/images/other.png" };
+  for (const [name, value] of Object.entries({ "package.json": {}, "content/page.json": page, "content/site.json": {}, [`content/${dataset}/first.json`]: first, [`content/${dataset}/other.json`]: other })) {
     await fs.writeFile(path.join(root, name), JSON.stringify(value));
   }
   await fs.writeFile(path.join(root, "scripts/build-data.js"), "");
@@ -50,7 +51,7 @@ async function fixture(foto = "assets/images/custom.png") {
   document.body.innerHTML = '<div id="editor-root"></div>';
   const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService(), storageRef: null });
   await app.ready;
-  get("editor-content-dataset").value = "equipe";
+  get("editor-content-dataset").value = dataset;
   const open = async () => {
     get("editor-tab-project").click();
     get("editor-project-advanced").open = true;
@@ -60,7 +61,7 @@ async function fixture(foto = "assets/images/custom.png") {
     get("editor-tab-content").click();
   };
   await open();
-  const read = () => host.readJson(null, "content/equipe/first.json");
+  const read = () => host.readJson(null, `content/${dataset}/first.json`);
   const save = async () => {
     get("editor-content-save").click();
     await vi.waitFor(() => expect(app.store.getState().contentSaving).toBe(false));
@@ -70,6 +71,70 @@ async function fixture(foto = "assets/images/custom.png") {
 }
 
 describe("complete editor photo lifecycle", () => {
+  it("reuses media selection for optional partner logos, canonical save/discard/remove and reopen", async () => {
+    const { app, host, root, first, other, read, save, open } = await fixture("", "parcerias");
+    const pick = () => document.querySelector('[data-focus-key="logo"]');
+    const clear = () => document.querySelector('[data-focus-key="remove-logo"]');
+    try {
+      expect(pick().textContent).toBe("Carregar logo");
+      expect(image().hasAttribute("src")).toBe(false);
+      expect(clear().hidden).toBe(true);
+      const description = get("content-field-root.descricao");
+      description.value = "Updated"; description.dispatchEvent(new Event("input"));
+      await save();
+      expect(await read()).toEqual({ ...first, descricao: "Updated" });
+      expect(Object.hasOwn(await read(), "logo")).toBe(false);
+      pick().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      expect(app.store.getState().contentDirty).toBe(true);
+      expect(get("editor-session-changes").textContent).toBe("não salvas");
+      expect(app.store.getState().editorSiteModel.parcerias.find((p) => p.nome === first.nome).logo).toBe(managed);
+      expect(image().hidden).toBe(false);
+      expect(image().alt).toBe(first.nome);
+      get("editor-content-cancel").click();
+      expect(image().hasAttribute("src")).toBe(false);
+      expect(Object.hasOwn(await read(), "logo")).toBe(false);
+      pick().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      await save();
+      expect(await read()).toEqual({ ...first, descricao: "Updated", logo: managed });
+      expect(get("editor-content-edit-status").textContent).toContain(path.join(root, "content/parcerias/first.json"));
+      get("editor-close-project").click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject).toBeNull());
+      await open();
+      expect(document.querySelector(".editor-image-path").textContent).toBe(managed);
+      expect(pick().textContent).toBe("Alterar logo");
+      host.selectProjectImage.mockResolvedValueOnce({ ok: true, path: "assets/images/image-replacement.png", previewUrl: "data:image/png;base64,iVBORw0KGgo=" });
+      pick().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      expect(document.querySelector(".editor-image-path").textContent).toBe("assets/images/image-replacement.png");
+      expect((await read()).logo).toBe(managed);
+      get("editor-content-cancel").click();
+      expect(document.querySelector(".editor-image-path").textContent).toBe(managed);
+      clear().click();
+      expect(image().hasAttribute("src")).toBe(false);
+      expect(document.querySelector(".editor-image-preview").hidden).toBe(true);
+      expect(app.store.getState().contentDirty).toBe(true);
+      get("editor-content-cancel").click();
+      expect(document.querySelector(".editor-image-path").textContent).toBe(managed);
+      clear().click(); await save();
+      expect((await read()).logo).toBe("");
+      expect(await fs.readFile(path.join(root, "public", managed), "utf8")).toBe("replacement binary");
+      expect(await host.readJson(null, "content/parcerias/other.json")).toEqual(other);
+    } finally { app.destroy(); }
+  });
+
+  it.each(["cancel", "unsupported", "absolute"])("preserves partner content after picker %s", async (outcome) => {
+    const { app, host, first, read } = await fixture("assets/images/custom.png", "parcerias");
+    try {
+      host.selectProjectImage.mockResolvedValue(outcome === "cancel" ? { cancelled: true } : outcome === "unsupported" ? { ok: false, message: "Formato não aceito." } : { ok: true, path: "C:\\private\\logo.png" });
+      document.querySelector('[data-focus-key="logo"]').click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      expect(app.store.getState().contentDirty).toBe(false);
+      expect(await read()).toEqual(first);
+      expect(host.saveContentRecord).not.toHaveBeenCalled();
+    } finally { app.destroy(); }
+  });
   it.each([
     [undefined, false], ["", false], ["assets/images/avatar.webp", true],
     ["/assets/images/avatar.webp", true], ["assets/images/team-placeholder.svg", false],

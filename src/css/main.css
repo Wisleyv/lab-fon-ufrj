@@ -2030,6 +2030,15 @@ a:focus {
   gap: var(--spacing-xs);
 }
 
+.parceria-logo {
+  display: block;
+  width: 160px;
+  height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
 .parceria-name-wrapper {
   display: flex;
   align-items: baseline;

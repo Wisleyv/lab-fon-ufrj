@@ -3,6 +3,28 @@ import { expect, it } from "vitest";
 import { ParceriasSection } from "../../src/js/sections/parcerias.js";
 import { CONTENT_DATASETS, validateContent } from "../../src/js/editor/content-fields.js";
 
+it.each([undefined, "", "C:\\private\\logo.png", "file:///private/logo.png", "javascript:alert(1)"])("keeps partner %s logo absent without a placeholder", (logo) => {
+  const partner = { nome: "Institution", tipo: "instituicao", url: "https://example.org", descricao: "Description", logo };
+  const card = new ParceriasSection("unused").createPartnerCard(partner);
+  expect(card.querySelector("img")).toBeNull();
+  expect(card.querySelector("h3").textContent).toBe(partner.nome);
+  expect(card.querySelector("a").href).toBe("https://example.org/");
+  expect(card.textContent).toContain("Description");
+});
+
+it("renders a restrained decorative logo beside its named institution and removes failed images", () => {
+  const partner = { nome: "Institution", tipo: "instituicao", logo: "assets/images/image-test.png" };
+  expect(validateContent(partner, CONTENT_DATASETS.parcerias.fields)).toEqual([]);
+  const card = new ParceriasSection("unused").createPartnerCard(partner);
+  const img = card.querySelector("img");
+  expect(img.getAttribute("src")).toBe(partner.logo);
+  expect(img.alt).toBe("");
+  expect(img.width).toBe(160); expect(img.height).toBe(80);
+  img.dispatchEvent(new Event("error"));
+  expect(card.querySelector("img")).toBeNull();
+  expect(card.querySelector("h3").textContent).toBe(partner.nome);
+});
+
 it("renders exactly one CNPq alongside existing partners through the current schema", async () => {
   const files = fs.readdirSync("content/parcerias").filter((file) => file.endsWith(".json"));
   const partners = files.map((file) => JSON.parse(fs.readFileSync(`content/parcerias/${file}`, "utf8")));

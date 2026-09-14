@@ -79,11 +79,12 @@ export function createContentEditor({ host, store, customEditor }) {
     if (draft) renderFocusedFields(fields, draft, schema().fields, {
       navigation, change: markDraft, render, button, dirty: () => store.getState().contentDirty,
       renderField: (field, object) => {
-        if (dataset !== "equipe" || field.key !== "foto") return null;
-        const imageField = createImageField({ host, directory, value: object.foto, alt: object.nome ? `Foto de ${object.nome}` : "Foto",
+        const logo = dataset === "parcerias" && field.key === "logo";
+        if (!logo && (dataset !== "equipe" || field.key !== "foto")) return null;
+        const imageField = createImageField({ host, directory, kind: logo ? "logo" : "photo", value: object[field.key], alt: logo ? object.nome || "Logo" : object.nome ? `Foto de ${object.nome}` : "Foto",
           canEdit: () => !busy && getEditingReadiness(store.getState()).ok,
           onBusy: (imageSelecting) => store.setState({ imageSelecting }),
-          onChange: (value) => { object.foto = value; markDraft(); },
+          onChange: (value) => { object[field.key] = value; markDraft(); },
         });
         imageFields.push(imageField);
         return imageField.element;

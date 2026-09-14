@@ -61,6 +61,14 @@ export class ParceriasSection extends SectionRenderer {
 
     // Institution name and acronym
     const header = createElement("div", { className: "parceria-header" });
+    const logo = typeof parceria.logo === "string" ? parceria.logo : "";
+    if ((/^\/?assets\/images\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/i.test(logo) || /^https?:\/\//i.test(logo)) &&
+      HTMLSanitizer.sanitizeURL(logo, ["http:", "https:"])) {
+      // The adjacent institution heading supplies the accessible name.
+      const image = createElement("img", { className: "parceria-logo", src: logo, alt: "", width: "160", height: "80", loading: "lazy" });
+      image.addEventListener("error", () => image.remove());
+      header.appendChild(image);
+    }
     
     const nameWrapper = createElement("div", { className: "parceria-name-wrapper" });
     

@@ -8,6 +8,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { consolidateData } from "../../scripts/build-data.js";
 import { PesquisadoresSection } from "../../src/js/sections/pesquisadores.js";
+import { ParceriasSection } from "../../src/js/sections/parcerias.js";
 import { createNativeDesktopHost } from "../../src/js/editor/desktop-host.js";
 import { TEAM_PLACEHOLDER_PATH, TEAM_PLACEHOLDER_URL } from "../../src/js/sections/team-photo.js";
 const require = createRequire(import.meta.url);
@@ -125,6 +126,8 @@ describe("restricted image asset service", () => {
     await saveContentRecord(null, root, "equipe", "member.json", null, member);
     expect((await readContentDataset(null, root, "equipe"))[0].value).toEqual(member);
     await saveContentRecord(null, root, "equipe", "no-photo.json", null, { nome: "No photo", foto: "" });
+    await saveContentRecord(null, root, "parcerias", "partner.json", null, { nome: "Partner", tipo: "instituicao", logo: result.path });
+    await saveContentRecord(null, root, "parcerias", "text-only.json", null, { nome: "Text only", tipo: "instituicao" });
     await fs.copyFile(path.join("public", TEAM_PLACEHOLDER_PATH), path.join(root, "public", TEAM_PLACEHOLDER_PATH));
     const data = consolidateData({ contentDir: path.join(root, "content"), outputFile: path.join(root, "public/data.json") });
     expect(data.equipe.find((entry) => entry.nome === member.nome).foto).toBe(result.path);
@@ -133,6 +136,11 @@ describe("restricted image asset service", () => {
     expect(await fs.readFile(path.join(root, "dist", result.path))).toEqual(PNG);
     expect(await fs.readFile(path.join(root, "dist", TEAM_PLACEHOLDER_PATH), "utf8")).toBe(await fs.readFile(path.join("public", TEAM_PLACEHOLDER_PATH), "utf8"));
     const output = JSON.parse(await fs.readFile(path.join(root, "dist/data.json"), "utf8"));
+    const partner = output.parcerias.find((record) => record.nome === "Partner");
+    expect(partner.logo).toBe(result.path);
+    const partnerRenderer = new ParceriasSection("unused");
+    expect(partnerRenderer.createPartnerCard(partner).querySelector("img").getAttribute("src")).toBe(result.path);
+    expect(partnerRenderer.createPartnerCard(output.parcerias.find((record) => record.nome === "Text only")).querySelector("img")).toBeNull();
     document.body.innerHTML = '<div id="team"></div>';
     const renderer = new PesquisadoresSection("team");
     document.getElementById("team").append(renderer.template(output.equipe));
