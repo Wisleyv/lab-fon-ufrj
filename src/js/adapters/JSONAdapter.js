@@ -89,6 +89,7 @@ export class JSONAdapter extends DataAdapter {
         tipo: parceria.tipo || "parceria",
         descricao: parceria.descricao || "",
         url: parceria.url || "",
+        ...(typeof parceria.logo === "string" ? { logo: parceria.logo } : {}),
       }));
     }
 

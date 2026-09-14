@@ -19,6 +19,7 @@ $files = @(
     'src/js/editor/content-editor.js'
     'src/js/editor/content-fields.js'
     'src/js/sections/parcerias.js'
+    'src/js/adapters/JSONAdapter.js'
     'src/css/main.css'
 )
 $archive = Join-Path $env:TEMP "labfonac-partner-logos-$([guid]::NewGuid()).zip"
@@ -29,7 +30,21 @@ Set-Location -LiteralPath $target
 npm run editor:dev
 ```
 
-Only these five application files are replaced. Preserve independent edits to them first. No content, images, dependencies, workspace settings or metadata are replaced; no new shared asset is needed. The disposable copy must already contain the accepted `311109c` application, including its team-photo helper. Confirm a fresh Electron window, not just a browser page. If startup fails or uses an occupied port, capture terminal output rather than testing an uncertain instance.
+Only these six application files are replaced. Preserve independent edits to them first. No content, images, dependencies, workspace settings or metadata are replaced; no new shared asset is needed. The disposable copy must already contain the accepted `311109c` application, including its team-photo helper. Confirm a fresh Electron window, not just a browser page. If startup fails or uses an occupied port, capture terminal output rather than testing an uncertain instance.
+
+## CAPES Correction Retest
+
+The September 14 investigation found a saved `logo` in `C:\Temp\labfonac-c2\content\parcerias\capes.json`, in that project's generated data, and its image in both public and dist assets. The maintained checkout's CAPES record is a different file and remains unchanged. The screenshot's UUID differs from the current saved UUID, so this does not establish the outcome of that specific selection attempt.
+
+The public JSONAdapter dropped `logo` during normalization. The correction preserves the optional string before rendering; it does not change Save or copy any disposable content back into the maintained checkout. Update the application files above, including JSONAdapter, before retesting.
+
+For checks 6-7, inspect the exact path reported by Save. With the disposable project open, run:
+
+```powershell
+Get-Content -LiteralPath 'C:\Temp\labfonac-c2\content\parcerias\capes.json'
+```
+
+For checks 12-13, regenerate and open the site through Revisar in that same project. An existing preview/build or the maintained checkout's site will not demonstrate the updated disposable content. CAPES must have a nonempty saved logo for the logo-visible check; do not expect it after removal and Save.
 
 ## Fifteen Checks
 

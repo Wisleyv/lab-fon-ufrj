@@ -451,6 +451,16 @@ Before any remote write, obtain authorization for that implementation run and pr
 
 If a gate fails, stop before publication. Revert only the current slice in a controlled working copy or restore its reviewed content snapshot; never reset the dirty repository or overwrite newer remote edits. An older binary is not a valid rollback for a newer custom-section schema unless source content is also restored compatibly.
 
+## September 14 Parcerias Adapter Correction
+
+Manual retest reported missing CAPES persistence and generated logo after `21441bf`. Read-only inspection found a managed logo in `C:\Temp\labfonac-c2\content\parcerias\capes.json`, the disposable public/dist data, and both asset destinations. The maintained checkout's CAPES JSON is separate and unchanged. The screenshot UUID differs from the currently saved one; no claim is made about that specific selection attempt or a Save defect.
+
+Confirmed rendering cause: `JSONAdapter.normalize()` rebuilt partner records without their optional `logo`. Preserve string logos (including explicit empty removal) while keeping absent fields absent. No picker, native service, persistence owner, renderer layout, content migration or dependencies changed. Regression tests first reproduced the failure, then passed with the correction. The managed-asset build test now includes the previously missed generated-data -> JSONAdapter -> public renderer boundary.
+
+Verification: **53 focused tests passed (4 files); 359 full-suite tests passed (29 files), run once; web/editor production build passed once.** Pre-existing `public/data.json` was preserved byte-for-byte. Disposable content was only inspected, not overwritten. Updated the retest guide to export JSONAdapter and distinguish the active project's Save destination from the maintained checkout. Native GUI/image decoding and visual acceptance remain pending; repeat the CAPES correction retest in that guide before accepting Parcerias.
+
+Equipe remains manually accepted at `311109c`; its historical reopen discrepancy remains not reproduced, with no cause or fix claimed. Site image controls remain the next separately authorized media slice after Parcerias acceptance. C3, Instagram, packaging, real FTP and production publication remain untouched (the full suite uses disposable FTP fixtures).
+
 ## Recommended Run Boundaries
 
 - **Run A:** choose A1, then A2; continue to A3/A4 only if approved scope and input readiness permit. Each remains separately testable.

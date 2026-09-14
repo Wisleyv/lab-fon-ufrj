@@ -5,7 +5,21 @@ import { createDefaultPageComposition } from "../../src/js/page/default-composit
 describe("JSONAdapter", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
+
+  it.each(["assets/images/partner.png", "https://example.org/logo.webp", ""])(
+    "preserves the optional partner logo %s through fetch normalization",
+    async (logo) => {
+      const partner = { nome: "CAPES", sigla: "CAPES", localizacao: "DF", tipo: "agencia-fomento", descricao: "Research", url: "https://example.org", logo };
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ parcerias: [partner] }),
+      }));
+      const data = await new JSONAdapter("./data.json", 1).fetch();
+      expect(data.parcerias[0]).toEqual(partner);
+    },
+  );
 
   it("loads page composition data without changing the existing JSON contract", async () => {
     const page = createDefaultPageComposition();
