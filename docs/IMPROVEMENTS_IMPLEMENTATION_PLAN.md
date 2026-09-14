@@ -18,7 +18,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
-| Equipe media | PARTIAL MANUAL ACCEPTANCE: 18/20 | At `42f845c`, all other tested behavior provisionally accepted; item 10 intermittent first-reopen discrepancy and item 13 member-specific missing Remove remain undiagnosed |
+| Equipe media | PARTIAL MANUAL ACCEPTANCE: 18/20 | Mayara's hidden Remove is correct for her stored legacy placeholder; first-reopen discrepancy not reproduced after targeted trace; maintainer confirmation pending |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -32,6 +32,27 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 14 Targeted Equipe Diagnosis
+
+Started at documentation checkpoint `b4debe9`, on `chore/verified-editor-cleanup-plan-2026-09-11`. Application code still corresponds to `42f845c`; no application changes were made in this run. Pre-existing member/data edits, annotated checklist, prompts, workspace settings and untracked images/documents were preserved and excluded from the commit.
+
+**Mayara result:** the exact record is `content/equipe/mayara-gak-assump-uo.json` in both the checkout and `C:\Temp\labfonac-c2`. Both store `foto: "assets/images/avatar.webp"`; both referenced assets exist. `isCustomTeamPhoto()` recognizes that exact legacy-placeholder value (also with one leading slash); `image-field.js` uses `remove.hidden = !isCustomTeamPhoto(value)`. The preview reads the existing legacy asset rather than changing its reference. Therefore hidden Remove is intended behavior for the observed stored state, not a custom-path classification bug. No name-specific logic, predicate changes, JSON migration or forced button visibility were added. The targeted guide clarifies the state without adding permanent UI instructions or changing accepted controls.
+
+**Persistence result: not reproduced after targeted trace.** The existing full-bootstrap test now starts with the old placeholder and asserts selected dataset/root/filename, exact canonical save arguments and returned destination, immediate disk contents, cleared active state, reopened root/filename, fresh dataset-read arguments, model photo and displayed photo. It also emits a fixture-only identity trace to identify a future automated mismatch. No speculative runtime logging or persistence fix was introduced.
+
+Observed trace on September 14:
+
+- Disposable root: `C:\Users\vil3l\AppData\Local\Temp\labfon-photo-app-g8kUIB`; synthetic member `First`; dataset `equipe`; initial `foto` was `assets/images/avatar.webp`.
+- Source, save-result destination and reopened record all matched `<root>\content\equipe\first.json`.
+- Immediate disk read, reopened site model and editor display all matched `assets/images/image-00000000-0000-4000-8000-000000000001.png`; copied fixture asset existed. The disposable fixture was cleaned up by the test afterward.
+- The picker response/image preview is simulated; canonical content-store writes/read-back and UI Save/Close/Open are exercised. This is not native Electron GUI acceptance and does not establish the cause of the earlier intermittent observation.
+
+Verification: **58 focused tests passed / 4 files** (`editor-photo-integration`, `editor-content`, `editor-project-loader`, `pesquisadores`). Nine added data-shape/path cases cover empty/absent classification, canonical and legacy placeholders, managed paths and valid legacy custom paths with matching Remove visibility. The existing save/reopen test was strengthened, not replaced with a hypothetical failure scenario. Application code did not change, so the full suite/build were not rerun; retain the prior **336 full-suite tests / 29 files and passing web/editor build at `42f845c`**, not a new full-suite claim.
+
+The [targeted retest/recurrence guide](EQUIPE_PHOTO_TARGETED_TRACE.md) gives exact file/root/UUID capture steps and an optional read-only UI console snapshot. No disposable application update is needed. The original annotated checklist remains untouched. Previous 18/20 provisional acceptance is retained; Mayara is explained, but one intermittent observation remains unresolved and full manual acceptance is not yet declared.
+
+Next exact slice: maintainer confirmation of Mayara's stored-state/Remove correspondence, then one replacement -> verified disk Save -> close -> same-root/same-member reopen trace, plus one ordinary removal/save and Revisar smoke check. Investigate only a captured mismatch; do not guess or broaden scope. Parcerias/Site media, C3, Instagram, packaging, FTP/source update and production publication remain untouched.
 
 ### Checkpoint 42f845c Manual Retest Wrap-Up
 
@@ -397,4 +418,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **targeted diagnosis of Mayara's missing Remove action, then the first-reopen persistence discrepancy**, following the `42f845c` wrap-up above with Medium reasoning. The 18/20 other checklist areas are provisionally accepted, and the `f8064e2` focused-form checklist remains accepted. Retest only the two unresolved cases plus the specified smoke checks. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **maintainer targeted confirmation and recurrence capture**, following [EQUIPE_PHOTO_TARGETED_TRACE.md](EQUIPE_PHOTO_TARGETED_TRACE.md). Mayara's legacy-placeholder state explains hidden Remove; the intermittent reopen discrepancy was not reproduced after targeted trace. Use Medium reasoning only if captured evidence requires further diagnosis. The previous 18/20 provisional acceptance and accepted `f8064e2` focused forms remain intact. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.

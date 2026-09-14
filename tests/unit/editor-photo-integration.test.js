@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 import { initEditorApp } from "../../src/js/editor/bootstrap.js";
 import { createMemoryCompositionService } from "../../src/js/editor/composition-service.js";
 import { createMemoryDesktopHost } from "../../src/js/editor/desktop-host.js";
-import { TEAM_PLACEHOLDER_URL } from "../../src/js/sections/team-photo.js";
+import { TEAM_PLACEHOLDER_URL, isCustomTeamPhoto } from "../../src/js/sections/team-photo.js";
 
 const { readContentDataset, saveContentRecord } = createRequire(import.meta.url)("../../desktop/content-store.cjs");
 const roots = [];
@@ -38,7 +38,7 @@ async function fixture(foto = "assets/images/custom.png") {
     const files = await fs.readdir(path.join(root, folder)).catch(() => []);
     return Promise.all(files.filter((f) => f.endsWith(".json")).map((f) => host.readJson(null, `${folder}/${f}`)));
   };
-  host.readContentDataset = (_dir, dataset) => readContentDataset(null, root, dataset);
+  host.readContentDataset = vi.fn((directory, dataset) => readContentDataset(null, directory.path, dataset));
   host.saveContentRecord = vi.fn((_dir, ...args) => saveContentRecord(null, root, ...args));
   host.readProjectImage = async () => ({ ok: true, previewUrl: "data:image/png;base64,iVBORw0KGgo=" });
   host.selectProjectImage = vi.fn(async () => {
@@ -69,9 +69,26 @@ async function fixture(foto = "assets/images/custom.png") {
 }
 
 describe("complete editor photo lifecycle", () => {
-  it("uses the visible content save for dirty photo drafts, canonical JSON and close/reopen", async () => {
-    const { app, host, root, first, other, open, read, save } = await fixture();
+  it.each([
+    [undefined, false], ["", false], ["assets/images/avatar.webp", false],
+    ["/assets/images/avatar.webp", false], ["assets/images/team-placeholder.svg", false],
+    ["assets/images/placeholder-avatar.jpg", false], [managed, true],
+    ["assets/images/legacy-portrait.webp", true], ["/assets/images/avatar-custom.webp", true],
+  ])("classifies photo %s without member-specific exceptions", async (foto, custom) => {
+    const { app } = await fixture(foto === undefined ? "" : foto);
     try {
+      expect(isCustomTeamPhoto(foto)).toBe(custom);
+      expect(remove().hidden).toBe(!custom);
+      expect(app.store.getState().contentDirty).toBe(false);
+    } finally { app.destroy(); }
+  });
+  it("uses the visible content save for dirty photo drafts, canonical JSON and close/reopen", async () => {
+    const { app, host, root, first, other, open, read, save } = await fixture("assets/images/avatar.webp");
+    try {
+      const sourceFile = path.join(await fs.realpath(root), "content/equipe", get("editor-content-record").value);
+      expect(app.store.getState().openedProject.path).toBe(root);
+      expect(get("editor-content-dataset").value).toBe("equipe");
+      expect((await read()).foto).toBe("assets/images/avatar.webp");
       const saveButton = get("editor-content-save");
       expect(saveButton.closest("[hidden]")).toBeNull();
       expect(saveButton.disabled).toBe(true);
@@ -88,6 +105,10 @@ describe("complete editor photo lifecycle", () => {
       expect(await read()).toEqual(first);
       expect(host.saveContentRecord).not.toHaveBeenCalled();
       await save();
+      expect(host.saveContentRecord).toHaveBeenCalledWith(expect.objectContaining({ path: root }), "equipe", "first.json", first, { ...first, foto: managed });
+      const savedResult = await host.saveContentRecord.mock.results[0].value;
+      expect(savedResult.path).toBe(sourceFile);
+      expect(JSON.parse(await fs.readFile(savedResult.path, "utf8")).foto).toBe(managed);
       expect((await read()).foto).toBe(managed);
       expect(get("editor-content-edit-status").textContent).toContain(path.join(root, "content/equipe/first.json"));
       expect(get("editor-session-changes").textContent).toBe("nenhuma não salva");
@@ -101,7 +122,14 @@ describe("complete editor photo lifecycle", () => {
       expect(get("editor-content-record").options).toHaveLength(0);
       expect(await fs.readFile(path.join(root, "public", managed), "utf8")).toBe("replacement binary");
       await open();
+      const reopenedFile = path.join(await fs.realpath(app.store.getState().openedProject.path), "content/equipe", get("editor-content-record").value);
+      expect(reopenedFile).toBe(sourceFile);
+      expect(host.readContentDataset).toHaveBeenLastCalledWith(expect.objectContaining({ path: root }), "equipe");
+      expect(app.store.getState().editorSiteModel.equipe.find((member) => member.nome === first.nome).foto).toBe(managed);
       expect(document.querySelector(".editor-image-path").textContent).toBe(managed);
+      console.info("Photo identity trace", JSON.stringify({ root, member: first.nome, initialPhoto: first.foto,
+        sourceFile, saveFile: savedResult.path, reopenedFile, diskPhoto: (await read()).foto,
+        editorPhoto: document.querySelector(".editor-image-path").textContent }));
     } finally { app.destroy(); }
   });
 
