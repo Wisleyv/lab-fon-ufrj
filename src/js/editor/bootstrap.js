@@ -390,10 +390,13 @@ function createLayout(
     {
       id: "editor-open-project",
       type: "button",
-      className: "editor-btn editor-btn-primary",
+      className: "editor-btn editor-btn-secondary",
     },
-    "Abrir projeto local",
+    "Escolher outro projeto",
   );
+  const openSavedProjectButton = createElement("button", {
+    id: "editor-open-saved-project", type: "button", className: "editor-btn editor-btn-primary",
+  }, "Abrir projeto salvo");
   statusCard.appendChild(openProjectButton);
 
   main.appendChild(statusCard);
@@ -541,7 +544,7 @@ function createLayout(
       type: "button",
       className: "editor-btn editor-btn-primary",
     },
-    "Salvar origem",
+    "Salvar origem do projeto",
   );
   const cancelSourceButton = createElement(
     "button",
@@ -1010,7 +1013,7 @@ function createLayout(
 
   const advanced = createElement("details", { id: "editor-project-advanced", className: "editor-advanced" });
   advanced.appendChild(createElement("summary", {}, "Opções avançadas"));
-  advanced.append(openProjectButton, sourceCard);
+  advanced.append(openSavedProjectButton, openProjectButton, sourceCard);
   const closeProjectButton = createElement("button", {
     id: "editor-close-project", type: "button", className: "editor-btn editor-btn-secondary",
   }, "Fechar projeto");
@@ -1078,7 +1081,7 @@ function createLayout(
     summary.appendChild(createElement("div", {}, [createElement("dt", {}, label), value]));
   }
   const operationReasons = new Map();
-  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, updateRemoteSourceButton, publishSiteButton]) {
+  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, updateRemoteSourceButton, publishSiteButton]) {
     const reason = createElement("p", { id: `${button.id}-reason`, className: "editor-operation-reason" });
     const operation = createElement("div", { className: "editor-operation" });
     button.setAttribute("aria-describedby", reason.id);
@@ -1523,9 +1526,13 @@ function createLayout(
       return;
     }
 
-    sourceError.textContent = "";
-    store.setState({ appStatus: "sourceSelected", projectSource: source });
-    persistSource(storageRef, source);
+    try {
+      persistSource(storageRef, source);
+      sourceError.textContent = "";
+      store.setState({ appStatus: "sourceSelected", projectSource: source });
+    } catch {
+      sourceError.textContent = "Não foi possível salvar a origem do projeto.";
+    }
   });
 
   const activateProjectDirectory = async (directory) => {
@@ -1572,8 +1579,8 @@ function createLayout(
     return result;
   };
 
-  openProjectButton.addEventListener("click", async () => {
-    if (openProjectButton.disabled) return;
+  const openLocalProject = async (saved = false) => {
+    if ((saved ? openSavedProjectButton : openProjectButton).disabled) return;
     if (store.getState().contentDirty || store.getState().contentSaving || store.getState().compositionDirty) {
       sourceError.textContent = "Salve ou descarte as alterações antes de abrir outro projeto.";
       return;
@@ -1581,10 +1588,13 @@ function createLayout(
     sourceError.textContent = "";
     store.setState({ projectOpening: true });
     try {
-    const selection = await desktopHost.openProjectDirectory();
+    const source = store.getState().projectSource;
+    if (saved && (source?.type !== "local" || typeof source.path !== "string" || !source.path.trim())) return;
+    const selection = await desktopHost.openProjectDirectory(saved ? source.path : undefined);
 
     if (!selection.ok) {
       if (!selection.cancelled) {
+        sourceError.textContent = selection.message || "Não foi possível abrir o projeto. Use Escolher outro projeto.";
         store.setState({
           diagnostics: [
             {
@@ -1598,11 +1608,14 @@ function createLayout(
       return;
     }
 
-    await activateProjectDirectory(selection.directory);
+    const result = await activateProjectDirectory(selection.directory);
+    if (!result.ok) sourceError.textContent = "O projeto não é válido para edição. Confira os diagnósticos ou use Escolher outro projeto.";
     } catch (error) {
       sourceError.textContent = error.message || "Não foi possível abrir o projeto.";
     } finally { store.setState({ projectOpening: false }); }
-  });
+  };
+  openProjectButton.addEventListener("click", () => openLocalProject());
+  openSavedProjectButton.addEventListener("click", () => openLocalProject(true));
 
   closeProjectButton.addEventListener("click", async () => {
     const state = store.getState();
@@ -1615,10 +1628,10 @@ function createLayout(
       if (result && !result.ok) throw new Error(result.message || "Não foi possível fechar o projeto.");
       activeCompositionService = compositionService;
       const initial = createInitialEditorState();
-      store.reset({ ...initial, publish: { ...initial.publish, profile: state.publish?.profile || null,
+      store.reset({ ...initial, projectSource: state.projectSource, publish: { ...initial.publish, profile: state.publish?.profile || null,
         status: state.publish?.profile ? "configured" : "unconfigured" } });
       sourceError.textContent = "";
-      hydrateFromSource(null);
+      hydrateFromSource(state.projectSource);
       closeProjectStatus.textContent = "Projeto fechado. Arquivos locais preservados.";
       selectTab(1);
     } catch (error) { closeProjectStatus.textContent = error.message || "Não foi possível fechar o projeto."; }
@@ -2162,7 +2175,11 @@ function createLayout(
     testReason.hidden = testReason.hidden || sharedReason;
     testFtpConnectionButton.setAttribute("aria-describedby", sharedReason ? connectionReason.id : testReason.id);
     apply(openRemoteProjectButton, getRetrievalReadiness(state, profile, password));
-    apply(openProjectButton, !busy.ok ? busy : state.contentDirty || state.compositionDirty ? unavailable("Salve ou descarte as alterações antes de abrir outro projeto.") : busy);
+    const openReadiness = !busy.ok ? busy : state.contentDirty || state.compositionDirty ? unavailable("Salve ou descarte as alterações antes de abrir outro projeto.") : busy;
+    apply(openProjectButton, openReadiness);
+    const hasSavedLocal = state.projectSource?.type === "local" && typeof state.projectSource.path === "string" && !!state.projectSource.path.trim();
+    openSavedProjectButton.parentElement.hidden = !hasSavedLocal;
+    apply(openSavedProjectButton, hasSavedLocal ? openReadiness : unavailable("Nenhum caminho local salvo."));
     apply(saveCompositionButton, !editing.ok ? editing : !state.compositionDirty ? unavailable("Nenhuma alteração para salvar.") : !activeCompositionService.canSave ? unavailable("Abra o projeto no aplicativo desktop para salvar.") : !validatePageComposition(state.draftComposition).valid ? unavailable("Corrija a composição antes de salvar.") : editing);
     apply(generateSiteButton, buildController.getReadiness());
     apply(previewGeneratedSiteButton, getGeneratedPreviewReadiness(state));

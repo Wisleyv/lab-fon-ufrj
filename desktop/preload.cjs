@@ -10,8 +10,8 @@ contextBridge.exposeInMainWorld("labfonDesktopHost", {
   readProjectImage(rootPath, publicPath) {
     return ipcRenderer.invoke("labfon:readProjectImage", rootPath, publicPath);
   },
-  openProjectDirectory() {
-    return ipcRenderer.invoke("labfon:openProjectDirectory");
+  openProjectDirectory(savedPath) {
+    return ipcRenderer.invoke("labfon:openProjectDirectory", savedPath);
   },
 
   pathExists(rootPath, relativePath) {

@@ -4,7 +4,7 @@ import {
   startEditorApp,
 } from "../../src/js/editor/bootstrap.js";
 import { createMemoryCompositionService } from "../../src/js/editor/composition-service.js";
-import { createMemoryDesktopHost } from "../../src/js/editor/desktop-host.js";
+import { createMemoryDesktopHost, createBrowserDesktopHost } from "../../src/js/editor/desktop-host.js";
 
 const STORAGE_KEY = "labfon.editor.lastSource";
 
@@ -76,6 +76,135 @@ function createStorageMock() {
     },
   };
 }
+
+describe("saved local project opening", () => {
+  async function fixture(source = { type: "local", path: "C:/saved" }, files = {}) {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const storage = createStorageMock();
+    if (source) storage.setItem(STORAGE_KEY, JSON.stringify(source));
+    const host = createMemoryDesktopHost({
+      "package.json": "{}", "scripts/build-data.js": "",
+      "content/site.json": "{}",
+      "content/page.json": JSON.stringify({ kind: "single-page", sections: [{ id: "sobre", type: "sobre", enabled: true, order: 1 }] }),
+      ...files,
+    }, { directory: { path: "C:/browsed", name: "Browsed" } });
+    const browse = host.openProjectDirectory.bind(host);
+    host.openProjectDirectory = vi.fn(async (savedPath) => savedPath === undefined
+      ? browse() : { ok: true, directory: { path: savedPath, name: "Saved" } });
+    const read = vi.spyOn(host, "readJson");
+    const app = initEditorApp({ storageRef: storage, desktopHost: host, compositionService: createMemoryCompositionService() });
+    await app.ready;
+    return { app, host, storage, read, button: document.getElementById("editor-open-saved-project") };
+  }
+
+  it("reopens the persisted local path through the canonical loader after closing, and retains browsing", async () => {
+    const { app, host, storage, read, button } = await fixture();
+    try {
+      expect(button.parentElement.hidden).toBe(false);
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().projectOpening).toBe(false));
+      expect(host.openProjectDirectory).toHaveBeenCalledExactlyOnceWith("C:/saved");
+      expect(read).toHaveBeenCalledWith(expect.objectContaining({ path: "C:/saved" }), "content/page.json");
+      expect(app.store.getState().openedProject).toMatchObject({ path: "C:/saved", status: "valid", source: "local" });
+      document.getElementById("editor-close-project").click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject).toBeNull());
+      expect(app.store.getState().projectSource).toEqual(JSON.parse(storage.getItem(STORAGE_KEY)));
+      expect(document.getElementById("editor-local-path").value).toBe("C:/saved");
+      expect(button.disabled).toBe(false);
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject?.path).toBe("C:/saved"));
+      document.getElementById("editor-open-project").click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject?.path).toBe("C:/browsed"));
+      expect(host.openProjectDirectory).toHaveBeenLastCalledWith(undefined);
+      expect(app.store.getState().projectSource.path).toBe("C:/saved");
+    } finally { app.destroy(); }
+  });
+
+  it.each([null, { type: "local", path: "" }, { type: "ftp", host: "ftp.example.org", remotePath: "/source" }])(
+    "does not offer direct local opening for absent/empty/remote origins: %j", async (source) => {
+      const { app, host, button } = await fixture(source);
+      try {
+        expect(button.disabled).toBe(true);
+        expect(button.parentElement.hidden).toBe(true);
+        button.click();
+        expect(host.openProjectDirectory).not.toHaveBeenCalled();
+        expect(document.getElementById("editor-open-project").disabled).toBe(false);
+      } finally { app.destroy(); }
+    },
+  );
+
+  it("makes a newly saved path available without implicitly opening it", async () => {
+    const { app, host, button } = await fixture(null);
+    try {
+      document.getElementById("editor-local-path").value = "C:/new-saved";
+      document.getElementById("editor-save-source").click();
+      expect(button.disabled).toBe(false);
+      expect(host.openProjectDirectory).not.toHaveBeenCalled();
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject?.path).toBe("C:/new-saved"));
+    } finally { app.destroy(); }
+  });
+
+  it("keeps the last saved origin if persisting a replacement fails", async () => {
+    const { app, storage } = await fixture();
+    try {
+      vi.spyOn(storage, "setItem").mockImplementation(() => { throw new Error("Storage unavailable"); });
+      document.getElementById("editor-local-path").value = "C:/replacement";
+      document.getElementById("editor-save-source").click();
+      expect(document.getElementById("editor-source-error").textContent).toContain("Não foi possível salvar");
+      expect(app.store.getState().projectSource.path).toBe("C:/saved");
+      expect(JSON.parse(storage.getItem(STORAGE_KEY)).path).toBe("C:/saved");
+    } finally { app.destroy(); }
+  });
+
+  it.each(["contentDirty", "compositionDirty", "contentSaving", "imageSelecting", "projectOpening"])(
+    "preserves the current project while %s blocks both open actions", async (flag) => {
+      const { app, host, button } = await fixture();
+      try {
+        const current = { path: "C:/current", status: "valid", source: "local" };
+        app.store.setState({ openedProject: current, [flag]: true });
+        button.click(); document.getElementById("editor-open-project").click();
+        expect(button.disabled).toBe(true);
+        expect(host.openProjectDirectory).not.toHaveBeenCalled();
+        expect(app.store.getState().openedProject).toEqual(current);
+        expect(app.store.getState()[flag]).toBe(true);
+      } finally { app.destroy(); }
+    },
+  );
+
+  it("reports inaccessible saved paths and leaves browsing and the current project available", async () => {
+    const { app, host, button } = await fixture();
+    try {
+      const current = { path: "C:/current", status: "valid", source: "local" };
+      app.store.setState({ openedProject: current });
+      host.openProjectDirectory.mockResolvedValueOnce({ ok: false, message: "Caminho salvo indisponível. Use Escolher outro projeto." });
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().projectOpening).toBe(false));
+      expect(document.getElementById("editor-source-error").textContent).toContain("Escolher outro projeto");
+      expect(app.store.getState().openedProject).toEqual(current);
+      expect(document.getElementById("editor-open-project").disabled).toBe(false);
+    } finally { app.destroy(); }
+  });
+
+  it("rejects an invalid saved project using the existing page validation", async () => {
+    const { app, button } = await fixture(undefined, { "content/page.json": "not json" });
+    try {
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().projectOpening).toBe(false));
+      expect(app.store.getState().openedProject.status).toBe("invalid");
+      expect(app.store.getState().editorSiteModel).toBeNull();
+      expect(app.store.getState().diagnostics.some((item) => item.code === "PROJECT_JSON_MALFORMED")).toBe(true);
+      expect(document.getElementById("editor-source-error").textContent).toContain("não é válido");
+    } finally { app.destroy(); }
+  });
+
+  it("does not substitute a browser picker when asked to open a saved filesystem path", async () => {
+    const picker = vi.fn();
+    const host = createBrowserDesktopHost({ showDirectoryPicker: picker });
+    expect(await host.openProjectDirectory("C:/saved")).toMatchObject({ ok: false, code: "SAVED_PROJECT_DESKTOP_REQUIRED" });
+    expect(picker).not.toHaveBeenCalled();
+  });
+});
 
 describe("Editor Bootstrap (E1-H1)", () => {
   it("publishes a tested destination before entering the busy UI state", async () => {

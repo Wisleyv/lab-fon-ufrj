@@ -396,7 +396,17 @@ function resolveProjectPath(rootPath, relativePath) {
   return resolved;
 }
 
-async function openProjectDirectory({ dialog }) {
+async function openProjectDirectory({ dialog }, savedPath) {
+  if (savedPath !== undefined) {
+    try {
+      if (typeof savedPath !== "string" || !path.isAbsolute(savedPath) || !(await fs.stat(savedPath)).isDirectory()) {
+        throw new Error("Invalid directory");
+      }
+      return { ok: true, directory: { name: path.basename(savedPath), path: savedPath } };
+    } catch {
+      return { ok: false, code: "SAVED_PROJECT_UNAVAILABLE", message: "O caminho salvo não existe ou não está acessível. Use Escolher outro projeto." };
+    }
+  }
   const result = await dialog.showOpenDialog({
     title: "Abrir projeto Labfonac",
     properties: ["openDirectory"],
@@ -1565,7 +1575,7 @@ if (require.main === module || (process.versions.electron && process.type === "b
   configureAppServices({ app, safeStorage });
 
   const images = createImageAssetService({ dialog, validateProject: (root) => validateLocalEditableProject(root, { requireLockfile: false }) });
-  ipcMain.handle("labfon:openProjectDirectory", async (event) => images.rememberProject(event, await openProjectDirectory({ dialog })));
+  ipcMain.handle("labfon:openProjectDirectory", async (event, savedPath) => images.rememberProject(event, await openProjectDirectory({ dialog }, savedPath)));
   ipcMain.handle("labfon:selectProjectImage", (event, root) => images.selectProjectImage(event, root));
   ipcMain.handle("labfon:readProjectImage", (event, root, publicPath) => images.readProjectImage(event, root, publicPath));
   ipcMain.handle("labfon:closeProject", async (event) => {

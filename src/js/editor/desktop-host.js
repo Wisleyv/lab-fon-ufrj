@@ -1,6 +1,9 @@
 export function createBrowserDesktopHost(windowRef = window) {
   return {
-    async openProjectDirectory() {
+    async openProjectDirectory(savedPath) {
+      if (savedPath !== undefined) {
+        return { ok: false, code: "SAVED_PROJECT_DESKTOP_REQUIRED", message: "Abra o projeto salvo no aplicativo desktop ou use Escolher outro projeto." };
+      }
       if (typeof windowRef.showDirectoryPicker !== "function") {
         return {
           ok: false,
@@ -199,8 +202,8 @@ export function createNativeDesktopHost(nativeBridge) {
     saveContentRecord(directory, key, name, expected, value) {
       return nativeBridge.saveContentRecord(directory.path, key, name, expected, value);
     },
-    async openProjectDirectory() {
-      return nativeBridge.openProjectDirectory();
+    async openProjectDirectory(savedPath) {
+      return nativeBridge.openProjectDirectory(savedPath);
     },
 
     async pathExists(directory, relativePath) {

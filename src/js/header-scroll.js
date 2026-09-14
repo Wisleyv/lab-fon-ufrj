@@ -3,24 +3,32 @@ export function initHeaderScroll(documentRef = document, windowRef = window) {
   if (!header) return () => {};
   let compact = null;
   let frame = null;
+  const expandAt = 24;
+  let compactAfter = 96;
   const rootStyle = documentRef.documentElement.style;
   const previousOffset = rootStyle.getPropertyValue("--header-offset");
-  const measure = () => rootStyle.setProperty("--header-offset", `${Math.ceil(header.getBoundingClientRect().height)}px`);
+  const measure = () => {
+    const height = Math.ceil(header.getBoundingClientRect().height);
+    rootStyle.setProperty("--header-offset", `${height}px`);
+    // Keep the hysteresis band wider than any header-induced scroll anchoring shift.
+    if (!compact) compactAfter = Math.max(96, height + expandAt);
+  };
   const observer = windowRef.ResizeObserver ? new windowRef.ResizeObserver(measure) : null;
   observer?.observe(header);
   const update = () => {
     frame = null;
-    const next = windowRef.scrollY > 24;
+    const next = compact ? windowRef.scrollY > expandAt : windowRef.scrollY > compactAfter;
     if (compact !== next) {
       compact = next;
       header.classList.toggle("is-scrolled", compact);
+      measure();
     }
   };
   const onScroll = () => {
     if (frame === null) frame = windowRef.requestAnimationFrame(update);
   };
-  update();
   measure();
+  update();
   windowRef.addEventListener("scroll", onScroll, { passive: true });
   return () => {
     windowRef.removeEventListener("scroll", onScroll);

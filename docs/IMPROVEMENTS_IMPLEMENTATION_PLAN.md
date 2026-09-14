@@ -1,6 +1,6 @@
 # Improvements Implementation Plan
 
-Status: development checkpoint through C2, September 13, 2026. Implementation status is recorded below; this document does not authorize packaging or production deployment.
+Status: development checkpoint through C2 and shell stabilization, September 14, 2026. Implementation status is recorded below; this document does not authorize packaging or production deployment.
 
 Request: [improvements.md](improvements.md). Baseline: September 7 production milestone and September 11 [sanitization report](SANITIZATION_REPORT_2026-09-11.md).
 
@@ -19,8 +19,9 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
 | Equipe media | MANUALLY ACCEPTED at 311109c | Maintainer passed all 13 canonical no-photo checks; historical reopen discrepancy not reproduced, no cause/fix claimed |
-| Parcerias media | IMPLEMENTED; MANUAL RETEST PENDING | Optional logo, shared picker, canonical content Save/Discard/Remove and restrained generated-site rendering |
-| Site media | NOT STARTED | Next separately authorized media consumer after Parcerias acceptance |
+| Parcerias media | MANUALLY ACCEPTED after 456d5c5 | Maintainer accepted logo persistence/rendering; centered layout polish now implemented, interaction retest pending |
+| Shell stabilization | IMPLEMENTED; MANUAL RETEST PENDING | Centered partner logos, header hysteresis/compact proportions, saved local direct-open |
+| Site media | NOT STARTED | Next separately authorized media consumer after stabilization acceptance |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -34,6 +35,22 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 14 Shell Stabilization
+
+Starts at `456d5c5` on `chore/verified-editor-cleanup-plan-2026-09-11`. The current maintainer prompt accepts both Equipe and Parcerias media. Earlier pending-media notes below are historical; the new layout/workflow refinements still require their own manual retest. The historical Equipe reopen discrepancy remains not reproduced, with no cause or fix claimed.
+
+Partner logos inherited a left-aligned flex-column position and explicit `object-position:left center`. CSS now centers the existing 160x80 image box with containment and a small bottom gap. Website actions align at the bottom of mixed grid rows. Names, descriptions, links, decorative alt semantics and optional/no-logo behavior are unchanged; no placeholder, renderer rewrite or content migration.
+
+Header diagnosis: the old sticky header animated grid columns/gaps/padding while switching at one 24px threshold. In an isolated Electron fixture using the old DOM/CSS/controller, a single downward scroll produced compact then expanded mutations without an upward input: resizing changed the scroll offset through browser anchoring. The same scroll owner now enters compact after `max(96, expandedHeight + 24)` and expands at `scrollY <= 24`. ResizeObserver still maintains anchor clearance; header dimensions no longer animate. No second listener/state system was added.
+
+Real-layout measurements at wide desktop: expanded logo 336x146 and header 194px remain unchanged; compact logo about 222x96 and header 128px, beside a 94px title/subtitle/navigation band. The 6rem compact height is width-constrained on narrower desktop layouts. Existing mobile 48/36px logo bounds and reduced-motion CSS remain. Offscreen Electron checks at 1440x1000, 1024x900, 390x844 and 200% zoom each recorded exactly one down and one up transition, centered decoded logos, aligned row actions and no horizontal overflow. CAPES was an in-memory fixture from read-only disposable files; third-party requests were blocked. Screenshots were inspected; this does not claim manual native-dialog acceptance.
+
+`Salvar origem do projeto` persists the same `labfon.editor.lastSource` configuration in localStorage, not content or an open project. New primary `Abrir projeto salvo` uses the saved local path; secondary `Escolher outro projeto` retains the picker. Both share the existing open handler, canonical project loader/markers/page validation and dirty/busy guards. Main/preload accept an optional saved path on the existing open IPC; native existence/directory checks report an inaccessible path without a picker, and successful selection retains sender-scoped media access. Closing retains the saved configuration; FTP origins do not gain a local direct-open action or remote shortcut. A storage write failure retains the previous origin and reports failure.
+
+Changed application files: `src/css/main.css`, `src/js/header-scroll.js`, `src/js/editor/bootstrap.js`, `src/js/editor/desktop-host.js`, `desktop/main.cjs`, `desktop/preload.cjs`. Tests extend `header-scroll`, `editor-bootstrap`, `image-assets`. Manual guide: [SHELL_STABILIZATION_RETEST.md](SHELL_STABILIZATION_RETEST.md), exporting only these six application files while preserving disposable content/assets.
+
+Verification: **106 focused tests passed (7 files); 376 full-suite tests passed (29 files), run once; web/editor production build passed once.** Pre-existing `public/data.json` was restored byte-for-byte after build. The manual guide's PowerShell block was syntax-checked without executing the disposable update. Automated offscreen screenshots/geometry passed; native editor/dialog interaction, keyboard navigation and maintainer visual acceptance remain pending. Site media, C3, Instagram, packaging, real FTP/source update and production publication were not started; the full suite uses disposable FTP fixtures only.
 
 ### September 14 Parcerias Managed Logos
 
@@ -468,4 +485,4 @@ Equipe remains manually accepted at `311109c`; its historical reopen discrepancy
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **maintainer Parcerias logo retest**, following [PARCERIAS_LOGO_RETEST.md](PARCERIAS_LOGO_RETEST.md). Equipe media at `311109c` is manually accepted; do not repeat its checklist. The historical reopen discrepancy remains not reproduced, with no cause/fix claimed. After Parcerias acceptance, propose separately authorized Site image controls. Do not start C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **maintainer shell stabilization retest**, following [SHELL_STABILIZATION_RETEST.md](SHELL_STABILIZATION_RETEST.md). Equipe and Parcerias media are accepted; do not repeat their full checklists. The historical Equipe reopen discrepancy remains not reproduced, with no cause/fix claimed. After stabilization acceptance, propose separately authorized Site image controls. Do not start C3, B3, Instagram, packaging or production FTP automatically.

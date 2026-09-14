@@ -287,7 +287,7 @@ a:focus {
   width: auto;
   object-fit: contain;
   border-radius: var(--border-radius-small);
-  transition: height 180ms ease;
+  transition: none;
 }
 
 .site-header.is-scrolled .logo-image {
@@ -307,7 +307,6 @@ a:focus {
 }
 
 @media (min-width: 769px) {
-  .site-header { transition: padding 240ms ease-out; }
   .site-header.is-scrolled { padding-block: var(--spacing-sm); }
   .site-header .header-content {
     width: min(100%, 1040px);
@@ -318,10 +317,10 @@ a:focus {
     column-gap: 32px;
     row-gap: var(--spacing-sm);
     align-items: center;
-    transition: grid-template-columns 240ms ease-out, column-gap 240ms ease-out, row-gap 240ms ease-out;
   }
   .site-header.is-scrolled .header-content {
-    grid-template-columns: minmax(0, 138.461538px) minmax(0, max-content);
+    /* About 96px high, matching the compact title/subtitle/navigation band. */
+    grid-template-columns: minmax(0, min(calc(6rem * 300 / 130), calc((100% - 32px) / 3))) minmax(0, max-content);
     column-gap: var(--spacing-md);
     row-gap: var(--spacing-xs);
   }
@@ -2036,7 +2035,9 @@ a:focus {
   height: 80px;
   max-width: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
+  align-self: center;
+  margin-block-end: var(--spacing-xs);
 }
 
 .parceria-name-wrapper {
@@ -2084,7 +2085,7 @@ a:focus {
 }
 
 .parceria-link-wrapper {
-  margin-top: var(--spacing-xs);
+  margin-top: auto;
 }
 
 .parceria-link {

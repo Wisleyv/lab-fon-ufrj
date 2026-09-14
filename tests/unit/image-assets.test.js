@@ -14,7 +14,7 @@ import { createNativeDesktopHost } from "../../src/js/editor/desktop-host.js";
 import { TEAM_PLACEHOLDER_PATH, TEAM_PLACEHOLDER_URL } from "../../src/js/sections/team-photo.js";
 const require = createRequire(import.meta.url);
 const { createImageAssetService } = require("../../desktop/image-assets.cjs");
-const { validateLocalEditableProject } = require("../../desktop/main.cjs");
+const { validateLocalEditableProject, openProjectDirectory } = require("../../desktop/main.cjs");
 const { saveContentRecord, readContentDataset } = require("../../desktop/content-store.cjs");
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64");
 const roots = [];
@@ -34,6 +34,14 @@ async function fixture(options = {}) {
 }
 
 describe("restricted image asset service", () => {
+  it("resolves saved local directories without the picker and reports invalid paths", async () => {
+    const { root, dialog } = await fixture();
+    expect(await openProjectDirectory({ dialog }, root)).toEqual({ ok: true, directory: { name: path.basename(root), path: root } });
+    for (const invalid of ["", "relative/path", null, 42, path.join(root, "missing"), path.join(root, "package.json")]) {
+      expect(await openProjectDirectory({ dialog }, invalid)).toMatchObject({ ok: false, code: "SAVED_PROJECT_UNAVAILABLE", message: expect.stringContaining("Escolher outro projeto") });
+    }
+    expect(dialog.showOpenDialog).not.toHaveBeenCalled();
+  });
   it("accepts locally editable projects without requiring the remote-source lockfile marker", async () => {
     const { root, event, service } = await fixture();
     await fs.unlink(path.join(root, "package-lock.json"));
@@ -160,6 +168,8 @@ it("exposes only approved image operations through preload and the native host a
     require: () => ({ contextBridge: { exposeInMainWorld: (_name, value) => { bridge = value; } }, ipcRenderer: { invoke } }),
   });
   const host = createNativeDesktopHost(bridge);
+  await host.openProjectDirectory("C:/saved-project");
+  expect(invoke).toHaveBeenLastCalledWith("labfon:openProjectDirectory", "C:/saved-project");
   await host.selectProjectImage({ path: "project" });
   expect(invoke).toHaveBeenLastCalledWith("labfon:selectProjectImage", "project");
   await host.readProjectImage({ path: "project" }, "assets/images/photo.png");
@@ -189,6 +199,12 @@ it("wires native project selection to the sender-scoped image handlers", async (
   await Promise.resolve();
   const opened = await handlers.get("labfon:openProjectDirectory")(event);
   expect(opened.directory.path).toBe(root);
+  await handlers.get("labfon:closeProject")(event);
+  dialog.showOpenDialog.mockClear();
+  const saved = await handlers.get("labfon:openProjectDirectory")(event, root);
+  expect(saved.directory.path).toBe(root);
+  expect(dialog.showOpenDialog).not.toHaveBeenCalled();
+  expect((await handlers.get("labfon:openProjectDirectory")(event, path.join(root, "missing"))).ok).toBe(false);
   const image = await handlers.get("labfon:selectProjectImage")(event, root);
   expect(image.ok).toBe(true);
   expect(image.path).not.toContain(source);
