@@ -21,6 +21,8 @@ describe("PesquisadoresSection", () => {
       expect(resolveTeamPhoto(foto)).toBe(foto);
       const member = { nome: "Test", foto };
       const img = renderer.createMemberCard(member).querySelector("img");
+      expect(img.getAttribute("src")).toBe(foto);
+      expect(img.alt).toBe("Foto de Test");
       img.dispatchEvent(new Event("error"));
       expect(img.getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
       expect(member.foto).toBe(foto);

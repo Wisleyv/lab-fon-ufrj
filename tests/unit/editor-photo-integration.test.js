@@ -31,6 +31,7 @@ async function fixture(foto = "assets/images/custom.png") {
   }
   await fs.writeFile(path.join(root, "scripts/build-data.js"), "");
   await fs.writeFile(path.join(root, "public/assets/images/custom.png"), "original binary");
+  await fs.writeFile(path.join(root, "public/assets/images/avatar.webp"), "assigned avatar binary");
   const host = createMemoryDesktopHost({}, { directory: { path: root } });
   host.pathExists = (_dir, name) => fs.stat(path.join(root, name)).then(() => true, () => false);
   host.readJson = async (_dir, name) => JSON.parse(await fs.readFile(path.join(root, name), "utf8"));
@@ -70,9 +71,9 @@ async function fixture(foto = "assets/images/custom.png") {
 
 describe("complete editor photo lifecycle", () => {
   it.each([
-    [undefined, false], ["", false], ["assets/images/avatar.webp", false],
-    ["/assets/images/avatar.webp", false], ["assets/images/team-placeholder.svg", false],
-    ["assets/images/placeholder-avatar.jpg", false], [managed, true],
+    [undefined, false], ["", false], ["assets/images/avatar.webp", true],
+    ["/assets/images/avatar.webp", true], ["assets/images/team-placeholder.svg", false],
+    ["assets/images/placeholder-avatar.jpg", true], [managed, true],
     ["assets/images/legacy-portrait.webp", true], ["/assets/images/avatar-custom.webp", true],
   ])("classifies photo %s without member-specific exceptions", async (foto, custom) => {
     const { app } = await fixture(foto === undefined ? "" : foto);
@@ -133,12 +134,14 @@ describe("complete editor photo lifecycle", () => {
     } finally { app.destroy(); }
   });
 
-  it("removes only the reference, supports discard, persists empty foto and retains the old binary", async () => {
-    const { app, root, first, read, save, open } = await fixture();
+  it.each(["assets/images/custom.png", "assets/images/avatar.webp"])("removes only reference %s, supports discard, persists empty foto and retains the binary", async (photo) => {
+    const { app, root, first, read, save, open } = await fixture(photo);
+    const binary = await fs.readFile(path.join(root, "public", photo));
     try {
       expect(remove().hidden).toBe(false);
       remove().click();
       expect(image().getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
+      expect(document.querySelector(".editor-image-field [role=status]").textContent).toBe("Sem foto.");
       expect(remove().hidden).toBe(true);
       expect(app.store.getState().contentDirty).toBe(true);
       expect(await read()).toEqual(first);
@@ -151,7 +154,7 @@ describe("complete editor photo lifecycle", () => {
       await vi.waitFor(() => expect(app.store.getState().openedProject).toBeNull());
       await open();
       expect(image().getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
-      expect(await fs.readFile(path.join(root, "public/assets/images/custom.png"), "utf8")).toBe("original binary");
+      expect(await fs.readFile(path.join(root, "public", photo))).toEqual(binary);
     } finally { app.destroy(); }
   });
 
@@ -190,16 +193,18 @@ describe("complete editor photo lifecycle", () => {
     } finally { app.destroy(); }
   });
 
-  it("preserves legacy placeholder references until explicit replacement", async () => {
+  it("preserves an assigned avatar reference and its Remove action through replacement/discard", async () => {
     const { app, first, read } = await fixture("assets/images/avatar.webp");
     try {
-      expect(remove().hidden).toBe(true);
+      await vi.waitFor(() => expect(image().getAttribute("src")).toMatch(/^data:image\/png/));
+      expect(document.querySelector(".editor-image-field [role=status]").textContent).not.toBe("Sem foto.");
+      expect(remove().hidden).toBe(false);
       expect(await read()).toEqual(first);
       choose().click();
       await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
       expect(remove().hidden).toBe(false);
       get("editor-content-cancel").click();
-      expect(remove().hidden).toBe(true);
+      expect(remove().hidden).toBe(false);
       expect(await read()).toEqual(first);
     } finally { app.destroy(); }
   });

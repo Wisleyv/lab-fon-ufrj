@@ -1,58 +1,54 @@
-# Equipe Targeted Retest and Recurrence Capture
+# Equipe Canonical No-Photo Retest
 
-Application checkpoint remains `42f845c`; the September 14 diagnostic run changes tests/documentation only. No application files need exporting to `C:\Temp\labfonac-c2`. Preserve its current content and assets, and the annotated 20-point checklist. Do not repeat that entire checklist.
+## Current Rule
 
-## Mayara: Stored State Explains Remove Visibility
+`team-placeholder.svg` is the sole canonical no-photo visual. `avatar.webp` is an ordinary assigned image reference and may be removed/replaced like any other photo. Empty/absent `foto` and an explicitly stored canonical SVG path count as no-photo. All other non-empty image references, including the old `placeholder-avatar.jpg` path, remain removable. Unavailable images retain the existing visual fallback without rewriting their reference.
 
-On September 14, both the maintained checkout and `C:\Temp\labfonac-c2` contain `content/equipe/mayara-gak-assump-uo.json` with `foto: "assets/images/avatar.webp"`. The referenced asset exists in both projects. This is an intentionally recognized legacy shared placeholder, so `Remover foto` is correctly hidden. A visible image alone does not establish a custom-photo reference. No JSON or classification code was changed.
+This clarified requirement supersedes the interpretation documented at `3bf7fde`. It does not authorize automatic migration of existing records or deletion of binaries. Mayara's current `content/equipe/mayara-gak-assump-uo.json` stores `assets/images/avatar.webp`; under the corrected rule Remove must be visible. No name-specific logic is used.
 
-1. Open `C:\Temp\labfonac-c2` through Projeto -> Opcoes avancadas -> Abrir projeto local, then Conteudo -> Equipe -> Mayara.
-2. Check the displayed reference against that exact JSON file. If it remains `assets/images/avatar.webp`, expect no Remove action. Do not force removal or edit JSON to make the button appear.
-3. Only to test custom-photo behavior, choose a disposable supported image using Alterar foto. Expect a managed UUID reference, dirty state and visible Remove. Discard should restore the legacy reference and hide Remove again. Saving a replacement makes it a custom photo; ordinary Remove/Discard/Save then applies. Use the disposable project only.
+## Update One Application File
 
-## One Traceable Replacement/Save/Reopen
-
-1. Choose one member and record name, selected JSON filename, active project root, initial photo path and current content status. Do not assume a filename from the person's display name.
-2. Select a supported replacement image. Record the displayed `assets/images/image-<uuid>.<ext>` and confirm the unsaved status and enabled Salvar conteudo.
-3. Click Salvar conteudo. Record the full success message and exact destination path. Immediately read that exact file with PowerShell, substituting the destination shown:
+Use the new completion-report commit on `chore/verified-editor-cleanup-plan-2026-09-11`, not `3bf7fde`. Close Electron and stop the old `npm run editor:dev` process with Ctrl+C. From the maintained Git checkout, verify HEAD and export only the changed helper:
 
 ```powershell
-$file = Read-Host 'Exact JSON destination from the save status'
-Get-Item -LiteralPath $file | Select-Object FullName, LastWriteTime, Length
-Get-Content -LiteralPath $file -Raw | ConvertFrom-Json | Select-Object nome, foto
+git log -1 --oneline
+$source = (git rev-parse --show-toplevel).Trim()
+$target = 'C:\Temp\labfonac-c2'
+if (-not (Test-Path -LiteralPath "$target\package.json")) {
+    throw 'Disposable project not found. Stop here.'
+}
+$archive = Join-Path $env:TEMP "labfonac-photo-semantics-$([guid]::NewGuid()).zip"
+git -C $source archive --format=zip --output=$archive HEAD src/js/sections/team-photo.js
+if ($LASTEXITCODE -ne 0) { throw 'Export failed. Stop here.' }
+Expand-Archive -LiteralPath $archive -DestinationPath $target -Force -ErrorAction Stop
+Set-Location -LiteralPath $target
+npm run editor:dev
 ```
 
-4. Compare its `foto` with the displayed UUID path and confirm the binary under the opened project's `public/assets/images/`. Capture any error rather than treating a clicked button as successful Save.
-5. Use Fechar projeto, confirm no active project, and reopen the same exact root. Reselect the same member and record the selected filename again. The editor deliberately resets record selection on reopening; identify the member explicitly, not just the first displayed image. This is workflow context, not an explanation of the earlier discrepancy.
-6. Compare source filename, save-status destination, reopened selected filename, disk `foto`, and displayed path. Report all five values if they disagree. Do not repair/delete/rename files before capturing evidence.
-7. Smoke only: check one placeholder member, one custom member's ordinary removal/save, and one Revisar build/review. No FTP or publication.
+This replaces only `src/js/sections/team-photo.js`. Preserve any independent edits to that helper first. It leaves `content/`, images, dependencies and metadata untouched. The disposable copy must already have the `42f845c` application. Confirm an Electron window opens; a browser tab alone is not the desktop app. Do not reinstall dependencies or export the entire project.
 
-## Optional Read-Only Editor Console Snapshot
+## Thirteen Checks Only
 
-If the Electron developer-tools console is available, run this before replacement, after selection, after successful Save, and after reopening/reselecting the member. It reads only existing UI state; it does not write files or invoke the desktop bridge. Keep the four outputs with the disk inspection and screenshots. Paths may identify your local account, so share them only in the project support context.
+1. Open `C:\Temp\labfonac-c2` through Projeto -> Opcoes avancadas -> Abrir projeto local. In Conteudo -> Equipe, select Mayara.
+2. Confirm her current reference is `assets/images/avatar.webp`. If it has already been explicitly changed, record the actual value rather than overwriting it to match this guide.
+3. Confirm `Remover foto` is visible for that reference and the assigned image is displayed normally.
+4. Click Remove.
+5. Confirm the single neutral icon appears and the photo status says `Sem foto.`.
+6. Confirm content/global dirty state and enabled Salvar conteudo; disk JSON must still have the prior reference.
+7. Click Descartar alteracoes. Confirm `avatar.webp` and Remove return.
+8. Remove again and click Salvar conteudo.
+9. Inspect the exact JSON file named in the local save status. Confirm `"foto": ""`. Confirm `public/assets/images/avatar.webp` still exists; no other member JSON should change.
+10. Use Fechar projeto, reopen the same root and reselect Mayara. Confirm the neutral icon remains and Remove is hidden.
+11. Select another member with a UUID/custom photo and confirm ordinary Remove/Discard still works.
+12. Select a canonical no-photo member. Confirm only the neutral icon, `Sem foto.`, and hidden Remove.
+13. Generate/review once in Revisar. Confirm no broken image/layout regression and `dist/assets/images/team-placeholder.svg` exists. Do not publish.
 
-```javascript
-(() => {
-  const get = (id) => document.getElementById(id);
-  const record = get("editor-content-record");
-  console.log(JSON.stringify({
-    capturedAt: new Date().toISOString(),
-    project: get("editor-project-status")?.textContent,
-    dataset: get("editor-content-dataset")?.value,
-    file: record?.value,
-    member: record?.selectedOptions[0]?.textContent,
-    photo: document.querySelector(".editor-image-path")?.textContent,
-    changes: get("editor-session-changes")?.textContent,
-    contentStatus: get("editor-content-edit-status")?.textContent,
-    saveDisabled: get("editor-content-save")?.disabled
-  }, null, 2));
-})();
-```
+## Separate Intermittent Observation
 
-If developer tools are unavailable, capture the same visible values in screenshots and retain the exact disk path; do not change application security settings.
+The first-reopen discrepancy remains **not reproduced after targeted trace; no cause established; no fix claimed**. This semantic correction is not a persistence fix. Do not repeat the full earlier trace unless a check fails.
 
-## Current Result and Acceptance Gate
+If it recurs, capture active root, selected member and actual JSON filename, displayed UUID, dirty state, full Save status/destination, immediate disk `foto`, then the root/filename/displayed path after reopening and explicitly reselecting the member. Do not infer filenames from display names. Preserve evidence before attempting another replacement. A disk/display or filename mismatch determines the next diagnostic step; do not assume cache, user error or a failed save.
 
-The September 14 full-editor disposable trace began at `assets/images/avatar.webp`. It saved and reopened the same `content/equipe/first.json`, with disk/model/display all resolving `assets/images/image-00000000-0000-4000-8000-000000000001.png`. The fixture uses a simulated picker response and actual canonical JSON persistence; it is not a native-dialog/image-decoding GUI retest.
+The previous automated fixture trace at `3bf7fde` matched source/save/reopen `content/equipe/first.json` and UUID on disk/model/display. Its former classification expectations are superseded by this correction. Native GUI acceptance remains the maintainer's responsibility; automated tests use disposable data and a picker seam.
 
-The intermittent first-reopen observation is **not reproduced after targeted trace**, not fixed or disproven. Mayara's current state is explained by the existing intended rule. Retain the prior 18/20 provisional acceptance; full Equipe manual acceptance still requires the maintainer's targeted confirmation. No replacement of shared assets, generalized media work or production operation is authorized here.
+No full 20-point retest, Parcerias/Site media, C3, Instagram, packaging, FTP/source update, bulk migration or production publication is included.

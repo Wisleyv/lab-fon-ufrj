@@ -4,7 +4,7 @@ export const TEAM_PLACEHOLDER_URL = `${import.meta.env?.BASE_URL ?? "/"}${TEAM_P
 
 export function isCustomTeamPhoto(value) {
   return typeof value === "string" && !!value.trim() &&
-    ![TEAM_PLACEHOLDER_PATH, "assets/images/avatar.webp", "assets/images/placeholder-avatar.jpg"].includes(value.replace(/^\//, ""));
+    value.replace(/^\//, "") !== TEAM_PLACEHOLDER_PATH;
 }
 
 export function resolveTeamPhoto(value) {

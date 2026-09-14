@@ -18,7 +18,7 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C1 | COMPLETE | Registered-section insertion and re-enable placement, including stale-target rejection |
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
-| Equipe media | PARTIAL MANUAL ACCEPTANCE: 18/20 | Mayara's hidden Remove is correct for her stored legacy placeholder; first-reopen discrepancy not reproduced after targeted trace; maintainer confirmation pending |
+| Equipe media | SEMANTIC CORRECTION IMPLEMENTED; TARGETED RETEST PENDING | Sole no-photo visual is team-placeholder.svg; avatar.webp is an assigned/removable image. Earlier 18/20 provisional acceptance retained; reopen discrepancy remains separate |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -32,6 +32,24 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 14 Canonical No-Photo Correction
+
+Starts at `3bf7fde` on `chore/verified-editor-cleanup-plan-2026-09-11`. The maintainer explicitly rejected the prior product interpretation of `avatar.webp` as an accepted second no-photo visual. **This section supersedes all legacy-placeholder classification statements in the historical diagnostic and implementation entries below.** They describe earlier behavior, not the current requirement or accepted semantics.
+
+**Clarified rule: `team-placeholder.svg` is the sole canonical no-photo visual. `avatar.webp` is treated as an ordinary image reference and may be removed/replaced like any other assigned photo.** Empty/absent `foto` and an explicitly stored canonical placeholder path remain no-photo. Other non-empty paths, including `placeholder-avatar.jpg`, are custom/assigned references. Existing missing-image fallback remains visual only and does not rewrite data.
+
+The old `isCustomTeamPhoto()` excluded `TEAM_PLACEHOLDER_PATH`, `assets/images/avatar.webp` and `assets/images/placeholder-avatar.jpg` after stripping one leading slash. That affected Remove visibility and public photo alternative text; preview loading already displayed avatar as an image, and actual no-photo fallback already used the neutral SVG. The single application edit removes the two noncanonical exclusions. No picker, storage, loader, close workflow, normalization/migration or UI layout change was needed.
+
+Twelve checkout records reference `avatar.webp`. Mayara's exact `content/equipe/mayara-gak-assump-uo.json` still stores that value; direct evaluation of the corrected helper returns custom=true / Remove visible, with its asset present. No member names appear in business logic. No member JSON was automatically changed, no binaries deleted and no shared SVG replaced. Maintainers may remove/replace each assigned reference explicitly.
+
+Tests now classify avatar (also with a leading slash) and other noncanonical paths as custom, verify normal preview/alternative text, and exercise avatar Remove -> empty draft/neutral icon/dirty -> Discard restoring avatar -> Remove/Save -> empty JSON -> close/reopen retaining the neutral icon. The original avatar binary remains byte-identical in the fixture. Tests encoding the rejected hidden-Remove expectation were rewritten; no weakening of persistence/asset checks was needed.
+
+Verification: **74 focused tests / 4 files passed; 346 full-suite tests / 29 files passed once; `npm run build` passed once for web/editor.** Source/build `team-placeholder.svg` hashes match. Pre-existing edited `public/data.json` was preserved byte-for-byte around the required build; user member edits, annotated checklist, prompts, workspace files and untracked images/documents remain untouched and excluded from the commit. Full-suite remote tests use mock/disposable or loopback targets, never production. Native Electron GUI/visual acceptance was not performed in this run.
+
+Changed files: `src/js/sections/team-photo.js`, `tests/unit/editor-photo-integration.test.js`, `tests/unit/pesquisadores.test.js`, this plan, and [EQUIPE_PHOTO_TARGETED_TRACE.md](EQUIPE_PHOTO_TARGETED_TRACE.md). The updated guide exports only the changed application helper to `C:\Temp\labfonac-c2`, preserving content/assets, and gives 13 focused manual checks. Its PowerShell block was syntax-checked without executing the update.
+
+The reopen discrepancy remains **not reproduced after targeted trace; no cause established; no fix claimed**. This correction implements a clarified product requirement, not a persistence fix. Full manual acceptance is still pending the targeted GUI check; prior unrelated accepted areas are not reopened. Next exact slice: the 13-point Mayara/avatar/neutral-placeholder retest plus one Revisar smoke build. Repeat the previous detailed persistence trace only if a check fails. Parcerias/Site media, C3, Instagram, packaging, FTP/source update, bulk migration, image cleanup and production publication remain untouched.
 
 ### September 14 Targeted Equipe Diagnosis
 
@@ -418,4 +436,4 @@ If a gate fails, stop before publication. Revert only the current slice in a con
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **maintainer targeted confirmation and recurrence capture**, following [EQUIPE_PHOTO_TARGETED_TRACE.md](EQUIPE_PHOTO_TARGETED_TRACE.md). Mayara's legacy-placeholder state explains hidden Remove; the intermittent reopen discrepancy was not reproduced after targeted trace. Use Medium reasoning only if captured evidence requires further diagnosis. The previous 18/20 provisional acceptance and accepted `f8064e2` focused forms remain intact. Do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **maintainer 13-point canonical no-photo retest**, following [EQUIPE_PHOTO_TARGETED_TRACE.md](EQUIPE_PHOTO_TARGETED_TRACE.md). Avatar is now an assigned/removable image, not a special no-photo state. The intermittent reopen discrepancy remains not reproduced after targeted trace, with no cause/fix claimed. Preserve the prior unrelated acceptance; do not start additional consumers, C3, B3, Instagram, packaging or production FTP automatically.
