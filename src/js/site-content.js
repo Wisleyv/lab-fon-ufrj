@@ -18,27 +18,34 @@ function applyHeaderContent(documentRef, header = {}, options = {}) {
   setText(documentRef, "[data-site-header-title]", header.title);
   setText(documentRef, "[data-site-header-subtitle]", header.subtitle);
 
-  const logo = header.logo || {};
-  const source = documentRef.querySelector("[data-site-logo-source]");
+  if (!header.logo) return;
+  const logo = header.logo;
+  let source = documentRef.querySelector("[data-site-logo-source]");
   const image = documentRef.querySelector("[data-site-logo-image]");
 
-  if (source && logo.source) {
+  if (logo.source && image?.parentElement?.tagName === "PICTURE") {
+    if (!source) {
+      source = documentRef.createElement("source");
+      source.setAttribute("data-site-logo-source", "");
+      source.setAttribute("type", "image/svg+xml");
+      image.before(source);
+    }
     source.setAttribute("srcset", getLogoAssetURL(logo.source, options));
-  }
+  } else source?.remove();
 
   if (image) {
     if (logo.fallback) {
       image.setAttribute("src", getLogoAssetURL(logo.fallback, options));
-    }
+    } else image.removeAttribute("src");
 
     if (logo.srcset) {
       image.setAttribute("srcset", logo.srcset.split(",").map((candidate) => {
         const [url, ...descriptor] = candidate.trim().split(/\s+/);
         return [getLogoAssetURL(url, options), ...descriptor].join(" ");
       }).join(", "));
-    }
+    } else image.removeAttribute("srcset");
 
-    if (logo.alt) {
+    if (typeof logo.alt === "string") {
       image.setAttribute("alt", logo.alt);
     }
   }

@@ -24,15 +24,24 @@ async function fixture(foto = "assets/images/custom.png", dataset = "equipe") {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "labfon-photo-app-")); roots.push(root);
   for (const folder of [`content/${dataset}`, "public/assets/images", "scripts"]) await fs.mkdir(path.join(root, folder), { recursive: true });
   const page = { kind: "single-page", sections: [{ id: "pesquisadores", type: "equipe", enabled: true, order: 1 }] };
-  const first = dataset === "equipe" ? { nome: "First", instituicao: "UFRJ", categoria: "docentes", foto } :
+  const first = dataset === "site" ? {
+    header: { title: "Laboratory", subtitle: "University", logo: {
+      source: "/assets/images/logo_300x130.svg", fallback: foto,
+      srcset: "/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x", alt: "Laboratory identity",
+    } }, hero: { title: "Research", description: "Original description" }, footer: { bottomText: "Original footer" },
+  } : dataset === "equipe" ? { nome: "First", instituicao: "UFRJ", categoria: "docentes", foto } :
     { nome: "First", tipo: "instituicao", descricao: "Original", url: "https://example.org", ...(foto ? { logo: foto } : {}) };
   const other = dataset === "equipe" ? { nome: "Other", instituicao: "UFRJ", foto: "assets/images/avatar.webp" } : { nome: "Other", tipo: "instituicao", logo: "assets/images/other.png" };
-  for (const [name, value] of Object.entries({ "package.json": {}, "content/page.json": page, "content/site.json": {}, [`content/${dataset}/first.json`]: first, [`content/${dataset}/other.json`]: other })) {
+  for (const [name, value] of Object.entries({ "package.json": {}, "content/page.json": page, "content/site.json": dataset === "site" ? first : {},
+    ...(dataset === "site" ? {} : { [`content/${dataset}/first.json`]: first, [`content/${dataset}/other.json`]: other }) })) {
     await fs.writeFile(path.join(root, name), JSON.stringify(value));
   }
   await fs.writeFile(path.join(root, "scripts/build-data.js"), "");
   await fs.writeFile(path.join(root, "public/assets/images/custom.png"), "original binary");
   await fs.writeFile(path.join(root, "public/assets/images/avatar.webp"), "assigned avatar binary");
+  if (dataset === "site") for (const name of ["logo_300x130.svg", "logo_300x130.png", "logo_retina.png"]) {
+    await fs.copyFile(path.join("public/assets/images", name), path.join(root, "public/assets/images", name));
+  }
   const host = createMemoryDesktopHost({}, { directory: { path: root } });
   host.pathExists = (_dir, name) => fs.stat(path.join(root, name)).then(() => true, () => false);
   host.readJson = async (_dir, name) => JSON.parse(await fs.readFile(path.join(root, name), "utf8"));
@@ -42,7 +51,7 @@ async function fixture(foto = "assets/images/custom.png", dataset = "equipe") {
   };
   host.readContentDataset = vi.fn((directory, dataset) => readContentDataset(null, directory.path, dataset));
   host.saveContentRecord = vi.fn((_dir, ...args) => saveContentRecord(null, root, ...args));
-  host.readProjectImage = async () => ({ ok: true, previewUrl: "data:image/png;base64,iVBORw0KGgo=" });
+  host.readProjectImage = vi.fn(async () => ({ ok: true, previewUrl: "data:image/png;base64,iVBORw0KGgo=" }));
   host.selectProjectImage = vi.fn(async () => {
     await fs.writeFile(path.join(root, "public", managed), "replacement binary");
     return { ok: true, path: managed, previewUrl: "data:image/png;base64,iVBORw0KGgo=" };
@@ -61,7 +70,7 @@ async function fixture(foto = "assets/images/custom.png", dataset = "equipe") {
     get("editor-tab-content").click();
   };
   await open();
-  const read = () => host.readJson(null, `content/${dataset}/first.json`);
+  const read = () => host.readJson(null, dataset === "site" ? "content/site.json" : `content/${dataset}/first.json`);
   const save = async () => {
     get("editor-content-save").click();
     await vi.waitFor(() => expect(app.store.getState().contentSaving).toBe(false));
@@ -71,6 +80,100 @@ async function fixture(foto = "assets/images/custom.png", dataset = "equipe") {
 }
 
 describe("complete editor photo lifecycle", () => {
+  const openLogoGroup = () => {
+    const select = document.querySelector('[data-focus-key="root.header:group"]');
+    select.value = "logo"; select.dispatchEvent(new Event("change"));
+  };
+  const logoPicker = () => document.querySelector('[data-focus-key="logo"]');
+
+  it("preserves the legacy Site logo on unrelated saves and replaces/discards/saves all picture fields together", async () => {
+    const { app, host, root, first, read, save, open } = await fixture("/assets/images/logo_300x130.png", "site");
+    try {
+      const title = get("content-field-root.header.title");
+      title.value = "Updated laboratory"; title.dispatchEvent(new Event("input"));
+      await save();
+      const baseline = { ...first, header: { ...first.header, title: "Updated laboratory" } };
+      expect(await read()).toEqual(baseline);
+      openLogoGroup();
+      await vi.waitFor(() => expect(host.readProjectImage).toHaveBeenCalledWith(expect.anything(), first.header.logo.fallback));
+      expect(logoPicker().textContent).toBe("Alterar logo");
+      expect(document.querySelector('[data-focus-key="remove-logo"]')).toBeNull();
+      for (const key of ["source", "fallback", "srcset"]) expect(get(`content-field-root.header.logo.${key}`)).toBeNull();
+      const alt = get("content-field-root.header.logo.alt");
+      expect(alt.type).toBe("text");
+      expect(alt.labels[0].textContent).toBe("Texto alternativo (acessibilidade)");
+      expect(alt.value).toBe(first.header.logo.alt);
+      logoPicker().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      const raster = { source: "", fallback: managed, srcset: "", alt: first.header.logo.alt };
+      expect(app.store.getState().contentDirty).toBe(true);
+      expect(app.store.getState().editorSiteModel.site.header.logo).toEqual(raster);
+      expect(await read()).toEqual(baseline);
+      expect(image().hidden).toBe(false);
+      expect(document.querySelector('[data-focus-key="remove-logo"]')).toBeNull();
+      get("editor-content-cancel").click();
+      expect(app.store.getState().editorSiteModel.site.header.logo).toEqual(first.header.logo);
+      expect(document.querySelector(".editor-image-path").textContent).toBe(first.header.logo.fallback);
+      expect(await fs.readFile(path.join(root, "public", managed), "utf8")).toBe("replacement binary");
+      logoPicker().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      await save();
+      expect(await read()).toEqual({ ...baseline, header: { ...baseline.header, logo: raster } });
+      expect(get("editor-content-edit-status").textContent).toContain(path.join(root, "content/site.json"));
+      get("editor-close-project").click();
+      await vi.waitFor(() => expect(app.store.getState().openedProject).toBeNull());
+      await open(); openLogoGroup();
+      expect(document.querySelector(".editor-image-path").textContent).toBe(managed);
+      expect(get("content-field-root.header.logo.alt").value).toBe(raster.alt);
+      expect(document.querySelector('[data-focus-key="remove-logo"]')).toBeNull();
+      for (const name of ["logo_300x130.svg", "logo_300x130.png", "logo_retina.png"]) {
+        expect(await fs.readFile(path.join(root, "public/assets/images", name))).toEqual(await fs.readFile(path.join("public/assets/images", name)));
+      }
+    } finally { app.destroy(); }
+  });
+
+  it("keeps accessibility text editable and preserves the edited text during image replacement", async () => {
+    const { app, read, save } = await fixture("/assets/images/logo_300x130.png", "site");
+    try {
+      openLogoGroup();
+      const alt = get("content-field-root.header.logo.alt");
+      alt.value = "New institutional identity"; alt.dispatchEvent(new Event("input"));
+      logoPicker().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      expect(image().alt).toBe(alt.value);
+      await save();
+      expect((await read()).header.logo.alt).toBe("New institutional identity");
+    } finally { app.destroy(); }
+  });
+
+  it.each(["cancel", "unsupported", "absolute"])("keeps the complete Site logo unchanged on picker %s", async (outcome) => {
+    const { app, host, first, read } = await fixture("/assets/images/logo_300x130.png", "site");
+    try {
+      openLogoGroup();
+      host.selectProjectImage.mockResolvedValue(outcome === "cancel" ? { cancelled: true } : outcome === "unsupported" ? { ok: false, message: "Formato não aceito." } : { ok: true, path: "C:\\private\\logo.png" });
+      logoPicker().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      expect(app.store.getState().contentDirty).toBe(false);
+      expect(await read()).toEqual(first);
+      expect(host.saveContentRecord).not.toHaveBeenCalled();
+    } finally { app.destroy(); }
+  });
+
+  it("keeps a missing legacy fallback editable through replacement", async () => {
+    const { app, host, save, read } = await fixture("/assets/images/missing.png", "site");
+    try {
+      host.readProjectImage.mockResolvedValue({ ok: false });
+      openLogoGroup();
+      await vi.waitFor(() => expect(document.querySelector(".editor-image-preview").hidden).toBe(true));
+      expect(logoPicker().disabled).toBe(false);
+      expect(app.store.getState().contentDirty).toBe(false);
+      logoPicker().click();
+      await vi.waitFor(() => expect(app.store.getState().imageSelecting).toBe(false));
+      await save();
+      expect((await read()).header.logo.fallback).toBe(managed);
+    } finally { app.destroy(); }
+  });
+
   it("reuses media selection for optional partner logos, canonical save/discard/remove and reopen", async () => {
     const { app, host, root, first, other, read, save, open } = await fixture("", "parcerias");
     const pick = () => document.querySelector('[data-focus-key="logo"]');

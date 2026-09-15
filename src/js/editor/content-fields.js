@@ -13,7 +13,7 @@ export const CONTENT_DATASETS = {
     label: "Site", singleton: true,
     fields: [
       group("header", "Cabeçalho", [text("title", "Título", true), text("subtitle", "Subtítulo"),
-        group("logo", "Logotipo", [url("source", "Imagem"), url("fallback", "Imagem alternativa"), text("srcset", "Imagens por resolução"), text("alt", "Descrição da imagem", true)])]),
+        group("logo", "Logotipo", [url("source", "Imagem"), url("fallback", "Imagem alternativa"), text("srcset", "Imagens por resolução"), text("alt", "Texto alternativo (acessibilidade)", true)])]),
       group("hero", "Apresentação", [text("title", "Título", true), area("description", "Descrição"),
         list("actions", "Links", [...linkFields, { key: "style", label: "Estilo", options: ["primary", "secondary"] }], { label: "", href: "", style: "secondary" })]),
       group("sobre", "Sobre", [text("title", "Título", true), list("paragraphs", "Parágrafos", [text("label", "Rótulo"), area("text", "Texto")], "")]),

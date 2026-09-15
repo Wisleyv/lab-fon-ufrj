@@ -10,6 +10,7 @@ import { consolidateData } from "../../scripts/build-data.js";
 import { PesquisadoresSection } from "../../src/js/sections/pesquisadores.js";
 import { ParceriasSection } from "../../src/js/sections/parcerias.js";
 import { JSONAdapter } from "../../src/js/adapters/JSONAdapter.js";
+import { applySiteContent } from "../../src/js/site-content.js";
 import { createNativeDesktopHost } from "../../src/js/editor/desktop-host.js";
 import { TEAM_PLACEHOLDER_PATH, TEAM_PLACEHOLDER_URL } from "../../src/js/sections/team-photo.js";
 const require = createRequire(import.meta.url);
@@ -137,6 +138,8 @@ describe("restricted image asset service", () => {
     await saveContentRecord(null, root, "equipe", "no-photo.json", null, { nome: "No photo", foto: "" });
     await saveContentRecord(null, root, "parcerias", "partner.json", null, { nome: "Partner", tipo: "instituicao", logo: result.path });
     await saveContentRecord(null, root, "parcerias", "text-only.json", null, { nome: "Text only", tipo: "instituicao" });
+    const site = { header: { logo: { source: "", fallback: result.path, srcset: "", alt: "Laboratory identity" } } };
+    await saveContentRecord(null, root, "site", "site.json", {}, site);
     await fs.copyFile(path.join("public", TEAM_PLACEHOLDER_PATH), path.join(root, "public", TEAM_PLACEHOLDER_PATH));
     const data = consolidateData({ contentDir: path.join(root, "content"), outputFile: path.join(root, "public/data.json") });
     expect(data.equipe.find((entry) => entry.nome === member.nome).foto).toBe(result.path);
@@ -158,6 +161,13 @@ describe("restricted image asset service", () => {
     expect(document.querySelector("#team img").alt).toBe("Foto de Example");
     expect(document.querySelectorAll("#team .membro-foto img")[1].getAttribute("src")).toBe(TEAM_PLACEHOLDER_URL);
     expect(JSON.stringify(output)).not.toContain(root);
+    document.body.innerHTML = '<picture><source data-site-logo-source type="image/svg+xml" srcset="assets/images/old.svg"><img data-site-logo-image srcset="assets/images/old.png 2x"></picture>';
+    expect(normalized.site).toEqual(site);
+    applySiteContent(document, normalized.site, { assetBase: "/labfonac/" });
+    expect(document.querySelector("source")).toBeNull();
+    expect(document.querySelector("img").getAttribute("src")).toBe(`/labfonac/${result.path}`);
+    expect(document.querySelector("img").hasAttribute("srcset")).toBe(false);
+    expect(document.querySelector("img").alt).toBe(site.header.logo.alt);
   });
 });
 

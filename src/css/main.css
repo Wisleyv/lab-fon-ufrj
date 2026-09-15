@@ -285,6 +285,7 @@ a:focus {
 .logo-image {
   height: 80px;
   width: auto;
+  aspect-ratio: 300 / 130;
   object-fit: contain;
   border-radius: var(--border-radius-small);
   transition: none;

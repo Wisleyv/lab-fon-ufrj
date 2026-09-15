@@ -79,6 +79,28 @@ export function createContentEditor({ host, store, customEditor }) {
     if (draft) renderFocusedFields(fields, draft, schema().fields, {
       navigation, change: markDraft, render, button, dirty: () => store.getState().contentDirty,
       renderField: (field, object) => {
+        if (dataset === "site" && field.key === "logo" && field.fields) {
+          const logo = object.logo || {};
+          const group = el("div", { className: "editor-focused-group" });
+          const change = () => {
+            object.logo = logo;
+            draft.header = object;
+            group.querySelector("img").alt = logo.alt || "";
+            markDraft();
+          };
+          const imageField = createImageField({ host, directory, kind: "logo", allowRemove: false,
+            value: logo.fallback, alt: () => logo.alt || "",
+            canEdit: () => !busy && getEditingReadiness(store.getState()).ok,
+            onBusy: (imageSelecting) => store.setState({ imageSelecting }),
+            onChange: (value) => { Object.assign(logo, { source: "", fallback: value, srcset: "" }); change(); },
+          });
+          imageFields.push(imageField);
+          group.append(imageField.element);
+          renderFocusedFields(group, logo, field.fields.filter((entry) => entry.key === "alt"), {
+            navigation, change, render, button, dirty: () => store.getState().contentDirty,
+          }, "root.header.logo");
+          return group;
+        }
         const logo = dataset === "parcerias" && field.key === "logo";
         if (!logo && (dataset !== "equipe" || field.key !== "foto")) return null;
         const imageField = createImageField({ host, directory, kind: logo ? "logo" : "photo", value: object[field.key], alt: logo ? object.nome || "Logo" : object.nome ? `Foto de ${object.nome}` : "Foto",

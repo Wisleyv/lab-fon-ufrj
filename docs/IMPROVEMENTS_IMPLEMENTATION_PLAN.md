@@ -19,9 +19,9 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | C0 | COMPLETE | Approved [custom-section contract](CUSTOM_SECTION_CONTRACT.md); its original proposal wording is historical |
 | C2 | LOCAL C2/UX MANUALLY ACCEPTED | Maintainer accepted the full f8064e2 disposable-project checklist; packaging and production gates remain separate |
 | Equipe media | MANUALLY ACCEPTED at 311109c | Maintainer passed all 13 canonical no-photo checks; historical reopen discrepancy not reproduced, no cause/fix claimed |
-| Parcerias media | MANUALLY ACCEPTED after 456d5c5 | Maintainer accepted logo persistence/rendering; centered layout polish now implemented, interaction retest pending |
-| Shell stabilization | IMPLEMENTED; MANUAL RETEST PENDING | Centered partner logos, header hysteresis/compact proportions, saved local direct-open |
-| Site media | NOT STARTED | Next separately authorized media consumer after stabilization acceptance |
+| Parcerias media | MANUALLY ACCEPTED after 456d5c5 | Centered layout polish also accepted at 13eea53 |
+| Shell stabilization | MANUALLY ACCEPTED at 13eea53 | Centered partner logos, header hysteresis/compact proportions, saved local direct-open |
+| Site media | IMPLEMENTED; MANUAL ACCEPTANCE PENDING | Replacement-only raster header logo, preserved legacy SVG and editable accessibility text |
 | C3 | NOT STARTED | Additional controlled blocks/layouts |
 | D | NOT STARTED | Instagram integration |
 | Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
@@ -35,6 +35,26 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 14 Site Header Logo Replacement
+
+Starts at accepted checkpoint `13eea53` on `chore/verified-editor-cleanup-plan-2026-09-11`. Equipe, Parcerias and shell stabilization are manually accepted. The earlier Site inspection stopped without edits at the explicit SVG compatibility gate; the updated prompt authorizes raster-only replacement, not SVG support. The historical Equipe reopen discrepancy remains not reproduced, with no proven cause or fix claimed.
+
+Site has one image configuration: `header.logo.source` is `/assets/images/logo_300x130.svg`, `fallback` is `/assets/images/logo_300x130.png`, `srcset` is `/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x`, and `alt` is `Logo do Laboratório de Fonética Acústica UFRJ`. All are strings. The fallback is another image, not alternative text. Modern browsers prefer the SVG source. No other Site image field or schema migration was introduced.
+
+The focused Cabecalho -> Logotipo group now composes the shared image field with `allowRemove:false` and the existing ordinary alt input, labeled Texto alternativo (acessibilidade). Raw source/fallback/srcset editing is replaced by this one control. Legacy editor preview reads the raster fallback through the unchanged media service; it never imports/converts SVG or rewrites content for preview. Alt remains required under the existing schema and changes only when edited, never from a filename.
+
+Explicit selection updates the draft atomically to `{ source: "", fallback: managedPath, srcset: "", alt: previousText }`. The normal Conteudo Save owns the verified `content/site.json` write. Discard restores all linked values, not only fallback; unrelated saves preserve the original legacy logo. Removal is absent before and after replacement. Copied/discarded/replaced assets remain. Native selection, supported formats (JPG/JPEG, PNG, WebP), 20 MB limit, signature checks, UUID naming and confinement are unchanged; managed references remain under `assets/images/` with binaries in `public/assets/images/` and Vite's copied dist assets.
+
+The header binder now removes inactive source elements and stale image srcset, and recreates the legacy SVG source when restoring that configuration. Raster-only rendering uses the selected img src, without old browser candidates or empty source markup. Updates that omit header/logo leave existing identity untouched. The existing 300:130 contained logo box now applies on mobile as well as desktop so different intrinsic raster proportions do not change the accepted header geometry. No scroll thresholds, header dimensions, navigation layout or Parcerias rules changed.
+
+Focused tests passed: **92 tests / 5 files**. Offscreen Electron confirmed actual browser currentSrc changed from the legacy SVG to a square raster and back; alt was preserved, obsolete candidates were absent, decoded pixels rendered, and expanded/compact dimensions were identical before/after replacement at 1440x1000, 1024x900, 390x844 and 200% zoom. Screenshots were inspected. This was an in-memory visual fixture with third-party requests blocked, not a native dialog/manual acceptance run.
+
+Final full suite: **384 passed / 29 files**. Two preceding full runs each reported 383 passed and one remote-retrieval failure. Isolated retrieval checks passed initially; temporary assertions then exposed intermittent Windows `EPERM` while renaming a fixture workspace from `retrieving-*` to `current` under the checkout's `tmp/`. Those diagnostic edits were removed. The final full run passed after stopping the agent-started Vite preview watcher; the locking process was not conclusively identified, and no FTP/native fix is claimed. The concrete failures justified the reruns. Web/editor production build passed once; pre-existing `public/data.json` was restored byte-for-byte. The retest guide's PowerShell block passed syntax validation without executing its disposable update. Native picker/editor interaction, keyboard navigation and maintainer visual acceptance remain pending.
+
+Changed application files: `src/js/editor/content-editor.js`, `content-fields.js`, `image-field.js`, `src/js/site-content.js`, `src/css/main.css`. Tests extend `editor-photo-integration`, `site-content`, and `image-assets`, including real managed-copy -> canonical Site write -> generated data -> JSONAdapter -> header binder and Vite asset copy. [SITE_HEADER_LOGO_RETEST.md](SITE_HEADER_LOGO_RETEST.md) updates only the five application files in the disposable project while preserving content/assets.
+
+Next exact action: Site header-logo manual acceptance. After acceptance, choose a separately authorized C3 increment or independent Instagram phase according to maintainer priority. SVG upload/conversion, logo removal, retina generation, C3, Instagram, packaging, real FTP/source update and production publication were not started.
 
 ### September 14 Shell Stabilization
 
@@ -485,4 +505,4 @@ Equipe remains manually accepted at `311109c`; its historical reopen discrepancy
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **maintainer shell stabilization retest**, following [SHELL_STABILIZATION_RETEST.md](SHELL_STABILIZATION_RETEST.md). Equipe and Parcerias media are accepted; do not repeat their full checklists. The historical Equipe reopen discrepancy remains not reproduced, with no cause/fix claimed. After stabilization acceptance, propose separately authorized Site image controls. Do not start C3, B3, Instagram, packaging or production FTP automatically.
+Next exact action: **maintainer Site header-logo retest**, following [SITE_HEADER_LOGO_RETEST.md](SITE_HEADER_LOGO_RETEST.md). Equipe, Parcerias and shell stabilization are accepted; do not repeat their full checklists. The historical Equipe reopen discrepancy remains not reproduced, with no cause/fix claimed. After Site acceptance, choose one separately authorized C3 increment or independent Instagram slice. Do not start C3, B3, Instagram, packaging or production FTP automatically.

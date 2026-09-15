@@ -3,6 +3,28 @@ import { applySiteContent } from "../../src/js/site-content.js";
 import fs from "node:fs";
 
 describe("site content binding", () => {
+  it.each(["", undefined])("switches legacy picture to managed raster with source/srcset %s and restores legacy", (empty) => {
+    const legacy = { source: "/assets/images/logo_300x130.svg", fallback: "/assets/images/logo_300x130.png",
+      srcset: "/assets/images/logo_300x130.png 1x, /assets/images/logo_retina.png 2x", alt: "Laboratory logo" };
+    const bind = logo => applySiteContent(document, { header: { logo } }, { assetBase: "/labfonac/" });
+    bind(legacy);
+    expect(document.querySelector("source").getAttribute("srcset")).toBe("/labfonac/assets/images/logo_300x130.svg");
+    const img = document.querySelector("[data-site-logo-image]");
+    expect(img.getAttribute("srcset")).toContain("/labfonac/assets/images/logo_retina.png 2x");
+    bind({ source: empty, fallback: "assets/images/image-managed.png", srcset: empty, alt: legacy.alt });
+    expect(document.querySelector("source")).toBeNull();
+    expect(img.getAttribute("src")).toBe("/labfonac/assets/images/image-managed.png");
+    expect(img.hasAttribute("srcset")).toBe(false);
+    expect(img.alt).toBe(legacy.alt);
+    expect(document.querySelector('picture [src=""], picture [srcset=""], picture [type=""]')).toBeNull();
+    applySiteContent(document, { hero: { title: "Unrelated update" } });
+    expect(img.getAttribute("src")).toBe("/labfonac/assets/images/image-managed.png");
+    bind(legacy);
+    expect(document.querySelector("source").getAttribute("type")).toBe("image/svg+xml");
+    expect(document.querySelector("source").getAttribute("srcset")).toBe("/labfonac/assets/images/logo_300x130.svg");
+    expect(img.getAttribute("src")).toBe("/labfonac/assets/images/logo_300x130.png");
+    expect(img.getAttribute("srcset")).toContain("logo_retina.png 2x");
+  });
   afterEach(() => vi.useRealTimers());
   beforeEach(() => {
     vi.useFakeTimers();
