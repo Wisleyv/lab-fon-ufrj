@@ -3,6 +3,7 @@ import { CONTENT_DATASETS, validateContent } from "./content-fields.js";
 import { getEditingReadiness } from "./state.js";
 import { renderFocusedFields } from "./focused-fields.js";
 import { createImageField } from "./image-field.js";
+import { normalizeInstagramInput, PROVALE_INSTAGRAM } from "../sections/provale-instagram.js";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -33,11 +34,13 @@ export function createContentEditor({ host, store, customEditor }) {
   let dataset = chooser.value, activeItem = dataset, lastComposition, previousRecordName;
   const navigation = new Map();
   let imageFields = [];
+  let instagramInputInvalid = false;
   const disposeFields = () => { imageFields.forEach((field) => field.destroy()); imageFields = []; };
   const schema = () => CONTENT_DATASETS[dataset];
   const isCustom = () => !CONTENT_DATASETS[activeItem];
   const validationErrors = () => {
     const errors = draft === null ? [] : validateContent(draft, schema().fields);
+    if (instagramInputInvalid) errors.push("Perfil ou código de incorporação do PROVALE inválido.");
     if (draft?.id && records.some((r) => r.name !== selected?.name && r.value.id === draft.id)) errors.push("Identificador já utilizado.");
     return errors;
   };
@@ -73,12 +76,41 @@ export function createContentEditor({ host, store, customEditor }) {
   }
 
   function render() {
+    instagramInputInvalid = false;
     const focusKey = fields.ownerDocument.activeElement?.dataset.focusKey;
     disposeFields();
     fields.replaceChildren();
     if (draft) renderFocusedFields(fields, draft, schema().fields, {
       navigation, change: markDraft, render, button, dirty: () => store.getState().contentDirty,
       renderField: (field, object) => {
+        if (dataset === "extensao" && field.key === "instagram") {
+          const group = el("div", { className: "editor-focused-group" });
+          const enabled = el("input", { type: "checkbox", id: "editor-instagram-enabled" });
+          enabled.checked = object.instagram?.enabled === true;
+          const source = el("textarea", { id: "editor-instagram-source", className: "editor-input", rows: "3" });
+          source.value = object.instagram?.source || "";
+          source.placeholder = PROVALE_INSTAGRAM;
+          const error = el("p", { id: "editor-instagram-error", role: "status" });
+          source.setAttribute("aria-describedby", error.id);
+          const change = () => {
+            const normalized = normalizeInstagramInput(source.value);
+            instagramInputInvalid = !!source.value.trim() && !normalized;
+            source.setAttribute("aria-invalid", String(instagramInputInvalid));
+            error.textContent = instagramInputInvalid ? "Perfil ou código de incorporação do PROVALE inválido." : "";
+            // Invalid clipboard content stays in the input, never in the content model.
+            if (!instagramInputInvalid) object.instagram = { ...object.instagram,
+              enabled: enabled.checked, provider: "instagram", source: normalized || "" };
+            markDraft();
+          };
+          source.addEventListener("input", change);
+          enabled.addEventListener("input", () => {
+            if (enabled.checked && !source.value.trim()) source.value = PROVALE_INSTAGRAM;
+            change();
+          });
+          group.append(el("label", { for: enabled.id }, "Ativar integração"), enabled,
+            el("label", { for: source.id }, "Perfil ou código do Instagram"), source, error);
+          return group;
+        }
         if (dataset === "site" && field.key === "logo" && field.fields) {
           const logo = object.logo || {};
           const group = el("div", { className: "editor-focused-group" });

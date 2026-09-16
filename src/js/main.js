@@ -122,7 +122,7 @@ async function initializeSections() {
   app.pageComposition.sections
     .filter((section) => section.enabled && isRenderableSection(section.type))
     .forEach((section) => {
-      app.sections[section.id] = createSectionRenderer(section.type, SECTION_REGISTRY, { section, composition: app.pageComposition });
+      app.sections[section.id] = createSectionRenderer(section.type, SECTION_REGISTRY, { section, composition: app.pageComposition, allowInstagram: true });
     });
 
   console.log("✅ Sections initialized");

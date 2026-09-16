@@ -475,6 +475,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
       expect(button.disabled).toBe(false);
       app.store.setState({ build: { status: "success", previewUrl: "http://localhost/old" } });
       const frame = document.getElementById("editor-generated-site-preview");
+      expect(frame.getAttribute("sandbox")).toBe("allow-scripts allow-same-origin allow-popups");
       expect(frame.hidden).toBe(false);
       app.store.setState({ contentDirty: true });
       expect(document.getElementById("editor-session-build").textContent).toBe("desatualizada");

@@ -1,4 +1,5 @@
 import { EQUIPE_CATEGORIES } from "../sections/equipe-categories.js";
+import { normalizeInstagramURL } from "../sections/provale-instagram.js";
 
 const text = (key, label, required = false) => ({ key, label, required });
 const area = (key, label, required = false) => ({ key, label, required, type: "textarea" });
@@ -59,6 +60,7 @@ export function validateContent(value, fields) {
   const errors = [];
   for (const field of fields) {
     const item = value?.[field.key];
+    if (field.key === "instagram" && item?.enabled && (item.provider !== "instagram" || !normalizeInstagramURL(item.source))) errors.push("Instagram: perfil do PROVALE inválido.");
     if (field.required && (typeof item !== "string" || !item.trim())) errors.push(`${field.label}: campo obrigatório.`);
     if (field.type === "number" && !(field.optional && item === undefined) && (!Number.isInteger(item) || item < 0 || item > (field.max ?? Infinity))) errors.push(`${field.label}: use um inteiro entre 0 e ${field.max ?? "o limite permitido"}.`);
     if (field.maxLength && item !== undefined && (typeof item !== "string" || item.length > field.maxLength)) errors.push(`${field.label}: use até ${field.maxLength} caracteres.`);

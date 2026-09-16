@@ -104,7 +104,7 @@ export function getSectionAnchor(section, registry = SECTION_REGISTRY) {
   return getSectionDefinition(section.type, registry)?.sectionId || section.id;
 }
 
-export function createSectionRenderer(type, registry = SECTION_REGISTRY, { section, composition, root } = {}) {
+export function createSectionRenderer(type, registry = SECTION_REGISTRY, { section, composition, root, allowInstagram = false } = {}) {
   const definition = getSectionDefinition(type, registry);
 
   if (!definition) {
@@ -117,7 +117,7 @@ export function createSectionRenderer(type, registry = SECTION_REGISTRY, { secti
 
   return new definition.Renderer(
     type === "custom" ? `${section.id}-content` : definition.containerId,
-    { ...definition.rendererOptions, root,
+    { ...definition.rendererOptions, root, allowInstagram,
       anchors: new Set(["top", "contato", ...Object.values(registry).map((entry) => entry.sectionId).filter(Boolean),
         ...(composition?.sections || []).map((entry) => getSectionAnchor(entry, registry))]),
       activeAnchors: new Set(["top", "contato", ...(composition?.sections || []).filter((entry) => entry.enabled).map((entry) => getSectionAnchor(entry, registry))]),

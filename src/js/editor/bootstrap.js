@@ -941,6 +941,7 @@ function createLayout(
     id: "editor-generated-site-preview",
     className: "editor-generated-site-preview",
     title: "Prévia do site gerado",
+    sandbox: "allow-scripts allow-same-origin allow-popups",
   });
   buildCard.appendChild(generatedPreviewFrame);
   main.appendChild(buildCard);

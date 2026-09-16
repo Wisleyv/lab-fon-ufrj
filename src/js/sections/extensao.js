@@ -6,6 +6,7 @@
 import { SectionRenderer } from "../modules/renderer.js";
 import { HTMLSanitizer } from "../utils/sanitizer.js";
 import { createElement } from "../utils/helpers.js";
+import { PROVALE_INSTAGRAM, normalizeInstagramURL, loadInstagram } from "./provale-instagram.js";
 
 export class ExtensaoSection extends SectionRenderer {
   constructor(containerId, options = {}) {
@@ -28,14 +29,14 @@ export class ExtensaoSection extends SectionRenderer {
 
     const fragment = document.createDocumentFragment();
 
-    projects.forEach((project) => {
-      fragment.appendChild(this.createProject(project));
+    projects.forEach((project, index) => {
+      fragment.appendChild(this.createProject(project, index));
     });
 
     return fragment;
   }
 
-  createProject(project) {
+  createProject(project, index = 0) {
     const article = createElement("article", {
       className: "extension-project",
       "aria-labelledby": `extension-project-${project.id || "project"}`,
@@ -58,7 +59,7 @@ export class ExtensaoSection extends SectionRenderer {
     article.appendChild(title);
 
     article.appendChild(this.createProjectBio(project));
-    article.appendChild(this.createInstagramFeed(project.instagram));
+    article.appendChild(this.createInstagramFeed(project.instagram, project.id || String(index)));
 
     return article;
   }
@@ -170,15 +171,18 @@ export class ExtensaoSection extends SectionRenderer {
     return list.children.length > 0 ? list : null;
   }
 
-  createInstagramFeed(instagram) {
+  createInstagramFeed(instagram, projectId) {
+    const titleId = `${this.containerId}-instagram-${encodeURIComponent(projectId)}-title`;
     const region = createElement("section", {
       className: "extension-instagram-feed",
-      "aria-labelledby": "extension-instagram-title",
+      "aria-labelledby": titleId,
     });
 
     region.appendChild(
-      createElement("h4", { id: "extension-instagram-title" }, "Instagram"),
+      createElement("h4", { id: titleId }, "Instagram"),
     );
+
+    region.appendChild(createElement("a", { href: PROVALE_INSTAGRAM, target: "_blank", rel: "noopener noreferrer" }, "Ver PROVALE no Instagram"));
 
     if (!instagram?.enabled || !instagram?.source) {
       region.appendChild(
@@ -191,17 +195,31 @@ export class ExtensaoSection extends SectionRenderer {
       return region;
     }
 
-    region.dataset.instagramSource = instagram.source;
-    region.dataset.instagramProvider = instagram.provider || "unconfigured";
-    region.appendChild(
-      createElement(
-        "p",
-        { className: "extension-feed-empty" },
-        "Feed do Instagram indisponível no momento.",
-      ),
-    );
+    const source = instagram.provider === "instagram" && normalizeInstagramURL(instagram.source);
+    if (source && this.options.allowInstagram && !this.options.root && !document.defaultView?.labfonDesktopHost) {
+      const slot = createElement("div", { className: "extension-instagram-embed" });
+      const quote = createElement("blockquote", { className: "instagram-media", "data-instgrm-permalink": source, "data-instgrm-version": "14" });
+      quote.appendChild(createElement("a", { href: source, target: "_blank", rel: "noopener noreferrer" }, "PROVALE no Instagram"));
+      slot.appendChild(quote);
+      region.appendChild(slot);
+    }
 
     return region;
+  }
+
+  afterRender() {
+    const slots = [...this.container.querySelectorAll(".extension-instagram-embed")];
+    if (!slots.length) return;
+    const doc = this.container.ownerDocument;
+    // Provider startup is independent of the section/page loading lifecycle.
+    void loadInstagram(doc).then((ready) => {
+      const connected = slots.filter((slot) => slot.isConnected);
+      if (!connected.length) return;
+      if (ready) {
+        try { doc.defaultView.instgrm.Embeds.process(); return; } catch { /* Keep the external link. */ }
+      }
+      connected.forEach((slot) => slot.remove());
+    });
   }
 
   createEmptyState() {
