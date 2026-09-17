@@ -139,7 +139,7 @@ function createFilesystemFtpClient(remoteRoot) {
       const entries = await fs.readdir(toLocal(remotePath || "/"), {
         withFileTypes: true,
       });
-      return entries.map((entry) => ({ name: entry.name }));
+      return entries.map((entry) => ({ name: entry.name, isDirectory: entry.isDirectory() }));
     },
     async downloadTo(localPath, remotePath) {
       calls.push(["downloadTo", remotePath]);
@@ -400,6 +400,55 @@ describe("remote editable project retrieval", () => {
     } finally {
       await layout.cleanup();
     }
+  });
+
+  it("initializes only /source with the existing filtered bundle and strict TLS", async () => {
+    const layout = await createRemoteLayout({ source: "empty" });
+    await fs.rename(path.join(layout.remoteRoot, "labfon-source"), path.join(layout.remoteRoot, "source"));
+    const client = createFilesystemFtpClient(layout.remoteRoot);
+    try {
+      const result = await withNativeServices(client, () => nativeHandlers.initializeRemoteProjectSource(null, repoRoot, createProfile({ remoteSourcePath: "/source" }), "secret"));
+      expect(result.code).toBe("REMOTE_PROJECT_SOURCE_INITIALIZED");
+      const paths = client.calls.filter(([operation]) => operation === "uploadFrom").map(([, target]) => target);
+      const bundle = await nativeHandlers.listEditableProjectBundleFiles(repoRoot);
+      expect(paths.sort()).toEqual(bundle.map(file => `/source/${file.relativePath}`).sort());
+      expect(paths.some(target => /\/(node_modules|\.git|dist|tests|release)\//.test(target))).toBe(false);
+      expect(client.calls[0][1].secure).toBe(true);
+      expect(client.calls[0][1].secureOptions).toBeUndefined();
+      expect(client.ftp.verbose).toBe(false);
+      expect(await fs.readFile(path.join(layout.remoteRoot, "source/.htaccess"), "utf8")).toBe("Require all denied\n");
+      expect(await fs.readFile(path.join(layout.remoteRoot, "index.html"), "utf8")).toBe("<html></html>");
+    } finally { await layout.cleanup(); }
+  });
+
+  it.each(["missing", "metadata directory", "invalid local"])("performs no write for %s initialization", async mode => {
+    const layout = await createRemoteLayout({ source: mode === "missing" ? "missing" : "empty" });
+    if (mode === "metadata directory") {
+      await fs.mkdir(path.join(layout.remoteRoot, "labfon-source/.ftpquota"));
+    }
+    const client = createFilesystemFtpClient(layout.remoteRoot);
+    try {
+      const result = await withNativeServices(client, () => nativeHandlers.initializeRemoteProjectSource(null, mode === "invalid local" ? layout.remoteRoot : repoRoot, createProfile(), "secret"));
+      expect(result.ok).toBe(false);
+      expect(client.calls.some(([operation]) => ["uploadFrom", "ensureDir", "remove"].includes(operation))).toBe(false);
+    } finally { await layout.cleanup(); }
+  });
+
+  it("reports a partial upload without rollback or automatic retry", async () => {
+    const layout = await createRemoteLayout({ source: "empty" });
+    const client = createFilesystemFtpClient(layout.remoteRoot);
+    const upload = client.uploadFrom.bind(client); let count = 0;
+    client.uploadFrom = async (...args) => {
+      if (++count === 2) throw Object.assign(new Error("Connection lost"), { code: "ECONNRESET" });
+      await upload(...args);
+    };
+    try {
+      const result = await withNativeServices(client, () => nativeHandlers.initializeRemoteProjectSource(null, repoRoot, createProfile(), "secret"));
+      expect(result).toMatchObject({ ok: false, remoteState: "possibly_partial" });
+      expect(count).toBe(2);
+      expect(client.calls.filter(([operation]) => operation === "uploadFrom")).toHaveLength(1);
+      expect(client.calls.some(([operation]) => operation === "remove")).toBe(false);
+    } finally { await layout.cleanup(); }
   });
 
   it.each([false, true])("synchronizes only explicit deletions and rejects changed remote records (conflict=%s)", async (conflict) => {

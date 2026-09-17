@@ -922,6 +922,7 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
     client.ftp.verbose = false;
   }
 
+  let uploadStarted = false;
   try {
     await client.access({
       host: sanitized.host,
@@ -943,7 +944,7 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
     }
 
     const unexpectedEntries = existingEntries.filter(
-      (entry) => !SOURCE_PROTECTION_METADATA.has(entry.name),
+      (entry) => entry.isDirectory || !SOURCE_PROTECTION_METADATA.has(entry.name),
     );
     if (unexpectedEntries.length > 0) {
       return {
@@ -958,13 +959,14 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
       };
     }
 
+    uploadStarted = true;
     await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath);
     const verification = await verifyRemoteEditableProject(
       client,
       sanitized.remoteSourcePath,
     );
     if (!verification.ok) {
-      return verification;
+      return { ...verification, remoteState: "possibly_partial" };
     }
 
     return {
@@ -974,7 +976,7 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
       markers: verification.markers,
     };
   } catch (error) {
-    return classifyFtpError(error);
+    return { ...classifyFtpError(error), remoteState: uploadStarted ? "possibly_partial" : "not_written" };
   } finally {
     client.close();
   }

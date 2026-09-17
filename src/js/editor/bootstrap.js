@@ -32,6 +32,7 @@ import {
   getProfileReadiness,
   getRetrievalReadiness,
   getSourceUpdateReadiness,
+  getSourceInitializationReadiness,
   getPublicationReadiness,
 } from "./publish-service.js";
 import { createEditorStore, createInitialEditorState, getBusyReadiness, getEditingReadiness } from "./state.js";
@@ -955,6 +956,9 @@ function createLayout(
     createElement("h2", { id: "editor-publish-title" }, "Publicação"),
   );
   const publishSiteActions = createElement("div", { className: "editor-actions" });
+  const initializeRemoteSourceButton = createElement("button", {
+    id: "editor-initialize-remote-source", type: "button", className: "editor-btn editor-btn-secondary",
+  }, "Inicializar projeto remoto");
   const updateRemoteSourceButton = createElement(
     "button",
     {
@@ -973,6 +977,7 @@ function createLayout(
     },
     "Publicar site",
   );
+  publishSiteActions.appendChild(initializeRemoteSourceButton);
   publishSiteActions.appendChild(updateRemoteSourceButton);
   publishSiteActions.appendChild(publishSiteButton);
   publishCard.appendChild(publishSiteActions);
@@ -1082,7 +1087,7 @@ function createLayout(
     summary.appendChild(createElement("div", {}, [createElement("dt", {}, label), value]));
   }
   const operationReasons = new Map();
-  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, updateRemoteSourceButton, publishSiteButton]) {
+  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, initializeRemoteSourceButton, updateRemoteSourceButton, publishSiteButton]) {
     const reason = createElement("p", { id: `${button.id}-reason`, className: "editor-operation-reason" });
     const operation = createElement("div", { className: "editor-operation" });
     button.setAttribute("aria-describedby", reason.id);
@@ -1427,6 +1432,8 @@ function createLayout(
       remote: {
         status: "connected",
         message: result.message || "Pasta remota carregada.",
+        connectionProfile: store.getState().remote?.connectionProfile,
+        verifiedProfile: sanitizePublishProfile(profile),
         currentPath: result.path || normalizedPath,
         entries: result.entries || [],
         diagnostics: [],
@@ -1850,6 +1857,7 @@ function createLayout(
       remote: {
         status: "connected",
         message: result.message || "Conectado ao servidor.",
+        connectionProfile: sanitizePublishProfile(profile),
         currentPath: "/",
         entries: [],
         diagnostics: [],
@@ -2076,6 +2084,33 @@ function createLayout(
     });
   });
 
+  initializeRemoteSourceButton.addEventListener("click", async () => {
+    if (initializeRemoteSourceButton.disabled) return;
+    const state = store.getState();
+    const profile = readPublishProfileFromForm();
+    if (!getSourceInitializationReadiness(state, profile, publishPasswordInput.value).ok) return;
+    const confirmed = (documentRef.defaultView || window).confirm(
+      `Inicializar projeto remoto?\n\nProjeto local: ${state.openedProject.path}\nServidor: ${profile.host}:${profile.port}\nDestino: /source/\n\nEsta operação cria o projeto editável remoto. Não publica o site público.`,
+    );
+    if (!confirmed) return;
+    showPublishFeedbackIn(publishCard);
+    const initializing = publishController.initializeRemoteProjectSource(state.openedProject, profile, publishPasswordInput.value);
+    store.setState({
+      remote: { ...state.remote, verifiedProfile: null },
+      publish: { ...state.publish, profile, status: "publishing", message: "Inicializando projeto remoto...", diagnostics: [], summary: null },
+    });
+    const result = await operationResult(initializing);
+    const success = result.ok && result.code === "REMOTE_PROJECT_SOURCE_INITIALIZED";
+    // Consume the empty-directory evidence even on failure: an upload may be partial.
+    store.setState({
+      remote: { ...store.getState().remote, verifiedProfile: null },
+      publish: { ...store.getState().publish, status: success ? "configured" : "failed",
+        message: success ? "Projeto remoto inicializado. Recuperação de /source/ pendente; site não publicado."
+          : `${result.message || "Inicialização não concluída."} Estado remoto não confirmado; pode haver envio parcial. Nenhuma reversão ou nova tentativa automática realizada.`,
+        diagnostics: success ? [] : [{ code: result.code, severity: "error", message: result.message }], summary: null },
+    });
+  });
+
   updateRemoteSourceButton.addEventListener("click", async () => {
     if (updateRemoteSourceButton.disabled) return;
     showPublishFeedbackIn(publishCard);
@@ -2185,6 +2220,8 @@ function createLayout(
     apply(generateSiteButton, buildController.getReadiness());
     apply(previewGeneratedSiteButton, getGeneratedPreviewReadiness(state));
     apply(updateRemoteSourceButton, getSourceUpdateReadiness(state, state.publish?.profile || profile, password));
+    initializeRemoteSourceButton.parentElement.hidden = state.openedProject?.source !== "local";
+    apply(initializeRemoteSourceButton, getSourceInitializationReadiness(state, profile, password));
     apply(publishSiteButton, getPublicationReadiness(state));
     savePublishProfileButton.disabled = !busy.ok;
     for (const input of [...publishForm.querySelectorAll("input"), ...publishRoleForm.querySelectorAll("input")]) input.disabled = !busy.ok;

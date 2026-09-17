@@ -140,6 +140,7 @@ export function validateConnectionProfile(profile = {}, options = {}) {
 }
 
 export function createPublishController({ host, getState } = {}) {
+  let initializing = false;
   return {
     async loadProfile() {
       if (typeof host.loadPublishProfile !== "function") {
@@ -290,6 +291,12 @@ export function createPublishController({ host, getState } = {}) {
     },
 
     async initializeRemoteProjectSource(directory, profile, password) {
+      if (initializing) return { ok: false, code: "EDITOR_BUSY", message: "Aguarde a operação em andamento." };
+      const readiness = getSourceInitializationReadiness(getState(), profile, password);
+      if (!readiness.ok) return readiness;
+      if (directory?.path !== getState().openedProject.path) {
+        return { ok: false, code: "REMOTE_PROJECT_LOCAL_INVALID", message: "O projeto local mudou. Inicialização cancelada." };
+      }
       const validation = validatePublishProfile(profile, {
         requirePassword: true,
         hasPassword: Boolean(password || profile.hasPassword),
@@ -312,11 +319,12 @@ export function createPublishController({ host, getState } = {}) {
         };
       }
 
-      return host.initializeRemoteProjectSource(
-        directory,
-        validation.profile,
-        password || "",
-      );
+      initializing = true;
+      try {
+        return await host.initializeRemoteProjectSource(directory, validation.profile, password || "");
+      } finally {
+        initializing = false;
+      }
     },
 
     async updateRemoteProjectSource(directory, profile, password) {
@@ -464,6 +472,28 @@ export function getSourceUpdateReadiness(state, profile, password) {
   if (state.openedProject.source === "local") return localProjectRemoteUnavailable();
   if (state.contentDirty || state.compositionDirty) return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve as alterações antes de atualizar o projeto remoto." };
   return getProfileReadiness(profile, password);
+}
+
+export function getSourceInitializationReadiness(state, profile, password) {
+  const ready = getEditingReadiness(state);
+  if (!ready.ok) return ready;
+  const unavailable = (code, message) => ({ ok: false, code, message });
+  if (state.openedProject.source !== "local") return unavailable("REMOTE_INITIALIZATION_LOCAL_REQUIRED", "Inicialização disponível apenas para projeto local.");
+  if (state.contentDirty || state.compositionDirty) return unavailable("REMOTE_UNSAVED_CHANGES", "Há alterações locais não salvas.");
+  const configured = getProfileReadiness(profile, password);
+  if (!configured.ok) return configured;
+  const normalized = sanitizePublishProfile(profile);
+  if (normalized.remoteSourcePath !== "/source" || !normalized.secure) return unavailable("REMOTE_INITIALIZATION_TARGET_INVALID", "Inicialização exige /source/ e FTPS explícito.");
+  const remote = state.remote;
+  const sameConnection = remote?.connectionProfile && ["host", "port", "username", "secure"].every(key => remote.connectionProfile[key] === normalized[key]);
+  if (remote?.status !== "connected" || !sameConnection) return unavailable("REMOTE_CONNECTION_REQUIRED", "Conexão com este servidor não verificada.");
+  if (remote.currentPath !== "/source" || JSON.stringify(remote.verifiedProfile) !== JSON.stringify(normalized) || !Array.isArray(remote.entries)) {
+    return unavailable("REMOTE_SOURCE_NOT_VERIFIED", "Listagem atual de /source/ não verificada.");
+  }
+  if (remote.entries.some(entry => entry.type !== "file" || ![".htaccess", ".ftpquota"].includes(entry.name))) {
+    return unavailable("REMOTE_PROJECT_SOURCE_NOT_EMPTY", "A pasta /source/ não está vazia.");
+  }
+  return { ok: true };
 }
 
 function localProjectRemoteUnavailable() {
