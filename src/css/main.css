@@ -1998,18 +1998,23 @@ a:focus {
 .extension-instagram-feed {
   border-top: 1px solid var(--color-border);
   padding-top: var(--spacing-md);
+  min-width: 0;
+  text-align: center;
 }
 
 .extension-instagram-embed {
+  display: grid;
+  justify-items: center;
   width: 100%;
-  max-width: 540px;
+  min-width: 0;
   margin-top: 1rem;
 }
 
 .extension-instagram-embed .instagram-media {
   min-width: 0 !important;
   width: 100% !important;
-  max-width: 100% !important;
+  max-width: 540px !important;
+  margin: 0 !important;
 }
 
 .parcerias-grid {

@@ -4,6 +4,23 @@ import fs from "node:fs";
 import { renderCompositionPreview } from "../../src/js/editor/composition-preview.js";
 
 describe("ExtensaoSection", () => {
+  it("centers a bounded provider element inside a full-width responsive wrapper", () => {
+    const css = fs.readFileSync("src/css/main.css", "utf8");
+    const rule = (selector) => css.slice(css.indexOf(`${selector} {`)).split("}")[0];
+    const wrapper = rule(".extension-instagram-embed");
+    expect(wrapper).toContain("display: grid");
+    expect(wrapper).toContain("justify-items: center");
+    expect(wrapper).toContain("width: 100%");
+    expect(wrapper).toContain("min-width: 0");
+    expect(wrapper).not.toContain("max-width:");
+    const provider = rule(".extension-instagram-embed .instagram-media");
+    expect(provider).toContain("min-width: 0 !important");
+    expect(provider).toContain("width: 100% !important");
+    expect(provider).toContain("max-width: 540px !important");
+    expect(provider).toContain("margin: 0 !important");
+    expect(rule(".extension-instagram-feed")).toContain("text-align: center");
+  });
+
   beforeEach(() => {
     document.body.innerHTML = '<div id="extensao-content"></div>';
   });
