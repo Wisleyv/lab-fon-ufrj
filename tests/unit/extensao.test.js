@@ -4,21 +4,33 @@ import fs from "node:fs";
 import { renderCompositionPreview } from "../../src/js/editor/composition-preview.js";
 
 describe("ExtensaoSection", () => {
-  it("centers a bounded provider element inside a full-width responsive wrapper", () => {
+  it("uses the content width and confines the provider's readable minimum width to a local scroller", () => {
     const css = fs.readFileSync("src/css/main.css", "utf8");
     const rule = (selector) => css.slice(css.indexOf(`${selector} {`)).split("}")[0];
     const wrapper = rule(".extension-instagram-embed");
-    expect(wrapper).toContain("display: grid");
-    expect(wrapper).toContain("justify-items: center");
+    expect(wrapper).toContain("overflow-x: auto");
+    expect(wrapper).toContain("overscroll-behavior-x: contain");
     expect(wrapper).toContain("width: 100%");
     expect(wrapper).toContain("min-width: 0");
     expect(wrapper).not.toContain("max-width:");
     const provider = rule(".extension-instagram-embed .instagram-media");
-    expect(provider).toContain("min-width: 0 !important");
+    expect(provider).toContain("min-width: 720px !important");
     expect(provider).toContain("width: 100% !important");
-    expect(provider).toContain("max-width: 540px !important");
-    expect(provider).toContain("margin: 0 !important");
+    expect(provider).toContain("max-width: 900px !important");
+    expect(provider).toContain("margin: 0 auto !important");
+    expect(rule(".extension-instagram-embed:focus-visible")).toContain("outline:");
     expect(rule(".extension-instagram-feed")).toContain("text-align: center");
+  });
+
+  it("names the public embed scroll area and makes it keyboard focusable without changing provider content", () => {
+    const section = new ExtensaoSection("extensao-content", { allowInstagram: true });
+    const feed = section.createInstagramFeed({ enabled: true, provider: "instagram", source: "https://www.instagram.com/provaleinterinstitucional/" }, "provale");
+    const slot = feed.querySelector(".extension-instagram-embed");
+    expect(slot.tabIndex).toBe(0);
+    expect(slot.getAttribute("role")).toBe("group");
+    expect(slot.getAttribute("aria-label")).toBe("Publicações do PROVALE no Instagram");
+    expect(slot.querySelectorAll("blockquote.instagram-media")).toHaveLength(1);
+    expect(feed.querySelector("a").href).toBe("https://www.instagram.com/provaleinterinstitucional/");
   });
 
   beforeEach(() => {

@@ -125,7 +125,7 @@ function applyFooterContent(documentRef, footer = {}, options = {}) {
   if (footerContent) {
     footerContent.querySelector(".footer-coordination")?.remove();
     const coordination = createFooterCoordination(footer.coordination);
-    if (coordination) footerContent.appendChild(coordination);
+    if (coordination) footerContent.insertBefore(coordination, footerContent.querySelector(".footer-contact"));
     footerContent.classList.toggle("has-coordination", Boolean(coordination));
 
     const parent = footerContent.parentElement;
@@ -141,7 +141,7 @@ function formatCopyright(text) {
   if (typeof text !== "string" || !/^©\s+/.test(text)) return text;
   // Accept the former literal prefix without rewriting years inside editable wording.
   const wording = text.replace(/^©\s+(?:\d{4}(?:[–-]\d{4})?\s+)?/, "");
-  const startYear = 2025;
+  const startYear = 1990;
   const currentYear = new Date().getFullYear();
   const period = currentYear > startYear ? `${startYear}–${currentYear}` : String(startYear);
   return `© ${period} ${wording}`;
@@ -216,6 +216,7 @@ function createFooterSection(documentRef, section, options = {}) {
   }
 
   if (Array.isArray(section.contacts)) {
+    sectionElement.classList.add("footer-contact");
     sectionElement.appendChild(
       createFooterContacts(documentRef, section.contacts),
     );

@@ -197,7 +197,10 @@ export class ExtensaoSection extends SectionRenderer {
 
     const source = instagram.provider === "instagram" && normalizeInstagramURL(instagram.source);
     if (source && this.options.allowInstagram && !this.options.root && !document.defaultView?.labfonDesktopHost) {
-      const slot = createElement("div", { className: "extension-instagram-embed" });
+      const slot = createElement("div", {
+        className: "extension-instagram-embed", tabindex: "0", role: "group",
+        "aria-label": "Publicações do PROVALE no Instagram",
+      });
       const quote = createElement("blockquote", { className: "instagram-media", "data-instgrm-permalink": source, "data-instgrm-version": "14" });
       quote.appendChild(createElement("a", { href: source, target: "_blank", rel: "noopener noreferrer" }, "PROVALE no Instagram"));
       slot.appendChild(quote);

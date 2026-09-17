@@ -182,7 +182,7 @@ describe("site content binding", () => {
     ).toBe("mailto:labfonac@posvernaculas.letras.ufrj.br");
     expect(
       document.querySelector("[data-site-footer-bottom]").textContent,
-    ).toBe("© 2025 Laboratório de Fonética Acústica | UFRJ.");
+    ).toBe("© 1990–2025 Laboratório de Fonética Acústica | UFRJ.");
   });
 
   it("handles missing optional footer fields gracefully", () => {
@@ -204,12 +204,14 @@ describe("site content binding", () => {
     ).toBe("");
   });
 
-  it("binds canonical coordination as the fourth column and credits outside the columns", () => {
+  it("binds canonical coordination before contact and credits outside the columns", () => {
     const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
     applySiteContent(document, site);
     const columns = document.querySelector("[data-site-footer-content]");
     expect(columns.children).toHaveLength(4);
-    expect(columns.lastElementChild.classList.contains("footer-coordination")).toBe(true);
+    expect([...columns.children].map((column) => column.querySelector("h3").textContent)).toEqual([
+      "Laboratório de Fonética Acústica UFRJ", "Coordenação", "Contato", "Links Úteis",
+    ]);
     expect([...columns.querySelectorAll(".footer-coordination-group")].map((group) => [...group.querySelectorAll("li")].map((li) => li.textContent))).toEqual([
       ["João Moraes", "Manuella Carnaval"],
       ["Carolina Gomes da Silva", "Manuella Carnaval", "Juliana Dias"],
@@ -217,18 +219,26 @@ describe("site content binding", () => {
     expect([...document.querySelectorAll(".footer-credits li")].map((li) => li.textContent)).toEqual(["LabFonAc-UFRJ", "PPGLEV", "UFRJ"]);
     expect(document.querySelector("footer").textContent).not.toMatch(/CNPq|Conselho Nacional de Desenvolvimento/);
     expect(columns.contains(document.querySelector(".footer-credits"))).toBe(false);
-    expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(site.footer.bottomText.replace("© ", "© 2025 "));
+    expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(site.footer.bottomText.replace("© ", "© 1990–2025 "));
   });
 
   it.each([2025, 2026, 2031])("calculates the copyright range at render time in %i, including legacy literals", (year) => {
     vi.setSystemTime(new Date(year, 6, 1));
     const wording = "Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados.";
-    for (const prefix of ["© ", "© 2025 ", "© 2026 ", "© 2025–2026 "]) {
+    for (const prefix of ["© ", "© 2025 ", "© 2026 ", "© 2025–2026 ", "© 1990–2026 "]) {
       const site = { footer: { bottomText: prefix + wording } };
       applySiteContent(document, site);
-      expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(`© ${year === 2025 ? "2025" : `2025–${year}`} ${wording}`);
+      expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(`© 1990–${year} ${wording}`);
       expect(site.footer.bottomText).toBe(prefix + wording);
     }
+  });
+
+  it("places coordination by contact structure rather than editable title, and appends when contacts are absent", () => {
+    const coordination = { lab: [{ name: "Maintainer" }] };
+    applySiteContent(document, { footer: { sections: [{ title: "Fale conosco", contacts: [] }, { title: "Links" }], coordination } });
+    expect([...document.querySelectorAll(".footer-section h3")].map((node) => node.textContent)).toEqual(["Coordenação", "Fale conosco", "Links"]);
+    applySiteContent(document, { footer: { sections: [{ title: "Links" }], coordination } });
+    expect([...document.querySelectorAll(".footer-section h3")].map((node) => node.textContent)).toEqual(["Links", "Coordenação"]);
   });
 
   it("preserves custom bottom wording and renders safe linked or name-only legacy credits", () => {
