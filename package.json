@@ -8,7 +8,7 @@
     "dev": "vite",
     "dev:editor": "vite --open /editor.html",
     "editor:dev": "concurrently -k \"vite --host 127.0.0.1 --port 3000 --strictPort false\" \"cross-env LABFON_EDITOR_DEV=true electron .\"",
-    "editor:build": "cross-env LABFON_EDITOR_BUILD=true vite build && electron-builder --dir",
+    "editor:build": "cross-env LABFON_EDITOR_BUILD=true vite build && electron-builder",
     "prebuild": "node scripts/build-data.js",
     "build": "vite build",
     "build:local": "node scripts/build-data.js && cross-env BUILD_OUTPUT=C:/labfonac vite build",
@@ -47,8 +47,29 @@
     "win": {
       "icon": "build/icon.ico",
       "target": [
-        "dir"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lab-FON Editor",
+      "uninstallDisplayName": "Lab-FON Editor",
+      "artifactName": "Lab-FON-Editor-Setup-${version}.${ext}"
     }
   },
   "devDependencies": {
