@@ -4,6 +4,8 @@ import { normalizeInstagramURL } from "../sections/provale-instagram.js";
 const text = (key, label, required = false) => ({ key, label, required });
 const area = (key, label, required = false) => ({ key, label, required, type: "textarea" });
 const url = (key, label) => ({ key, label, type: "url" });
+const hidden = (field) => ({ ...field, surface: "hidden" });
+const advanced = (field) => ({ ...field, surface: "advanced" });
 const group = (key, label, fields) => ({ key, label, fields });
 const list = (key, label, fields, empty) => ({ key, label, fields, empty, type: "list" });
 const linkFields = [text("label", "Rótulo"), url("href", "Destino")];
@@ -29,7 +31,7 @@ export const CONTENT_DATASETS = {
     ],
   },
   equipe: {
-    label: "Equipe", empty: { nome: "", instituicao: "", categoria: "docentes", foto: "", lattes: "" },
+    label: "Equipe", sectionType: "equipe", empty: { nome: "", instituicao: "", categoria: "docentes", foto: "", lattes: "" },
     fields: [text("nome", "Nome", true), text("instituicao", "Instituição", true),
       { key: "categoria", label: "Categoria", options: EQUIPE_CATEGORIES.map((c) => c.id) },
       { ...text("badge", "Distinção"), maxLength: 40 },
@@ -37,17 +39,19 @@ export const CONTENT_DATASETS = {
       url("foto", "Foto"), url("lattes", "Currículo Lattes")],
   },
   linhasPesquisa: {
-    label: "Linhas de Pesquisa", empty: { id: "", nome: "", descricao: "", icon: "fa-solid fa-flask", estudantes: 0, pesquisadores: 0, ordem: 1 },
-    fields: [text("id", "Identificador", true), text("nome", "Nome", true), area("descricao", "Descrição", true), text("icon", "Ícone"),
-      ...["estudantes", "pesquisadores", "ordem"].map((key) => ({ key, label: { estudantes: "Estudantes", pesquisadores: "Pesquisadores", ordem: "Ordem" }[key], type: "number" }))],
+    label: "Linhas de Pesquisa", sectionType: "linhas_pesquisa", empty: { id: "", nome: "", descricao: "", icon: "fa-solid fa-flask", estudantes: 0, pesquisadores: 0, ordem: 1 },
+    fields: [hidden(text("id", "Identificador", true)), text("nome", "Nome", true), area("descricao", "Descrição", true), advanced(text("icon", "Ícone")),
+      hidden({ key: "estudantes", label: "Estudantes", type: "number" }),
+      hidden({ key: "pesquisadores", label: "Pesquisadores", type: "number" }),
+      advanced({ key: "ordem", label: "Ordem de exibição", type: "number" })],
   },
   parcerias: {
-    label: "Parcerias", empty: { nome: "", sigla: "", localizacao: "", tipo: "instituicao", descricao: "", url: "" },
+    label: "Parcerias", sectionType: "parcerias", empty: { nome: "", sigla: "", localizacao: "", tipo: "instituicao", descricao: "", url: "" },
     fields: [text("nome", "Nome", true), text("sigla", "Sigla"), text("localizacao", "Localização"), text("tipo", "Tipo", true), area("descricao", "Descrição"), url("url", "Site"), url("logo", "Logo")],
   },
   extensao: {
-    label: "Extensão", singleton: true,
-    fields: [list("projects", "Projetos", [text("id", "Identificador", true), text("projectType", "Tipo", true), text("title", "Título", true),
+    label: "Extensão", sectionType: "extension", singleton: true,
+    fields: [list("projects", "Projetos", [hidden(text("id", "Identificador", true)), text("projectType", "Tipo", true), text("title", "Título", true),
       group("image", "Imagem", [url("src", "Arquivo"), text("alt", "Descrição da imagem")]), area("minibio", "Apresentação"), area("complementaryText", "Texto complementar"),
       list("coordination", "Coordenação", personFields, { name: "", institution: "" }),
       list("socialLinks", "Redes sociais", [text("label", "Rótulo"), url("url", "URL")], { label: "", url: "" }),
@@ -55,6 +59,12 @@ export const CONTENT_DATASETS = {
     ], { id: "", title: "", projectType: "Projeto de Extensão", image: null, minibio: "", complementaryText: "", coordination: [], socialLinks: [], instagram: { enabled: false, source: null, provider: null } })],
   },
 };
+
+export function isSectionTypeEnabled(composition, sectionType) {
+  return !sectionType || !Array.isArray(composition?.sections) || Boolean(composition.sections.some(
+    (section) => section.type === sectionType && section.enabled,
+  ));
+}
 
 export function validateContent(value, fields) {
   const errors = [];

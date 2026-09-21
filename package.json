@@ -45,6 +45,7 @@
       "node_modules/basic-ftp/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "dir"
       ]

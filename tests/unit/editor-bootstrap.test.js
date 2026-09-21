@@ -672,13 +672,14 @@ describe("Editor Bootstrap (E1-H1)", () => {
           kind: "single-page",
           sections: [
             { id: "sobre", type: "sobre", enabled: true, order: 1 },
+            { id: "equipe", type: "equipe", enabled: true, order: 2 },
             {
               id: "publicacoes",
               type: "publicacoes",
-              enabled: true,
-              order: 2,
+              enabled: false,
+              order: 3,
             },
-            { id: "extensao", type: "extension", enabled: false, order: 3 },
+            { id: "extensao", type: "extension", enabled: false, order: 4 },
           ],
         }),
         "content/site.json": JSON.stringify({
@@ -733,10 +734,10 @@ describe("Editor Bootstrap (E1-H1)", () => {
     );
     expect(
       document.getElementById("editor-section-list").textContent,
-    ).toContain("Publicações (habilitada)");
+    ).not.toContain("Publicações (habilitada)");
     expect(
       document.getElementById("editor-add-section-select").textContent,
-    ).toContain("Extensão");
+    ).toContain("Publicações");
     expect(
       document.getElementById("editor-content-summary").textContent,
     ).toContain("Hero: Hero local");
@@ -745,7 +746,10 @@ describe("Editor Bootstrap (E1-H1)", () => {
     ).toContain("Egressos: presente");
     expect(
       document.getElementById("editor-content-summary").textContent,
-    ).toContain("PROVALE: Projeto de Extensão");
+    ).not.toContain("PROVALE: Projeto de Extensão");
+    expect(
+      document.getElementById("editor-content-summary").textContent,
+    ).not.toContain("Publicações");
 
     app.destroy();
   });

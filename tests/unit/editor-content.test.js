@@ -277,6 +277,131 @@ it("focuses extension projects and materializes optional groups only on edit", a
   } finally { editor.destroy(); }
 });
 
+it("shows only enabled section datasets and preserves a dirty selection when composition disables it", async () => {
+  const line = { id: "fonetica", nome: "Fonética", descricao: "Descrição", icon: "fa-solid fa-flask", estudantes: 2, pesquisadores: 3, ordem: 1 };
+  const site = { hero: { title: "Site" } };
+  const host = { readContentDataset: vi.fn(async (_directory, key) => key === "site"
+    ? [{ name: "site.json", value: site }]
+    : [{ name: "linha.json", value: line }]) };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  const enabled = { sections: [
+    { id: "linhas", type: "linhas_pesquisa", enabled: true },
+    { id: "equipe", type: "equipe", enabled: true },
+    { id: "extensao", type: "extension", enabled: false },
+    { id: "parcerias", type: "parcerias", enabled: false },
+    { id: "publicacoes", type: "publicacoes", enabled: false },
+  ] };
+  store.setState({ draftComposition: enabled, openedProject: { path: "fixture", status: "valid" },
+    editorSiteModel: { site, linhasPesquisa: [line], equipe: [], extensao: { projects: [] }, parcerias: [], publicacoes: [{ title: "Preservada" }] } });
+  const chooser = document.getElementById("editor-content-dataset");
+  await vi.waitFor(() => expect([...chooser.options].map((option) => option.value)).toEqual(["site", "equipe", "linhasPesquisa"]));
+  chooser.value = "linhasPesquisa"; chooser.dispatchEvent(new Event("change"));
+  await vi.waitFor(() => expect(document.getElementById("content-field-root.nome")?.value).toBe("Fonética"));
+  const name = document.getElementById("content-field-root.nome");
+  name.value = "Fonética editada"; name.dispatchEvent(new Event("input", { bubbles: true }));
+  store.setState({ draftComposition: { sections: enabled.sections.map((section) => section.type === "linhas_pesquisa" ? { ...section, enabled: false } : section) } });
+  expect(chooser.value).toBe("linhasPesquisa");
+  expect(chooser.selectedOptions[0].textContent).toContain("alterações pendentes");
+  expect(document.getElementById("content-field-root.nome").value).toBe("Fonética editada");
+  expect(store.getState().editorSiteModel.publicacoes).toEqual([{ title: "Preservada" }]);
+  document.getElementById("editor-content-cancel").click();
+  await vi.waitFor(() => expect([...chooser.options].map((option) => option.value)).toEqual(["site", "equipe"]));
+  editor.destroy();
+});
+
+it("keeps research-line technical data while exposing only name and description outside advanced editing", async () => {
+  let record = { id: "fonetica-experimental", nome: "Fonética", descricao: "Descrição", icon: "fa-solid fa-wave-square", estudantes: 4, pesquisadores: 5, ordem: 7 };
+  const host = {
+    readContentDataset: vi.fn(async () => [{ name: "linha.json", value: structuredClone(record) }]),
+    saveContentRecord: vi.fn(async (_directory, _dataset, _name, _previous, next) => { record = structuredClone(next); return { ok: true }; }),
+  };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  document.getElementById("editor-content-dataset").value = "linhasPesquisa";
+  store.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { linhasPesquisa: [record] } });
+  await vi.waitFor(() => expect(document.getElementById("content-field-root.nome")?.value).toBe("Fonética"));
+  expect([...document.querySelectorAll("#editor-content-fields label")].map((label) => label.textContent)).toEqual(["Nome", "Descrição"]);
+  const advanced = document.getElementById("editor-content-advanced");
+  expect(advanced.open).toBe(false);
+  expect(advanced.querySelector("summary").textContent).toBe("Edição avançada");
+  expect([...advanced.querySelectorAll("label")].map((label) => label.textContent)).toEqual(["Ícone", "Ordem de exibição"]);
+  expect(document.body.textContent).not.toContain("Identificador");
+  expect(document.body.textContent).not.toContain("Estudantes");
+  expect(document.body.textContent).not.toContain("Pesquisadores");
+  const name = document.getElementById("content-field-root.nome");
+  name.value = "Fonética atualizada"; name.dispatchEvent(new Event("input", { bubbles: true }));
+  document.getElementById("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+  await vi.waitFor(() => expect(store.getState().contentDirty).toBe(false));
+  expect(record).toEqual({ id: "fonetica-experimental", nome: "Fonética atualizada", descricao: "Descrição", icon: "fa-solid fa-wave-square", estudantes: 4, pesquisadores: 5, ordem: 7 });
+  editor.destroy();
+});
+
+it("preserves the PROVALE identifier while hiding it from ordinary editing", async () => {
+  let extension = { projects: [{ id: "provale-em-extensao", projectType: "Projeto de Extensão", title: "PROVALE em Extensão", image: null, minibio: "Texto", complementaryText: "", coordination: [], socialLinks: [], instagram: { enabled: false, source: "", provider: "instagram" } }] };
+  const host = {
+    readContentDataset: vi.fn(async () => [{ name: "extensao.json", value: structuredClone(extension) }]),
+    saveContentRecord: vi.fn(async (_directory, _dataset, _name, _previous, next) => { extension = structuredClone(next); return { ok: true }; }),
+  };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  document.getElementById("editor-content-dataset").value = "extensao";
+  store.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { extensao: extension } });
+  await vi.waitFor(() => expect(document.getElementById("content-field-root.projects.0.title")?.value).toBe("PROVALE em Extensão"));
+  expect(document.body.textContent).not.toContain("Identificador");
+  const title = document.getElementById("content-field-root.projects.0.title");
+  title.value = "PROVALE atualizado"; title.dispatchEvent(new Event("input", { bubbles: true }));
+  document.getElementById("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+  await vi.waitFor(() => expect(store.getState().contentDirty).toBe(false));
+  expect(extension.projects[0].id).toBe("provale-em-extensao");
+  expect(extension.projects[0].title).toBe("PROVALE atualizado");
+  editor.destroy();
+});
+
+it("generates unique stable IDs for new research lines and extension projects", async () => {
+  let lines = [{ id: "nova-linha", nome: "Existente", descricao: "Descrição", icon: "fa-solid fa-flask", estudantes: 0, pesquisadores: 0, ordem: 1 }];
+  const lineHost = {
+    readContentDataset: vi.fn(async () => lines.map((value, index) => ({ name: `${index}.json`, value: structuredClone(value) }))),
+    saveContentRecord: vi.fn(async (_directory, _dataset, _name, _previous, next) => { lines.push(structuredClone(next)); return { ok: true }; }),
+  };
+  const lineStore = createEditorStore();
+  const lineEditor = createContentEditor({ host: lineHost, store: lineStore });
+  document.body.replaceChildren(lineEditor.element);
+  document.getElementById("editor-content-dataset").value = "linhasPesquisa";
+  lineStore.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { linhasPesquisa: lines } });
+  await vi.waitFor(() => expect(document.getElementById("content-field-root.nome")).not.toBeNull());
+  document.getElementById("editor-content-add").click();
+  const name = document.getElementById("content-field-root.nome");
+  name.value = "Nova Linha"; name.dispatchEvent(new Event("input", { bubbles: true }));
+  const description = document.getElementById("content-field-root.descricao");
+  description.value = "Descrição nova"; description.dispatchEvent(new Event("input", { bubbles: true }));
+  name.value = "Nome alterado"; name.dispatchEvent(new Event("input", { bubbles: true }));
+  const newLine = lineStore.getState().editorSiteModel.linhasPesquisa.find((item) => item.nome === "Nome alterado");
+  expect(newLine.id).toBe("nova-linha-2");
+  expect(validateContent(newLine, CONTENT_DATASETS.linhasPesquisa.fields)).toEqual([]);
+  lineEditor.destroy();
+
+  const extension = { projects: [{ id: "novo-projeto", projectType: "Tipo", title: "Existente", image: null, coordination: [], socialLinks: [] }] };
+  const extensionHost = { readContentDataset: vi.fn(async () => [{ name: "extensao.json", value: structuredClone(extension) }]) };
+  const extensionStore = createEditorStore();
+  const extensionEditor = createContentEditor({ host: extensionHost, store: extensionStore });
+  document.body.replaceChildren(extensionEditor.element);
+  document.getElementById("editor-content-dataset").value = "extensao";
+  extensionStore.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { extensao: extension } });
+  await vi.waitFor(() => expect(document.querySelector('[aria-label="Projetos"]')).not.toBeNull());
+  document.querySelector('[data-focus-key="root.projects:add"]').click();
+  const newTitle = document.getElementById("content-field-root.projects.1.title");
+  newTitle.value = "Novo Projeto"; newTitle.dispatchEvent(new Event("input", { bubbles: true }));
+  newTitle.value = "Título alterado"; newTitle.dispatchEvent(new Event("input", { bubbles: true }));
+  const newProject = extensionStore.getState().editorSiteModel.extensao.projects[1];
+  expect(newProject.id).toBe("novo-projeto-2");
+  expect(validateContent(extensionStore.getState().editorSiteModel.extensao, CONTENT_DATASETS.extensao.fields)).toEqual([]);
+  extensionEditor.destroy();
+});
+
 describe("Equipe managed photo form", () => {
   const previewUrl = "data:image/png;base64,iVBORw0KGgo=";
   const photo = "assets/images/image-00000000-0000-4000-8000-000000000001.png";

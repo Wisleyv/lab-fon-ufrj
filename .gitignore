@@ -10,7 +10,8 @@ pnpm-debug.log*
 /release/
 /release-verify/
 dist/
-build/
+build/*
+!build/icon.ico
 .output/
 .vite/
 .cache/

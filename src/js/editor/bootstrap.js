@@ -22,6 +22,7 @@ import {
 import { createBuildController, getGeneratedPreviewReadiness } from "./build-service.js";
 import { createDesktopHost } from "./desktop-host.js";
 import { createContentEditor } from "./content-editor.js";
+import { isSectionTypeEnabled } from "./content-fields.js";
 import { createCustomSectionEditor } from "./custom-section-editor.js";
 import { loadEditorSiteModel } from "./project-loader.js";
 import {
@@ -1303,6 +1304,7 @@ function createLayout(
       },
       {
         title: "Equipe",
+        sectionType: "equipe",
         items: [
           `${model.equipe.length} membros`,
           `Egressos: ${model.equipe.some((member) => member.categoria === "egressos") ? "presente" : "ausente"}`,
@@ -1310,10 +1312,12 @@ function createLayout(
       },
       {
         title: "Linhas de Pesquisa",
+        sectionType: "linhas_pesquisa",
         items: [`${model.linhasPesquisa.length} linhas`],
       },
       {
         title: "Extensão",
+        sectionType: "extension",
         items: [
           `Projetos: ${model.extensao.projects?.length || 0}`,
           `PROVALE: ${model.extensao.projects?.some((project) => project.projectType === "Projeto de Extensão" && project.title === "PROVALE em Extensão") ? "Projeto de Extensão" : "não encontrado"}`,
@@ -1322,10 +1326,12 @@ function createLayout(
       },
       {
         title: "Parcerias",
+        sectionType: "parcerias",
         items: [`${model.parcerias.length} registros`],
       },
       {
         title: "Publicações",
+        sectionType: "publicacoes",
         items: [
           `${model.publicacoes.length} registros`,
           `Seção: ${model.page.sections.find((section) => section.type === "publicacoes")?.enabled ? "habilitada" : "desabilitada"}`,
@@ -1333,7 +1339,7 @@ function createLayout(
       },
     ];
 
-    groups.forEach((group) => {
+    groups.filter((group) => isSectionTypeEnabled(model.page, group.sectionType)).forEach((group) => {
       const section = createElement("section", {
         className: "editor-content-group",
       });

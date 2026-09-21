@@ -89,6 +89,13 @@ body {
 }
 .editor-advanced { margin-top: 1rem; }
 .editor-advanced summary { cursor: pointer; padding: 0.75rem 0; }
+.editor-warning {
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  border-left: 4px solid #9a7100;
+  background: #fff8db;
+  color: #5f4700;
+}
 @media (max-width: 600px) {
   .editor-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .editor-tab-panel .editor-publish-form { grid-template-columns: minmax(0, 1fr); }

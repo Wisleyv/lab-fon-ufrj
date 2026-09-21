@@ -1,7 +1,8 @@
 import { createElement as el } from "../utils/helpers.js";
 
 // Navigation is ephemeral; every edit still belongs to the containing dataset draft.
-export function renderFocusedFields(parent, object, definitions, { navigation, change, render, button, dirty, renderField }, path = "root") {
+export function renderFocusedFields(parent, object, definitions, { navigation, change, render, button, dirty, renderField, surface = "ordinary" }, path = "root") {
+  definitions = definitions.filter((field) => field.surface ? field.surface === surface : surface === "ordinary");
   const groups = definitions.filter((field) => field.fields || field.type === "list");
   if (groups.length && definitions.length > 1) {
     const plain = definitions.filter((field) => !groups.includes(field));
@@ -27,7 +28,7 @@ export function renderFocusedFields(parent, object, definitions, { navigation, c
           input.value = entry;
           input.addEventListener("input", () => { items[index] = input.value; change(); });
           row.append(input);
-        } else renderFocusedFields(row, entry, field.fields, { navigation, change, render, button, dirty, renderField }, `${key}.${index}`);
+        } else renderFocusedFields(row, entry, field.fields, { navigation, change, render, button, dirty, renderField, surface }, `${key}.${index}`);
       }
       const actions = el("div", { className: "editor-actions" });
       const append = button("", `Adicionar ${field.label}`);
@@ -61,7 +62,7 @@ export function renderFocusedFields(parent, object, definitions, { navigation, c
       const group = el("div", { className: "editor-focused-group" });
       const nested = object[field.key] || {};
       renderFocusedFields(group, nested, field.fields, {
-        navigation, render, button, dirty, renderField,
+        navigation, render, button, dirty, renderField, surface,
         change: () => { object[field.key] = nested; change(); },
       }, key);
       parent.append(group);

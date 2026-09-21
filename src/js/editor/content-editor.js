@@ -1,5 +1,5 @@
 import { createElement as el } from "../utils/helpers.js";
-import { CONTENT_DATASETS, validateContent } from "./content-fields.js";
+import { CONTENT_DATASETS, isSectionTypeEnabled, validateContent } from "./content-fields.js";
 import { getEditingReadiness } from "./state.js";
 import { renderFocusedFields } from "./focused-fields.js";
 import { createImageField } from "./image-field.js";
@@ -7,14 +7,34 @@ import { normalizeInstagramInput, PROVALE_INSTAGRAM } from "../sections/provale-
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
+function createUniqueId(label, used) {
+  const base = String(label || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  if (!base) return "";
+  let candidate = base;
+  for (let suffix = 2; used.has(candidate); suffix += 1) candidate = `${base}-${suffix}`;
+  used.add(candidate);
+  return candidate;
+}
+
 export function createContentEditor({ host, store, customEditor }) {
   const element = el("section", { className: "editor-panel", id: "editor-content-editing" });
   element.appendChild(el("h2", {}, "Editar conteúdo"));
   const chooser = el("select", { id: "editor-content-dataset", className: "editor-input", "aria-label": "Conteúdo" });
-  Object.entries(CONTENT_DATASETS).forEach(([key, schema]) => chooser.appendChild(el("option", { value: key }, schema.label)));
   const recordsSelect = el("select", { id: "editor-content-record", className: "editor-input", "aria-label": "Registro" });
   const form = el("form", { id: "editor-content-form" });
-  const fields = el("div");
+  const fields = el("div", { id: "editor-content-fields" });
+  const advanced = el("details", { id: "editor-content-advanced", className: "editor-advanced" });
+  const advancedFields = el("div", { id: "editor-content-advanced-fields" });
+  advanced.append(
+    el("summary", {}, "Edição avançada"),
+    el("p", { className: "editor-warning" }, "Alterações nesta área podem afetar a estrutura ou a apresentação do site. Edite somente se compreender os efeitos."),
+    advancedFields,
+  );
   const status = el("p", { id: "editor-content-edit-status", role: "status" });
   const actions = el("div", { className: "editor-actions" });
   const button = (id, label, type = "button") => el("button", { id, type, className: "editor-btn editor-btn-secondary" }, label);
@@ -27,11 +47,11 @@ export function createContentEditor({ host, store, customEditor }) {
   const reason = el("p", { id: "editor-content-save-reason", className: "editor-operation-reason" });
   save.setAttribute("aria-describedby", reason.id);
   actions.append(add, remove, cancel, save);
-  form.append(actions, reason, status, fields);
+  form.append(actions, reason, status, fields, advanced);
   element.append(chooser, recordsSelect, form);
   if (customEditor) element.append(customEditor.content);
   let directory = null, records = [], selected = null, draft = null, baselineModel = null, busy = false;
-  let dataset = chooser.value, activeItem = dataset, lastComposition, previousRecordName;
+  let dataset = "site", activeItem = dataset, lastComposition, lastContentDirty, previousRecordName;
   const navigation = new Map();
   let imageFields = [];
   let instagramInputInvalid = false;
@@ -44,6 +64,23 @@ export function createContentEditor({ host, store, customEditor }) {
     if (draft?.id && records.some((r) => r.name !== selected?.name && r.value.id === draft.id)) errors.push("Identificador já utilizado.");
     return errors;
   };
+
+  function ensureInternalIds() {
+    if (!draft) return;
+    if (dataset === "linhasPesquisa" && !draft.id) {
+      const used = new Set(records
+        .filter((record) => record.name !== selected?.name)
+        .map((record) => record.value.id)
+        .filter(Boolean));
+      draft.id = createUniqueId(draft.nome, used);
+    }
+    if (dataset === "extensao") {
+      const used = new Set(draft.projects?.map((project) => project.id).filter(Boolean));
+      for (const project of draft.projects || []) {
+        if (!project.id) project.id = createUniqueId(project.title, used);
+      }
+    }
+  }
 
   function setControls() {
     const dirty = store.getState().contentDirty;
@@ -61,12 +98,14 @@ export function createContentEditor({ host, store, customEditor }) {
     save.disabled = blocked || !dirty || errors.length > 0;
     reason.textContent = !ready.ok ? ready.message : busy ? "Aguarde a operação em andamento." : !dirty ? "Nenhuma alteração para salvar." : errors.join(" ");
     reason.hidden = !save.disabled;
-    fields.querySelectorAll("input,textarea,select,button").forEach((node) => {
+    [...fields.querySelectorAll("input,textarea,select,button"),
+      ...advancedFields.querySelectorAll("input,textarea,select,button")].forEach((node) => {
       node.disabled = blocked || node.dataset.edge === "true" || (dirty && node.dataset.navigation === "true");
     });
   }
 
   function markDraft() {
+    ensureInternalIds();
     const model = clone(baselineModel);
     if (schema().singleton) model[dataset] = draft;
     else model[dataset] = records.filter((r) => r.name !== selected?.name).map((r) => r.value).concat(draft === null ? [] : [draft]);
@@ -80,6 +119,8 @@ export function createContentEditor({ host, store, customEditor }) {
     const focusKey = fields.ownerDocument.activeElement?.dataset.focusKey;
     disposeFields();
     fields.replaceChildren();
+    advancedFields.replaceChildren();
+    advanced.hidden = dataset !== "linhasPesquisa" || !draft;
     if (draft) renderFocusedFields(fields, draft, schema().fields, {
       navigation, change: markDraft, render, button, dirty: () => store.getState().contentDirty,
       renderField: (field, object) => {
@@ -144,6 +185,13 @@ export function createContentEditor({ host, store, customEditor }) {
         return imageField.element;
       },
     });
+    if (draft && dataset === "linhasPesquisa") {
+      renderFocusedFields(advancedFields, draft, schema().fields, {
+        navigation, change: markDraft, render, button,
+        dirty: () => store.getState().contentDirty,
+        surface: "advanced",
+      });
+    }
     setControls();
     if (focusKey) {
       const control = [...fields.querySelectorAll("[data-focus-key]")].find((node) => node.dataset.focusKey === focusKey && !node.disabled);
@@ -175,15 +223,33 @@ export function createContentEditor({ host, store, customEditor }) {
     } finally { busy = false; store.setState({ contentLoading: false }); setControls(); }
   }
   function refreshOptions() {
-    const composition = store.getState().draftComposition;
-    if (composition === lastComposition) return;
+    const state = store.getState();
+    const composition = state.draftComposition;
+    if (composition === lastComposition && state.contentDirty === lastContentDirty) return;
     lastComposition = composition;
-    chooser.replaceChildren(...Object.entries(CONTENT_DATASETS).map(([key, value]) => el("option", { value: key }, value.label)),
-      ...(customEditor ? composition?.sections.filter((section) => section.type === "custom") || [] : []).map((section, index) =>
-        el("option", { value: section.id }, `${index + 1}. ${section.title || "Sem título"}${section.enabled ? "" : " (desabilitada)"}`)));
+    lastContentDirty = state.contentDirty;
+    const datasets = Object.entries(CONTENT_DATASETS)
+      .filter(([, value]) => isSectionTypeEnabled(composition, value.sectionType));
+    const customSections = customEditor
+      ? composition?.sections.filter((section) => section.type === "custom" && section.enabled) || []
+      : [];
+    const options = [
+      ...datasets.map(([key, value]) => el("option", { value: key }, value.label)),
+      ...customSections.map((section, index) => el("option", { value: section.id }, `${index + 1}. ${section.title || "Sem título"}`)),
+    ];
+    const activeVisible = datasets.some(([key]) => key === activeItem) || customSections.some((section) => section.id === activeItem);
+    if (!activeVisible && state.contentDirty) {
+      const label = CONTENT_DATASETS[activeItem]?.label || composition?.sections.find((section) => section.id === activeItem)?.title || "Conteúdo em edição";
+      options.push(el("option", { value: activeItem }, `${label} (alterações pendentes)`));
+    }
+    chooser.replaceChildren(...options);
     if (![...chooser.options].some((option) => option.value === activeItem)) {
-      activeItem = dataset;
-      void load();
+      const next = chooser.options[0]?.value || "site";
+      activeItem = next;
+      if (CONTENT_DATASETS[next]) {
+        dataset = next; selected = draft = null; navigation.clear();
+        void load();
+      } else customEditor?.select(next);
     }
     chooser.value = activeItem;
   }
@@ -224,10 +290,10 @@ export function createContentEditor({ host, store, customEditor }) {
   });
   remove.addEventListener("click", () => { draft = null; markDraft(); render(); });
   cancel.addEventListener("click", () => {
-    store.setState({ contentDirty: false, editorSiteModel: baselineModel });
     if (recordsSelect.value === "__new__") recordsSelect.value = previousRecordName || records[0]?.name || "";
     recordsSelect.querySelector('[value="__new__"]')?.remove();
     selectRecord(); status.textContent = "Alterações descartadas.";
+    store.setState({ contentDirty: false, editorSiteModel: baselineModel });
   });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -259,6 +325,7 @@ export function createContentEditor({ host, store, customEditor }) {
     if (!state.contentDirty && !state.compositionDirty) selectionStatus.textContent = "";
     setControls();
   });
+  refreshOptions();
   setControls();
   return { element, selectItem, destroy() { disposeFields(); unsubscribe(); } };
 }
