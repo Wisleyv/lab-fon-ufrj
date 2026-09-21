@@ -2,7 +2,7 @@ import fs from "fs";
 import { describe, expect, it } from "vitest";
 
 describe("Current Content Preservation", () => {
-  it("keeps Publicações present in the canonical page composition", () => {
+  it("keeps Publicações present but disabled in the release composition", () => {
     const page = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
     const publicacoes = page.sections.find(
       (section) => section.type === "publicacoes",
@@ -10,7 +10,7 @@ describe("Current Content Preservation", () => {
 
     expect(publicacoes).toMatchObject({
       id: "publicacoes",
-      enabled: true,
+      enabled: false,
     });
   });
 
@@ -27,7 +27,7 @@ describe("Current Content Preservation", () => {
     );
   });
 
-  it("represents PROVALE as content within the Extensão model", () => {
+  it("represents active PROVALE content within the Extensão model", () => {
     const page = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
     const extensao = JSON.parse(
       fs.readFileSync("content/extensao.json", "utf8"),
@@ -37,7 +37,7 @@ describe("Current Content Preservation", () => {
       page.sections.find((section) => section.type === "extension"),
     ).toMatchObject({
       id: "extensao",
-      enabled: false,
+      enabled: true,
       navigation: {
         label: "Extensão",
       },
@@ -47,5 +47,10 @@ describe("Current Content Preservation", () => {
     ).toBe(false);
     expect(extensao.projects[0].projectType).toBe("Projeto de Extensão");
     expect(extensao.projects[0].title).toBe("PROVALE em Extensão");
+    expect(extensao.projects[0].instagram).toEqual({
+      enabled: true,
+      source: "https://www.instagram.com/provaleinterinstitucional/",
+      provider: "instagram",
+    });
   });
 });

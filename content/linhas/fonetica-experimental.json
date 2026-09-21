@@ -1,9 +1,9 @@
 {
   "id": "fonetica-experimental",
-  "nome": "Fonêtica Experimental",
+  "nome": "Fonética Experimental",
   "icon": "fa-solid fa-wave-square",
   "estudantes": 0,
   "pesquisadores": 3,
-  "descricao": "[Descrição da linha de pesquisa]",
+  "descricao": "Esta linha de pesquisa tem como foco a investigação dos parâmetros acústicos, articulatórios e perceptivos da fala por meio de métodos experimentais e análises instrumentais.",
   "ordem": 1
 }

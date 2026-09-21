@@ -1,6 +1,6 @@
 # Improvements Implementation Plan
 
-Status: development checkpoint through C2 and shell stabilization, September 14, 2026. Implementation status is recorded below; this document does not authorize packaging or production deployment.
+Status: September 21, 2026 production milestone complete. The approved candidate passed normal `/source/` update, fresh retrieval with exact parity, Editor build/review, publication to `/`, and live verification. C2, shell, Equipe, Parcerias and PROVALE acceptance remain intact; Site header-logo work stays non-priority, C3 is omitted, and package distribution plus backup/recovery remain separate follow-up work. See the current release baseline for evidence.
 
 Request: [improvements.md](improvements.md). Baseline: September 7 production milestone and September 11 [sanitization report](SANITIZATION_REPORT_2026-09-11.md).
 
@@ -21,10 +21,10 @@ Request: [improvements.md](improvements.md). Baseline: September 7 production mi
 | Equipe media | MANUALLY ACCEPTED at 311109c | Maintainer passed all 13 canonical no-photo checks; historical reopen discrepancy not reproduced, no cause/fix claimed |
 | Parcerias media | MANUALLY ACCEPTED after 456d5c5 | Centered layout polish also accepted at 13eea53 |
 | Shell stabilization | MANUALLY ACCEPTED at 13eea53 | Centered partner logos, header hysteresis/compact proportions, saved local direct-open |
-| Site media | IMPLEMENTED; MANUAL ACCEPTANCE PENDING | Replacement-only raster header logo, preserved legacy SVG and editable accessibility text |
-| C3 | NOT STARTED | Additional controlled blocks/layouts |
-| D | NOT STARTED | Instagram integration |
-| Integrated release | NOT STARTED | No compatible custom-schema package or production rollout performed |
+| Site header logo | CLOSED; NON-PRIORITY | Retain verified fe9828f implementation; maintainer reports manual replacement behavior as intended; no further feature work scheduled |
+| C3 | OPTIONAL; OMITTED FROM RELEASE | No image/cards/wide custom blocks needed for this release |
+| D | MANUALLY ACCEPTED at c2dc0e2 | All nine focused maintainer checks passed; integrated packaged acceptance remains separate |
+| Integrated release | COMPLETE; LIVE VERIFIED | Normal `/source/` update, fresh 198-file/79-JSON parity, Revisar, 77-file publication and live checks passed on September 21; release evidence is in the baseline |
 
 **C2 production gate: do not upload projects containing `schemaVersion: 2` / custom sections to production `/source/` until a compatible Editor Labfonac package is ready, maintainers have upgraded, and a pre-feature editable-source backup has been made. Older packaged editors may strip unknown custom data during normalization. Do not publish a checkout build as a substitute.**
 
@@ -35,6 +35,86 @@ The earlier Git-only checkpoint review changed documentation only and reused the
 Git checkpoint scope: improvement source, tests, canonical content changes from A1-A3, generated tracked data, this plan and the C0 contract. Exclude local workspace settings, personal time-report CSV, run prompts, and the older A3/A4 handoff containing machine-specific paths. Ignored credentials, backups, caches, dependencies and build/package artifacts remain excluded. Git-only push uses the existing feature-branch upstream, never `main` (which triggers deployment).
 
 ## Assessment
+
+### September 21 Production Release
+
+The approved candidate completed the normal remote-project workflow: `/source/` update, fresh isolated retrieval, exact source/content parity, generated-site build and release-critical review, publication to `/`, and live verification. The publication transferred 77 of 77 generated files and returned `PUBLISH_SUCCEEDED`; the live Labfonac URL returned HTTP 200 with the accepted composition, content, portraits, PROVALE Instagram integration and footer. No application code changed during the release operation, so no duplicate test/build run was required after the already-passing `df8d1e4` verification.
+
+The repository milestone now records the deployed editorial authority in canonical `content/`, its three referenced final portraits and regenerated `public/data.json`. Canonical-content tests were aligned with the approved Publicacoes-disabled/Extensao-enabled composition; the full suite passed 450 tests / 31 files and the production build passed. The detailed timestamps, parity counts, manifest path and scope exclusions are in [RELEASE_BASELINE_2026-09-16.md](RELEASE_BASELINE_2026-09-16.md#production-release---september-21). Feature work remains frozen. Compatible package distribution and a non-technical backup/recovery workflow are follow-up milestones, not conditions on the completed live release.
+
+### September 17 Initialization Correction and Acceptance
+
+The [current release baseline](RELEASE_BASELINE_2026-09-16.md#guarded-initialization-correction---september-17) supersedes the earlier blocked attempt below. The separate confirmed initialization action reuses the existing guarded initializer; ordinary local-project update/publication remain blocked. Focused verification: 122 tests / 6 files; full suite once: 450 / 31; production web/Editor build once passed. The unchanged approved candidate initialized `/source/` through the Editor, followed by fresh retrieval and valid clean remote-project open. No generated-site publication, retrieval build, package or backup tooling. Only the narrow fix/tests were committed and pushed; other user work is preserved.
+
+### September 17 Clean-Server Release Stop (Historical)
+
+The approved `C:\Temp\labfonac-release-candidate-20260917` is now the sole editorial authority, including human-approved Equipe changes; the old remote test snapshot is not a comparison baseline. Actual unchanged Editor/runtime authenticated with strict explicit FTPS to the approved endpoint, listed root (`source/`, hosting `.ftpquota`) and empty `/source/`, and opened the candidate with clean drafts. Publicar disabled source update with `REMOTE_PROJECT_REQUIRED` because the project origin is local. The separate native initializer was not called as a workaround. No remote writes, fresh retrieval, parity check, build/review from retrieval, publication or live verification occurred.
+
+The [current release baseline](RELEASE_BASELINE_2026-09-16.md#clean-server-release-attempt---september-17) records timestamps, evidence, workflow matrix and the next step: separately authorize a small GUI integration of the existing guarded initializer, then repeat all release gates. No fix is authorized by this status entry. The earlier packaging/backup sequence is historical for this maintainer-authorized clean-server attempt; compatible package verification remains necessary for distribution, and after the first live release all future writes require backups of both source and publication roots. No backup tooling was added.
+
+### September 17 Responsive Candidate and Human Proof Gate (Historical)
+
+Checkpoint `349bf12` supersedes the 540px-only centering correction: computed provider inspection proved that the application imposed that cap. The official iframe accepts 900px; its three-column grid does not reflow on narrow screens. Final presentation uses a full content-column width with a 720px minimum contained in a named keyboard-focusable horizontal scroller, preserving approximately 239px tiles on narrow/zoomed layouts and 299px tiles on desktop. No provider-internal DOM or integration-model change. Desktop/tablet/390px/200%-zoom measurements, screenshots, keyboard scrolling, blocked-provider fallback, one-script behavior and privileged Editor isolation passed.
+
+The candidate at `C:\Temp\labfonac-release-candidate-20260917` now has Publicacoes disabled, Linhas before Equipe, the stale hero action removed and only the Missao item removed from otherwise unchanged Sobre text. The custom test instance was permanently removed through the prompt-authorized one-time candidate JSON cleanup because permanent instance deletion is not supported by the Editor; no deletion feature was added. Footer rendering now puts coordination before contact and uses 1990 through the dynamic current year. Albert/Carolina/Maria Luiza records remain remote-authoritative for the deliberate human proof.
+
+Only `page.json`, `site.json` and the already-approved Instagram configuration in `extensao.json` differ from the remote base; the other 76 JSON files match. Bounded actual Editor/native smoke and candidate Revisar passed. Focused tests: 67 / 4 files; full suite once: 421 / 30 files; final production web/Editor-entry build once: passed. No state/persistence/IPC change, production FTP write, source upgrade, packaging or publication. Implementation/tests alone were committed and pushed; user-edited documentation remains separate.
+
+The current authority is the final section of [RELEASE_BASELINE_2026-09-16.md](RELEASE_BASELINE_2026-09-16.md), with the short [human Equipe proof guide](HUMAN_EDITOR_PROOF_EQUIPE.md). Earlier unresolved-decision and initial-candidate notes below are historical. Next: human proof -> final candidate approval -> compatible packaging -> pre-write backup -> controlled source upgrade -> fresh retrieval/build parity -> reviewed publication -> live verification/handoff. Backup/recovery tooling remains post-release exploratory work only.
+
+### September 17 Final Usability Candidate
+
+The mandatory Instagram alignment correction is CSS-only: full-width wrapper, centered bounded provider element and associated fallback link, without provider-internal DOM or Editor changes. Checkpoint `70076c5` contains only CSS and its regression test and was pushed to the existing feature branch. Real offscreen desktop/narrow/200%-zoom geometry and screenshots passed with zero centering error and no horizontal overflow.
+
+The isolated `C:\Temp\labfonac-release-candidate-20260917` uses the September 16 read-only remote content plus current application code. Automated actual Editor controls/native handlers passed the maintenance matrix, canonical save/read-back, separate Page/Content saves, local saved opening, close/reopen and Revisar. Dialog selections were harness-supplied, not human dialog testing. Only accepted Instagram configuration remains changed; all other 78 JSON files, including composition, match the remote snapshot structurally. No hand-edited content JSON, capability gap or proven Editor regression. Unresolved decisions were preserved, not inferred from test-section names or local photo changes.
+
+Verification: 39 focused tests; full suite once, 419 tests / 30 files passed; final production web/Editor-entry build once passed. Two separate candidate Revisar builds exercised temporary ordering and its restoration; only the restored candidate is the final preview. Pre-existing checkout generated data was preserved byte-for-byte. See the existing [release baseline](RELEASE_BASELINE_2026-09-16.md) for the compact usability matrix, visual evidence, remaining three decision groups and exact candidate state. Stop for maintainer choices before final editorial acceptance/packaging; no source update/publication occurred.
+
+Post-release follow-up only: devise a simple non-technical backup/recovery workflow and later evaluate an Editor Backup tab versus a parallel procedure/tool. No backup tooling was implemented. Feature freeze, C3 omission, B3/Site-logo deferrals and production safeguards remain in force.
+
+### September 16 Feature Freeze and Editorial Baseline
+
+The current authority is [RELEASE_BASELINE_2026-09-16.md](RELEASE_BASELINE_2026-09-16.md), which reconciles the maintained checkout, historical September 7 production evidence, and an actual read-only `/source/` retrieval captured at 15:21 UTC. Retrieval succeeded into an isolated temporary workspace: 189 files downloaded, no FTP mutation commands, no existing application workspace rotated. This is editable-source evidence, not a new live-publication check.
+
+All nine focused PROVALE Instagram checks passed according to the maintainer. Do not repeat implementation or the full focused checklist absent new regression evidence. Feature development is frozen: C3, B3, Site-logo expansion, generic embeds/providers, API/OAuth/scraping, auto-updater, active-navigation polish and unrelated redesign remain outside this release.
+
+Comparison found 79 content JSON files on each side, ten semantically different files, and no missing referenced images. Preserve the remote research descriptions and other current editorial data. Both copies still have Instagram disabled; the accepted enabled profile configuration belongs in the later approved release candidate, not a remote write now. Three decision groups remain: composition (Publicacoes/order/test section), authoritative About/footer coordination wording, and Albert's institution plus three local team-photo edits.
+
+**Compatibility clarification to the historical C2 gate:** actual `/source/` already contains schema version 2 and an enabled empty custom test section. The current validator accepts it without diagnostics. Older pre-C2 packaged editors must not overwrite it now. This observation does not establish who uploaded it or whether it is publicly deployed. The remote source lacks the accepted Instagram and canonical no-photo modules and the partner-logo adapter correction. A controlled source-code/runtime-asset upgrade and separately verified compatible package are required before fresh retrieval/build/publication; neither was performed here.
+
+The plan's existing uncommitted history is retained, with this dated assessment superseding earlier pending Instagram/C3 recommendations. No forced cleanup or commit is needed. After maintainer approval, assemble the approved candidate in an isolated working copy, preserving newer remote content, then proceed through integrated release acceptance -> compatible packaging -> backup/controlled source upgrade -> fresh retrieval/build parity -> reviewed production publication -> live verification/handoff. Each remote-write gate still requires explicit authorization and a fresh drift check.
+
+This audit changed documentation only. Narrow read-only schema/reference checks passed; no full test suite, build, packaging, source upload or publication was run. Existing content, generated data, settings, prompts and untracked user assets were preserved.
+
+### September 16 PROVALE Instagram
+
+The audit-informed prompt supersedes the historical C3 recommendation below. Instagram was the single essential feature gap; after this slice, the next finish-line stage is **editorial release-baseline approval**, then integrated acceptance, compatible packaging, authorized rollout and handoff. No further feature slice is scheduled.
+
+Anonymous preflight on September 16 loaded the exact `provaleinterinstitucional` profile and official `/embed/` endpoint, displaying the profile identity and six-post grid without authentication. The normal profile page displayed a signup prompt, but the embed did not require login. The official Instagram help page confirmed public-profile embedding. No account-setting restriction was observed and no administrator action is currently required. Official menu-copy was not independently exercised; the prompt-supplied blockquote/embed.js format was verified through the real renderer. References: [profile embed](https://www.instagram.com/provaleinterinstitucional/embed/), [official help](https://help.instagram.com/620154495870484/). Provider availability is time-bound, not guaranteed indefinitely.
+
+Reuse: existing `content/extensao.json` project `instagram.enabled/source/provider`, adapter pass-through, focused form, draft, Save/Discard and native verified singleton persistence. The accepted configuration is `{ enabled: true, provider: "instagram", source: "https://www.instagram.com/provaleinterinstitucional/" }`. Only this profile is supported. URL input accepts the exact www/non-www HTTPS host and canonicalizes approved tracking parameters. The supplied official snippet is parsed in a disconnected inert template; only its validated destination reaches the draft/JSON. Arbitrary scripts, iframes, event handlers, conflicting destinations, deceptive hosts and unsupported paths are rejected. No second configuration or persistence system, backend, API, credentials, OAuth, token or scraping service was introduced.
+
+The focused Instagram group has an activation checkbox and profile/code input; activating an empty configuration supplies the intended profile. Provider is derived, not user-entered. Invalid pasted content remains only in the input and blocks Save. No real content was activated/migrated by the implementation. Public rendering owns the blockquote and fixed official script, with one loader per document, bounded eight-second script startup and non-blocking section completion. Stable project-specific region IDs replace the old shared ID. The external `Ver PROVALE no Instagram` link always remains, including disabled, invalid, blocked and failed states.
+
+Security: inline editor composition previews remain inert/link-only. Only the public entry point opts into provider execution, and the renderer/loader also refuse documents exposing `labfonDesktopHost`. Revisar serves the generated site on its existing separate localhost origin; its iframe now has `allow-scripts allow-same-origin allow-popups`, without top navigation or sandbox escape. No native bridge, Node or context-isolation setting changed. A real offscreen Electron cross-origin review fixture using this sandbox confirmed absent Node/own bridge and denied parent-bridge access while the embed rendered. This is not packaged acceptance.
+
+Verification: **59 focused tests passed (3 files), 418 full-suite tests passed (30 files), production web/editor build passed once**. The final review sandbox attribute was additionally verified by **38 bootstrap tests** after the full-suite run; no full-suite rerun. Existing `public/data.json` was preserved byte-for-byte. Generated-site fixtures enabled Extensao/Instagram only in the temporary HTTP response, not canonical files or the disposable project. Desktop/narrow screenshots showed the real PROVALE grid, one script and no horizontal overflow. The blocked-provider fixture retained the biography/link with no loading spinner or embed slot. Instagram emitted non-fatal `route config was null` console messages; no page-breaking error was observed. The acceptance harness initially quit between windows; its lifecycle was corrected before completing the blocked-provider check, without application changes.
+
+Manual steps and checkpoint export are in [PROVALE_INSTAGRAM_RETEST.md](PROVALE_INSTAGRAM_RETEST.md). Existing editorial differences still require maintainer approval. C3, generalized embeds, other providers, Site-logo work, packaging, FTP/source update and production publication were not started. This plan already contained uncommitted handoff edits before the run; preserve them rather than folding the whole file into the feature commit.
+
+### Site-Logo Closure and Current Handoff
+
+This documentation-only handoff at `fe9828f` supersedes earlier pending Site-logo retest and next-media instructions below. Prior implementation and verification history is retained, not repeated or reclassified as new testing.
+
+Site header-logo replacement was explored and implemented as a raster replacement workflow because the existing SVG `<picture>` structure triggered the previous stop condition. The maintainer now reports that manual testing indicates replacement behaves as intended. However, **header-logo replacement was never a required project goal**. This is a closed, non-priority branch of work, not a defect or failed implementation. Preserve the committed implementation; do not expand, polish or generalize it without a future explicit maintainer request. SVG upload support, retina generation, logo removal, image conversion and broader Site-logo tooling are deferred indefinitely. The existing retest guide remains historical/reference material, not a mandatory next gate.
+
+Treat remote/local project workflows, saved-project reopening, focused content forms, C2 custom sections, draft-preview synchronization, local save-status behavior, Equipe photo management and canonical no-photo semantics, Parcerias logos/card layout, expanded/compact header geometry and scroll hysteresis, button styling and editor usability as substantially stable/accepted. Do not reopen these areas without concrete regression evidence. Preserve existing content and all unrelated local changes. Compatible-package rollout and the production safeguards above remain separate, unperformed gates.
+
+Prioritize future work by direct user value, completion of planned core functionality, low regression risk, reuse of existing architecture, avoidance of speculative features, and conscious use of model credits, rate limits and development time. Do not schedule broad refactors for elegance or repeat acceptance suites without relevant changes or a concrete failure.
+
+**One recommended next slice: C3, one constrained image block for existing custom sections.** This fills a planned editorial capability beyond C2's text blocks while reusing its approved contract, adapter/renderer separation, controlled forms and canonical whole-page draft/save/discard flow. Limit the slice to existing approved asset paths, required alternative text, bounded contained dimensions, shared preview/public rendering and focused round-trip/path tests. No new upload system, file manager, cards/grouping, embed or general layout work in that slice. Preserve legacy content and disabled blocks. Confirm the contract's existing extension point in that separately authorized run; do not redesign it here. Recommended reasoning: **Medium**, escalating only for a concrete compatibility or persistence blocker.
+
+No application code, tests or build outputs were changed or rerun in this handoff. No FTP, production publication, packaging, C3 implementation or Instagram work was started. The working tree contains unrelated user edits, so the prompt's clean-tree condition for a documentation-only commit/push is not met; leave this plan update uncommitted and preserve those edits exactly. Halt after the handoff.
 
 ### September 14 Site Header Logo Replacement
 
@@ -54,7 +134,7 @@ Final full suite: **384 passed / 29 files**. Two preceding full runs each report
 
 Changed application files: `src/js/editor/content-editor.js`, `content-fields.js`, `image-field.js`, `src/js/site-content.js`, `src/css/main.css`. Tests extend `editor-photo-integration`, `site-content`, and `image-assets`, including real managed-copy -> canonical Site write -> generated data -> JSONAdapter -> header binder and Vite asset copy. [SITE_HEADER_LOGO_RETEST.md](SITE_HEADER_LOGO_RETEST.md) updates only the five application files in the disposable project while preserving content/assets.
 
-Next exact action: Site header-logo manual acceptance. After acceptance, choose a separately authorized C3 increment or independent Instagram phase according to maintainer priority. SVG upload/conversion, logo removal, retina generation, C3, Instagram, packaging, real FTP/source update and production publication were not started.
+Historical next action at implementation completion: Site header-logo manual acceptance, then a separately authorized development slice. Superseded by the Site-Logo Closure and Current Handoff above. SVG upload/conversion, logo removal, retina generation, C3, Instagram, packaging, real FTP/source update and production publication were not started.
 
 ### September 14 Shell Stabilization
 
@@ -445,7 +525,7 @@ Likely files: `page/composition.js`, `page/section-registry.js`, `page/navigatio
 
 ### C3. Remaining Constrained Blocks and Layouts
 
-**Status: NOT STARTED.** Requires a separate authorized slice after C2 acceptance.
+**Status: OPTIONAL; OMITTED FROM THIS RELEASE.** The historical proposal below is not a release gate or current next action. Requires a future explicit request.
 
 Add one block/layout at a time after C2 passes. Images accept existing approved asset paths or validated URLs with required alternative text and bounded dimensions; no file manager or new upload system. Check `/labfonac/` and packaged-preview bases. Eager-load the header logo; lazy-load appropriate below-fold images.
 
@@ -455,7 +535,7 @@ The embed block should reuse Phase D's restricted Instagram representation. Do n
 
 ## Phase D - Instagram, Independent of Custom Sections
 
-**Status: NOT STARTED.** Provider/input verification and implementation remain future work.
+**Status: MANUALLY ACCEPTED for the PROVALE profile only at c2dc0e2.** All nine focused maintainer checks passed; see the feature-freeze assessment above. The following original requirements are historical scope; generic custom embeds remain omitted. Integrated packaged acceptance remains a separate release gate.
 
 May run after A/B and before C if PROVALE social integration is the higher priority. Existing Extensao fields are the smaller extension point.
 
@@ -471,7 +551,7 @@ Changes: extension form fields and `extensao.js`, a narrowly scoped normalizer/l
 
 ## Integrated Acceptance and Release Gate
 
-**Status: NOT STARTED for the custom-section schema.** C2 manual desktop acceptance, compatible-package validation, maintainer upgrades and pre-feature backup precede any production `/source/` update or publication. Existing older releases are not C2-compatible verification evidence.
+**Status: COMPLETE AND LIVE VERIFIED on September 21, 2026.** C2 manual desktop acceptance, human Equipe proof, approved candidate parity, normal remote source update, fresh retrieval, Revisar, publication and live checks passed. Compatible-package distribution and backup/recovery remain separate operational follow-up; older pre-C2 editors must not overwrite the schema-v2 source.
 
 After each chosen run, use focused tests while editing, then one full `npx vitest run` and one production build. Repackage once when code shipped in the editor changes; content-only edits do not justify repackaging. Run narrower checks between slices, not the entire release workflow repeatedly.
 
@@ -505,4 +585,4 @@ Equipe remains manually accepted at `311109c`; its historical reopen discrepancy
 - **Run C:** approve C0 and implement C2 only. Add C3 and/or D in subsequent bounded runs; do not force security-sensitive embeds and custom persistence into one budget merely to fit the source document's suggested three runs.
 - **Release run:** integrated acceptance and authorized publication after chosen slices are green. Optional active-navigation refinement and unrelated dependency/documentation cleanup remain deferred.
 
-Next exact action: **maintainer Site header-logo retest**, following [SITE_HEADER_LOGO_RETEST.md](SITE_HEADER_LOGO_RETEST.md). Equipe, Parcerias and shell stabilization are accepted; do not repeat their full checklists. The historical Equipe reopen discrepancy remains not reproduced, with no cause/fix claimed. After Site acceptance, choose one separately authorized C3 increment or independent Instagram slice. Do not start C3, B3, Instagram, packaging or production FTP automatically.
+Current handoff: the production release is complete and live-verified. Preserve the accepted composition and editorial source. The next separately authorized operational work is compatible package distribution and a simple backup/recovery workflow. Instagram's functional checks are already accepted, not a checklist to repeat automatically. C3 is omitted; B3 and Site-logo expansion remain deferred. Do not start another feature automatically.

@@ -19,11 +19,6 @@
         "style": "primary"
       },
       {
-        "label": "Publicações",
-        "href": "#trabalhos",
-        "style": "secondary"
-      },
-      {
         "label": "Contato",
         "href": "#contato",
         "style": "secondary"
@@ -36,11 +31,7 @@
       "Tradição e Inovação na Ciência da Fala",
       "Estabelecido no início da década de 1990 por iniciativa do Professor João Moraes na Faculdade de Letras, o Laboratório de Fonética Acústica da UFRJ consolidou-se como um centro de excelência dedicado à pesquisa científica dos sons da fala humana.",
       "Atualmente vinculado ao Programa de Pós-Graduação em Letras Vernáculas (PPGLEV) e sob a coordenação das professoras Manuella Carnaval (UFRJ) e Carolina Silva (UFPB), o grupo desenvolve estudos de ponta que integram Fonética Experimental, Fonologia e Prosódia — com ênfase recente em Prosódia Multimodal e suas interfaces.",
-      "Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa.",
-      {
-        "label": "Missão:",
-        "text": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
-      }
+      "Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa."
     ]
   },
   "footer": {
@@ -103,13 +94,23 @@
     ],
     "coordination": {
       "lab": [
-        { "name": "João Moraes" },
-        { "name": "Manuella Carnaval" }
+        {
+          "name": "João Moraes"
+        },
+        {
+          "name": "Manuella Carnaval"
+        }
       ],
       "extensionProject": [
-        { "name": "Carolina Gomes da Silva" },
-        { "name": "Manuella Carnaval" },
-        { "name": "Juliana Dias" }
+        {
+          "name": "Carolina Gomes da Silva"
+        },
+        {
+          "name": "Manuella Carnaval"
+        },
+        {
+          "name": "Juliana Dias"
+        }
       ]
     },
     "bottomText": "© Laboratório de Fonética Acústica | UFRJ. Todos os direitos reservados."

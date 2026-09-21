@@ -10,9 +10,9 @@
       "coordination": [],
       "socialLinks": [],
       "instagram": {
-        "enabled": false,
-        "source": null,
-        "provider": null
+        "enabled": true,
+        "source": "https://www.instagram.com/provaleinterinstitucional/",
+        "provider": "instagram"
       }
     }
   ]

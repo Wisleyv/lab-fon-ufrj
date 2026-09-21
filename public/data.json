@@ -20,11 +20,6 @@
           "style": "primary"
         },
         {
-          "label": "Publicações",
-          "href": "#trabalhos",
-          "style": "secondary"
-        },
-        {
           "label": "Contato",
           "href": "#contato",
           "style": "secondary"
@@ -37,11 +32,7 @@
         "Tradição e Inovação na Ciência da Fala",
         "Estabelecido no início da década de 1990 por iniciativa do Professor João Moraes na Faculdade de Letras, o Laboratório de Fonética Acústica da UFRJ consolidou-se como um centro de excelência dedicado à pesquisa científica dos sons da fala humana.",
         "Atualmente vinculado ao Programa de Pós-Graduação em Letras Vernáculas (PPGLEV) e sob a coordenação das professoras Manuella Carnaval (UFRJ) e Carolina Silva (UFPB), o grupo desenvolve estudos de ponta que integram Fonética Experimental, Fonologia e Prosódia — com ênfase recente em Prosódia Multimodal e suas interfaces.",
-        "Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa.",
-        {
-          "label": "Missão:",
-          "text": "Desenvolver pesquisas de ponta em fonética experimental e aplicada, formar pesquisadores qualificados e contribuir para o avanço do conhecimento sobre a língua portuguesa."
-        }
+        "Para viabilizar essas investigações, o Laboratório dispõe de infraestrutura especializada, incluindo estúdio com isolamento acústico e equipamentos de alta performance para a constituição de corpora audiovisuais, contribuindo decisivamente para o avanço do conhecimento sobre a língua portuguesa."
       ]
     },
     "footer": {
@@ -127,6 +118,7 @@
     }
   },
   "page": {
+    "schemaVersion": 2,
     "kind": "single-page",
     "sections": [
       {
@@ -163,7 +155,8 @@
         "order": 2,
         "navigation": {
           "visible": false,
-          "label": "Linhas de Pesquisa"
+          "label": "Linhas de Pesquisa",
+          "children": []
         },
         "presentation": {
           "variant": "cards"
@@ -176,7 +169,8 @@
         "order": 3,
         "navigation": {
           "visible": true,
-          "label": "Equipe"
+          "label": "Equipe",
+          "children": []
         },
         "presentation": {
           "variant": "grouped"
@@ -185,11 +179,12 @@
       {
         "id": "publicacoes",
         "type": "publicacoes",
-        "enabled": true,
+        "enabled": false,
         "order": 4,
         "navigation": {
           "visible": true,
-          "label": "Publicações"
+          "label": "Publicações",
+          "children": []
         },
         "presentation": {
           "variant": "default"
@@ -201,11 +196,12 @@
       {
         "id": "extensao",
         "type": "extension",
-        "enabled": false,
+        "enabled": true,
         "order": 5,
         "navigation": {
           "visible": true,
-          "label": "Extensão"
+          "label": "Extensão",
+          "children": []
         },
         "presentation": {
           "variant": "default"
@@ -218,7 +214,8 @@
         "order": 6,
         "navigation": {
           "visible": false,
-          "label": "Parcerias"
+          "label": "Parcerias",
+          "children": []
         },
         "presentation": {
           "variant": "default"
@@ -231,7 +228,7 @@
       "nome": "Carolina Gomes da Silva",
       "instituicao": "UFPB",
       "categoria": "coordenacao",
-      "foto": "assets/images/carolina_silva.jpeg",
+      "foto": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
       "lattes": "http://lattes.cnpq.br/6450917807340365"
     },
     {
@@ -243,9 +240,9 @@
     },
     {
       "nome": "Albert Olivier Blaise Rilliard",
-      "instituicao": "UFRJ",
+      "instituicao": "LISN",
       "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
+      "foto": "assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
       "lattes": "http://lattes.cnpq.br/7604104346087790"
     },
     {
@@ -366,7 +363,7 @@
       "nome": "Maria Luiza de Almeida Mattos Weinstein",
       "instituicao": "UFRJ",
       "categoria": "graduacao",
-      "foto": "assets/images/maria_luiza_weinstein.jpeg",
+      "foto": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
       "lattes": "http://lattes.cnpq.br/2540203937814048"
     },
     {
@@ -422,11 +419,11 @@
   "linhas_pesquisa": [
     {
       "id": "fonetica-experimental",
-      "nome": "Fonêtica Experimental",
+      "nome": "Fonética Experimental",
       "icon": "fa-solid fa-wave-square",
       "estudantes": 0,
       "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "Esta linha de pesquisa tem como foco a investigação dos parâmetros acústicos, articulatórios e perceptivos da fala por meio de métodos experimentais e análises instrumentais.",
       "ordem": 1
     },
     {
@@ -435,7 +432,7 @@
       "icon": "fa-solid fa-masks-theater",
       "estudantes": 4,
       "pesquisadores": 4,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "Esta linha de pesquisa tem como tema a descrição e análise da estrutura entonacional de atos de fala expressivos, de emoções e de atitudes numa perspectiva multimodal. ",
       "ordem": 2
     },
     {
@@ -444,7 +441,7 @@
       "icon": "fa-solid fa-diagram-project",
       "estudantes": 5,
       "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "Esta linha de pesquisa tem como objetivo analisar a organização e a representação fonológica dos fenômenos suprassegmentais, como acento, ritmo e entoação, na estrutura da língua.",
       "ordem": 3
     },
     {
@@ -453,7 +450,7 @@
       "icon": "fa-solid fa-network-wired",
       "estudantes": 4,
       "pesquisadores": 7,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "Esta linha de pesquisa tem como objetivo incentivar a relação da área de prosódia com outros campos da pesquisa linguística, contribuindo para uma abordagem holística dos fenômenos estudados.",
       "ordem": 4
     },
     {
@@ -462,7 +459,7 @@
       "icon": "fa-solid fa-photo-film",
       "estudantes": 6,
       "pesquisadores": 3,
-      "descricao": "[Descrição da linha de pesquisa]",
+      "descricao": "Esta linha de pesquisa dedica-se ao estudo da integração entre os elementos prosódicos da fala e os recursos gestuais, faciais e corporais na construção do sentido e na interação.",
       "ordem": 5
     },
     {
@@ -481,7 +478,7 @@
       "sigla": "CAPES",
       "localizacao": "Brasília, DF",
       "tipo": "agencia-fomento",
-      "descricao": "Agência de fomento à pesquisa e pós-graduação",
+      "descricao": "Agência de fomento à pesquisa e pós-graduação.",
       "url": "https://www.gov.br/capes"
     },
     {
@@ -1075,9 +1072,9 @@
         "coordination": [],
         "socialLinks": [],
         "instagram": {
-          "enabled": false,
-          "source": null,
-          "provider": null
+          "enabled": true,
+          "source": "https://www.instagram.com/provaleinterinstitucional/",
+          "provider": "instagram"
         }
       }
     ]
