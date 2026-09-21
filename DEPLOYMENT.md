@@ -1,324 +1,84 @@
-# Deployment Guide - Lab Fonética UFRJ
+# Publicação e empacotamento
 
-## 🚀 Quick Automated Deployment (NEW!)
+Este documento orienta desenvolvedores e responsáveis pela preparação de versões. Para manutenção comum do conteúdo, consulte o [Guia do Usuário do Editor Labfonac](docs/GUIA-DO-USUARIO.md).
 
-**You now have automated deployment scripts!**
+## Modelo vigente
 
-### Option 1: PowerShell FTP Deploy (Simpler)
-```powershell
-.\deploy-staging.ps1
-```
+O site de produção é estático. O Editor Labfonac mantém uma cópia local de trabalho, salva o conteúdo, gera os arquivos do site e publica pelo acesso FTP configurado no próprio aplicativo.
 
-### Option 2: WinSCP Deploy (Recommended - Faster)
-```powershell
-.\deploy-winscp.ps1
-```
+Os caminhos remotos do projeto editável e do site publicado são controlados pelo Editor. Não devem ser escolhidos manualmente pelo mantenedor.
 
-See **Automated Deployment** section below for setup details.
+Não há backend, banco de dados ou processo de build no servidor. Também não há publicação automática a partir de `main`: uma alteração no GitHub não substitui a revisão e a publicação explícita pelo Editor.
 
----
+## Verificação do código-fonte
 
-## Architecture Overview
-
-```
-Development (Local):
-├─ Git Repository: C:\Users\vil3l\OneDrive\...\lab-fon-ufrj
-│  └─ Source code, tests, dev tools, documentation
-└─ Build Output: C:\labfonac
-   └─ Production-ready files for upload
-
-Staging Server:
-└─ https://wisley.net/labfonac/
-   └─ Test deployment before production
-
-Production Server:
-└─ https://posvernaculas.letras.ufrj.br/labfonac/
-   └─ Final deployment (WordPress subfolder)
-```
-
-## Local Development Workflow
-
-### 1. Daily Development
+Em uma cópia limpa do repositório:
 
 ```powershell
-# Navigate to git repository
-cd 'C:\Users\vil3l\OneDrive\1 - Work\PPGLEV\Laboratorio Fonetica\Git\lab-fon-ufrj'
-
-# Start development server
-npm run dev
-
-# Visit in browser
-# http://localhost:3000
-```
-
-### 2. Make Changes
-
-- Edit files in the git repository
-- Test in the browser (hot-reload enabled)
-- Run tests: `npm test`
-- Lint code: `npm run lint`
-- Format code: `npm run format`
-
-### 3. Commit Changes
-
-```powershell
-# Stage changes
-git add .
-
-# Commit with descriptive message
-git commit -m "feat: description of changes"
-
-# Push to GitHub
-git push
-```
-
-## Build & Deployment Workflow
-
-### 🤖 Automated Deployment (Recommended)
-
-#### Setup Once:
-
-1. **Configure credentials** in `.env.deploy`:
-```bash
-FTP_HOST=ftp.wisley.net
-FTP_USER=your_username
-FTP_PASSWORD=your_password
-FTP_PROTOCOL=ftp    # or 'sftp' for secure connection
-REMOTE_PATH=/public_html/labfonac
-LOCAL_BUILD_PATH=C:/labfonac
-```
-
-2. **(Optional) Install WinSCP** for faster uploads:
-   - Download from https://winscp.net
-   - Install to default location
-
-#### Deploy to Staging:
-
-**Method A - PowerShell FTP (Simple):**
-```powershell
-.\deploy-staging.ps1
-```
-- Uses built-in Windows FTP
-- No additional software needed
-- Prompts for credentials if not configured
-
-**Method B - WinSCP (Faster & Recommended):**
-```powershell
-.\deploy-winscp.ps1
-```
-- Requires WinSCP installation
-- Only uploads changed files (much faster!)
-- Supports secure SFTP protocol
-- Better progress tracking
-
-**Dry Run (Test without uploading):**
-```powershell
-.\deploy-winscp.ps1 -DryRun
-```
-
-Both scripts automatically:
-1. ✅ Build the project (`npm run build:staging`)
-2. ✅ Upload all files to your server
-3. ✅ Show progress and summary
-4. ✅ Display the live URL
-
----
-
-### 📋 Manual Deployment (Traditional Method)
-
-If you prefer manual control:
-
-#### Step 1: Build for Production
-
-```powershell
-# Navigate to git repository
-cd 'C:\Users\vil3l\OneDrive\1 - Work\PPGLEV\Laboratorio Fonetica\Git\lab-fon-ufrj'
-
-# Build staging files
-npm run build:staging
-
-# Or for production
-npm run build:production
-```
-
-**Output:** Production-ready files are created in `C:\labfonac\`
-
-#### Step 2: Verify Build Output
-
-```powershell
-# Check that files were created
-ls C:\labfonac
-
-# Expected contents:
-# - index.html
-# - js/
-# - assets/
-# - .htaccess
-```
-
-### Step 3: Deploy to Staging (Testing)
-
-#### Using FileZilla:
-
-1. **Open FileZilla**
-2. **Connect to Staging Server:**
-   - Host: `wisley.net`
-   - Protocol: SFTP or FTP
-   - Port: 22 (SFTP) or 21 (FTP)
-   - Username: [your username]
-   - Password: [your password]
-
-3. **Upload Files:**
-   - Local: Navigate to `C:\labfonac\`
-   - Remote: Navigate to `/labfonac/` (or `/public_html/labfonac/`)
-   - Select all files in `C:\labfonac\`
-   - Drag and drop to remote folder
-   - Overwrite when prompted
-
-4. **Test:**
-   - Visit: https://wisley.net/labfonac
-   - Test all functionality
-   - Check browser console for errors
-   - Test on mobile devices
-
-### Step 4: Deploy to Production
-
-**⚠️ Only deploy after successful staging tests!**
-
-#### Using FileZilla:
-
-1. **Open FileZilla**
-2. **Connect to Production Server:**
-   - Host: `posvernaculas.letras.ufrj.br`
-   - Protocol: SFTP or FTP
-   - Port: 22 (SFTP) or 21 (FTP)
-   - Username: [your username]
-   - Password: [your password]
-
-3. **Upload Files:**
-   - Local: Navigate to `C:\labfonac\`
-   - Remote: Navigate to `/labfonac/` (WordPress subfolder)
-   - Select all files in `C:\labfonac\`
-   - Drag and drop to remote folder
-   - Overwrite when prompted
-
-4. **Test:**
-   - Visit: https://posvernaculas.letras.ufrj.br/labfonac
-   - Verify all functionality works
-   - Check that WordPress installation is unaffected
-
-## Available npm Scripts
-
-```powershell
-# Development
-npm run dev                  # Start dev server (localhost:3000)
-npm run preview              # Preview production build locally
-npm run preview:staging      # Preview with /labfonac/ base path
-
-# Building
-npm run build                # Build for production → C:\labfonac
-npm run build:staging        # Build with staging mode
-npm run build:production     # Build with production mode
-npm run deploy:build         # Build + reminder to upload
-
-# Testing & Quality
-npm test                     # Run unit tests
-npm run test:ui              # Run tests with UI
-npm run test:coverage        # Run tests with coverage report
-npm run lint                 # Check code for errors
-npm run format               # Format code with Prettier
-```
-
-## Important Notes
-
-### Git Repository vs Build Output
-
-- **Git Repository:** `C:\Users\vil3l\OneDrive\...\lab-fon-ufrj`
-  - Contains source code, tests, documentation
-  - Tracked by git and pushed to GitHub
-  - Used for development only
-
-- **Build Output:** `C:\labfonac\`
-  - Contains compiled production files
-  - NOT tracked by git (excluded in `.gitignore`)
-  - Only used for deployment
-  - Generated by `npm run build`
-
-### WordPress Compatibility
-
-- The SPW lives in `/labfonac/` subfolder
-- WordPress installation in root is not modified
-- `.htaccess` file ensures proper routing
-- Assets load correctly with `/labfonac/` base path
-
-### Rollback Strategy
-
-If you need to rollback a deployment:
-
-1. **Keep a backup** of previous `C:\labfonac\` before building:
-   ```powershell
-   # Backup current build
-   Copy-Item -Recurse C:\labfonac C:\labfonac-backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')
-   ```
-
-2. **Restore from backup:**
-   ```powershell
-   # List backups
-   ls C:\labfonac-backup-*
-   
-   # Restore specific backup
-   Remove-Item -Recurse C:\labfonac
-   Copy-Item -Recurse C:\labfonac-backup-20250112-143000 C:\labfonac
-   ```
-
-### Troubleshooting
-
-#### Build fails
-```powershell
-# Clear node_modules and reinstall
-Remove-Item -Recurse node_modules
-npm install
+npm ci
+npm test -- --run
 npm run build
 ```
 
-#### Assets not loading on server
-- Verify `base: "/labfonac/"` in `vite.config.js`
-- Check that `.htaccess` was uploaded
-- Verify file permissions on server (755 for directories, 644 for files)
+O comando `npm run build` gera o site estático em `dist/`. Esse diretório é gerado e ignorado pelo Git.
 
-#### 404 errors
-- Ensure `.htaccess` has correct `RewriteBase /labfonac/`
-- Verify Apache `mod_rewrite` is enabled on server
-- Check that all files were uploaded correctly
+## Aplicativo Windows
 
-## Pre-Deployment Checklist
-
-Before deploying to production:
-
-- [ ] All tests passing (`npm test`)
-- [ ] No linting errors (`npm run lint`)
-- [ ] Code formatted (`npm run format`)
-- [ ] Changes committed and pushed to GitHub (`git status`)
-- [ ] Build successful (`npm run build`)
-- [ ] Build output verified in `C:\labfonac\`
-- [ ] Tested on staging server (wisley.net)
-- [ ] Cross-browser testing completed
-- [ ] Mobile testing completed
-- [ ] Backup of current production created (if updating)
-
-## Quick Reference
+Para gerar os artefatos do Editor:
 
 ```powershell
-# Full deployment workflow
-cd 'C:\Users\vil3l\OneDrive\1 - Work\PPGLEV\Laboratorio Fonetica\Git\lab-fon-ufrj'
-npm test && npm run lint && npm run build
-# → Upload C:\labfonac via FileZilla
-# → Test on staging
-# → Upload to production
+npm ci
+npm run editor:build
 ```
 
-## Contact & Support
+O Electron Builder produz em `release/`:
 
-- **Repository:** https://github.com/Wisleyv/lab-fon-ufrj
-- **Staging URL:** https://wisley.net/labfonac
-- **Production URL:** https://posvernaculas.letras.ufrj.br/labfonac
+- instalador NSIS x64 por usuário;
+- distribuição Windows não instalada (`win-unpacked`).
+
+O diretório `release/` é ignorado pelo Git. Não registre instaladores, executáveis ou demais binários gerados no repositório.
+
+Antes de distribuir uma versão, verifique em uma cópia limpa:
+
+1. instalação sem privilégio administrativo desnecessário;
+2. abertura pelo menu Iniciar;
+3. identidade visual e abas do Editor;
+4. presença da entrada de desinstalação;
+5. desinstalação completa;
+6. abertura da distribuição portátil.
+
+O instalador `v1.0.0` não possui assinatura digital. O Windows pode indicar fornecedor desconhecido ou exibir um aviso de reputação. Isso deve ser comunicado com neutralidade; não desative nem oriente o usuário a desativar proteções do sistema.
+
+## Publicação do site
+
+O fluxo operacional aceito é executado no Editor:
+
+1. abrir o projeto remoto;
+2. editar e salvar o conteúdo e a página;
+3. usar **Gerar site**;
+4. revisar em **Prévia do site gerado**;
+5. validar a conexão;
+6. usar **Atualizar projeto remoto**;
+7. usar **Publicar site**;
+8. verificar manualmente o site público.
+
+Salvar conteúdo, atualizar o projeto editável remoto e publicar o site são operações diferentes. Nenhuma publicação deve ser presumida após um salvamento local.
+
+## Segurança
+
+- Mantenha senhas, tokens e dados de conexão fora do Git.
+- Não inclua credenciais em documentação, scripts ou relatórios.
+- Não publique por scripts antigos ou por upload manual para contornar uma falha do Editor.
+- Em caso de falha, preserve a mensagem apresentada e investigue antes de repetir a operação.
+
+## Preparação de uma versão
+
+Depois da aceitação funcional e documental:
+
+1. confirme que a branch de versão está limpa e sincronizada;
+2. faça a integração revisada em `main`;
+3. crie a tag da versão;
+4. publique no GitHub Release somente os artefatos verificados destinados ao usuário;
+5. registre os resultados da instalação, abertura e desinstalação.
+
+Merge, tag e GitHub Release são ações explícitas e não fazem parte da publicação cotidiana de conteúdo.

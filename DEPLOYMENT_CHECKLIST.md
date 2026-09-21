@@ -3,6 +3,8 @@
 **Build:** Production build completed  
 **Commit:** e6611ee - feat: Implement comprehensive Publications section
 
+> **Registro histórico:** este checklist documenta uma implantação antiga da seção de Publicações. Não use os caminhos, servidores ou procedimentos abaixo para uma publicação atual. Consulte [DEPLOYMENT.md](DEPLOYMENT.md) e o [guia do usuário](docs/GUIA-DO-USUARIO.md).
+
 ---
 
 ## ✅ Pre-Deployment Verification
@@ -94,12 +96,7 @@
 
 ### Option 2: Automated Deployment Script
 
-**Using:** `deploy-staging.ps1`
-
-```powershell
-cd "C:\Users\vil3l\OneDrive\1 - Work\PPGLEV\Laboratorio Fonetica\Git\lab-fon-ufrj"
-.\deploy-staging.ps1
-```
+The former staging deployment script was retired when publication moved to the Editor Labfonac. See the historical notice above for the current documentation.
 
 ---
 

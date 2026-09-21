@@ -21,8 +21,7 @@
     "test:coverage": "vitest --coverage",
     "editor:smoke:ftp": "node scripts/editor-smoke-ftp.cjs",
     "lint": "eslint src/**/*.js",
-    "format": "prettier --write \"**/*.{js,css,html,md}\"",
-    "deploy:build": "vite build && echo Build complete! Upload C:\\labfonac via FileZilla to server"
+    "format": "prettier --write \"**/*.{js,css,html,md}\""
   },
   "keywords": [
     "fonética",
