@@ -14,8 +14,8 @@ function createProfile(overrides = {}) {
     host: "localhost",
     port: 21,
     username: "editor",
-    remoteSourcePath: "/labfon-source",
-    remotePublishPath: "/site",
+    remoteSourcePath: "/source",
+    remotePublishPath: "/",
     secure: false,
     passiveMode: true,
     hasPassword: true,
@@ -307,7 +307,7 @@ describe("editor safe FTP publication", () => {
         ),
       );
       const remoteData = JSON.parse(
-        await fs.readFile(path.join(remoteRoot, "site", "data.json"), "utf8"),
+        await fs.readFile(path.join(remoteRoot, "data.json"), "utf8"),
       );
       const publicacoes = remoteData.page.sections.find(
         (section) => section.type === "publicacoes",
@@ -320,12 +320,12 @@ describe("editor safe FTP publication", () => {
       expect(result.ok).toBe(true);
       expect(result.manifest.fileCount).toBeGreaterThan(2);
       expect(result.manifest.uploadedCount).toBe(result.manifest.fileCount);
-      expect(await fs.stat(path.join(remoteRoot, "site", "index.html"))).toBeTruthy();
-      expect(await fs.stat(path.join(remoteRoot, "site", "data.json"))).toBeTruthy();
+      expect(await fs.stat(path.join(remoteRoot, "index.html"))).toBeTruthy();
+      expect(await fs.stat(path.join(remoteRoot, "data.json"))).toBeTruthy();
       expect(publicacoes.enabled).toBe(false);
       expect(extensao.enabled).toBe(true);
       expect(remoteData.extensao.projects[0].title).toBe("PROVALE em Extensão");
-      expect(uploadCalls.at(-1)[1]).toBe("/site/index.html");
+      expect(uploadCalls.at(-1)[1]).toBe("/index.html");
       expect(client.calls.at(-1)).toEqual(["close"]);
     } finally {
       await project.cleanup();

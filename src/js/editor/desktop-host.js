@@ -266,8 +266,16 @@ export function createNativeDesktopHost(nativeBridge) {
       );
     },
 
-    async retrieveRemoteProject(profile, password) {
-      return nativeBridge.retrieveRemoteProject(profile, password);
+    async retrieveRemoteProject(profile, password, onProgress) {
+      const unsubscribe = typeof onProgress === "function"
+        && typeof nativeBridge.onRemoteProjectRetrievalProgress === "function"
+        ? nativeBridge.onRemoteProjectRetrievalProgress(onProgress)
+        : null;
+      try {
+        return await nativeBridge.retrieveRemoteProject(profile, password);
+      } finally {
+        unsubscribe?.();
+      }
     },
 
     async initializeRemoteProjectSource(directory, profile, password) {
@@ -511,9 +519,9 @@ export function createMemoryDesktopHost(filesByPath = {}, options = {}) {
       };
     },
 
-    async retrieveRemoteProject(profile, password) {
+    async retrieveRemoteProject(profile, password, onProgress) {
       if (typeof options.retrieveRemoteProject === "function") {
-        return options.retrieveRemoteProject(profile, password);
+        return options.retrieveRemoteProject(profile, password, onProgress);
       }
 
       return {

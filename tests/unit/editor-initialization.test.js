@@ -29,7 +29,7 @@ describe("remote initialization readiness", () => {
     expect(getSourceInitializationReadiness(state, profile, "").ok).toBe(false);
   });
 
-  it.each([{ secure: false }, { remoteSourcePath: "/other" }, { host: "" }, { username: "changed" }])("rejects unsafe or changed profile %j", override => {
+  it.each([{ secure: false }, { host: "" }, { username: "changed" }])("rejects unsafe or changed profile %j", override => {
     expect(getSourceInitializationReadiness(eligibleState(), { ...profile, ...override }, "").ok).toBe(false);
   });
 
@@ -80,9 +80,8 @@ async function fixture() {
   app.store.setState({ openedProject: eligibleState().openedProject });
   document.getElementById("editor-connect-ftp").click();
   await vi.waitFor(() => expect(app.store.getState().remote.status).toBe("connected"));
-  const open = [...document.querySelectorAll("button")].find(button => button.textContent === "Abrir");
-  open.click();
-  await vi.waitFor(() => expect(app.store.getState().remote.currentPath).toBe("/source"));
+  expect(app.store.getState().remote.currentPath).toBe("/source");
+  expect(host.listRemoteDirectory).toHaveBeenCalledWith(profile, "", "/source");
   return { app, host, button: document.getElementById("editor-initialize-remote-source") };
 }
 

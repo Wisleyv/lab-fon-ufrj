@@ -89,6 +89,12 @@ contextBridge.exposeInMainWorld("labfonDesktopHost", {
     return ipcRenderer.invoke("labfon:retrieveRemoteProject", profile, password);
   },
 
+  onRemoteProjectRetrievalProgress(callback) {
+    const listener = (_event, progress) => callback(progress);
+    ipcRenderer.on("labfon:remoteProjectRetrievalProgress", listener);
+    return () => ipcRenderer.removeListener("labfon:remoteProjectRetrievalProgress", listener);
+  },
+
   initializeRemoteProjectSource(rootPath, profile, password) {
     return ipcRenderer.invoke(
       "labfon:initializeRemoteProjectSource",

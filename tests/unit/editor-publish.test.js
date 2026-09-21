@@ -40,8 +40,8 @@ function createProfile(overrides = {}) {
     host: "ftp.example.edu",
     port: 21,
     username: "editor",
-    remoteSourcePath: "/labfon-source",
-    remotePublishPath: "/public_html/labfonac",
+    remoteSourcePath: "/source",
+    remotePublishPath: "/",
     secure: false,
     passiveMode: true,
     hasPassword: false,
@@ -125,12 +125,16 @@ async function withNativeServices({ client } = {}, callback) {
 }
 
 describe("editor publish workflow", () => {
-  it("validates publish profile fields", () => {
-    const validation = validatePublishProfile(createProfile());
+  it("enforces the fixed remote paths while preserving connection fields", () => {
+    const validation = validatePublishProfile(createProfile({
+      remoteSourcePath: "/legacy-source",
+      remotePublishPath: "/public_html/labfonac",
+    }));
 
     expect(validation.valid).toBe(true);
-    expect(validation.profile.remoteSourcePath).toBe("/labfon-source");
-    expect(validation.profile.remotePublishPath).toBe("/public_html/labfonac");
+    expect(validation.profile.remoteSourcePath).toBe("/source");
+    expect(validation.profile.remotePublishPath).toBe("/");
+    expect(validation.profile.host).toBe("ftp.example.edu");
   });
 
   it("accepts slash as publication path when source path is distinct", () => {
@@ -142,7 +146,7 @@ describe("editor publish workflow", () => {
     expect(validation.profile.remotePublishPath).toBe("/");
   });
 
-  it("requires source and publication paths to be distinct", () => {
+  it("normalizes unsafe legacy path choices to the fixed destinations", () => {
     const validation = validatePublishProfile(
       createProfile({
         remoteSourcePath: "/",
@@ -150,13 +154,14 @@ describe("editor publish workflow", () => {
       }),
     );
 
-    expect(validation.valid).toBe(false);
-    expect(validation.diagnostics.map((item) => item.code)).toContain(
-      "PUBLISH_REMOTE_PATHS_NOT_DISTINCT",
-    );
+    expect(validation.valid).toBe(true);
+    expect(validation.profile).toMatchObject({
+      remoteSourcePath: "/source",
+      remotePublishPath: "/",
+    });
   });
 
-  it("reports missing host, username, and source path diagnostics", () => {
+  it("reports missing host and username without asking for fixed paths", () => {
     const validation = validatePublishProfile({
       host: "",
       username: "",
@@ -168,7 +173,6 @@ describe("editor publish workflow", () => {
     expect(validation.diagnostics.map((item) => item.code)).toEqual([
       "PUBLISH_HOST_MISSING",
       "PUBLISH_USERNAME_MISSING",
-      "PUBLISH_REMOTE_SOURCE_PATH_MISSING",
     ]);
   });
 
@@ -190,6 +194,32 @@ describe("editor publish workflow", () => {
       await expect(
         fs.access(path.join(process.cwd(), "content", "publish-profile.json")),
       ).rejects.toThrow();
+    });
+  });
+
+  it("loads legacy paths as fixed destinations and reports the correction", async () => {
+    await withNativeServices({}, async (userDataPath) => {
+      const publishDir = path.join(userDataPath, "publish");
+      await fs.mkdir(publishDir, { recursive: true });
+      await fs.writeFile(path.join(publishDir, "publish-profile.json"), JSON.stringify({
+        host: "ftp.example.edu",
+        port: 2100,
+        username: "editor",
+        remoteSourcePath: "/old-source",
+        remotePublishPath: "/public_html/labfonac",
+        secure: true,
+      }));
+
+      const result = await nativeHandlers.loadPublishProfile();
+
+      expect(result).toMatchObject({ ok: true, correctedPaths: true });
+      expect(result.message).toContain("corrigidos");
+      expect(result.profile).toMatchObject({
+        host: "ftp.example.edu",
+        username: "editor",
+        remoteSourcePath: "/source",
+        remotePublishPath: "/",
+      });
     });
   });
 
@@ -350,8 +380,8 @@ describe("editor publish workflow", () => {
 
     expect(result.ok).toBe(true);
     expect(result.summary).toEqual({
-      remotePublishPath: "/public_html/labfonac",
-      remoteSourcePath: "/labfon-source",
+      remotePublishPath: "/",
+      remoteSourcePath: "/source",
       publishFileCount: 2,
       sourceFileCount: 2,
       indexHtmlPresent: true,
@@ -456,7 +486,7 @@ describe("editor publish workflow", () => {
     expect(client.remove).toBeUndefined();
   });
 
-  it("navigates into a selected remote subdirectory", async () => {
+  it("ignores arbitrary directory-list paths at the native boundary", async () => {
     const client = createFakeFtpClient({ entries: [] });
 
     await withNativeServices({ client }, () =>
@@ -468,10 +498,11 @@ describe("editor publish workflow", () => {
       ),
     );
 
-    expect(client.calls).toContainEqual(["cd", "/labfon-source"]);
+    expect(client.calls).toContainEqual(["cd", "/source"]);
+    expect(client.calls).not.toContainEqual(["cd", "/labfon-source"]);
   });
 
-  it("classifies missing remote directory during browsing distinctly", async () => {
+  it("classifies a missing fixed source directory distinctly", async () => {
     const client = createFakeFtpClient({ failCd: "550 No such directory" });
 
     const result = await withNativeServices({ client }, () =>
@@ -487,7 +518,7 @@ describe("editor publish workflow", () => {
     expect(result.code).toBe("FTP_REMOTE_PATH_NOT_FOUND");
   });
 
-  it("allows connecting before assigning either remote path role", async () => {
+  it("connects with fixed remote paths without path assignment", async () => {
     let receivedProfile = null;
     const controller = createPublishController({
       host: createMemoryDesktopHost(
@@ -508,20 +539,24 @@ describe("editor publish workflow", () => {
     );
 
     expect(result.ok).toBe(true);
-    expect(receivedProfile.remoteSourcePath).toBe("");
+    expect(receivedProfile.remoteSourcePath).toBe("/source");
     expect(receivedProfile.remotePublishPath).toBe("/");
   });
 
-  it("lists remote directories through the controller before paths are assigned", async () => {
+  it("verifies only the fixed source directory through the controller", async () => {
+    let receivedPath = null;
     const controller = createPublishController({
       host: createMemoryDesktopHost(
         {},
         {
-          listRemoteDirectory: async (_profile, _password, remotePath) => ({
-            ok: true,
-            path: remotePath,
-            entries: [{ name: "labfon-source", type: "directory" }],
-          }),
+          listRemoteDirectory: async (_profile, _password, remotePath) => {
+            receivedPath = remotePath;
+            return {
+              ok: true,
+              path: remotePath,
+              entries: [{ name: "content", type: "directory" }],
+            };
+          },
         },
       ),
       getState: () => createUnopenedState(),
@@ -534,7 +569,8 @@ describe("editor publish workflow", () => {
     );
 
     expect(result.ok).toBe(true);
-    expect(result.entries).toEqual([{ name: "labfon-source", type: "directory" }]);
+    expect(receivedPath).toBe("/source");
+    expect(result.entries).toEqual([{ name: "content", type: "directory" }]);
   });
 
   it("connection errors do not affect editor project state", async () => {

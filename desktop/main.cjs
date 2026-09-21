@@ -15,6 +15,8 @@ const GENERATED_SITE_BASE_PATH = "/labfonac/";
 const PROFILE_FILE = "publish-profile.json";
 const PASSWORD_FILE = "publish-password.bin";
 const CRITICAL_REMOTE_FILES = ["index.html", "data.json"];
+const FIXED_REMOTE_SOURCE_PATH = "/source";
+const FIXED_REMOTE_PUBLISH_PATH = "/";
 let generatedPreviewServer = null;
 let appServices = {
   app: null,
@@ -440,15 +442,21 @@ function configureAppServices(services) {
 
 async function loadPublishProfile() {
   const profile = await readStoredProfile();
+  const correctedPaths = profile ? hasNonFixedRemotePaths(profile) : false;
+  const sanitized = profile ? sanitizeProfile(profile) : null;
 
   return {
     ok: true,
-    profile: profile
+    profile: sanitized
       ? {
-          ...profile,
+          ...sanitized,
           hasPassword: await hasStoredPassword(),
         }
       : null,
+    correctedPaths,
+    message: correctedPaths
+      ? "Os destinos remotos foram corrigidos para o projeto Labfonac."
+      : "",
   };
 }
 
@@ -587,7 +595,7 @@ async function connectFtp(_event, profile, password) {
   }
 }
 
-async function listRemoteDirectory(_event, profile, password, remotePath) {
+async function listRemoteDirectory(_event, profile, password, _remotePath) {
   const sanitized = sanitizeProfile(profile);
   const profileError = validateConnectionProfile(sanitized);
   if (profileError) {
@@ -603,7 +611,7 @@ async function listRemoteDirectory(_event, profile, password, remotePath) {
     };
   }
 
-  const targetPath = normalizeRemotePath(remotePath) || "/";
+  const targetPath = FIXED_REMOTE_SOURCE_PATH;
 
   const client = appServices.createFtpClient
     ? appServices.createFtpClient()
@@ -771,7 +779,23 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
   }
 }
 
-async function retrieveRemoteProject(_event, profile, password) {
+async function retrieveRemoteProject(event, profile, password) {
+  const retrievalStartedAt = performance.now();
+  const metrics = {
+    setupMs: 0,
+    discoveryMs: 0,
+    downloadMs: 0,
+    validationMs: 0,
+    totalFiles: 0,
+    totalBytes: 0,
+    totalMs: 0,
+  };
+  const reportProgress = (phase, details = {}) => {
+    event?.sender?.send("labfon:remoteProjectRetrievalProgress", {
+      phase,
+      ...details,
+    });
+  };
   const sanitized = sanitizeProfile(profile);
   const profileError = validateNativeProfile(sanitized);
   if (profileError) {
@@ -787,11 +811,12 @@ async function retrieveRemoteProject(_event, profile, password) {
     };
   }
 
-  const client = appServices.createFtpClient
-    ? appServices.createFtpClient()
-    : new ftp.Client(15000);
-  if (client.ftp) {
-    client.ftp.verbose = false;
+  const downloadClients = Array.from({ length: 2 }, () =>
+    appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000)
+  );
+  const [client] = downloadClients;
+  for (const downloadClient of downloadClients) {
+    if (downloadClient.ftp) downloadClient.ftp.verbose = false;
   }
 
   const workspacesRoot = getWorkspacesDirectory();
@@ -800,17 +825,22 @@ async function retrieveRemoteProject(_event, profile, password) {
   const previousWorkspace = path.join(workspacesRoot, "previous");
 
   try {
-    await client.access({
+    reportProgress("setup");
+    const setupStartedAt = performance.now();
+    const accessConfig = {
       host: sanitized.host,
       port: sanitized.port,
       user: sanitized.username,
       password: secret,
       secure: sanitized.secure,
-    });
+    };
+    await Promise.all(downloadClients.map((downloadClient) => downloadClient.access(accessConfig)));
+    metrics.setupMs = Math.round(performance.now() - setupStartedAt);
 
+    reportProgress("discovery");
+    const discoveryStartedAt = performance.now();
     try {
       await client.cd(sanitized.remoteSourcePath);
-      await client.list();
     } catch {
       return {
         ok: false,
@@ -820,32 +850,56 @@ async function retrieveRemoteProject(_event, profile, password) {
       };
     }
 
+    const downloadManifest = await createRetrievalDownloadManifest(
+      client,
+      sanitized.remoteSourcePath,
+    );
+    metrics.discoveryMs = Math.round(performance.now() - discoveryStartedAt);
+
+    reportProgress("download", { transferredBytes: 0 });
+    const transferredBytes = [0, 0];
+    for (const [index, downloadClient] of downloadClients.entries()) {
+      if (typeof downloadClient.trackProgress === "function") {
+        downloadClient.trackProgress((info) => {
+          transferredBytes[index] = Number(info?.bytesOverall) || transferredBytes[index];
+          reportProgress("download", {
+            transferredBytes: transferredBytes[0] + transferredBytes[1],
+          });
+        });
+      }
+    }
+    const downloadStartedAt = performance.now();
     await fs.rm(temporaryWorkspace, { recursive: true, force: true });
     await fs.mkdir(temporaryWorkspace, { recursive: true });
 
-    for (const bundlePath of EDITABLE_PROJECT_BUNDLE) {
-      const remotePath = joinRemotePath(sanitized.remoteSourcePath, bundlePath);
-      const localPath = path.join(temporaryWorkspace, bundlePath);
-      if (path.extname(bundlePath)) {
-        await client.downloadTo(localPath, remotePath);
-      } else {
-        await client.downloadToDir(localPath, remotePath);
+    const queues = [[], []];
+    downloadManifest.forEach((file, index) => queues[index % 2].push(file));
+    let workerFailure = null;
+    await Promise.all(downloadClients.map(async (downloadClient, index) => {
+      for (const file of queues[index]) {
+        if (workerFailure) break;
+        const localPath = path.join(temporaryWorkspace, ...file.relativePath.split("/"));
+        try {
+          await fs.mkdir(path.dirname(localPath), { recursive: true });
+          await downloadClient.downloadTo(localPath, file.remotePath);
+        } catch (error) {
+          workerFailure = error;
+          break;
+        }
       }
+    }));
+    if (workerFailure) throw workerFailure;
+    metrics.downloadMs = Math.round(performance.now() - downloadStartedAt);
+    for (const downloadClient of downloadClients) {
+      if (typeof downloadClient.trackProgress === "function") downloadClient.trackProgress(undefined);
     }
 
-    const sourceEntries = await client.list(sanitized.remoteSourcePath);
-    if (sourceEntries.some((entry) => entry.name === "public")) {
-      const publicEntries = await client.list(joinRemotePath(sanitized.remoteSourcePath, "public"));
-      for (const assetPath of STATIC_PROJECT_ASSETS) {
-        if (!publicEntries.some((entry) => entry.name === path.posix.basename(assetPath))) continue;
-        const localPath = path.join(temporaryWorkspace, assetPath);
-        await fs.mkdir(path.dirname(localPath), { recursive: true });
-        const remotePath = joinRemotePath(sanitized.remoteSourcePath, assetPath);
-        if (path.extname(assetPath)) await client.downloadTo(localPath, remotePath);
-        else await client.downloadToDir(localPath, remotePath);
-      }
-    }
-
+    reportProgress("validation");
+    const validationStartedAt = performance.now();
+    const retrievedFiles = await listEditableProjectBundleFiles(temporaryWorkspace);
+    const retrievedStats = await Promise.all(retrievedFiles.map((file) => fs.stat(file.localPath)));
+    metrics.totalFiles = retrievedFiles.length;
+    metrics.totalBytes = retrievedStats.reduce((total, stat) => total + stat.size, 0);
     const validation = await validateLocalEditableProject(temporaryWorkspace);
     if (!validation.ok) {
       await fs.rm(temporaryWorkspace, { recursive: true, force: true });
@@ -872,10 +926,20 @@ async function retrieveRemoteProject(_event, profile, password) {
       "utf8",
     );
 
+    metrics.validationMs = Math.round(performance.now() - validationStartedAt);
+    metrics.totalMs = Math.round(performance.now() - retrievalStartedAt);
+    reportProgress("complete", {
+      totalFiles: metrics.totalFiles,
+      totalBytes: metrics.totalBytes,
+      totalMs: metrics.totalMs,
+    });
+    console.info(`[Labfonac] Remote retrieval metrics ${JSON.stringify(metrics)}`);
+
     return {
       ok: true,
       code: "REMOTE_PROJECT_RETRIEVED",
       message: "Projeto remoto carregado.",
+      metrics,
       directory: {
         name: "Labfonac remoto",
         path: activeWorkspace,
@@ -890,8 +954,53 @@ async function retrieveRemoteProject(_event, profile, password) {
       message: `Não foi possível abrir o projeto remoto: ${sanitizeErrorMessage(getErrorMessage(error))}`,
     };
   } finally {
-    client.close();
+    for (const downloadClient of downloadClients) downloadClient.close();
   }
+}
+
+async function createRetrievalDownloadManifest(client, remoteSourcePath) {
+  const files = [];
+
+  async function addDirectory(relativeDirectory) {
+    const remoteDirectory = joinRemotePath(remoteSourcePath, relativeDirectory);
+    const entries = await client.list(remoteDirectory);
+    for (const entry of entries) {
+      if (!entry.name || path.posix.basename(entry.name) !== entry.name) continue;
+      const relativePath = path.posix.join(relativeDirectory, entry.name);
+      if (entry.isDirectory) await addDirectory(relativePath);
+      else if (entry.isFile) files.push({
+        relativePath,
+        remotePath: joinRemotePath(remoteSourcePath, relativePath),
+      });
+    }
+  }
+
+  for (const bundlePath of EDITABLE_PROJECT_BUNDLE) {
+    if (path.posix.extname(bundlePath)) {
+      files.push({
+        relativePath: bundlePath,
+        remotePath: joinRemotePath(remoteSourcePath, bundlePath),
+      });
+    } else {
+      await addDirectory(bundlePath);
+    }
+  }
+
+  const sourceEntries = await client.list(remoteSourcePath);
+  if (sourceEntries.some((entry) => entry.name === "public" && entry.isDirectory)) {
+    const publicEntries = await client.list(joinRemotePath(remoteSourcePath, "public"));
+    for (const assetPath of STATIC_PROJECT_ASSETS) {
+      const entry = publicEntries.find((item) => item.name === path.posix.basename(assetPath));
+      if (!entry) continue;
+      if (entry.isDirectory) await addDirectory(assetPath);
+      else if (entry.isFile) files.push({
+        relativePath: assetPath,
+        remotePath: joinRemotePath(remoteSourcePath, assetPath),
+      });
+    }
+  }
+
+  return files.sort((left, right) => left.relativePath.localeCompare(right.relativePath));
 }
 
 async function initializeRemoteProjectSource(_event, rootPath, profile, password) {
@@ -1363,18 +1472,22 @@ function sanitizeErrorMessage(message) {
 }
 
 function sanitizeProfile(profile = {}) {
-  const legacyPath = profile.remotePath || "";
   return {
     host: String(profile.host || "").trim(),
     port: normalizePort(profile.port),
     username: String(profile.username || "").trim(),
-    remoteSourcePath: normalizeRemotePath(profile.remoteSourcePath || legacyPath),
-    remotePublishPath: normalizeRemotePath(
-      profile.remotePublishPath || legacyPath || "/",
-    ),
+    remoteSourcePath: FIXED_REMOTE_SOURCE_PATH,
+    remotePublishPath: FIXED_REMOTE_PUBLISH_PATH,
     secure: profile.secure !== false,
     passiveMode: profile.passiveMode !== false,
   };
+}
+
+function hasNonFixedRemotePaths(profile = {}) {
+  const hasLegacyPath = Object.prototype.hasOwnProperty.call(profile, "remotePath");
+  const sourcePath = normalizeRemotePath(profile.remoteSourcePath || "");
+  const publishPath = normalizeRemotePath(profile.remotePublishPath || "");
+  return hasLegacyPath || sourcePath !== FIXED_REMOTE_SOURCE_PATH || publishPath !== FIXED_REMOTE_PUBLISH_PATH;
 }
 
 function validateNativeProfile(profile) {

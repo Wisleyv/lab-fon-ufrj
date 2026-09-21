@@ -27,7 +27,7 @@ import { loadEditorSiteModel } from "./project-loader.js";
 import {
   createEmptyPublishProfile,
   createPublishController,
-  normalizeRemotePath,
+  FIXED_REMOTE_SOURCE_PATH,
   sanitizePublishProfile,
   getProfileReadiness,
   getRetrievalReadiness,
@@ -59,11 +59,6 @@ const DEFAULT_REMOTE_STATE = {
   entries: [],
   diagnostics: [],
 };
-
-function joinRemoteDisplayPath(basePath, name) {
-  const normalizedBase = normalizeRemotePath(basePath || "/") || "/";
-  return normalizedBase === "/" ? `/${name}` : `${normalizedBase}/${name}`;
-}
 
 function safeGetLocalStorage(defaultDocument) {
   if (typeof window !== "undefined" && window.localStorage) {
@@ -322,6 +317,12 @@ async function operationResult(promise) {
       : { ok: false, code: "EDITOR_OPERATION_INVALID_RESULT", message: "A operação não retornou um resultado válido." };
   }
   catch (error) { return { ok: false, code: "EDITOR_OPERATION_FAILED", message: error instanceof Error ? error.message : "Não foi possível concluir a operação." }; }
+}
+
+function formatByteCount(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function createLayout(
@@ -671,96 +672,6 @@ function createLayout(
   );
   remoteCard.appendChild(connectStatus);
 
-  const remoteBrowser = createElement("div", {
-    id: "editor-remote-browser",
-    className: "editor-remote-browser is-hidden",
-  });
-  const remoteBrowserNav = createElement("div", { className: "editor-actions" });
-  const remoteUpButton = createElement(
-    "button",
-    {
-      id: "editor-remote-up",
-      type: "button",
-      className: "editor-btn editor-btn-secondary",
-    },
-    "Pasta anterior",
-  );
-  const remoteReloadButton = createElement(
-    "button",
-    {
-      id: "editor-remote-reload",
-      type: "button",
-      className: "editor-btn editor-btn-secondary",
-    },
-    "Recarregar",
-  );
-  const useCurrentAsSourceButton = createElement(
-    "button",
-    {
-      id: "editor-remote-use-current-source",
-      type: "button",
-      className: "editor-btn editor-btn-secondary",
-    },
-    "Usar pasta atual como projeto editável",
-  );
-  const useCurrentAsPublishButton = createElement(
-    "button",
-    {
-      id: "editor-remote-use-current-publish",
-      type: "button",
-      className: "editor-btn editor-btn-secondary",
-    },
-    "Usar pasta atual como site publicado",
-  );
-  remoteBrowserNav.appendChild(remoteUpButton);
-  remoteBrowserNav.appendChild(remoteReloadButton);
-  remoteBrowserNav.appendChild(useCurrentAsSourceButton);
-  remoteBrowserNav.appendChild(useCurrentAsPublishButton);
-  remoteBrowser.appendChild(remoteBrowserNav);
-  const remoteBreadcrumb = createElement(
-    "p",
-    { id: "editor-remote-breadcrumb", className: "editor-status" },
-    "/",
-  );
-  remoteBrowser.appendChild(remoteBreadcrumb);
-  const remoteListing = createElement("ul", {
-    id: "editor-remote-listing",
-    className: "editor-remote-listing",
-  });
-  remoteBrowser.appendChild(remoteListing);
-  remoteCard.appendChild(remoteBrowser);
-
-  const publishRoleForm = createElement("div", { className: "editor-publish-form" });
-  const publishRemoteSourcePathInput = createElement("input", {
-    id: "editor-publish-remote-source-path",
-    type: "text",
-    className: "editor-input",
-    placeholder: "/labfon-source",
-  });
-  const publishRemotePathInput = createElement("input", {
-    id: "editor-publish-remote-path",
-    type: "text",
-    className: "editor-input",
-    placeholder: "/",
-  });
-  publishRoleForm.appendChild(
-    createElement(
-      "label",
-      { for: "editor-publish-remote-source-path" },
-      "Pasta do projeto editável",
-    ),
-  );
-  publishRoleForm.appendChild(publishRemoteSourcePathInput);
-  publishRoleForm.appendChild(
-    createElement(
-      "label",
-      { for: "editor-publish-remote-path" },
-      "Pasta do site publicado",
-    ),
-  );
-  publishRoleForm.appendChild(publishRemotePathInput);
-  remoteCard.appendChild(publishRoleForm);
-
   const publishActions = createElement("div", { className: "editor-actions" });
   const testFtpConnectionButton = createElement(
     "button",
@@ -1027,7 +938,7 @@ function createLayout(
   statusCard.append(closeProjectButton, closeProjectStatus);
 
   const projectRemote = createElement("section", { id: "editor-project-remote", className: "editor-panel" });
-  projectRemote.append(createElement("h2", {}, "Projeto remoto"), remoteBrowser, publishRoleForm, openRemoteProjectButton);
+  projectRemote.append(createElement("h2", {}, "Projeto remoto"), openRemoteProjectButton);
 
   // Move existing nodes once; switching tabs never recreates controls or touches the store.
   const panelContents = [
@@ -1272,8 +1183,6 @@ function createLayout(
       host: publishHostInput.value,
       port: publishPortInput.value,
       username: publishUsernameInput.value,
-      remoteSourcePath: publishRemoteSourcePathInput.value,
-      remotePublishPath: publishRemotePathInput.value,
       secure: publishSecureInput.checked,
       passiveMode: true,
       hasPassword: store.getState().publish?.profile?.hasPassword === true,
@@ -1286,8 +1195,6 @@ function createLayout(
     publishHostInput.value = effectiveProfile.host;
     publishPortInput.value = effectiveProfile.port;
     publishUsernameInput.value = effectiveProfile.username;
-    publishRemoteSourcePathInput.value = effectiveProfile.remoteSourcePath;
-    publishRemotePathInput.value = effectiveProfile.remotePublishPath;
     publishSecureInput.checked = effectiveProfile.secure;
     publishPasswordInput.value = "";
     publishPasswordInput.placeholder = effectiveProfile.hasPassword
@@ -1310,7 +1217,7 @@ function createLayout(
       }
 
       if (publish.summary.workspacePath) {
-        publishDiagnostics.textContent = `Projeto remoto aberto\nProjeto editável: ${publish.summary.remoteSourcePath}\nSite publicado: ${publish.summary.remotePublishPath}`;
+        publishDiagnostics.textContent = "Projeto remoto aberto.";
         return;
       }
 
@@ -1322,103 +1229,34 @@ function createLayout(
     else publishDiagnostics.replaceChildren();
   };
 
-  const renderRemoteListing = (remote) => {
-    remoteListing.innerHTML = "";
-
-    if (remote.status === "error") {
-      remoteListing.appendChild(
-        createElement("li", { className: "editor-remote-entry" }, remote.message),
-      );
-      return;
-    }
-
-    if (!remote.entries || remote.entries.length === 0) {
-      remoteListing.appendChild(
-        createElement("li", { className: "editor-remote-entry" }, "Pasta vazia."),
-      );
-      return;
-    }
-
-    remote.entries.forEach((entry) => {
-      const row = createElement("li", { className: "editor-remote-entry" });
-      row.appendChild(
-        createElement(
-          "span",
-          { className: "editor-remote-entry-name" },
-          `${entry.type === "directory" ? "Pasta" : "Arquivo"}: ${entry.name}`,
-        ),
-      );
-
-      if (entry.type === "directory") {
-        const targetPath = joinRemoteDisplayPath(remote.currentPath, entry.name);
-        const openButton = createElement(
-          "button",
-          { type: "button", className: "editor-btn editor-btn-secondary" },
-          "Abrir",
-        );
-        openButton.addEventListener("click", () => loadRemoteDirectory(targetPath));
-
-        const useSourceButton = createElement(
-          "button",
-          { type: "button", className: "editor-btn editor-btn-secondary" },
-          "Usar como pasta do projeto editável",
-        );
-        useSourceButton.addEventListener("click", () => {
-          publishRemoteSourcePathInput.value = targetPath;
-          profileChanged();
-        });
-
-        const usePublishButton = createElement(
-          "button",
-          { type: "button", className: "editor-btn editor-btn-secondary" },
-          "Usar como pasta do site publicado",
-        );
-        usePublishButton.addEventListener("click", () => {
-          publishRemotePathInput.value = targetPath;
-          profileChanged();
-        });
-
-        row.appendChild(openButton);
-        row.appendChild(useSourceButton);
-        row.appendChild(usePublishButton);
-      }
-
-      remoteListing.appendChild(row);
-    });
-  };
-
   const updateRemoteUi = (state) => {
     const remote = state.remote || DEFAULT_REMOTE_STATE;
     connectStatus.textContent = remote.message;
-    remoteBrowser.classList.toggle("is-hidden", remote.status === "idle");
-    remoteBreadcrumb.textContent = remote.currentPath || "/";
-    renderRemoteListing(remote);
   };
 
-  const loadRemoteDirectory = async (targetPath) => {
+  const verifyRemoteSource = async () => {
     if (!getBusyReadiness(store.getState()).ok) return;
     const profile = readPublishProfileFromForm();
-    const normalizedPath = normalizeRemotePath(targetPath || "/") || "/";
     store.setState({
       remote: {
         ...(store.getState().remote || DEFAULT_REMOTE_STATE),
         status: "listing",
-        message: "Carregando pasta remota...",
+        message: "Verificando projeto remoto...",
       },
     });
 
     const result = await operationResult(publishController.listDirectory(
       profile,
       publishPasswordInput.value,
-      normalizedPath,
+      FIXED_REMOTE_SOURCE_PATH,
     ));
 
     if (!result.ok) {
       store.setState({
         remote: {
           status: "error",
-          message: result.message || "Não foi possível listar a pasta remota.",
-          currentPath: normalizedPath,
+          message: result.message || "Não foi possível verificar o projeto remoto.",
+          currentPath: FIXED_REMOTE_SOURCE_PATH,
           entries: [],
           diagnostics: result.diagnostics || [
             { code: result.code, severity: "error", message: result.message },
@@ -1431,10 +1269,10 @@ function createLayout(
     store.setState({
       remote: {
         status: "connected",
-        message: result.message || "Pasta remota carregada.",
+        message: "Conexão estabelecida.",
         connectionProfile: store.getState().remote?.connectionProfile,
         verifiedProfile: sanitizePublishProfile(profile),
-        currentPath: result.path || normalizedPath,
+        currentPath: FIXED_REMOTE_SOURCE_PATH,
         entries: result.entries || [],
         diagnostics: [],
       },
@@ -1858,33 +1696,13 @@ function createLayout(
         status: "connected",
         message: result.message || "Conectado ao servidor.",
         connectionProfile: sanitizePublishProfile(profile),
-        currentPath: "/",
+        currentPath: FIXED_REMOTE_SOURCE_PATH,
         entries: [],
         diagnostics: [],
       },
     });
 
-    await loadRemoteDirectory("/");
-  });
-
-  remoteUpButton.addEventListener("click", async () => {
-    const currentPath = store.getState().remote?.currentPath || "/";
-    if (currentPath === "/") return;
-    const segments = currentPath.split("/").filter(Boolean);
-    segments.pop();
-    await loadRemoteDirectory(segments.length ? `/${segments.join("/")}` : "/");
-  });
-
-  remoteReloadButton.addEventListener("click", async () => {
-    await loadRemoteDirectory(store.getState().remote?.currentPath || "/");
-  });
-
-  useCurrentAsSourceButton.addEventListener("click", () => {
-    publishRemoteSourcePathInput.value = store.getState().remote?.currentPath || "/";
-  });
-
-  useCurrentAsPublishButton.addEventListener("click", () => {
-    publishRemotePathInput.value = store.getState().remote?.currentPath || "/";
+    await verifyRemoteSource();
   });
 
   savePublishProfileButton.addEventListener("click", async () => {
@@ -1982,7 +1800,33 @@ function createLayout(
     if (openRemoteProjectButton.disabled) return;
     showPublishFeedbackIn(projectRemote);
     const profile = readPublishProfileFromForm();
-    const retrieval = publishController.retrieveRemoteProject(profile, publishPasswordInput.value);
+    const retrieval = publishController.retrieveRemoteProject(
+      profile,
+      publishPasswordInput.value,
+      (progress) => {
+        const messages = {
+          setup: "Conectando...",
+          discovery: "Localizando arquivos...",
+          validation: "Verificando projeto...",
+        };
+        let message = messages[progress?.phase];
+        if (progress?.phase === "download") {
+          const bytes = Number(progress.transferredBytes) || 0;
+          message = bytes > 0
+            ? `Baixando projeto... ${formatByteCount(bytes)}`
+            : "Baixando projeto...";
+        }
+        if (!message) return;
+        const current = store.getState();
+        if (current.publish?.status !== "retrieving") return;
+        store.setState({
+          publish: {
+            ...current.publish,
+            message,
+          },
+        });
+      },
+    );
     store.setState({
       publish: {
         status: "retrieving",
@@ -2224,10 +2068,7 @@ function createLayout(
     apply(initializeRemoteSourceButton, getSourceInitializationReadiness(state, profile, password));
     apply(publishSiteButton, getPublicationReadiness(state));
     savePublishProfileButton.disabled = !busy.ok;
-    for (const input of [...publishForm.querySelectorAll("input"), ...publishRoleForm.querySelectorAll("input")]) input.disabled = !busy.ok;
-    for (const button of [remoteReloadButton, useCurrentAsSourceButton, useCurrentAsPublishButton]) button.disabled = !busy.ok || state.remote?.status !== "connected";
-    remoteUpButton.disabled = !busy.ok || state.remote?.status !== "connected" || state.remote?.currentPath === "/";
-    remoteListing.querySelectorAll("button").forEach((button) => { button.disabled = !busy.ok; });
+    for (const input of publishForm.querySelectorAll("input")) input.disabled = !busy.ok;
     const validComposition = !!state.draftComposition && validatePageComposition(state.draftComposition).valid;
     sectionList.querySelectorAll("button,input").forEach((node) => { if (!editing.ok || !validComposition) node.disabled = true; });
     addSelect.disabled = !editing.ok || !addSelect.value;
@@ -2255,9 +2096,6 @@ function createLayout(
     });
   };
   publishForm.addEventListener("input", profileChanged);
-  publishRoleForm.addEventListener("input", profileChanged);
-  useCurrentAsSourceButton.addEventListener("click", profileChanged);
-  useCurrentAsPublishButton.addEventListener("click", profileChanged);
 
   const unsubscribeStatus = store.subscribe(updateStatus);
   const unsubscribeComposition = store.subscribe(updateCompositionUi);
@@ -2282,7 +2120,9 @@ function createLayout(
     store.setState({
       publish: {
         status: "configured",
-        message: "Destino de publicação configurado.",
+        message: result.correctedPaths
+          ? result.message || "Os destinos remotos foram corrigidos para o projeto Labfonac."
+          : "Destino de publicação configurado.",
         profile: result.profile,
         diagnostics: [],
         summary: null,

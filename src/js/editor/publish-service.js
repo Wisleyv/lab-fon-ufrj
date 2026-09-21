@@ -1,13 +1,15 @@
 import { getBusyReadiness, getEditingReadiness } from "./state.js";
 export const DEFAULT_FTP_PORT = 2100;
+export const FIXED_REMOTE_SOURCE_PATH = "/source";
+export const FIXED_REMOTE_PUBLISH_PATH = "/";
 
 export function createEmptyPublishProfile() {
   return {
     host: "",
     port: DEFAULT_FTP_PORT,
     username: "",
-    remoteSourcePath: "/source",
-    remotePublishPath: "/",
+    remoteSourcePath: FIXED_REMOTE_SOURCE_PATH,
+    remotePublishPath: FIXED_REMOTE_PUBLISH_PATH,
     secure: true,
     passiveMode: true,
     hasPassword: false,
@@ -15,21 +17,23 @@ export function createEmptyPublishProfile() {
 }
 
 export function sanitizePublishProfile(profile = {}) {
-  const legacyPath = profile.remotePath || "";
   return {
     host: String(profile.host || "").trim(),
     port: normalizePort(profile.port),
     username: String(profile.username || "").trim(),
-    remoteSourcePath: normalizeRemotePath(
-      profile.remoteSourcePath || legacyPath,
-    ),
-    remotePublishPath: normalizeRemotePath(
-      profile.remotePublishPath || legacyPath || "/",
-    ),
+    remoteSourcePath: FIXED_REMOTE_SOURCE_PATH,
+    remotePublishPath: FIXED_REMOTE_PUBLISH_PATH,
     secure: profile.secure === true,
     passiveMode: profile.passiveMode !== false,
     hasPassword: profile.hasPassword === true,
   };
+}
+
+export function hasNonFixedRemotePaths(profile = {}) {
+  const hasLegacyPath = Object.hasOwn(profile, "remotePath");
+  const sourcePath = normalizeRemotePath(profile.remoteSourcePath || "");
+  const publishPath = normalizeRemotePath(profile.remotePublishPath || "");
+  return hasLegacyPath || sourcePath !== FIXED_REMOTE_SOURCE_PATH || publishPath !== FIXED_REMOTE_PUBLISH_PATH;
 }
 
 export function validatePublishProfile(profile = {}, options = {}) {
@@ -43,51 +47,6 @@ export function validatePublishProfile(profile = {}, options = {}) {
   if (!normalized.username) {
     diagnostics.push(
       createDiagnostic("PUBLISH_USERNAME_MISSING", "Informe o usuário FTP."),
-    );
-  }
-
-  if (!normalized.remoteSourcePath) {
-    diagnostics.push(
-      createDiagnostic(
-        "PUBLISH_REMOTE_SOURCE_PATH_MISSING",
-        "Informe a pasta remota do projeto editável.",
-      ),
-    );
-  }
-
-  if (!normalized.remotePublishPath) {
-    diagnostics.push(
-      createDiagnostic(
-        "PUBLISH_REMOTE_PATH_MISSING",
-        "Informe a pasta remota do site publicado.",
-      ),
-    );
-  }
-
-  for (const [field, code] of [
-    ["remoteSourcePath", "PUBLISH_REMOTE_SOURCE_PATH_INVALID"],
-    ["remotePublishPath", "PUBLISH_REMOTE_PATH_INVALID"],
-  ]) {
-    if (normalized[field].split("/").includes("..")) {
-      diagnostics.push(
-        createDiagnostic(
-          code,
-          "A pasta remota não pode conter navegação por '..'.",
-        ),
-      );
-    }
-  }
-
-  if (
-    normalized.remoteSourcePath &&
-    normalized.remotePublishPath &&
-    normalized.remoteSourcePath === normalized.remotePublishPath
-  ) {
-    diagnostics.push(
-      createDiagnostic(
-        "PUBLISH_REMOTE_PATHS_NOT_DISTINCT",
-        "A pasta do projeto editável deve ser diferente da pasta do site publicado.",
-      ),
     );
   }
 
@@ -232,7 +191,7 @@ export function createPublishController({ host, getState } = {}) {
       return host.connectFtp(validation.profile, password || "");
     },
 
-    async listDirectory(profile, password, remotePath) {
+    async listDirectory(profile, password, _remotePath) {
       const validation = validateConnectionProfile(profile, {
         requirePassword: true,
         hasPassword: Boolean(password || profile.hasPassword),
@@ -242,7 +201,7 @@ export function createPublishController({ host, getState } = {}) {
         return {
           ok: false,
           code: "PUBLISH_PROFILE_INVALID",
-          message: "Preencha servidor, usuário e senha para navegar pelas pastas.",
+        message: "Preencha servidor, usuário e senha para verificar o projeto remoto.",
           diagnostics: validation.diagnostics,
         };
       }
@@ -251,18 +210,18 @@ export function createPublishController({ host, getState } = {}) {
         return {
           ok: false,
           code: "FTP_UNAVAILABLE",
-          message: "A navegação remota exige o aplicativo desktop.",
+        message: "A verificação remota exige o aplicativo desktop.",
         };
       }
 
       return host.listRemoteDirectory(
         validation.profile,
         password || "",
-        normalizeRemotePath(remotePath || "/") || "/",
+        FIXED_REMOTE_SOURCE_PATH,
       );
     },
 
-    async retrieveRemoteProject(profile, password) {
+    async retrieveRemoteProject(profile, password, onProgress) {
       const readiness = getRetrievalReadiness(getState(), profile, password);
       if (!readiness.ok) return readiness;
       const validation = validatePublishProfile(profile, {
@@ -287,7 +246,7 @@ export function createPublishController({ host, getState } = {}) {
         };
       }
 
-      return host.retrieveRemoteProject(validation.profile, password || "");
+      return host.retrieveRemoteProject(validation.profile, password || "", onProgress);
     },
 
     async initializeRemoteProjectSource(directory, profile, password) {
@@ -483,7 +442,7 @@ export function getSourceInitializationReadiness(state, profile, password) {
   const configured = getProfileReadiness(profile, password);
   if (!configured.ok) return configured;
   const normalized = sanitizePublishProfile(profile);
-  if (normalized.remoteSourcePath !== "/source" || !normalized.secure) return unavailable("REMOTE_INITIALIZATION_TARGET_INVALID", "Inicialização exige /source/ e FTPS explícito.");
+  if (normalized.remoteSourcePath !== FIXED_REMOTE_SOURCE_PATH || !normalized.secure) return unavailable("REMOTE_INITIALIZATION_TARGET_INVALID", "Inicialização exige /source/ e FTPS explícito.");
   const remote = state.remote;
   const sameConnection = remote?.connectionProfile && ["host", "port", "username", "secure"].every(key => remote.connectionProfile[key] === normalized[key]);
   if (remote?.status !== "connected" || !sameConnection) return unavailable("REMOTE_CONNECTION_REQUIRED", "Conexão com este servidor não verificada.");

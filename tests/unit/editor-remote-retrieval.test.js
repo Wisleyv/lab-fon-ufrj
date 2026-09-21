@@ -18,7 +18,7 @@ function createProfile(overrides = {}) {
     host: "localhost",
     port: 21,
     username: "editor",
-    remoteSourcePath: "/labfon-source",
+    remoteSourcePath: "/source",
     remotePublishPath: "/",
     secure: true,
     passiveMode: true,
@@ -51,7 +51,7 @@ async function createRemoteLayout({ source = "valid" } = {}) {
   await writeJson(path.join(remoteRoot, "data.json"), { page: { sections: [] } });
 
   if (source !== "missing") {
-    const sourceRoot = path.join(remoteRoot, "labfon-source");
+    const sourceRoot = path.join(remoteRoot, "source");
     await fs.mkdir(sourceRoot, { recursive: true });
     if (source === "empty") {
       await fs.writeFile(path.join(sourceRoot, ".htaccess"), "Require all denied\n");
@@ -119,14 +119,36 @@ async function createRemoteLayout({ source = "valid" } = {}) {
   };
 }
 
-function createFilesystemFtpClient(remoteRoot) {
+function createFilesystemFtpClient(remoteRoot, options = {}) {
   const calls = [];
+  let progressCallback = null;
+  let transferredBytes = 0;
+  let activeDownloads = 0;
+  let maxActiveDownloads = 0;
   const toLocal = (remotePath) =>
     path.join(remoteRoot, path.posix.normalize(remotePath).replace(/^\/+/, ""));
 
+  async function reportTransferred(localPath) {
+    if (!progressCallback) return;
+    const entries = [];
+    async function walk(currentPath) {
+      const stat = await fs.stat(currentPath);
+      if (stat.isFile()) {
+        entries.push(stat.size);
+        return;
+      }
+      for (const name of await fs.readdir(currentPath)) await walk(path.join(currentPath, name));
+    }
+    await walk(localPath);
+    transferredBytes += entries.reduce((total, size) => total + size, 0);
+    progressCallback({ bytesOverall: transferredBytes });
+  }
+
   return {
+    remoteRoot,
     calls,
     ftp: {},
+    get maxActiveDownloads() { return maxActiveDownloads; },
     async access(config) {
       calls.push(["access", config]);
     },
@@ -139,7 +161,11 @@ function createFilesystemFtpClient(remoteRoot) {
       const entries = await fs.readdir(toLocal(remotePath || "/"), {
         withFileTypes: true,
       });
-      return entries.map((entry) => ({ name: entry.name, isDirectory: entry.isDirectory() }));
+      return entries.map((entry) => ({
+        name: entry.name,
+        isDirectory: entry.isDirectory(),
+        isFile: entry.isFile(),
+      }));
     },
     async downloadTo(localPath, remotePath) {
       calls.push(["downloadTo", remotePath]);
@@ -147,12 +173,33 @@ function createFilesystemFtpClient(remoteRoot) {
         localPath.end(await fs.readFile(toLocal(remotePath)));
         return;
       }
-      await fs.mkdir(path.dirname(localPath), { recursive: true });
-      await fs.copyFile(toLocal(remotePath), localPath);
+      activeDownloads += 1;
+      maxActiveDownloads = Math.max(maxActiveDownloads, activeDownloads);
+      if (options.sharedConcurrency) {
+        options.sharedConcurrency.active += 1;
+        options.sharedConcurrency.max = Math.max(
+          options.sharedConcurrency.max,
+          options.sharedConcurrency.active,
+        );
+      }
+      try {
+        if (options.failDownloadPath === remotePath) throw new Error("Simulated worker failure");
+        if (options.delayMs) await new Promise((resolve) => setTimeout(resolve, options.delayMs));
+        await fs.mkdir(path.dirname(localPath), { recursive: true });
+        await fs.copyFile(toLocal(remotePath), localPath);
+        await reportTransferred(localPath);
+      } finally {
+        activeDownloads -= 1;
+        if (options.sharedConcurrency) options.sharedConcurrency.active -= 1;
+      }
     },
     async downloadToDir(localPath, remotePath) {
       calls.push(["downloadToDir", remotePath]);
       await fs.cp(toLocal(remotePath), localPath, { recursive: true });
+      await reportTransferred(localPath);
+    },
+    trackProgress(callback) {
+      progressCallback = callback || null;
     },
     async ensureDir(remotePath) {
       calls.push(["ensureDir", remotePath]);
@@ -173,21 +220,30 @@ function createFilesystemFtpClient(remoteRoot) {
   };
 }
 
-async function withNativeServices(client, callback) {
+async function withNativeServices(client, callback, options = {}) {
   const userDataPath = path.join(
     repoRoot,
     "tmp",
     `retrieval-user-${Date.now()}-${Math.random().toString(16).slice(2)}`,
   );
   await fs.mkdir(userDataPath, { recursive: true });
+  let clientCount = 0;
+  const createdClients = [];
   nativeHandlers.configureAppServices({
     app: { getPath: () => userDataPath },
     safeStorage: createFakeSafeStorage(),
-    createFtpClient: () => client,
+    createFtpClient: () => {
+      const nextClient = clientCount % 2 === 0
+        ? client
+        : options.secondaryClient || createFilesystemFtpClient(client.remoteRoot);
+      clientCount += 1;
+      createdClients.push(nextClient);
+      return nextClient;
+    },
   });
 
   try {
-    return await callback(userDataPath);
+    return await callback(userDataPath, createdClients);
   } finally {
     nativeHandlers.configureAppServices({
       app: null,
@@ -199,6 +255,131 @@ async function withNativeServices(client, callback) {
 }
 
 describe("remote editable project retrieval", () => {
+  it("forwards native progress and unsubscribes after retrieval", async () => {
+    let progressListener = null;
+    let unsubscribeCount = 0;
+    const host = createNativeDesktopHost({
+      onRemoteProjectRetrievalProgress(listener) {
+        progressListener = listener;
+        return () => { unsubscribeCount += 1; };
+      },
+      async retrieveRemoteProject() {
+        progressListener({ phase: "download", transferredBytes: 2048 });
+        return { ok: true };
+      },
+    });
+    const progress = [];
+
+    const result = await host.retrieveRemoteProject(createProfile(), "secret", (value) => progress.push(value));
+
+    expect(result.ok).toBe(true);
+    expect(progress).toEqual([{ phase: "download", transferredBytes: 2048 }]);
+    expect(unsubscribeCount).toBe(1);
+  });
+
+  it("reports retrieval phases and non-sensitive timing totals", async () => {
+    const layout = await createRemoteLayout();
+    const client = createFilesystemFtpClient(layout.remoteRoot);
+    const progress = [];
+    try {
+      const result = await withNativeServices(client, () =>
+        nativeHandlers.retrieveRemoteProject(
+          { sender: { send: (_channel, value) => progress.push(value) } },
+          createProfile(),
+          "secret",
+        ),
+      );
+
+      expect(result.ok).toBe(true);
+      expect(progress.map((item) => item.phase)).toEqual(expect.arrayContaining([
+        "setup", "discovery", "download", "validation", "complete",
+      ]));
+      expect(result.metrics).toMatchObject({
+        totalFiles: expect.any(Number),
+        totalBytes: expect.any(Number),
+        totalMs: expect.any(Number),
+      });
+      expect(result.metrics.totalFiles).toBeGreaterThan(0);
+      expect(result.metrics.totalBytes).toBeGreaterThan(0);
+      expect(progress).not.toEqual(expect.arrayContaining([
+        expect.objectContaining({ password: expect.anything() }),
+      ]));
+    } finally {
+      await layout.cleanup();
+    }
+  });
+
+  it("uses exactly two strict-TLS clients with independent sequential queues and aggregated progress", async () => {
+    const layout = await createRemoteLayout();
+    const sharedConcurrency = { active: 0, max: 0 };
+    const primary = createFilesystemFtpClient(layout.remoteRoot, {
+      delayMs: 2,
+      sharedConcurrency,
+    });
+    const secondary = createFilesystemFtpClient(layout.remoteRoot, {
+      delayMs: 2,
+      sharedConcurrency,
+    });
+    const progress = [];
+    try {
+      const result = await withNativeServices(
+        primary,
+        (_userDataPath, createdClients) => nativeHandlers.retrieveRemoteProject(
+          { sender: { send: (_channel, value) => progress.push(value) } },
+          createProfile(),
+          "secret",
+        ).then((value) => ({ value, createdClients: [...createdClients] })),
+        { secondaryClient: secondary },
+      );
+
+      expect(result.value.ok).toBe(true);
+      expect(result.createdClients).toEqual([primary, secondary]);
+      for (const client of result.createdClients) {
+        expect(client.calls.filter(([name]) => name === "access")).toHaveLength(1);
+        expect(client.calls.find(([name]) => name === "access")[1].secure).toBe(true);
+        expect(client.calls.filter(([name]) => name === "downloadTo").length).toBeGreaterThan(0);
+        expect(client.maxActiveDownloads).toBe(1);
+      }
+      expect(sharedConcurrency.max).toBe(2);
+      const downloadUpdates = progress.filter((item) => item.phase === "download");
+      expect(Math.max(...downloadUpdates.map((item) => item.transferredBytes || 0)))
+        .toBe(result.value.metrics.totalBytes);
+    } finally {
+      await layout.cleanup();
+    }
+  });
+
+  it("closes both workers and preserves the active copy when one queue fails", async () => {
+    const layout = await createRemoteLayout();
+    const primary = createFilesystemFtpClient(layout.remoteRoot, { delayMs: 2 });
+    const secondary = createFilesystemFtpClient(layout.remoteRoot, {
+      delayMs: 2,
+      failDownloadPath: "/source/content/page.json",
+    });
+    try {
+      await withNativeServices(primary, async (userDataPath) => {
+        const activeWorkspace = path.join(userDataPath, "workspaces", "lab-fon", "current");
+        await fs.mkdir(activeWorkspace, { recursive: true });
+        await fs.writeFile(path.join(activeWorkspace, "sentinel.txt"), "keep", "utf8");
+
+        const result = await nativeHandlers.retrieveRemoteProject(
+          null,
+          createProfile(),
+          "secret",
+        );
+
+        expect(result.ok).toBe(false);
+        expect(result.code).toBe("REMOTE_PROJECT_RETRIEVAL_FAILED");
+        expect(primary.calls.at(-1)).toEqual(["close"]);
+        expect(secondary.calls.at(-1)).toEqual(["close"]);
+        await expect(fs.readFile(path.join(activeWorkspace, "sentinel.txt"), "utf8"))
+          .resolves.toBe("keep");
+      }, { secondaryClient: secondary });
+    } finally {
+      await layout.cleanup();
+    }
+  });
+
   it("maps FTPS profile settings into the basic-ftp access call", async () => {
     const layout = await createRemoteLayout();
     const client = createFilesystemFtpClient(layout.remoteRoot);
@@ -236,7 +417,7 @@ describe("remote editable project retrieval", () => {
     }
   });
 
-  it("retrieves a valid configurable remote source into an app workspace", async () => {
+  it("retrieves the fixed remote source into an app workspace", async () => {
     const layout = await createRemoteLayout();
     const client = createFilesystemFtpClient(layout.remoteRoot);
 
@@ -365,10 +546,10 @@ describe("remote editable project retrieval", () => {
       expect(result.code).toBe("REMOTE_PROJECT_SOURCE_INITIALIZED");
       expect(client.calls.map((call) => call[0])).toContain("uploadFrom");
       await expect(
-        fs.access(path.join(layout.remoteRoot, "labfon-source", "content", "page.json")),
+        fs.access(path.join(layout.remoteRoot, "source", "content", "page.json")),
       ).resolves.toBeUndefined();
       await expect(
-        fs.access(path.join(layout.remoteRoot, "labfon-source", ".htaccess")),
+        fs.access(path.join(layout.remoteRoot, "source", ".htaccess")),
       ).resolves.toBeUndefined();
     } finally {
       await layout.cleanup();
@@ -379,7 +560,7 @@ describe("remote editable project retrieval", () => {
     const layout = await createRemoteLayout({ source: "empty" });
     const client = createFilesystemFtpClient(layout.remoteRoot);
     await fs.writeFile(
-      path.join(layout.remoteRoot, "labfon-source", "unexpected.txt"),
+      path.join(layout.remoteRoot, "source", "unexpected.txt"),
       "stop",
       "utf8",
     );
@@ -404,7 +585,6 @@ describe("remote editable project retrieval", () => {
 
   it("initializes only /source with the existing filtered bundle and strict TLS", async () => {
     const layout = await createRemoteLayout({ source: "empty" });
-    await fs.rename(path.join(layout.remoteRoot, "labfon-source"), path.join(layout.remoteRoot, "source"));
     const client = createFilesystemFtpClient(layout.remoteRoot);
     try {
       const result = await withNativeServices(client, () => nativeHandlers.initializeRemoteProjectSource(null, repoRoot, createProfile({ remoteSourcePath: "/source" }), "secret"));
@@ -424,7 +604,7 @@ describe("remote editable project retrieval", () => {
   it.each(["missing", "metadata directory", "invalid local"])("performs no write for %s initialization", async mode => {
     const layout = await createRemoteLayout({ source: mode === "missing" ? "missing" : "empty" });
     if (mode === "metadata directory") {
-      await fs.mkdir(path.join(layout.remoteRoot, "labfon-source/.ftpquota"));
+      await fs.mkdir(path.join(layout.remoteRoot, "source/.ftpquota"));
     }
     const client = createFilesystemFtpClient(layout.remoteRoot);
     try {
@@ -459,7 +639,7 @@ describe("remote editable project retrieval", () => {
         const retrieved = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
         const original = { nome: "Pessoa Egressa", categoria: "egressos" };
         await saveContentRecord(null, retrieved.directory.path, "equipe", "egressa.json", original, null);
-        const remoteFile = path.join(layout.remoteRoot, "labfon-source/content/equipe/egressa.json");
+        const remoteFile = path.join(layout.remoteRoot, "source/content/equipe/egressa.json");
         if (conflict) await writeJson(remoteFile, { ...original, nome: "Alterado por outro editor" });
         const update = await nativeHandlers.updateRemoteProjectSource(null, retrieved.directory.path, createProfile(), "secret");
         expect(update.ok).toBe(!conflict);
@@ -467,7 +647,7 @@ describe("remote editable project retrieval", () => {
           expect(client.calls.some(([name]) => name === "uploadFrom" || name === "remove")).toBe(false);
           expect(await fs.readFile(remoteFile, "utf8")).toContain("Alterado por outro editor");
         } else {
-          expect(client.calls.filter(([name]) => name === "remove")).toEqual([["remove", "/labfon-source/content/equipe/egressa.json"]]);
+          expect(client.calls.filter(([name]) => name === "remove")).toEqual([["remove", "/source/content/equipe/egressa.json"]]);
           const fresh = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
           expect(await nativeHandlers.pathExists(null, fresh.directory.path, "content/equipe/egressa.json")).toBe(false);
         }
@@ -520,7 +700,7 @@ describe("remote editable project retrieval", () => {
         );
         const remoteSite = JSON.parse(
           await fs.readFile(
-            path.join(layout.remoteRoot, "labfon-source", "content", "site.json"),
+            path.join(layout.remoteRoot, "source", "content", "site.json"),
             "utf8",
           ),
         );

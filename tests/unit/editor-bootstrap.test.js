@@ -310,7 +310,6 @@ describe("Editor Bootstrap (E1-H1)", () => {
       await app.ready;
       document.getElementById("editor-publish-host").value = "ftp.example.edu";
       document.getElementById("editor-publish-username").value = "editor";
-      document.getElementById("editor-publish-remote-source-path").value = "/source";
       const password = document.getElementById("editor-publish-password");
       password.value = "test-password";
       password.dispatchEvent(new Event("input", { bubbles: true }));
@@ -359,6 +358,39 @@ describe("Editor Bootstrap (E1-H1)", () => {
       expect(document.getElementById("editor-publish-site").disabled).toBe(true);
       expect(document.getElementById("editor-test-ftp-connection").disabled).toBe(true);
       expect(document.getElementById("editor-test-ftp-connection-reason").textContent).toContain("servidor FTP");
+    } finally { app.destroy(); }
+  });
+
+  it("reports legacy path correction without exposing path controls", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost({}, {
+      loadPublishProfile: async () => ({
+        ok: true,
+        correctedPaths: true,
+        message: "Os destinos remotos foram corrigidos para o projeto Labfonac.",
+        profile: {
+          host: "ftp.example.edu",
+          port: 2100,
+          username: "editor",
+          remoteSourcePath: "/source",
+          remotePublishPath: "/",
+          secure: true,
+          passiveMode: true,
+          hasPassword: true,
+        },
+      }),
+    });
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: host });
+    try {
+      await app.ready;
+      await vi.waitFor(() => expect(app.store.getState().publish?.profile).toBeTruthy());
+      expect(document.getElementById("editor-publish-status").textContent).toContain("corrigidos");
+      expect(app.store.getState().publish.profile).toMatchObject({
+        remoteSourcePath: "/source",
+        remotePublishPath: "/",
+      });
+      expect(document.getElementById("editor-publish-remote-source-path")).toBeNull();
+      expect(document.getElementById("editor-publish-remote-path")).toBeNull();
     } finally { app.destroy(); }
   });
 
@@ -736,7 +768,6 @@ describe("Editor Bootstrap (E1-H1)", () => {
     );
     document.getElementById("editor-publish-host").value = "ftp.example.edu";
     document.getElementById("editor-publish-username").value = "editor";
-    document.getElementById("editor-publish-remote-source-path").value = "/source";
     const password = document.getElementById("editor-publish-password");
     password.value = "test-password";
     password.dispatchEvent(new Event("input", { bubbles: true }));
@@ -748,6 +779,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
 
   it("opens a retrieved remote project through the existing project loader", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
+    const progressMessages = [];
     const app = initEditorApp({
       compositionService: createMemoryCompositionService(),
       desktopHost: createMemoryDesktopHost(
@@ -767,13 +799,24 @@ describe("Editor Bootstrap (E1-H1)", () => {
           }),
         },
         {
-          retrieveRemoteProject: async () => ({
-            ok: true,
-            directory: {
-              name: "Lab-FON remoto",
-              path: "C:/app/workspaces/lab-fon/current",
-            },
-          }),
+          retrieveRemoteProject: async (_profile, _password, onProgress) => {
+            await Promise.resolve();
+            onProgress({ phase: "setup" });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            onProgress({ phase: "discovery" });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            onProgress({ phase: "download", transferredBytes: 1536 });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            onProgress({ phase: "validation" });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            return {
+              ok: true,
+              directory: {
+                name: "Lab-FON remoto",
+                path: "C:/app/workspaces/lab-fon/current",
+              },
+            };
+          },
         },
       ),
     });
@@ -782,16 +825,23 @@ describe("Editor Bootstrap (E1-H1)", () => {
     document.getElementById("editor-publish-host").value = "ftp.example.edu";
     document.getElementById("editor-publish-username").value = "editor";
     document.getElementById("editor-publish-password").value = "secret";
-    document.getElementById("editor-publish-remote-source-path").value =
-      "/labfon-source";
-    document.getElementById("editor-publish-remote-path").value = "/";
     document.getElementById("editor-publish-password").dispatchEvent(new Event("input", { bubbles: true }));
     document.getElementById("editor-open-remote-project").click();
     await waitForCondition(() => app.store.getState().openedProject);
 
+    expect(
+      app.store.getState().openedProject,
+      app.store.getState().publish?.message,
+    ).not.toBeNull();
     expect(app.store.getState().openedProject.path).toBe(
       "C:/app/workspaces/lab-fon/current",
     );
+    expect(progressMessages).toEqual([
+      "Conectando...",
+      "Localizando arquivos...",
+      "Baixando projeto... 1.5 KB",
+      "Verificando projeto...",
+    ]);
     expect(app.store.getState().editorSiteModel.site.hero.title).toBe(
       "Hero remoto",
     );
@@ -800,7 +850,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
     app.destroy();
   });
 
-  it("connects to the FTP server without remote paths, browses folders, and assigns roles", async () => {
+  it("connects with fixed paths and keeps folder controls out of the Projeto tab", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const listedPaths = [];
     const app = initEditorApp({
@@ -809,22 +859,13 @@ describe("Editor Bootstrap (E1-H1)", () => {
         {},
         {
           connectFtp: async (profile) => {
-            expect(profile.remoteSourcePath).toBe("");
+            expect(profile.remoteSourcePath).toBe("/source");
+            expect(profile.remotePublishPath).toBe("/");
             return { ok: true, code: "FTP_CONNECTED", message: "Conectado ao servidor." };
           },
           listRemoteDirectory: async (_profile, _password, remotePath) => {
             listedPaths.push(remotePath);
-            if (remotePath === "/") {
-              return {
-                ok: true,
-                path: "/",
-                entries: [
-                  { name: "labfon-source", type: "directory" },
-                  { name: "index.html", type: "file" },
-                ],
-              };
-            }
-            return { ok: true, path: remotePath, entries: [] };
+            return { ok: true, path: remotePath, entries: [{ name: "content", type: "directory" }] };
           },
         },
       ),
@@ -837,25 +878,21 @@ describe("Editor Bootstrap (E1-H1)", () => {
     document.getElementById("editor-publish-password").dispatchEvent(new Event("input", { bubbles: true }));
 
     document.getElementById("editor-connect-ftp").click();
-    await waitForCondition(() => app.store.getState().remote?.entries?.length > 0);
+    await waitForCondition(() => app.store.getState().remote?.status === "connected");
 
-    expect(listedPaths).toContain("/");
-    expect(document.getElementById("editor-remote-browser").classList.contains("is-hidden")).toBe(false);
-    expect(document.getElementById("editor-remote-listing").textContent).toContain(
-      "labfon-source",
-    );
-
-    const listingButtons = Array.from(
-      document.getElementById("editor-remote-listing").querySelectorAll("button"),
-    );
-    const useAsSourceButton = listingButtons.find(
-      (button) => button.textContent === "Usar como pasta do projeto editável",
-    );
-    useAsSourceButton.click();
-
-    expect(document.getElementById("editor-publish-remote-source-path").value).toBe(
-      "/labfon-source",
-    );
+    expect(listedPaths).toEqual(["/source"]);
+    expect(app.store.getState().remote.currentPath).toBe("/source");
+    for (const id of [
+      "editor-remote-browser",
+      "editor-remote-up",
+      "editor-remote-reload",
+      "editor-remote-use-current-source",
+      "editor-remote-use-current-publish",
+      "editor-publish-remote-source-path",
+      "editor-publish-remote-path",
+    ]) expect(document.getElementById(id)).toBeNull();
+    expect(document.getElementById("editor-tabpanel-project").textContent).not.toContain("Pasta:");
+    expect(document.getElementById("editor-open-remote-project")).not.toBeNull();
 
     app.destroy();
   });
