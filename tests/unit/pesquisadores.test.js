@@ -10,6 +10,11 @@ import fs from "node:fs/promises";
 import { TEAM_PLACEHOLDER_URL, resolveTeamPhoto } from "../../src/js/sections/team-photo.js";
 
 describe("PesquisadoresSection", () => {
+  it("uses inclusive visible titles without changing persisted category IDs", () => {
+    expect(EQUIPE_CATEGORIES.find(({ id }) => id === "doutorandas")?.title).toBe("Doutorandos");
+    expect(EQUIPE_CATEGORIES.find(({ id }) => id === "graduadas")?.title).toBe("Graduados");
+  });
+
   it("uses one shared placeholder for empty photos and failed legacy images without rewriting references", () => {
     const renderer = new PesquisadoresSection("unused");
     for (const foto of [undefined, "", "   "]) {

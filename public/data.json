@@ -51,8 +51,8 @@
           "contacts": [
             {
               "label": "Email",
-              "href": "mailto:labfonac@posvernaculas.letras.ufrj.br",
-              "text": "labfonac@posvernaculas.letras.ufrj.br"
+              "href": "mailto:labfonac@letras.ufrj.br",
+              "text": "labfonac@letras.ufrj.br"
             },
             {
               "label": "Instagram",
@@ -71,6 +71,10 @@
             {
               "label": "Faculdade de Letras",
               "href": "https://portal.letras.ufrj.br/"
+            },
+            {
+              "label": "PPGLEV",
+              "href": "https://posvernaculas.letras.ufrj.br"
             },
             {
               "label": "Plataforma Lattes",

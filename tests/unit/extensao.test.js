@@ -50,7 +50,7 @@ describe("ExtensaoSection", () => {
     document.body.innerHTML = '<div id="preview"></div>';
     await renderCompositionPreview({ documentRef: document, container: document.querySelector("#preview"), composition, previewData: { site: { extensao: extension } } });
     expect(document.querySelector("#extensao .extension-project-minibio").textContent).toBe(supplied);
-    expect(document.querySelector(".extension-project-type").textContent).toBe("Projeto de Extensão");
+    expect(document.querySelector(".extension-project-type")).toBeNull();
     expect(document.querySelector(".extension-empty-text")).toBeNull();
     expect([...document.querySelectorAll("nav a")].map((a) => a.textContent)).toEqual(["Extensão", "Contato"]);
   });
@@ -83,9 +83,7 @@ describe("ExtensaoSection", () => {
     expect(
       document.querySelector(".extension-project-title")?.textContent,
     ).toBe("PROVALE em Extensão");
-    expect(document.querySelector(".extension-project-type")?.textContent).toBe(
-      "Projeto de Extensão",
-    );
+    expect(document.querySelector(".extension-project-type")).toBeNull();
     expect(
       document.querySelector(".extension-project-minibio")?.textContent,
     ).toBe("Minibio estruturada do projeto.");

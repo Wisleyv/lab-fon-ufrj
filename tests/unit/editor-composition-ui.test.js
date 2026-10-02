@@ -411,7 +411,7 @@ describe("Editor Composition UI", () => {
     expect(navLinks).not.toContain("Publicações");
     expect(navLinks).not.toContain("PROVALE");
     expect(preview.textContent).toContain("PROVALE em Extensão");
-    expect(preview.textContent).toContain("Projeto de Extensão");
+    expect(preview.querySelector(".extension-project-type")).toBeNull();
     expect(app.store.getState().loadedComposition.sections).toEqual(
       app.store.getState().savedComposition.sections,
     );

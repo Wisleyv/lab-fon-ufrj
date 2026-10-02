@@ -151,8 +151,8 @@ describe("site content binding", () => {
             contacts: [
               {
                 label: "Email",
-                href: "mailto:labfonac@posvernaculas.letras.ufrj.br",
-                text: "labfonac@posvernaculas.letras.ufrj.br",
+                href: "mailto:labfonac@letras.ufrj.br",
+                text: "labfonac@letras.ufrj.br",
               },
             ],
           },
@@ -179,10 +179,38 @@ describe("site content binding", () => {
     );
     expect(
       document.querySelector(".footer-section a")?.getAttribute("href"),
-    ).toBe("mailto:labfonac@posvernaculas.letras.ufrj.br");
+    ).toBe("mailto:labfonac@letras.ufrj.br");
     expect(
       document.querySelector("[data-site-footer-bottom]").textContent,
     ).toBe("© 1990–2025 Laboratório de Fonética Acústica | UFRJ.");
+  });
+
+  it("keeps the canonical contact and PPGLEV link consistent and ordered", () => {
+    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+    const contact = site.footer.sections.find(({ title }) => title === "Contato").contacts[0];
+    const links = site.footer.sections.find(({ title }) => title === "Links Úteis").links;
+
+    expect(contact).toMatchObject({
+      href: "mailto:labfonac@letras.ufrj.br",
+      text: "labfonac@letras.ufrj.br",
+    });
+    expect(links.map(({ label }) => label)).toEqual([
+      "UFRJ",
+      "Faculdade de Letras",
+      "PPGLEV",
+      "Plataforma Lattes",
+    ]);
+    expect(links[2]).toEqual({
+      label: "PPGLEV",
+      href: "https://posvernaculas.letras.ufrj.br",
+    });
+
+    applySiteContent(document, site);
+    const renderedLinks = [...document.querySelectorAll(".footer-section:last-child a")];
+    expect(renderedLinks.map((link) => link.textContent)).toEqual(
+      links.map(({ label }) => label),
+    );
+    expect(renderedLinks[2].href).toBe("https://posvernaculas.letras.ufrj.br/");
   });
 
   it("handles missing optional footer fields gracefully", () => {

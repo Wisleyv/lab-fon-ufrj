@@ -50,12 +50,6 @@ export class ExtensaoSection extends SectionRenderer {
       },
       HTMLSanitizer.sanitize(project.title || "Projeto de Extensão"),
     );
-    const projectType = createElement(
-      "p",
-      { className: "extension-project-type" },
-      HTMLSanitizer.sanitize(project.projectType || "Projeto de Extensão"),
-    );
-    article.appendChild(projectType);
     article.appendChild(title);
 
     article.appendChild(this.createProjectBio(project));

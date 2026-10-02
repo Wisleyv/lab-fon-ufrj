@@ -13,7 +13,7 @@ export const EQUIPE_CATEGORIES = [
   },
   {
     id: "doutorandas",
-    title: "Doutorandas",
+    title: "Doutorandos",
     order: 3,
     current: false,
   },
@@ -31,7 +31,7 @@ export const EQUIPE_CATEGORIES = [
   },
   {
     id: "graduadas",
-    title: "Graduadas",
+    title: "Graduados",
     order: 6,
     current: false,
   },
