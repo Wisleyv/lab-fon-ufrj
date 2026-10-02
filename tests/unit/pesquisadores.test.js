@@ -54,18 +54,25 @@ describe("PesquisadoresSection", () => {
       const files = await fs.readdir("content/equipe");
       const people = await Promise.all(files.filter((file) => file.endsWith(".json")).map(async (file) => JSON.parse(await fs.readFile(`content/equipe/${file}`, "utf8"))));
       const founder = JSON.parse(await fs.readFile("content/equipe/joao-antonio-de-moraes.json", "utf8"));
-      expect(founder).toMatchObject({ nome: "João Moraes", categoria: "docentes", badge: "Fundador", priority: 0, foto: "assets/images/avatar.webp", lattes: "http://lattes.cnpq.br/3799132338763925" });
+      expect(founder).toMatchObject({ nome: "João Moraes", categoria: "fundador", badge: "Fundador e Coordenador", priority: 0, foto: "assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg", lattes: "http://lattes.cnpq.br/3799132338763925" });
       await section.render(people);
       const names = [...container.querySelectorAll("#categoria-docentes-panel .membro-nome")].map((node) => node.textContent);
-      expect(names[0]).toBe("João Moraes");
-      expect(names.slice(1)).toEqual(people.filter((person) => person.categoria === "docentes" && person !== people.find((p) => p.nome === founder.nome)).map((p) => p.nome).sort((a, b) => a.localeCompare(b, "pt-BR", { sensitivity: "base" })));
+      expect(names).toEqual([
+        "João Moraes",
+        "Manuella Carnaval",
+        "Carolina Gomes da Silva",
+        "Albert Olivier Blaise Rilliard",
+        "Carolina Ribeiro Serra",
+        "Luma Miranda",
+        "Vitor Gabriel Caldas",
+      ]);
       expect(container.querySelectorAll(".membro-card")).toHaveLength(people.length);
       expect(container.querySelectorAll("#categoria-egressos-panel .membro-card")).toHaveLength(people.filter((p) => p.categoria === "egressos").length);
       container.querySelector("#categoria-docentes-trigger").click();
       expect(container.querySelector("#categoria-docentes-panel").hidden).toBe(false);
       for (const mode of ["grid", "list", "card"]) {
         section.switchView(mode);
-        expect(container.querySelector(".membro-badge").textContent).toBe("Fundador");
+        expect(container.querySelector(".membro-badge").textContent).toBe("Fundador e Coordenador");
         expect(container.querySelector(".membro-badge").hasAttribute("aria-hidden")).toBe(false);
       }
     });

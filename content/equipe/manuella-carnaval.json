@@ -1,7 +1,9 @@
 {
   "nome": "Manuella Carnaval",
   "instituicao": "UFRJ",
-  "categoria": "coordenacao",
-  "foto": "assets/images/manuella_carnaval.jpeg",
-  "lattes": "http://lattes.cnpq.br/5169234339795314"
+  "categoria": "docentes",
+  "foto": "assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+  "lattes": "http://lattes.cnpq.br/5169234339795314",
+  "badge": "Coordenadora do Laboratório",
+  "priority": 1
 }

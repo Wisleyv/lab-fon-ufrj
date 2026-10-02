@@ -153,24 +153,10 @@
         }
       },
       {
-        "id": "linhas-pesquisa",
-        "type": "linhas_pesquisa",
-        "enabled": true,
-        "order": 2,
-        "navigation": {
-          "visible": false,
-          "label": "Linhas de Pesquisa",
-          "children": []
-        },
-        "presentation": {
-          "variant": "cards"
-        }
-      },
-      {
         "id": "pesquisadores",
         "type": "equipe",
         "enabled": true,
-        "order": 3,
+        "order": 2,
         "navigation": {
           "visible": true,
           "label": "Equipe",
@@ -178,6 +164,20 @@
         },
         "presentation": {
           "variant": "grouped"
+        }
+      },
+      {
+        "id": "linhas-pesquisa",
+        "type": "linhas_pesquisa",
+        "enabled": true,
+        "order": 3,
+        "navigation": {
+          "visible": false,
+          "label": "Linhas de Pesquisa",
+          "children": []
+        },
+        "presentation": {
+          "variant": "cards"
         }
       },
       {
@@ -229,18 +229,189 @@
   },
   "equipe": [
     {
-      "nome": "Carolina Gomes da Silva",
-      "instituicao": "UFPB",
-      "categoria": "coordenacao",
-      "foto": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
-      "lattes": "http://lattes.cnpq.br/6450917807340365"
+      "nome": "Caio Korol Gonçalves da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "doutorandas",
+      "foto": "assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+      "lattes": "http://lattes.cnpq.br/9215729399755614"
     },
     {
-      "nome": "Manuella Carnaval",
+      "nome": "Daniel Borges dos Santos",
       "instituicao": "UFRJ",
-      "categoria": "coordenacao",
-      "foto": "assets/images/manuella_carnaval.jpeg",
-      "lattes": "http://lattes.cnpq.br/5169234339795314"
+      "categoria": "graduandos",
+      "foto": "assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+      "lattes": "http://lattes.cnpq.br/0154057514029577"
+    },
+    {
+      "nome": "Isabelli de Lima Lacet",
+      "instituicao": "UFPB",
+      "categoria": "mestrandos",
+      "foto": "assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+      "lattes": "http://lattes.cnpq.br/9022305811205190"
+    },
+    {
+      "nome": "Jhennefer Câmara da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "mestrandos",
+      "foto": "assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+      "lattes": "http://lattes.cnpq.br/5644266965616691"
+    },
+    {
+      "nome": "João Moraes",
+      "badge": "Fundador e Coordenador",
+      "priority": 0,
+      "instituicao": "UFRJ",
+      "categoria": "fundador",
+      "foto": "assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+      "lattes": "http://lattes.cnpq.br/3799132338763925"
+    },
+    {
+      "nome": "Juliana Benicio de Andrade Dias",
+      "instituicao": "UFPB",
+      "categoria": "mestres",
+      "foto": "assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+      "lattes": "http://lattes.cnpq.br/7907813635310894",
+      "badge": "Coordenadora do PROVALE"
+    },
+    {
+      "nome": "Leandro Lisboa Lopes da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "doutorandas",
+      "foto": "assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+      "lattes": "http://lattes.cnpq.br/3530461459594286"
+    },
+    {
+      "nome": "Maria Luiza de Almeida Mattos Weinstein",
+      "instituicao": "UFRJ",
+      "categoria": "mestrandos",
+      "foto": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+      "lattes": "http://lattes.cnpq.br/2540203937814048"
+    },
+    {
+      "nome": "Mayara Gak Assumpção",
+      "instituicao": "UFRJ",
+      "categoria": "doutorandas",
+      "foto": "assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+      "lattes": "http://lattes.cnpq.br/1907886059107911"
+    },
+    {
+      "nome": "Mayra Suézia Oliveira dos Santos",
+      "instituicao": "UFPB",
+      "categoria": "mestres",
+      "foto": "assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+      "lattes": "http://lattes.cnpq.br/4073084415181213"
+    },
+    {
+      "nome": "Mikaellen Kawany do Nascimento",
+      "instituicao": "UFPB",
+      "categoria": "doutorandas",
+      "foto": "assets/images/mikaellen_nascimento.jpeg",
+      "lattes": "http://lattes.cnpq.br/3368956449281390"
+    },
+    {
+      "nome": "Nicole Maria dos Santos Mello",
+      "instituicao": "UFRJ",
+      "categoria": "doutorandas",
+      "foto": "assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+      "lattes": "http://lattes.cnpq.br/7359692918757774"
+    },
+    {
+      "nome": "Paloma de Barros Moura",
+      "instituicao": "UFPB",
+      "categoria": "mestrandos",
+      "foto": "assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+      "lattes": "http://lattes.cnpq.br/2291377596150650"
+    },
+    {
+      "nome": "Priscila Batista Araújo de Almeida",
+      "instituicao": "UFPB",
+      "categoria": "mestres",
+      "foto": "assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+      "lattes": "http://lattes.cnpq.br/1284109969120471"
+    },
+    {
+      "nome": "Maria Eduarda Rocha da Silva",
+      "instituicao": "UFPB",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+      "lattes": "http://lattes.cnpq.br/4696384516937852"
+    },
+    {
+      "nome": "Sávio Augusto Laurentino da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+      "lattes": "http://lattes.cnpq.br/2895456469194042"
+    },
+    {
+      "nome": "Danilo Moraes de Souza Garcia",
+      "instituicao": "UFRJ",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+      "lattes": "http://lattes.cnpq.br/6209339179642294"
+    },
+    {
+      "nome": "Lucas Benamor Martins da Silva",
+      "instituicao": "UFRJ",
+      "categoria": "doutorandas",
+      "foto": "assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+      "lattes": "http://lattes.cnpq.br/5564520014268763"
+    },
+    {
+      "nome": "Addisseny de Carvalho Ganem",
+      "instituicao": "UFPB",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+      "lattes": "http://lattes.cnpq.br/5311640599574063"
+    },
+    {
+      "nome": "Nicole Azevedo dos Santos Santana",
+      "instituicao": "UFRJ",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+      "lattes": "http://lattes.cnpq.br/5475167418902069"
+    },
+    {
+      "nome": "Kennedy Lohan Fernandes Pereira",
+      "instituicao": "UFPB",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+      "lattes": "http://lattes.cnpq.br/5926772056118780"
+    },
+    {
+      "nome": "Lívia Soeiro Villa Flôr de Carvalho",
+      "instituicao": "UFRJ",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+      "lattes": "http://lattes.cnpq.br/3434968070477518"
+    },
+    {
+      "nome": "Ana Beatriz da Silva Santos",
+      "instituicao": "UFPB",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+      "lattes": "http://lattes.cnpq.br/9029021386087162"
+    },
+    {
+      "nome": "Manuela Maio Sabença",
+      "instituicao": "UFRJ",
+      "categoria": "graduandos",
+      "foto": "assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+      "lattes": "http://lattes.cnpq.br/2752356772251196"
+    },
+    {
+      "nome": "Tathiana Lacerda Alcon",
+      "instituicao": "UFPB",
+      "categoria": "graduadas",
+      "foto": "assets/images/tathiana_alcon.jpeg",
+      "lattes": "http://lattes.cnpq.br/8351323867616540"
+    },
+    {
+      "nome": "Victor Hugo Teixeira de Souza",
+      "instituicao": "UFRJ",
+      "categoria": "mestrandos",
+      "foto": "assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+      "lattes": "http://lattes.cnpq.br/0183601960012762"
     },
     {
       "nome": "Albert Olivier Blaise Rilliard",
@@ -250,174 +421,43 @@
       "lattes": "http://lattes.cnpq.br/7604104346087790"
     },
     {
+      "nome": "Carolina Gomes da Silva",
+      "instituicao": "UFPB",
+      "categoria": "docentes",
+      "foto": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+      "lattes": "http://lattes.cnpq.br/6450917807340365",
+      "badge": "Coordenadora do  PROVALE",
+      "priority": 2
+    },
+    {
       "nome": "Carolina Ribeiro Serra",
       "instituicao": "UFRJ",
       "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
+      "foto": "assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
       "lattes": "http://lattes.cnpq.br/5878437077874490"
     },
     {
-      "nome": "João Moraes",
-      "badge": "Fundador",
-      "priority": 0,
+      "nome": "Manuella Carnaval",
       "instituicao": "UFRJ",
       "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/3799132338763925"
+      "foto": "assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+      "lattes": "http://lattes.cnpq.br/5169234339795314",
+      "badge": "Coordenadora do Laboratório",
+      "priority": 1
     },
     {
-      "nome": "Thiago Laurentino de Oliveira",
-      "instituicao": "UFRJ",
+      "nome": "Luma Miranda",
+      "instituicao": "Eötvös Loránd University - Budapeste",
       "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/4470317184826146"
+      "foto": "assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+      "lattes": "http://lattes.cnpq.br/7803605481153580"
     },
     {
       "nome": "Vitor Gabriel Caldas",
       "instituicao": "UFRJ",
       "categoria": "docentes",
-      "foto": "assets/images/avatar.webp",
+      "foto": "assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
       "lattes": "http://lattes.cnpq.br/5899233718078448"
-    },
-    {
-      "nome": "Brenda Gonçalves Tosi",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/8228431450709999"
-    },
-    {
-      "nome": "Caio Korol Gonçalves da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/9215729399755614"
-    },
-    {
-      "nome": "Juliana Benicio de Andrade Dias",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/juliana_dias.jpeg",
-      "lattes": "http://lattes.cnpq.br/7907813635310894"
-    },
-    {
-      "nome": "Leandro Lisboa Lopes da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/3530461459594286"
-    },
-    {
-      "nome": "Mayara Gak Assumpção",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/1907886059107911"
-    },
-    {
-      "nome": "Mayra Suêzia Oliveira dos Santos",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/mayra_santos.jpeg",
-      "lattes": "http://lattes.cnpq.br/4073084415181213"
-    },
-    {
-      "nome": "Mikaellen Kawany do Nascimento",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/mikaellen_nascimento.jpeg",
-      "lattes": "http://lattes.cnpq.br/3368956449281390"
-    },
-    {
-      "nome": "Nicole Maria dos Santos Mello",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/7359692918757774"
-    },
-    {
-      "nome": "Priscila Batista Araújo de Almeida",
-      "instituicao": "UFRJ",
-      "categoria": "pos_graduacao",
-      "foto": "assets/images/priscila_almeida.jpeg",
-      "lattes": "http://lattes.cnpq.br/1284109969120471"
-    },
-    {
-      "nome": "Daniel Almico Saraiva",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/daniel_saraiva.jpeg",
-      "lattes": "http://lattes.cnpq.br/3996706589776778"
-    },
-    {
-      "nome": "Daniel Borges dos Santos",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/0154057514029577"
-    },
-    {
-      "nome": "Jhennefer Câmara da Silva",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/5644266965616691"
-    },
-    {
-      "nome": "Maria Luiza de Almeida Mattos Weinstein",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
-      "lattes": "http://lattes.cnpq.br/2540203937814048"
-    },
-    {
-      "nome": "Paloma de Barros Moura",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/paloma_moura.jpeg",
-      "lattes": "http://lattes.cnpq.br/2291377596150650"
-    },
-    {
-      "nome": "Susã Silva Garcia",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/avatar.webp",
-      "lattes": "http://lattes.cnpq.br/8374958077516871"
-    },
-    {
-      "nome": "Victor Hugo Teixeira de Souza",
-      "instituicao": "UFRJ",
-      "categoria": "graduacao",
-      "foto": "assets/images/victor_souza.jpeg",
-      "lattes": "http://lattes.cnpq.br/0183601960012762"
-    },
-    {
-      "nome": "Isabelli de Lima Lacet",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/isabelli_lacet.jpeg",
-      "lattes": "http://lattes.cnpq.br/9022305811205190"
-    },
-    {
-      "nome": "Jussara Cassimiro Soares",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/jussara_soares.jpeg",
-      "lattes": "http://lattes.cnpq.br/3233006072497912"
-    },
-    {
-      "nome": "Safira Dy Carly Ramos Brandão",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/safira_brandao.jpeg",
-      "lattes": "http://lattes.cnpq.br/6347327329503433"
-    },
-    {
-      "nome": "Tathiana Lacerda Alcon",
-      "instituicao": "UFPB",
-      "categoria": "egressos",
-      "foto": "assets/images/tathiana_alcon.jpeg",
-      "lattes": "http://lattes.cnpq.br/8351323867616540"
     }
   ],
   "linhas_pesquisa": [
@@ -483,15 +523,17 @@
       "localizacao": "Brasília, DF",
       "tipo": "agencia-fomento",
       "descricao": "Agência de fomento à pesquisa e pós-graduação.",
-      "url": "https://www.gov.br/capes"
+      "url": "https://www.gov.br/capes",
+      "logo": "assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg"
     },
     {
       "nome": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
       "sigla": "CNPq",
-      "localizacao": "",
+      "localizacao": "Brasília, DF",
       "tipo": "agencia-fomento",
       "descricao": "",
-      "url": "https://www.gov.br/cnpq/pt-br/"
+      "url": "https://www.gov.br/cnpq/pt-br/",
+      "logo": "assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg"
     },
     {
       "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
@@ -499,7 +541,8 @@
       "localizacao": "Rio de Janeiro, RJ",
       "tipo": "agencia-fomento",
       "descricao": "Agência estadual de fomento à pesquisa científica",
-      "url": "https://www.faperj.br"
+      "url": "https://www.faperj.br",
+      "logo": "assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg"
     },
     {
       "nome": "Laboratoire Interdisciplinaire des Sciences du Numérique",
@@ -507,7 +550,17 @@
       "localizacao": "Paris, França",
       "tipo": "internacional",
       "descricao": "Laboratório interdisciplinar de ciências digitais",
-      "url": "https://www.lisn.upsaclay.fr"
+      "url": "https://www.lisn.upsaclay.fr",
+      "logo": "assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png"
+    },
+    {
+      "nome": "Programa de Pós-Graduação em Letras Vernáculas",
+      "sigla": "PPGLEV | UFRJ",
+      "localizacao": "Rio de Janeiro, RJ",
+      "tipo": "instituicao",
+      "descricao": "O PPGLEV, criado em 1970, abrange três áreas de concentração: Língua Portuguesa, Literatura Brasileira e Literaturas Portuguesa e Africanas. O PPGLEV tem como objetivos fundamentais a criação, o desenvolvimento e a divulgação da pesquisa em língua e literaturas de língua portuguesa (no Brasil, Europa e África), bem como a formação e a capacitação de professores e pesquisadores.",
+      "url": "https://posvernaculas.letras.ufrj.br",
+      "logo": "assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg"
     },
     {
       "nome": "Universidade Federal da Paraíba",
@@ -515,7 +568,8 @@
       "localizacao": "João Pessoa, PB",
       "tipo": "universidade",
       "descricao": "Parceria institucional com a Universidade Federal da Paraíba",
-      "url": "https://www.ufpb.br"
+      "url": "https://www.ufpb.br",
+      "logo": "assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png"
     }
   ],
   "publicacoes": [

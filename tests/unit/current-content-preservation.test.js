@@ -1,5 +1,6 @@
 import fs from "fs";
 import { describe, expect, it } from "vitest";
+import { EQUIPE_CATEGORIES } from "../../src/js/sections/equipe-categories.js";
 
 describe("Current Content Preservation", () => {
   it("keeps Publicações present but disabled in the release composition", () => {
@@ -14,7 +15,7 @@ describe("Current Content Preservation", () => {
     });
   });
 
-  it("keeps Egressos present in the team content", () => {
+  it("keeps Egressos available without restoring removed production members", () => {
     const files = fs.readdirSync("content/equipe");
     const members = files
       .filter((file) => file.endsWith(".json"))
@@ -22,9 +23,8 @@ describe("Current Content Preservation", () => {
         JSON.parse(fs.readFileSync(`content/equipe/${file}`, "utf8")),
       );
 
-    expect(members.some((member) => member.categoria === "egressos")).toBe(
-      true,
-    );
+    expect(EQUIPE_CATEGORIES.some((category) => category.id === "egressos")).toBe(true);
+    expect(members.some((member) => member.categoria === "egressos")).toBe(false);
   });
 
   it("represents active PROVALE content within the Extensão model", () => {

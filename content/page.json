@@ -30,24 +30,10 @@
       }
     },
     {
-      "id": "linhas-pesquisa",
-      "type": "linhas_pesquisa",
-      "enabled": true,
-      "order": 2,
-      "navigation": {
-        "visible": false,
-        "label": "Linhas de Pesquisa",
-        "children": []
-      },
-      "presentation": {
-        "variant": "cards"
-      }
-    },
-    {
       "id": "pesquisadores",
       "type": "equipe",
       "enabled": true,
-      "order": 3,
+      "order": 2,
       "navigation": {
         "visible": true,
         "label": "Equipe",
@@ -55,6 +41,20 @@
       },
       "presentation": {
         "variant": "grouped"
+      }
+    },
+    {
+      "id": "linhas-pesquisa",
+      "type": "linhas_pesquisa",
+      "enabled": true,
+      "order": 3,
+      "navigation": {
+        "visible": false,
+        "label": "Linhas de Pesquisa",
+        "children": []
+      },
+      "presentation": {
+        "variant": "cards"
       }
     },
     {
