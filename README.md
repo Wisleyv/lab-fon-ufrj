@@ -10,7 +10,9 @@ O site é estático e pode ser hospedado em um servidor FTP comum. O conteúdo i
 
 ## Para quem mantém o conteúdo
 
-Use a versão empacotada do **Lab-FON Editor**. O aplicativo recupera o projeto remoto, permite editar e revisar o conteúdo, gera o site e conduz a atualização e a publicação. Não é necessário instalar Node.js, editar JSON ou operar um cliente FTP.
+Use a distribuição validada do **Editor Labfonac**, com a máquina preparada pelo suporte técnico. O aplicativo recupera o projeto remoto, permite editar/salvar e revisar, e conduz **Atualizar site**: verificação, atualização da fonte, geração e publicação. O build utiliza Node.js/npm disponíveis na máquina; o mantenedor não precisa executar comandos, editar JSON ou operar um cliente FTP.
+
+Este fluxo descreve o checkpoint pós-v1 aceito, não uma nova release instalada. O instalador publicado v1.0.0 antecede esse checkpoint; confirme a distribuição com o responsável técnico.
 
 Consulte o [Guia do Usuário do Editor Labfonac](docs/GUIA-DO-USUARIO.md) para instalação e uso cotidiano.
 
@@ -20,9 +22,11 @@ O instalador e a distribuição portátil são artefatos de versão; binários g
 
 ### Requisitos
 
-- Node.js compatível com o projeto;
+- Node.js 22.12 ou superior para o conjunto de ferramentas do lockfile atual (contexto usado nesta documentação: 22.16.0);
 - npm;
 - Windows para executar e empacotar o aplicativo desktop.
+
+O primeiro lançamento de desenvolvimento pode baixar o binário Electron do GitHub. Prepare acesso à internet e Node.js/npm no PATH. A [configuração detalhada](docs/ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) explica a porta 3000 exclusiva do Editor e a alternativa de startup sem servidor; não reutilize inadvertidamente um renderer de outro worktree.
 
 ### Comandos principais
 
@@ -40,6 +44,8 @@ npm run editor:build
 - `npm run build`: gera o site estático.
 - `npm run editor:dev`: abre o Editor em modo de desenvolvimento.
 - `npm run editor:build`: gera o instalador NSIS para Windows e a distribuição não instalada.
+
+Para desenvolvimento local do site, prefira `npx vite --host 127.0.0.1`, escolhendo uma porta livre quando necessário. Nesta baseline, use testes em execução única e mantenha serviços de desenvolvimento em loopback; a [auditoria de continuidade](docs/CONTINUITY_REPRODUCIBILITY_AUDIT.md) classifica os findings conhecidos e as restrições de Vitest UI no Windows.
 
 Os detalhes de publicação e empacotamento estão em [DEPLOYMENT.md](DEPLOYMENT.md). As instruções permanentes de arquitetura e manutenção estão em [AGENTS.md](AGENTS.md).
 
@@ -71,6 +77,8 @@ Princípios do projeto:
 ## Documentação
 
 - [Guia do usuário](docs/GUIA-DO-USUARIO.md): instalação e operação por mantenedores de conteúdo.
+- [Handover técnico](docs/ARCHITECTURE_AND_OPERATIONS_HANDOVER.md): arquitetura, ambiente, recuperação e responsabilidades institucionais.
+- [Convergência aceita](docs/PRODUCTION_CONVERGENCE_2026-10-03.md) e [inventário de entrega](docs/DELIVERY_INVENTORY.md): evidências operacionais, fronteiras e custódia pendente.
 - [Índice de documentação](DOCUMENTATION_INDEX.md): referências atuais, técnicas e históricas.
 - [Publicação e empacotamento](DEPLOYMENT.md): orientação para desenvolvedores e responsáveis pela versão.
 - [Instruções do projeto](AGENTS.md): restrições arquiteturais e práticas de desenvolvimento.

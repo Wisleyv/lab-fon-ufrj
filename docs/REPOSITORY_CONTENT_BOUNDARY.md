@@ -1,5 +1,7 @@
 # Identidade, licença e limite entre software e dados
 
+Nota de contexto: este registro conserva a evidência do checkpoint e suas ressalvas. A pendência de avaliação de produção foi encerrada pela [convergência aceita](PRODUCTION_CONVERGENCE_2026-10-03.md). Consulte o [handover técnico](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) para operação e custódia atuais.
+
 Registro do checkpoint de 2026-10-03, posterior a `71581ea`.
 
 ## Correção do caminho de desenvolvimento
@@ -29,7 +31,7 @@ A versão vem de `app.getVersion()`, que usa os metadados do aplicativo. Pacote 
 
 ## Licença
 
-O pacote, o lockfile e o README já declaravam MIT, mas faltava um arquivo canônico rastreado. `LICENSE` contém o texto MIT e foi incluído na lista existente de arquivos distribuídos, sem executar empacotamento. Pacote, README, guia e diálogo descrevem a autoria, o financiamento e a licença de forma consistente. O nome de instalação **Lab-FON Editor** foi preservado.
+O pacote, o lockfile e o README já declaravam MIT, mas faltava um arquivo canônico rastreado. `LICENSE` contém o texto MIT e foi incluído na lista existente de arquivos distribuídos, sem executar empacotamento. Pacote, README, guia e diálogo descrevem a autoria, o financiamento e a licença de forma consistente. O aplicativo é o **Editor Labfonac**; o identificador histórico de instalação `Lab-FON Editor` foi preservado no pacote.
 
 A licença do software não concede direitos sobre conteúdo institucional, registros pessoais ou fotografias mantidos fora deste repositório.
 

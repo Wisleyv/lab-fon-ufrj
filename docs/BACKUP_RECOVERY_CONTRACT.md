@@ -1,5 +1,7 @@
 # Local Backup and Recovery Contract
 
+Contract with historical Phase 5 context. Standalone “no automatic rollback” statements below do not describe the later guided public-only compensation: read the Phase 7 paragraph together with [guided update acceptance](PHASE_7_GUIDED_UPDATE_VERIFICATION.md). Subsequent [disposable acceptance](DISPOSABLE_FTP_ACCEPTANCE_REPORT.md) completed the manual scenarios; the [current guide](GUIA-DO-USUARIO.md) describes user operations.
+
 Phase 5 adds recovery to the existing separate source-update and publication actions. It does not unify their workflow or create remote backup directories.
 
 ## Storage and evidence

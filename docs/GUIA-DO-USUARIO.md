@@ -2,135 +2,170 @@
 
 ## 1. O que é o Editor Labfonac
 
-O Editor Labfonac é o aplicativo usado para manter o conteúdo do site do Laboratório de Fonética da UFRJ. Nele, você pode recuperar o projeto do servidor, editar textos e registros, revisar o resultado e publicar a nova versão do site.
+Ferramenta de manutenção do site do Laboratório de Fonética Acústica - UFRJ. Requer um projeto compatível com o fluxo de trabalho do laboratório e, para publicação, acesso a um servidor configurado para esse projeto.
 
-A manutenção normal deve ser feita pelo próprio Editor. Não é necessário manipular arquivos internos do projeto nem usar programas de FTP.
+O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e atualizar o site. Faça a manutenção pelos controles do aplicativo; não é necessário editar JSON ou usar um cliente FTP. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. Software sob a MIT License.
 
-O aplicativo requer um projeto compatível com o fluxo LAB-FON e um servidor configurado para publicar esse projeto. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. O software é de código aberto sob a MIT License.
+Este guia descreve o fluxo pós-v1 aceito em 2026-10-03, não uma nova versão instalada. O instalador publicado v1.0.0 é anterior a esse fluxo; confirme com o responsável técnico qual distribuição foi validada para utilizá-lo. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
-Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão instalada e acesse o guia, o código-fonte, a licença e a última versão disponível. Esses links abrem no navegador e requerem conexão à internet.
+## 2. Instalação e preparação
 
-## 2. Instalação
+Use a distribuição fornecida ou indicada pelo responsável técnico. O instalador publicado v1.0.0 chama-se `Lab-FON-Editor-Setup-1.0.0.exe`. Depois da instalação, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
-### Instalação recomendada
+Esse instalador não tem assinatura digital. O Windows pode indicar fornecedor desconhecido ou aviso de reputação. Confirme a origem oficial com o responsável técnico; não desative as proteções do Windows.
 
-1. Abra o arquivo `Lab-FON-Editor-Setup-1.0.0.exe`.
-2. Aguarde o término da instalação. Normalmente, não é necessária permissão de administrador.
-3. Abra o menu Iniciar do Windows e selecione **Lab-FON Editor**.
+Na distribuição portátil, extraia o ZIP completo, mantenha os arquivos juntos e abra o **Editor Labfonac** pelo executável `Lab-FON Editor.exe`. Não mova somente o executável. Os nomes de arquivos e identificadores de instalação da distribuição v1.0.0 conservam a nomenclatura original; o nome do aplicativo neste guia é **Editor Labfonac**.
 
-O instalador atual não possui assinatura digital. Em outro computador, o Windows pode identificar o editor como sendo de um fornecedor desconhecido ou exibir um aviso de segurança ou reputação. Leia o aviso e confirme que o arquivo recebido é o instalador oficial do Lab-FON. Não desative os recursos de segurança do Windows.
+Antes do primeiro uso, peça ao suporte para preparar e verificar a geração neste computador. O Editor atual utiliza Node.js e npm disponíveis no Windows: instalar apenas o aplicativo não garante essa preparação. Você não precisa executar comandos; o suporte configura o ambiente e o Editor conduz a geração. A primeira preparação das dependências do projeto também requer internet e pode demorar.
 
-### Versão portátil
+Combine quem fará a manutenção. Não atualize ou recupere enquanto outra pessoa estiver fazendo o mesmo: o servidor não bloqueia operações simultâneas.
 
-A pasta `Lab-FON-Editor-Portable` contém uma versão que funciona sem instalação. Para usá-la, mantenha todos os arquivos da pasta juntos e abra **Lab-FON Editor.exe**. Essa é uma alternativa; para o uso cotidiano, prefira a versão instalada.
+## 3. Conectar e abrir o projeto remoto
 
-## 3. Conectar e abrir o projeto
+Solicite **Servidor**, **Porta**, **Usuário** e **Senha** ao responsável pelo acesso institucional. Não inclua esses dados em documentos públicos ou capturas compartilhadas.
 
-Tenha em mãos o servidor, a porta, o usuário e a senha fornecidos pela pessoa responsável pelo site. Não compartilhe nem registre essas credenciais em documentos públicos.
+1. Abra **Conectar** e preencha os quatro campos com os dados recebidos. Não adivinhe a porta.
+2. Mantenha **Usar FTP/TLS** marcado para a conexão institucional. Erro de certificado/TLS exige suporte; não desmarque a opção para contornar o erro.
+3. Clique em **Conectar** e aguarde a confirmação e a verificação do projeto remoto.
+4. Use **Salvar configuração** somente em computador autorizado, se quiser reutilizá-la. O indicador de senha salva não revela a senha nem fornece acesso a outro computador.
+5. Em **Projeto**, clique em **Abrir projeto remoto**.
+6. Aguarde localização, download e verificação. Continue quando aparecer **Projeto remoto aberto em cópia local de trabalho** e o projeto estiver válido.
 
-1. Abra a aba **Conectar**.
-2. Preencha **Servidor**, **Porta**, **Usuário** e **Senha**.
-3. Mantenha **Usar FTP/TLS** marcado quando essa for a configuração informada para o servidor.
-4. Clique em **Conectar** e aguarde a confirmação. O Editor localiza e verifica automaticamente o projeto remoto.
-5. Use **Salvar configuração** somente se quiser conservar a configuração para sessões futuras.
-6. Antes de publicar, use **Testar conexão** e aguarde a confirmação do Editor.
-7. Abra a aba **Projeto** e clique em **Abrir projeto remoto**.
-8. Aguarde o download e a verificação. O progresso pode passar por mensagens como “Conectando...”, “Localizando arquivos...”, “Baixando projeto...” e “Verificando projeto...”.
-9. Continue somente quando o Editor informar que o projeto remoto foi aberto em uma cópia local de trabalho.
+O aplicativo controla os destinos remotos; você não escolhe pastas no servidor. **Testar conexão** ajuda no diagnóstico, mas não é etapa obrigatória separada antes de cada atualização: **Atualizar site** faz suas próprias verificações.
 
-Os locais corretos do projeto editável e do site publicado são administrados automaticamente pelo aplicativo. Você não precisa escolher pastas no servidor.
+![Aba Projeto com Abrir projeto remoto](images/guide/projeto.png)
 
-## 4. Editar conteúdo
+*Orientação antes da abertura. O caminho temporário visível é um exemplo antigo, não um local a criar. Aguarde a mensagem de abertura bem-sucedida no seu computador.*
 
-### Aba Conteúdo
+**Opções avançadas** permite abrir projetos locais para trabalho técnico. Uma sessão local permite edição/revisão, mas não atualização remota cotidiana. Para manter o servidor, use **Abrir projeto remoto**.
 
-Na aba **Conteúdo**, escolha a área que deseja editar. Somente áreas habilitadas na página são apresentadas. Faça uma alteração por vez e confira os campos antes de clicar em **Salvar conteúdo**.
+Ao retomar em outra sessão, recupere o projeto remoto atual antes de editar. Se houver trabalho local não enviado, não o substitua sem orientação: combine com o suporte como preservá-lo e conciliá-lo.
 
-Use **Descartar alterações** para abandonar mudanças ainda não salvas. Ao trocar de área ou de registro, observe os avisos do Editor: a troca pode ser bloqueada enquanto existirem alterações não salvas.
+## 4. Editar e salvar
 
-#### Site
+### Conteúdo
 
-Em **Site**, é possível manter os textos gerais e elementos institucionais, incluindo cabeçalho, apresentação, seção “Sobre” e rodapé. Revise com cuidado títulos, descrições, links, contatos e textos alternativos de imagens.
+Escolha a área em **Conteúdo**; somente áreas habilitadas na página são oferecidas. Faça uma alteração por vez e clique em **Salvar conteúdo**. Aguarde a confirmação. Salvar conserva o trabalho local; não atualiza o servidor.
 
-#### Linhas de Pesquisa
+**Descartar alterações** abandona mudanças ainda não salvas. Trocas de área/registro ou fechamento podem ser bloqueados enquanto houver mudanças pendentes. Salve ou descarte conscientemente; fechar a janela não deve ser tratado como salvamento.
 
-Em **Linhas de Pesquisa**, selecione um registro existente ou use **Adicionar registro**. Os campos de uso comum são **Nome** e **Descrição**.
+| Área | Operação comum e cuidado |
+| --- | --- |
+| Site | Textos gerais, cabeçalho, apresentação, Sobre e rodapé. Confira links, contatos e textos alternativos das imagens. |
+| Equipe | Selecione a pessoa ou use **Adicionar registro**. Confira nome, instituição, categoria, currículo e foto antes de salvar; confirme o registro antes de **Remover registro**. |
+| Linhas de Pesquisa | Nome e descrição. **Ícone** e **Ordem de exibição**, em Edição avançada, só devem mudar quando o efeito for conhecido. |
+| Extensão | Projetos, incluindo PROVALE, imagem, coordenação e redes sociais. Confira o perfil/URL do Instagram na prévia. Se a área não aparecer, confira se Extensão está habilitada em Página. |
+| Parcerias | Instituição, sigla, localização, tipo, descrição, site e logotipo. Confira link e imagem antes de salvar. |
 
-A seção **Edição avançada** contém **Ícone** e **Ordem de exibição**. Normalmente, não é necessário alterá-los. Uma mudança incorreta pode afetar a apresentação ou a posição da linha no site; edite esses controles somente quando compreender o resultado esperado.
+Para fotos/logotipos, use o controle **Carregar** ou **Alterar** correspondente, escolha o arquivo e confira a imagem. Complete os campos obrigatórios e o texto alternativo quando oferecido; salve o conteúdo. Não copie arquivos para pastas internas nem use imagens sem autorização de publicação.
 
-#### Equipe
+![Formulário ativo com dados de demonstração](images/guide/conteudo-ativo.png)
 
-Em **Equipe**, selecione a pessoa que deseja atualizar ou use **Adicionar registro**. É possível editar informações como nome, instituição, categoria, distinção e currículo, além de carregar ou alterar a foto.
+*Editor real com conteúdo público fictício em projeto local isolado. A forma de editar é a mesma; este exemplo não representa conteúdo institucional nem conexão ao servidor.*
 
-Confira se a categoria está correta e se a foto corresponde à pessoa antes de salvar. Para excluir uma pessoa, selecione o registro certo antes de usar **Remover registro**.
+### Página
 
-#### Extensão e PROVALE
+Em **Página**, controle quais seções aparecem e sua ordem:
 
-Em **Extensão**, mantenha as informações dos projetos de extensão, incluindo título, apresentação, imagem, coordenação, redes sociais e a integração do Instagram quando disponível. O PROVALE é mantido nessa área.
-
-Ao alterar o Instagram do PROVALE, informe somente um perfil ou endereço válido e confira a prévia antes de publicar. Se **Extensão** não aparecer em **Conteúdo**, verifique primeiro se essa seção está habilitada na aba **Página**.
-
-#### Parcerias
-
-Em **Parcerias**, é possível adicionar ou atualizar instituição, sigla, localização, tipo, descrição, site e logotipo. Use **Carregar logo** ou **Alterar logo** para escolher uma imagem. Confira o nome, o endereço do site e a aparência do logotipo antes de salvar.
-
-### Aba Página
-
-A aba **Página** controla quais seções aparecem no site e em que ordem.
-
-- Use **Subir** e **Descer** para reorganizar uma seção.
-- Use **Remover da página** somente quando a seção realmente não deva aparecer.
+- **Subir** e **Descer** reorganizam.
+- **Remover da página** desabilita a seção na composição; não equivale a excluir todos os registros.
 - Para recolocar uma seção disponível, escolha-a, indique a **Posição** e clique em **Adicionar seção**.
-- Use **Preview** para conferir a composição.
-- Clique em **Salvar página** para conservar a nova organização.
-- Use **Descartar alterações da página** para voltar à composição salva.
+- Use **Preview** para conferir a composição; clique em **Salvar página** para conservá-la.
+- **Descartar alterações da página** retorna à composição salva.
 
-Salvar a página e salvar o conteúdo são ações separadas. Se você alterou os dois, salve ambos antes de revisar.
+Seções personalizadas são blocos de texto controlados, não edição livre de HTML. Use os campos oferecidos e revise; alterações de programação/estilo cabem ao técnico.
 
-## 5. Salvar, revisar e publicar
+Salvar página e salvar conteúdo são ações separadas. Salve ambos se alterou os dois. O **Preview** de Página ajuda a revisar a composição; não substitui a prévia do site gerado.
 
-Salvar uma edição não publica o site. O trabalho normal segue esta ordem:
+![Composição ativa e salvamento da página](images/guide/pagina.png)
 
-1. Faça as alterações na aba **Conteúdo** e clique em **Salvar conteúdo**.
-2. Se alterou a composição, abra **Página**, use **Preview** e clique em **Salvar página**.
-3. Abra **Revisar** e clique em **Gerar site**.
-4. Quando a geração terminar, clique em **Prévia do site gerado**.
-5. Examine a prévia, especialmente os textos, links, imagens, ordem das seções e registros alterados.
-6. Confirme que **Testar conexão**, na aba **Conectar**, foi concluído com sucesso.
-7. Abra **Publicar** e clique em **Atualizar projeto remoto**. Confirme a operação e aguarde a mensagem de sucesso.
-8. Ainda em **Publicar**, clique em **Publicar site**, leia a confirmação apresentada e prossiga somente se estiver publicando a versão revisada.
-9. Aguarde a confirmação de que o site foi publicado.
-10. Abra o site público no navegador e verifique manualmente o resultado.
+*Projeto fictício após reorganizar e salvar a página. Os controles de composição estão disponíveis; a geração anterior precisa ser refeita após alterações.*
 
-O botão **Inicializar projeto remoto** não faz parte da manutenção cotidiana. Ele se destina à preparação inicial de um servidor e só deve ser usado com orientação específica.
+## 5. Revisar e atualizar o site
 
-## 6. Antes de publicar
+O fluxo cotidiano é **abrir projeto remoto → editar → salvar → revisar → Atualizar site → conferir o site público**.
 
-- Salve todas as alterações e revise a prévia antes de publicar.
-- Não feche o projeto nem escolha outro projeto quando o Editor indicar alterações não salvas. Salve-as ou descarte-as conscientemente.
-- Não altere opções avançadas apenas para experimentar.
-- Leia as mensagens de confirmação antes de atualizar ou publicar.
-- Depois da publicação, abra o site público e confira exatamente o conteúdo alterado.
-- Se houver falha de conexão, recuperação, atualização ou publicação, pare e investigue a mensagem apresentada. Não tente contornar o problema com alterações manuais por FTP.
+1. Salve conteúdo e página, se alterada. Resolva avisos de validação.
+2. Em **Revisar**, clique em **Gerar site**. Aguarde; a primeira geração pode preparar dependências antes de construir o site.
+3. Após sucesso, clique em **Prévia do site gerado**. Confira textos, links, imagens, seções e registros alterados. Se editar novamente, salve e gere nova prévia.
+4. Em **Publicar**, clique em **Atualizar site**, leia a confirmação e confirme somente se projeto e destino forem os esperados.
+5. Aguarde verificação, proteção da versão anterior, atualização do projeto remoto, nova geração e publicação. Não feche o Editor, desligue o computador ou inicie outra operação.
+6. Aguarde a mensagem de sucesso. Abra o endereço público fornecido pelo responsável e confira as mudanças, inclusive em tela pequena.
 
-## 7. Situações comuns
+![Geração concluída e prévia disponível](images/guide/revisao.png)
 
-### Não foi possível conectar
+*Geração e prévia reais do projeto fictício isolado. **Prévia do site gerado** só fica disponível para uma geração válida e atual. Caminhos de demonstração na saída são ilustrativos, não pastas a configurar.*
 
-Confira **Servidor**, **Porta**, **Usuário**, **Senha** e **Usar FTP/TLS**. Tente **Conectar** novamente apenas depois de corrigir os dados. Se o erro continuar, registre a mensagem exibida e procure a pessoa responsável pelo acesso ao servidor.
+Revisar antes é recomendado. Uma geração anterior não é requisito técnico de **Atualizar site**: o botão verifica a conexão e gera uma versão nova durante a operação. A prévia antiga é invalidada ao iniciar. Salvar sozinho nunca publica.
 
-### O projeto remoto não abre
+![Aba Publicar com Atualizar site e recuperação](images/guide/publicar.png)
 
-Confirme primeiro que a conexão foi estabelecida. Depois, na aba **Projeto**, use **Abrir projeto remoto** e aguarde todas as etapas. Se a recuperação ou a verificação falhar, não escolha pastas manualmente nem tente montar o projeto por FTP; registre a mensagem e investigue a causa.
+*Orientação dos controles atuais antes da abertura de projeto; nesta captura estão desabilitados. A mensagem de conclusão no seu Editor confirma o resultado.*
 
-### Há alterações não salvas
+**Inicializar projeto remoto** destina-se à preparação técnica inicial de servidor vazio. Não use para resolver falha de abertura ou atualização.
 
-Volte à aba indicada e escolha **Salvar conteúdo**, **Salvar página**, **Descartar alterações** ou **Descartar alterações da página**, conforme o caso. O Editor pode impedir a troca ou o fechamento do projeto para proteger o trabalho em andamento.
+## 6. Falha, interrupção e nova tentativa
 
-### A publicação não está disponível ou falhou
+Falha não significa que nenhuma etapa aconteceu. Registre mensagem, etapa e horário sem expor credenciais.
 
-Confirme, nesta ordem, que o projeto está aberto, as alterações estão salvas, **Gerar site** terminou com sucesso, a prévia está atualizada e **Testar conexão** foi concluído. Se uma operação falhar, não repita várias vezes nem faça um envio manual: preserve a mensagem apresentada para análise.
+| Etapa que falhou | O que esperar |
+| --- | --- |
+| Verificação inicial | A atualização não deve prosseguir. Corrija o motivo antes de tentar novamente. |
+| Atualização do projeto remoto | Geração/publicação não prossegue. O projeto remoto pode estar parcial; não suponha reversão automática. Estado parcial/conflito exige suporte. |
+| Geração depois da atualização do projeto | O projeto remoto atualizado permanece; o site público não é publicado por essa tentativa. Corrija a geração com suporte. |
+| Publicação parcial | O Editor tenta restaurar os arquivos afetados da versão pública anterior, sem restaurar o projeto editável. Se a conexão impedir, a recuperação fica pendente. |
 
-### Versão instalada ou portátil
+Depois de corrigir uma causa transitória conhecida, use **Tentar atualizar novamente** quando oferecido. A tentativa verifica o estado, resolve recuperação pública pendente antes de publicar e gera novamente. Etapas concluídas só são reaproveitadas após verificação; não há repetição automática em segundo plano.
 
-Use normalmente **Lab-FON Editor** pelo menu Iniciar. A versão portátil deve ser aberta pelo arquivo **Lab-FON Editor.exe** dentro de `Lab-FON-Editor-Portable`. Não mova somente o executável para fora dessa pasta, pois ele depende dos arquivos que o acompanham.
+Se aplicativo/computador for interrompido, preserve o mesmo computador e suas cópias locais. Reabra, configure a mesma conexão e use **Projeto → Abrir projeto remoto**, lendo o estado antes de confirmar nova atualização. Se houver mudanças locais não enviadas ou dúvida sobre a revisão a recuperar, pare e peça suporte para preservar/conciliar esse trabalho. Registros locais permitem reconciliar etapas interrompidas; não provam que o site já foi restaurado.
+
+Durante transferência ou falha de rede, o site pode estar parcial até a recuperação terminar. Não apague dados do aplicativo, troque de computador para contornar a falha nem envie arquivos por FTP. Pare se houver conflito de revisão, recuperação persistente, cópia danificada ou falha repetida sem causa corrigida.
+
+## 7. Recuperar uma versão anterior
+
+Recuperação muda o servidor. Combine com o responsável qual versão e qual parte restaurar; não use apenas para investigar um aviso.
+
+1. Salve ou descarte conscientemente mudanças locais; aguarde o fim de operações.
+2. Confira a conexão. Em **Publicar**, clique em **Recuperar versão anterior**.
+3. Leia horários e opções. O Editor oferece a cópia anterior elegível mais recente de cada parte para aquela conexão; não permite navegar por todas as versões históricas.
+4. Escolha **Restaurar site publicado**, **Restaurar projeto editável** ou **Cancelar** se houver dúvida.
+5. Aguarde a confirmação. Cópia disponível não prova restauração concluída.
+
+| Escolha | Efeito e próximo passo |
+| --- | --- |
+| **Restaurar site publicado** | Retorna os arquivos públicos abrangidos pela cópia; não muda o projeto remoto. Mantém um projeto já aberto. Confira o site; futura atualização poderá publicar novamente o conteúdo do projeto atual. |
+| **Restaurar projeto editável** | Retorna os arquivos do projeto remoto abrangidos pela cópia; não muda o site público. Fecha o projeto local, que pode estar desatualizado. Use **Projeto → Abrir projeto remoto** novamente, revise e gere antes de decidir publicar. |
+
+Após tentativa de recuperação do projeto editável, o projeto também pode fechar se a restauração falhar: preserve a mensagem e peça suporte. Não há outro diálogo para escolher o projeto remoto; o destino é fixo.
+
+O Editor verifica a cópia e protege a versão afetada atual antes de restaurar. Cópia incompleta/danificada bloqueia a operação. Se não houver cópia para a conexão, peça suporte no computador/arquivo institucional responsável; não improvise restauração manual. A recuperação cobre arquivos da operação, não toda a hospedagem.
+
+## 8. Revisar limpeza remota
+
+Com projeto remoto aberto, mudanças salvas e geração bem-sucedida, use **Publicar → Manutenção → Revisar limpeza remota**. O Editor consulta/classifica arquivos e mostra caminhos e tamanhos propostos. A ação é somente leitura: **não existe execução de limpeza disponível nesta versão aceita**.
+
+Arquivos antigos podem permanecer após atualizar. Sucesso confirma os arquivos mantidos pelo Editor, não a exclusão de todo material histórico. Não exclua candidatos ou imagens desconhecidas por FTP. Encaminhe a revisão ao técnico para decisão separada, com evidências atuais e cópias verificadas.
+
+## 9. Solução de problemas
+
+| Situação | Como agir |
+| --- | --- |
+| Não conecta / autenticação falhou | Confira os dados recebidos e a rede. Corrija causa conhecida antes de repetir. Erro TLS/certificado vai ao suporte, mantendo FTP/TLS marcado. |
+| Projeto remoto não abre | Aguarde todas as etapas. Se faltar projeto compatível/verificação falhar, preserve mensagem; não escolha outra pasta, inicialize ou monte o projeto manualmente. |
+| Primeira geração demora | Pode instalar dependências, baixar e verificar arquivos. Acompanhe etapa/saída; não feche enquanto ocupado. Aparente paralisação ou downloads bloqueados exigem suporte com mensagem/horário. Não há prazo universal garantido. |
+| Geração falhou / npm não encontrado | Não prossiga com publicação. Suporte deve conferir Node.js/npm, internet, espaço e diagnósticos. Salve antes de nova geração. |
+| Avisos npm/dependências | Depreciações foram observadas sem impedir operações aceitas. Confira resultado final: aviso não equivale a sucesso/falha. Encaminhe avisos de segurança ao técnico, sem executar atualizações/correções automáticas. |
+| Botão indisponível | Leia o motivo e estado da sessão: projeto remoto válido, mudanças salvas e nenhuma operação em andamento. Limpeza também exige geração concluída; atualização guiada não exige teste de conexão ou geração manual prévios. |
+| Mudanças não salvas | Volte a Conteúdo/Página e salve ou descarte conscientemente. Não feche para eliminar o aviso. |
+| Publicação falhou / atualização interrompida | Siga a seção 6. Preserve registros locais; repita após corrigir causa. Estado parcial, conflito ou recuperação persistente exige suporte. |
+| Projeto fechou após recuperação | No projeto editável, é proteção esperada. Após sucesso, recupere novamente em Projeto; após falha, pare e investigue. Recuperação pública não abre um projeto por si só. |
+| Não há cópia / cópia danificada | Pare e procure responsável pela recuperação. Pode estar em outro computador autorizado; não apague registros nem copie perfis/senhas para improvisar. |
+| Site parece antigo / arquivos públicos antigos | Confira resultado final e recarregue a página para descartar cache. Legados fora do conjunto atualizado podem permanecer. Use revisão somente leitura e suporte; não os apague. |
+
+Ao pedir ajuda, informe versão, ação, etapa, horário e mensagem final. Revise capturas/logs antes de compartilhar, retirando credenciais e informações privadas. Não envie senhas pelo relatório.
+
+## 10. Limites da manutenção comum
+
+Use campos, salvamentos e confirmações do Editor. Não altere JSON, dependências, código, destinos, registros de recuperação ou arquivos legados manualmente. Preparação inicial, ambiente, conciliação de trabalhos, novas versões e custódia de backups cabem ao suporte.
+
+Referências técnicas: [handover](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md), [convergência aceita](PRODUCTION_CONVERGENCE_2026-10-03.md) e [inventário de preservação](DELIVERY_INVENTORY.md).

@@ -1,4 +1,4 @@
-# Algoritmo de desenvolvimento — Lab-FON Editor
+# Algoritmo de desenvolvimento — Editor Labfonac
 
 ### Objetivo
 

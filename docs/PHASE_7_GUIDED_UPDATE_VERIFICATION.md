@@ -1,5 +1,7 @@
 # Phase 7: guided site update
 
+Dated implementation/verification record. The pending manual/production statements below are historical: see [disposable acceptance](DISPOSABLE_FTP_ACCEPTANCE_REPORT.md) and [accepted production convergence](PRODUCTION_CONVERGENCE_2026-10-03.md). The implemented workflow remains the reference for the [current guide](GUIA-DO-USUARIO.md).
+
 Implemented in `C:\Temp\labfonac-post-v1.0` on the existing post-v1 branch, preserving Phases 1-6. No commit or push.
 
 ## Maintainer workflow

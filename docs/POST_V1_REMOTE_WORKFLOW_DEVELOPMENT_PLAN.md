@@ -9,7 +9,7 @@ Planning baseline:
 - branch: `work/post-v1.0-hardening-2026-10-02`;
 - baseline commit: `8274a88 feat: reconcile and polish post-v1 site`;
 - production remains a static website hosted through FTP;
-- the installed Lab-FON Editor remains separate from the editable website project;
+- the installed Editor Labfonac remains separate from the editable website project;
 - no phase may silently delete remote files or combine unrelated changes.
 
 The inventory in `docs/backup_inventory.md` is the primary structural evidence for the current remote account. It records approximately 73.52 MB under `/source/` and 73.08 MB under the published root. In both locations, the corresponding image tree accounts for approximately 72.8 MB. This is not principally an accidental nested copy inside `/source/`: the current architecture keeps source assets under `/source/public/` and reproduces them in the generated public site. The actionable problems are the oversized source boundary, probable stale or orphaned media, repeated transfer of unchanged assets, and Editor artifacts leaking into public output.

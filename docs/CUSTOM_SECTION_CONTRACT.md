@@ -1,5 +1,7 @@
 # Custom Section Contract (C0)
 
+Historical proposal: the original approval/implementation statements below describe C0, not the present implementation. C2 was subsequently accepted in [the manual acceptance report](C2-manual-acceptance-report-2026-09-13.md). Use the accepted implementation and [current handover](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) for operational context; retain this proposal as design history.
+
 Status: proposal awaiting maintainer approval. No C2 implementation is authorized by this document alone.
 
 Scope: repeatable, controlled text sections in the static Labfonac site and its existing desktop editor. Evidence is current source inspection, not an audit of historical executable packages. C1 remains accepted; B3 remains deferred.

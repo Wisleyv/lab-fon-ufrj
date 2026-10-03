@@ -1,4 +1,4 @@
-**Backlog Executável do Lab-FON Editor (Windows)**
+**Backlog Executável do Editor Labfonac (Windows)**
 
 ## 1. Regras operacionais do backlog
 1. Não iniciar história sem critérios de aceite definidos.

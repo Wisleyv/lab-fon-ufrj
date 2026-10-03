@@ -110,7 +110,7 @@ dist/
 
 Eu chamaria conceitualmente de:
 
-## **Lab-FON Editor**
+## **Editor Labfonac**
 
 Um aplicativo Windows local.
 
@@ -123,7 +123,7 @@ O fluxo seria:
                          │
                          ▼
               ┌────────────────────┐
-              │   Lab-FON Editor   │
+              │   Editor Labfonac  │
               │                    │
               │  conteúdo          │
               │  estrutura         │
@@ -481,7 +481,7 @@ Abre:
 
 ```text
 ┌─────────────────────────────────────────────┐
-│ Lab-FON Editor                              │
+│ Editor Labfonac                             │
 ├──────────────┬──────────────────────────────┤
 │              │                              │
 │ Páginas      │       PREVIEW                │
@@ -984,7 +984,7 @@ Eu chegaria a isto:
                  └───────┬───────┘
                          │
                          ▼
-                  Lab-FON Editor
+                  Editor Labfonac
                     (.exe)
                          │
           ┌──────────────┼──────────────┐

@@ -1,5 +1,7 @@
 # Phase 8: controlled remote cleanup
 
+Dated implementation record. Manual workflow acceptance and production convergence subsequently completed; see [disposable acceptance](DISPOSABLE_FTP_ACCEPTANCE_REPORT.md) and [convergence](PRODUCTION_CONVERGENCE_2026-10-03.md). The mirror proposal and pending-acceptance statements below are historical. Cleanup execution remains hard-disabled and unauthorized; no later convergence authorized deletion.
+
 ## Implementation
 
 The native cleanup service composes the existing source/public manifests and recovery store. A read-only, on-demand `Manutencao` review saves a checksum-bound manifest locally and displays the exact proposed paths and sizes. Classification is not authorization.

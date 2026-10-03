@@ -1,4 +1,4 @@
-# Lab-FON Editor — Manual C2 Acceptance Report and Usability Findings
+# Editor Labfonac — Manual C2 Acceptance Report and Usability Findings
 
 ## Acceptance Update: f8064e2
 
