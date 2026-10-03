@@ -11,11 +11,98 @@ const STORAGE_KEY = "labfon.editor.lastSource";
 describe("manual acceptance operation regressions", () => {
   const profile = { host: "ftp.example.edu", port: 21, username: "editor", remoteSourcePath: "/source", remotePublishPath: "/", secure: true, hasPassword: true };
 
+  it("offers a guarded read-only cleanup review with no deletion control", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Execução bloqueada.", manifest: { proposed: [{ path: "editor.html", bytes: 100 }], proposedBytes: 100 } }));
+    const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
+    try {
+      await app.ready;
+      const project = { status: "valid", source: "remote-ftp", path: "C:/fixture" };
+      app.store.setState({ openedProject: project, publish: { status: "configured", profile }, build: { status: "success" }, contentDirty: true });
+      const button = document.getElementById("editor-review-cleanup");
+      expect(button.disabled).toBe(true); button.click();
+      expect(host.reviewRemoteCleanup).not.toHaveBeenCalled();
+      app.store.setState({ contentDirty: false }); button.click();
+      expect(app.store.getState().publish.status).toBe("publishing");
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("configured"));
+      expect(host.reviewRemoteCleanup).toHaveBeenCalledExactlyOnceWith(project, profile, "");
+      expect(document.getElementById("editor-publish-diagnostics").textContent).toContain("/editor.html");
+      expect(document.getElementById("editor-publish-status").textContent).toContain("bloqueada");
+      expect(document.getElementById("editor-execute-cleanup")).toBeNull();
+    } finally { app.destroy(); }
+  });
+
+  it("announces guided stages, retains a confirmed source after public failure, and invalidates an old preview", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    let finish; let progress;
+    const host = createMemoryDesktopHost({}, { updateSite: (_directory, _profile, _password, onProgress) => {
+      progress = onProgress;
+      return new Promise(resolve => { finish = resolve; });
+    } });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
+        publish: { status: "configured", profile }, build: { status: "success", previewUrl: "http://localhost/stale" } });
+      document.getElementById("editor-publish-site").click();
+      expect(app.store.getState().build.status).toBe("idle");
+      expect(app.store.getState().build.previewUrl).toBeNull();
+      const receipts = { source: { transactionId: "source" }, build: { fingerprint: "build" }, publication: null };
+      progress({ stage: "publication", message: "Protegendo e publicando site...", receipts });
+      expect(document.getElementById("editor-publish-status").textContent).toContain("publicando");
+      expect(document.getElementById("editor-publish-status").getAttribute("aria-live")).toBe("polite");
+      expect(app.store.getState().receipts.source).toBeTruthy();
+      expect(document.getElementById("editor-close-project").disabled).toBe(true);
+      finish({ ok: false, stage: "recovery", message: "Site anterior recuperado.", receipts });
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("failed"));
+      expect(app.store.getState().receipts.source).toBeTruthy();
+      expect(app.store.getState().receipts.publication).toBeNull();
+      expect(document.getElementById("editor-publish-site").textContent).toBe("Tentar atualizar novamente");
+      expect(document.getElementById("editor-publish-site").disabled).toBe(false);
+    } finally { app.destroy(); confirm.mockRestore(); }
+  });
+
+  it.each(["public", "source"])("protects unsaved work and settles explicit %s recovery", async (domain) => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.restoreRemoteBackup = vi.fn(async () => ({ ok: true, domain, message: "Versão restaurada." }));
+    host.closeProject = vi.fn(async () => ({ ok: true }));
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: host });
+    try {
+      await app.ready;
+      for (const [id, value] of [["editor-publish-host", profile.host], ["editor-publish-username", profile.username]]) {
+        document.getElementById(id).value = value;
+      }
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
+        publish: { status: "configured", profile }, contentDirty: true });
+      const button = document.getElementById("editor-restore-backup");
+      expect(button.disabled).toBe(true);
+      button.click();
+      expect(host.restoreRemoteBackup).not.toHaveBeenCalled();
+      app.store.setState({ contentDirty: false, receipts: { source: { revision: app.store.getState().revision }, publication: null } });
+      expect(button.disabled).toBe(false);
+      button.click();
+      await vi.waitFor(() => expect(app.store.getState().publish.status).not.toBe("publishing"));
+      expect(host.restoreRemoteBackup).toHaveBeenCalledOnce();
+      if (domain === "source") {
+        expect(app.store.getState().openedProject).toBeNull();
+        expect(host.closeProject).toHaveBeenCalledOnce();
+      } else {
+        expect(app.store.getState().openedProject).not.toBeNull();
+        expect(app.store.getState().receipts.source).not.toBeNull();
+        expect(host.closeProject).not.toHaveBeenCalled();
+      }
+    } finally { app.destroy(); }
+  });
+
   it("does not enter remote operations for a local-only project, even with a saved ready profile", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const host = createMemoryDesktopHost();
     host.updateRemoteProjectSource = vi.fn();
     host.publishGeneratedSite = vi.fn();
+    host.updateSite = vi.fn();
     const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: host });
     try {
       await app.ready;
@@ -29,15 +116,16 @@ describe("manual acceptance operation regressions", () => {
       }
       expect(host.updateRemoteProjectSource).not.toHaveBeenCalled();
       expect(host.publishGeneratedSite).not.toHaveBeenCalled();
+      expect(host.updateSite).not.toHaveBeenCalled();
       expect(app.store.getState().publish.status).toBe("ready");
       expect(document.getElementById("editor-session-project").textContent).toBe("local aberto");
     } finally { app.destroy(); }
   });
 
-  it.each(["success", "failure", "throw", "malformed"])("settles remote source-update state after %s without a build prerequisite", async (outcome) => {
+  it.each(["success", "failure", "throw", "malformed"])("settles guided update state after %s without a build prerequisite", async (outcome) => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const host = createMemoryDesktopHost();
-    host.updateRemoteProjectSource = vi.fn(async () => {
+    host.updateSite = vi.fn(async () => {
       if (outcome === "throw") throw new Error("Simulated failure");
       if (outcome === "malformed") return undefined;
       return { ok: outcome === "success", code: "FIXTURE_RESULT", message: "Fixture result" };
@@ -48,12 +136,12 @@ describe("manual acceptance operation regressions", () => {
       await app.ready;
       app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
         publish: { status: "configured", profile }, build: { status: "idle" } });
-      document.getElementById("editor-update-remote-source").click();
+      document.getElementById("editor-publish-site").click();
       expect(app.store.getState().publish.status).toBe("publishing");
-      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe(outcome === "success" ? "configured" : "failed"));
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe(outcome === "success" ? "success" : "failed"));
       expect(document.getElementById("editor-publish-status").textContent).not.toContain("Atualizando projeto remoto...");
-      expect(document.getElementById("editor-update-remote-source").disabled).toBe(false);
-      expect(host.updateRemoteProjectSource).toHaveBeenCalledOnce();
+      expect(document.getElementById("editor-publish-site").disabled).toBe(false);
+      expect(host.updateSite).toHaveBeenCalledOnce();
     } finally { app.destroy(); confirm.mockRestore(); }
   });
 });
@@ -207,7 +295,7 @@ describe("saved local project opening", () => {
 });
 
 describe("Editor Bootstrap (E1-H1)", () => {
-  it("publishes a tested destination before entering the busy UI state", async () => {
+  it("starts a guided update before entering the busy UI state", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     let finishPublication;
     const publishGeneratedSite = vi.fn(() => new Promise((resolve) => {
@@ -215,7 +303,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
     }));
     const app = initEditorApp({
       compositionService: createMemoryCompositionService(),
-      desktopHost: createMemoryDesktopHost({}, { publishGeneratedSite }),
+      desktopHost: createMemoryDesktopHost({}, { updateSite: publishGeneratedSite }),
     });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     try {
@@ -459,10 +547,10 @@ describe("Editor Bootstrap (E1-H1)", () => {
     } finally { app.destroy(); }
   });
 
-  it("keeps remote-source update independent of build while enforcing unsaved-change guards", async () => {
+  it("uses one guided action without a pre-existing build and enforces unsaved-change guards", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
-    const update = vi.fn(async () => ({ ok: true, message: "Atualizado" }));
-    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateRemoteProjectSource: update }) });
+    const update = vi.fn(async () => ({ ok: false, message: "Geração falhou", receipts: { source: { transactionId: "source" }, build: null, publication: null } }));
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateSite: update }) });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     try {
       await app.ready;
@@ -470,8 +558,11 @@ describe("Editor Bootstrap (E1-H1)", () => {
         publish: { status: "configured", profile: { host: "ftp.example.edu", port: 21, username: "editor", remoteSourcePath: "/source", remotePublishPath: "/", secure: true, hasPassword: true } } });
       document.getElementById("editor-tab-publish").click();
       expect(update).not.toHaveBeenCalled();
-      expect(document.getElementById("editor-publish-site").disabled).toBe(true);
+      expect(document.getElementById("editor-publish-site").disabled).toBe(false);
+      expect(document.getElementById("editor-update-remote-source").parentElement.hidden).toBe(true);
       document.getElementById("editor-update-remote-source").click();
+      expect(update).not.toHaveBeenCalled();
+      document.getElementById("editor-publish-site").click();
       await vi.waitFor(() => expect(update).toHaveBeenCalledTimes(1));
       await vi.waitFor(() => expect(app.store.getState().publish.status).not.toBe("publishing"));
       expect(document.getElementById("editor-session-source").textContent).toBe("atualizado nesta sessão");
@@ -480,9 +571,9 @@ describe("Editor Bootstrap (E1-H1)", () => {
       expect(document.getElementById("editor-session-build").textContent).toBe("não gerada");
       app.store.setState({ contentDirty: true });
       expect(document.getElementById("editor-session-source").textContent).toBe("estado desconhecido");
-      document.getElementById("editor-update-remote-source").click();
-      expect(document.getElementById("editor-update-remote-source").disabled).toBe(true);
-      expect(document.getElementById("editor-update-remote-source-reason").textContent).toContain("Salve");
+      document.getElementById("editor-publish-site").click();
+      expect(document.getElementById("editor-publish-site").disabled).toBe(true);
+      expect(document.getElementById("editor-publish-site-reason").textContent).toContain("Salve");
       expect(update).toHaveBeenCalledTimes(1);
     } finally { confirm.mockRestore(); app.destroy(); }
   });
@@ -521,12 +612,12 @@ describe("Editor Bootstrap (E1-H1)", () => {
   it("retains source failure across tabs and releases busy controls after a rejected operation", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const update = vi.fn(async () => { throw new Error("Transferência simulada falhou."); });
-    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateRemoteProjectSource: update }) });
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateSite: update }) });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     try {
       await app.ready;
       app.store.setState({ openedProject: { status: "valid", path: "C:/project" }, publish: { status: "configured", profile: { host: "ftp.example.edu", port: 21, username: "editor", hasPassword: true, remoteSourcePath: "/source", remotePublishPath: "/" } } });
-      const button = document.getElementById("editor-update-remote-source");
+      const button = document.getElementById("editor-publish-site");
       button.click(); button.click();
       expect(update).toHaveBeenCalledTimes(1);
       await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("failed"));
@@ -541,12 +632,12 @@ describe("Editor Bootstrap (E1-H1)", () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     let finish;
     const update = vi.fn(() => new Promise((resolve) => { finish = resolve; }));
-    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateRemoteProjectSource: update }) });
+    const app = initEditorApp({ compositionService: createMemoryCompositionService(), desktopHost: createMemoryDesktopHost({}, { updateSite: update }) });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     try {
       await app.ready;
       app.store.setState({ openedProject: { status: "valid", path: "C:/project" }, publish: { status: "configured", profile: { host: "ftp.example.edu", port: 21, username: "editor", hasPassword: true, remoteSourcePath: "/source", remotePublishPath: "/" } } });
-      document.getElementById("editor-update-remote-source").click();
+      document.getElementById("editor-publish-site").click();
       app.store.setState({ openedProject: { status: "valid", path: "C:/other-project" } });
       finish({ ok: true });
       await vi.waitFor(() => expect(app.store.getState().publish.status).not.toBe("publishing"));
@@ -809,7 +900,11 @@ describe("Editor Bootstrap (E1-H1)", () => {
             progressMessages.push(document.getElementById("editor-publish-status").textContent);
             onProgress({ phase: "discovery" });
             progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            onProgress({ phase: "reuse" });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
             onProgress({ phase: "download", transferredBytes: 1536 });
+            progressMessages.push(document.getElementById("editor-publish-status").textContent);
+            onProgress({ phase: "download", transferredBytes: 1536, totalBytes: 3072, completedFiles: 2, totalFiles: 4, percent: 50, bytesPerSecond: 1024, etaSeconds: 2 });
             progressMessages.push(document.getElementById("editor-publish-status").textContent);
             onProgress({ phase: "validation" });
             progressMessages.push(document.getElementById("editor-publish-status").textContent);
@@ -843,7 +938,9 @@ describe("Editor Bootstrap (E1-H1)", () => {
     expect(progressMessages).toEqual([
       "Conectando...",
       "Localizando arquivos...",
-      "Baixando projeto... 1.5 KB",
+      "Verificando arquivos locais...",
+      "Baixando projeto... 1.5 KB recebidos",
+      "Baixando projeto... 50% (2/4 arquivos) · 1.5 KB recebidos · 3.0 KB no total · 1.0 KB/s · cerca de 2 s restantes",
       "Verificando projeto...",
     ]);
     expect(app.store.getState().editorSiteModel.site.hero.title).toBe(

@@ -1,6 +1,20 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("labfonDesktopHost", {
+  reviewRemoteCleanup(rootPath, profile, password) {
+    return ipcRenderer.invoke("labfon:reviewRemoteCleanup", rootPath, profile, password);
+  },
+  updateSite(rootPath, profile, password) {
+    return ipcRenderer.invoke("labfon:updateSite", rootPath, profile, password);
+  },
+  onSiteUpdateProgress(callback) {
+    const listener = (_event, progress) => callback(progress);
+    ipcRenderer.on("labfon:siteUpdateProgress", listener);
+    return () => ipcRenderer.removeListener("labfon:siteUpdateProgress", listener);
+  },
+  restoreRemoteBackup(profile, password) {
+    return ipcRenderer.invoke("labfon:restoreRemoteBackup", profile, password);
+  },
   closeProject() {
     return ipcRenderer.invoke("labfon:closeProject");
   },

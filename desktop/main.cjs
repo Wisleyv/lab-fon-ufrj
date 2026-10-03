@@ -8,9 +8,161 @@ const { readContentDataset, saveContentRecord, readContentDeletions } = require(
 const { createImageAssetService } = require("./image-assets.cjs");
 const { Writable } = require("node:stream");
 const { isDeepStrictEqual } = require("node:util");
+const { SOURCE_ENTRIES, REQUIRED_SOURCE_MARKERS, isSourceFile } = require("./source-manifest.cjs");
+const { installEditorMenu } = require("./editor-menu.cjs");
+const { runPortableBuild } = require("./portable-build.cjs");
+const { createRecoveryStore, destinationKey } = require("./recovery-store.cjs");
+const { createRemoteCleanup, fileEvidence } = require("./remote-cleanup.cjs");
+// A later explicit authorization must follow Phase 7 manual acceptance and manifest review.
+const REMOTE_CLEANUP_AUTHORIZED = false;
+
+async function cleanupEvidence(root, profile) {
+  const source = await validateLocalEditableProject(root);
+  if (!source.ok) throw new Error(source.message);
+  const build = await validateGeneratedSite(root);
+  if (!build.ok) throw new Error(build.message);
+  return {
+    sourceFiles: await fileEvidence(await listEditableProjectBundleFiles(root)),
+    publicFiles: await fileEvidence(await listDistFiles(root)),
+    connectionKey: destinationKey(profile),
+  };
+}
+
+function cleanupService(root, password) {
+  return createRemoteCleanup({
+    recoveryStore: getRecoveryStore(),
+    evidence: profile => cleanupEvidence(root, profile),
+    mutationGate: () => REMOTE_CLEANUP_AUTHORIZED,
+    verifyCurrent: async profile => {
+      const key = require("node:crypto").createHash("sha256").update(JSON.stringify([root, profile.host, profile.port, profile.username, profile.secure])).digest("hex");
+      const journal = JSON.parse(await fs.readFile(path.join(getPublishStorageDirectory(), "guided-updates", `${key}.json`), "utf8"));
+      if (journal.stage !== "complete" || journal.publicPending || !journal.receipts.source || !journal.receipts.publication || !journal.receipts.build) throw new Error("Guided update receipt required");
+      const store = getRecoveryStore();
+      if (await store.fingerprint(await listEditableProjectBundleFiles(root)) !== journal.revision ||
+          await store.fingerprint(await listDistFiles(root)) !== journal.receipts.build.fingerprint) throw new Error("Guided revision changed");
+      const secret = password || await loadPublishPassword();
+      await verifyGuidedReceipt(journal.receipts.source.transactionId, "source", profile, secret);
+      await verifyGuidedReceipt(journal.receipts.publication.transactionId, "public", profile, secret);
+    },
+  });
+}
+
+async function reviewRemoteCleanup(_event, rootPath, profile, password) {
+  const root = path.resolve(rootPath);
+  if (root !== path.join(getWorkspacesDirectory(), "current")) return { ok: false, code: "REMOTE_PROJECT_REQUIRED", message: "Abra o projeto remoto para revisar a limpeza." };
+  const sanitized = sanitizeProfile(profile);
+  const invalid = validateNativeProfile(sanitized);
+  if (invalid) return invalid;
+  const secret = password || await loadPublishPassword();
+  if (!secret) return { ok: false, code: "FTP_AUTHENTICATION_FAILED", message: "Senha FTP não configurada." };
+  try {
+    const manifest = await withGuidedClient(sanitized, secret, client => cleanupService(root, secret).plan(client, sanitized));
+    const directory = path.join(getPublishStorageDirectory(), "cleanup-reviews");
+    await fs.mkdir(directory, { recursive: true });
+    const filename = path.join(directory, `${manifest.id}.json`);
+    await fs.writeFile(`${filename}.tmp`, `${JSON.stringify(manifest, null, 2)}\n`);
+    await fs.rename(`${filename}.tmp`, filename);
+    return { ok: true, manifest, message: "Revisão concluída. Execução bloqueada: aceite manual e autorização pendentes." };
+  } catch {
+    return { ok: false, code: "CLEANUP_REVIEW_FAILED", message: "Revisão não concluída. Nenhum arquivo remoto foi alterado." };
+  }
+}
+
+async function executeRemoteCleanup(_event, rootPath, profile, password, manifestId, approval) {
+  if (!REMOTE_CLEANUP_AUTHORIZED) return { ok: false, code: "CLEANUP_PRODUCTION_GATE_PENDING", message: "Limpeza bloqueada: aceite manual e autorização pendentes." };
+  const root = path.resolve(rootPath);
+  if (root !== path.join(getWorkspacesDirectory(), "current") || !/^[a-f0-9]{64}$/.test(manifestId || "")) return { ok: false, code: "CLEANUP_BLOCKED" };
+  const sanitized = sanitizeProfile(profile);
+  const invalid = validateNativeProfile(sanitized);
+  if (invalid) return invalid;
+  const secret = password || await loadPublishPassword();
+  if (!secret) return { ok: false, code: "FTP_AUTHENTICATION_FAILED" };
+  const manifest = JSON.parse(await fs.readFile(path.join(getPublishStorageDirectory(), "cleanup-reviews", `${manifestId}.json`), "utf8"));
+  const { dialog } = require("electron");
+  const confirmation = await dialog.showMessageBox({ type: "warning", title: "Confirmar limpeza remota",
+    message: `${manifest.proposed.length} arquivos serão removidos.`,
+    detail: manifest.proposed.map(file => `/${file.path}`).join("\n"), buttons: ["Cancelar", "Confirmar limpeza"], defaultId: 0, cancelId: 0, noLink: true });
+  if (confirmation.response !== 1) return { ok: false, cancelled: true };
+  return withGuidedClient(sanitized, secret, client => cleanupService(root, secret).execute(client, sanitized, manifest, approval));
+}
+const { createAssetReuse } = require("./retrieval-cache.cjs");
+const { createRetrievalProgress } = require("./retrieval-progress.cjs");
+const { createGuidedUpdate } = require("./guided-update.cjs");
+let guidedUpdate;
+let guidedUpdateDirectory;
+
+async function updateSite(event, rootPath, profile, password) {
+  const root = path.resolve(rootPath);
+  const sanitized = sanitizeProfile(profile);
+  const profileError = validateNativeProfile(sanitized);
+  if (profileError) return profileError;
+  const secret = password || await loadPublishPassword();
+  if (!secret) return { ok: false, code: "FTP_AUTHENTICATION_FAILED", message: "Senha FTP não configurada." };
+  const directory = path.join(getPublishStorageDirectory(), "guided-updates");
+  // The coordinator's dependencies are bound per call, not to stale connection credentials.
+  if (!guidedUpdate || guidedUpdateDirectory !== directory) {
+    guidedUpdateDirectory = directory;
+    guidedUpdate = createGuidedUpdate(directory, {
+      validate: async (project, target, pass) => {
+        if (project !== path.join(getWorkspacesDirectory(), "current")) return { ok: false, code: "REMOTE_PROJECT_REQUIRED", message: "Abra o projeto remoto antes de atualizar o site." };
+        const local = await validateLocalEditableProject(project);
+        if (!local.ok) return local;
+        const connection = await testFtpConnection(null, target, pass);
+        if (!connection.ok) return connection;
+        if (!connection.summary?.sourceReady) return { ok: false, code: "REMOTE_PROJECT_NOT_INITIALIZED", message: "Projeto editável remoto não encontrado." };
+        return { ok: true };
+      },
+      revision: async project => getRecoveryStore().fingerprint(await listEditableProjectBundleFiles(project)),
+      buildRevision: async project => getRecoveryStore().fingerprint(await listDistFiles(project)),
+      history: target => getRecoveryStore().list(target),
+      verify: async (id, domain, target, pass) => verifyGuidedReceipt(id, domain, target, pass),
+      restorePublic: async (id, target, pass) => restoreGuidedPublic(id, target, pass),
+      source: (project, target, pass) => updateRemoteProjectSource(null, project, target, pass),
+      build: project => runProjectBuild(null, project),
+      publish: (project, target, pass) => publishGeneratedSite(null, project, target, pass),
+    });
+  }
+  return guidedUpdate(root, sanitized, secret, progress => event?.sender?.send("labfon:siteUpdateProgress", progress));
+}
+
+async function withGuidedClient(profile, password, operation) {
+  const client = appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000);
+  if (client.ftp) client.ftp.verbose = false;
+  try {
+    await client.access({ host: profile.host, port: profile.port, user: profile.username, password, secure: profile.secure });
+    return await operation(client);
+  } finally { client.close(); }
+}
+
+async function verifyGuidedReceipt(id, domain, profile, password) {
+  const store = getRecoveryStore();
+  const transaction = await store.verify(id, domain);
+  const matches = (await store.list(profile)).some(item => item.id === id);
+  if (!matches || transaction.snapshots[domain].status !== "success" || transaction.snapshots[domain].resolvedAt) throw new Error("Stale update receipt");
+  return withGuidedClient(profile, password, client => store.verifyRemote(client, transaction, domain));
+}
+
+async function restoreGuidedPublic(id, profile, password) {
+  const store = getRecoveryStore();
+  await store.verify(id, "public");
+  return withGuidedClient(profile, password, client => store.restore(client, id, "public", profile));
+}
 
 const isDev = process.env.LABFON_EDITOR_DEV === "true";
 const REQUIRED_BUILD_ARTIFACTS = ["dist/index.html", "dist/data.json"];
+const PUBLIC_ARTIFACT_PATTERNS = [
+  /^\.htaccess$/,
+  /^data\.json$/,
+  /^index\.html$/,
+  /^publication_references\.json$/,
+  /^assets\/images\/.+$/,
+  /^assets\/index\.[A-Za-z0-9_-]+\.css$/,
+  /^js\/index\.[A-Za-z0-9_-]+\.js$/,
+  /^js\/site-content\.[A-Za-z0-9_-]+\.js$/,
+];
+function isPublicArtifact(relativePath) {
+  return PUBLIC_ARTIFACT_PATTERNS.some(pattern => pattern.test(relativePath));
+}
 const GENERATED_SITE_BASE_PATH = "/labfonac/";
 const PROFILE_FILE = "publish-profile.json";
 const PASSWORD_FILE = "publish-password.bin";
@@ -24,18 +176,7 @@ let appServices = {
   createFtpClient: null,
 };
 
-const EDITABLE_PROJECT_BUNDLE = [
-  "content",
-  "scripts",
-  "src",
-  "package.json",
-  "package-lock.json",
-  "index.html",
-  "editor.html",
-  "vite.config.js",
-];
 const SOURCE_PROTECTION_METADATA = new Set([".htaccess", ".ftpquota"]);
-const STATIC_PROJECT_ASSETS = ["public/assets", "public/publication_references.json"];
 
 function createWindow({ BrowserWindow }) {
   const window = new BrowserWindow({
@@ -43,6 +184,7 @@ function createWindow({ BrowserWindow }) {
     height: 820,
     minWidth: 960,
     minHeight: 640,
+    icon: path.join(__dirname, "..", "build", "icon.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
@@ -120,16 +262,12 @@ async function runProjectBuild(_event, rootPath) {
     };
   }
 
-  const command = "npm";
-  let dependencyResult = { ok: true, command: "dependency check", output: "" };
-  let buildResult = await runApprovedBuildCommand(command, projectRoot);
-
-  if (!buildResult.ok && isMissingLocalVite(buildResult.output)) {
-    dependencyResult = await ensureProjectDependencies(command, projectRoot);
-    if (!dependencyResult.ok) {
-      return dependencyResult;
-    }
-    buildResult = await runApprovedBuildCommand(command, projectRoot);
+  let buildResult;
+  try {
+    buildResult = await runPortableBuild(projectRoot, runNpmCommand);
+  } catch (error) {
+    return { ok: false, code: "BUILD_UNAVAILABLE",
+      message: `Não foi possível preparar a geração do site: ${getErrorMessage(error)}`, output: "" };
   }
 
   if (!buildResult.ok) {
@@ -150,48 +288,9 @@ async function runProjectBuild(_event, rootPath) {
     code: "BUILD_SUCCEEDED",
     message: "Site generated successfully.",
     command: buildResult.command,
-    output: `${dependencyResult.output || ""}${buildResult.output}`,
+    output: buildResult.output,
     artifacts: validation.artifacts,
   };
-}
-
-async function ensureProjectDependencies(command, projectRoot) {
-  if (!(await pathExists(null, projectRoot, "package-lock.json"))) {
-    return {
-      ok: false,
-      code: "BUILD_DEPENDENCIES_UNAVAILABLE",
-      message:
-        "Não foi possível preparar a geração: package-lock.json não foi encontrado no projeto aberto.",
-      command: "npm ci",
-      output: "",
-    };
-  }
-
-  const installResult = await runNpmCommand(command, ["ci"], projectRoot);
-  if (!installResult.ok) {
-    return {
-      ...installResult,
-      code: "BUILD_DEPENDENCIES_FAILED",
-      message: "Não foi possível instalar as dependências do projeto aberto.",
-    };
-  }
-
-  return installResult;
-}
-
-function isMissingLocalVite(output) {
-  const lower = String(output || "").toLowerCase();
-  return (
-    lower.includes("vite") &&
-    (lower.includes("not recognized") ||
-      lower.includes("não é reconhecido") ||
-      lower.includes("reconhecido") ||
-      lower.includes("not found"))
-  );
-}
-
-function runApprovedBuildCommand(command, projectRoot) {
-  return runNpmCommand(command, ["run", "build"], projectRoot);
 }
 
 function runNpmCommand(command, args, projectRoot) {
@@ -200,7 +299,7 @@ function runNpmCommand(command, args, projectRoot) {
       cwd: projectRoot,
       shell: process.platform === "win32",
       windowsHide: true,
-      env: process.env,
+      env: { ...process.env, LABFON_EDITOR_BUILD: "false", BUILD_OUTPUT: "dist" },
     });
     let output = "";
     const commandLabel = [command, ...args].join(" ");
@@ -257,6 +356,31 @@ async function validateGeneratedSite(rootPath) {
       code: "BUILD_ARTIFACT_INVALID",
       message: `A geração terminou, mas arquivos obrigatórios não foram encontrados: ${missing.join(", ")}.`,
       missing,
+    };
+  }
+
+  let unexpected = [];
+  try {
+    const files = await listDistFiles(rootPath);
+    unexpected = files
+      .map((file) => file.relativePath)
+      .filter((relativePath) =>
+        !isPublicArtifact(relativePath)
+      );
+  } catch (error) {
+    return {
+      ok: false,
+      code: "BUILD_ARTIFACT_INVALID",
+      message: `Os arquivos gerados não puderam ser inspecionados: ${getErrorMessage(error)}`,
+    };
+  }
+
+  if (unexpected.length > 0) {
+    return {
+      ok: false,
+      code: "BUILD_ARTIFACT_INVALID",
+      message: `A geração contém arquivos fora do limite público aprovado: ${unexpected.join(", ")}.`,
+      unexpected,
     };
   }
 
@@ -700,6 +824,10 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
     };
   }
 
+  const recoveryStore = getRecoveryStore();
+  let recovery = null;
+  let mutationStarted = false;
+
   const client = appServices.createFtpClient
     ? appServices.createFtpClient()
     : new ftp.Client(15000);
@@ -716,6 +844,13 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
       secure: sanitized.secure,
     });
     await client.cd(sanitized.remotePublishPath);
+
+    let revision = null;
+    try { revision = await recoveryStore.fingerprint(await listEditableProjectBundleFiles(projectRoot)); }
+    catch { /* Publication fixtures may contain only a generated site. */ }
+    recovery = await recoveryStore.prepare(client, "public", sanitized, manifest.files, revision);
+    await recoveryStore.mark(recovery, "public", "mutating");
+    mutationStarted = true;
 
     for (const file of orderFilesForPublication(manifest.files)) {
       const remotePath = joinRemotePath(sanitized.remotePublishPath, file.remotePath);
@@ -743,20 +878,29 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
       }
     }
 
+    await recoveryStore.verifyRemote(client, recovery, "public");
+    await recoveryStore.mark(recovery, "public", "success");
+    manifest.recovery = recoveryStore.summary(recovery, "public");
     manifest.status = "success";
     manifest.finishedAt = new Date().toISOString();
     await writePublicationManifest(manifest);
 
+    const retentionPending = await recoveryStore.prune().then(() => false, () => true);
     return {
       ok: true,
       code: "PUBLISH_SUCCEEDED",
       stage: "success",
       message: "Site published successfully.",
       manifest: summarizeManifest(manifest),
+      recovery: recoveryStore.summary(recovery, "public"),
+      retentionPending,
     };
   } catch (error) {
-    const uploaded = manifest.files.filter((file) => file.status === "uploaded");
-    manifest.status = uploaded.length > 0 ? "failed_during_transfer" : "failed_before_mutation";
+    manifest.status = mutationStarted ? "failed_during_transfer" : "failed_before_mutation";
+    if (recovery) {
+      await recoveryStore.mark(recovery, "public", mutationStarted ? "possibly_partial" : "failed_before_mutation");
+      manifest.recovery = recoveryStore.summary(recovery, "public");
+    }
     manifest.finishedAt = new Date().toISOString();
     manifest.error = {
       message: sanitizeErrorMessage(getErrorMessage(error)),
@@ -771,8 +915,11 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
           ? "PUBLISH_VERIFICATION_FAILED"
           : "PUBLISH_TRANSFER_FAILED",
       stage: manifest.status,
-      message: "Publication failed. The local manifest was preserved for diagnosis.",
+      message: mutationStarted
+        ? "Publicação não concluída. O projeto editável foi preservado. A cópia local permite recuperar a versão anterior do site."
+        : "Publicação interrompida antes do envio. Nenhum arquivo remoto foi alterado.",
       manifest: summarizeManifest(manifest),
+      recovery: recovery ? recoveryStore.summary(recovery, "public") : null,
     };
   } finally {
     client.close();
@@ -785,10 +932,14 @@ async function retrieveRemoteProject(event, profile, password) {
     setupMs: 0,
     discoveryMs: 0,
     downloadMs: 0,
+    reuseMs: 0,
     validationMs: 0,
     totalFiles: 0,
     totalBytes: 0,
     totalMs: 0,
+    reusedFiles: 0,
+    reusedBytes: 0,
+    transferredBytes: 0,
   };
   const reportProgress = (phase, details = {}) => {
     event?.sender?.send("labfon:remoteProjectRetrievalProgress", {
@@ -823,6 +974,7 @@ async function retrieveRemoteProject(event, profile, password) {
   const temporaryWorkspace = path.join(workspacesRoot, `retrieving-${Date.now()}`);
   const activeWorkspace = path.join(workspacesRoot, "current");
   const previousWorkspace = path.join(workspacesRoot, "previous");
+  let progressTimer;
 
   try {
     reportProgress("setup");
@@ -850,30 +1002,52 @@ async function retrieveRemoteProject(event, profile, password) {
       };
     }
 
+    const remoteValidation = await verifyRemoteEditableProject(client, sanitized.remoteSourcePath);
+    if (!remoteValidation.ok) return remoteValidation;
+
     const downloadManifest = await createRetrievalDownloadManifest(
       client,
       sanitized.remoteSourcePath,
     );
     metrics.discoveryMs = Math.round(performance.now() - discoveryStartedAt);
 
-    reportProgress("download", { transferredBytes: 0 });
+    await fs.rm(temporaryWorkspace, { recursive: true, force: true });
+    await fs.mkdir(temporaryWorkspace, { recursive: true });
+    reportProgress("reuse");
+    const reuseStartedAt = performance.now();
+    const reuse = await createAssetReuse(client, activeWorkspace);
+    const pending = [];
+    for (const file of downloadManifest) {
+      const localPath = path.join(temporaryWorkspace, ...file.relativePath.split("/"));
+      await fs.mkdir(path.dirname(localPath), { recursive: true });
+      if (await reuse(file, localPath)) {
+        metrics.reusedFiles += 1;
+        metrics.reusedBytes += file.size;
+      } else pending.push(file);
+    }
+    metrics.reuseMs = Math.round(performance.now() - reuseStartedAt);
+    const knownTotal = downloadManifest.every(file => Number.isSafeInteger(file.size) && file.size >= 0)
+      ? downloadManifest.reduce((sum, file) => sum + file.size, 0) : null;
+    const progress = createRetrievalProgress(downloadManifest.length, knownTotal);
+    let completedFiles = metrics.reusedFiles;
     const transferredBytes = [0, 0];
+    const emitDownload = () => reportProgress("download", progress(
+      transferredBytes[0] + transferredBytes[1], completedFiles, metrics.reusedBytes,
+    ));
+    emitDownload();
+    progressTimer = setInterval(emitDownload, 1000);
     for (const [index, downloadClient] of downloadClients.entries()) {
       if (typeof downloadClient.trackProgress === "function") {
         downloadClient.trackProgress((info) => {
           transferredBytes[index] = Number(info?.bytesOverall) || transferredBytes[index];
-          reportProgress("download", {
-            transferredBytes: transferredBytes[0] + transferredBytes[1],
-          });
+          emitDownload();
         });
       }
     }
     const downloadStartedAt = performance.now();
-    await fs.rm(temporaryWorkspace, { recursive: true, force: true });
-    await fs.mkdir(temporaryWorkspace, { recursive: true });
 
     const queues = [[], []];
-    downloadManifest.forEach((file, index) => queues[index % 2].push(file));
+    pending.forEach((file, index) => queues[index % 2].push(file));
     let workerFailure = null;
     await Promise.all(downloadClients.map(async (downloadClient, index) => {
       for (const file of queues[index]) {
@@ -882,6 +1056,8 @@ async function retrieveRemoteProject(event, profile, password) {
         try {
           await fs.mkdir(path.dirname(localPath), { recursive: true });
           await downloadClient.downloadTo(localPath, file.remotePath);
+          completedFiles += 1;
+          emitDownload();
         } catch (error) {
           workerFailure = error;
           break;
@@ -889,6 +1065,7 @@ async function retrieveRemoteProject(event, profile, password) {
       }
     }));
     if (workerFailure) throw workerFailure;
+    clearInterval(progressTimer);
     metrics.downloadMs = Math.round(performance.now() - downloadStartedAt);
     for (const downloadClient of downloadClients) {
       if (typeof downloadClient.trackProgress === "function") downloadClient.trackProgress(undefined);
@@ -900,6 +1077,7 @@ async function retrieveRemoteProject(event, profile, password) {
     const retrievedStats = await Promise.all(retrievedFiles.map((file) => fs.stat(file.localPath)));
     metrics.totalFiles = retrievedFiles.length;
     metrics.totalBytes = retrievedStats.reduce((total, stat) => total + stat.size, 0);
+    metrics.transferredBytes = metrics.totalBytes - metrics.reusedBytes;
     const validation = await validateLocalEditableProject(temporaryWorkspace);
     if (!validation.ok) {
       await fs.rm(temporaryWorkspace, { recursive: true, force: true });
@@ -954,49 +1132,52 @@ async function retrieveRemoteProject(event, profile, password) {
       message: `Não foi possível abrir o projeto remoto: ${sanitizeErrorMessage(getErrorMessage(error))}`,
     };
   } finally {
+    clearInterval(progressTimer);
     for (const downloadClient of downloadClients) downloadClient.close();
   }
 }
 
 async function createRetrievalDownloadManifest(client, remoteSourcePath) {
   const files = [];
+  const sourceEntries = await client.list(remoteSourcePath);
+  const listings = new Map([[remoteSourcePath, sourceEntries]]);
+  const list = async directory => {
+    if (!listings.has(directory)) listings.set(directory, await client.list(directory));
+    return listings.get(directory);
+  };
+  const sizeOf = entry => Number.isSafeInteger(entry?.size) && entry.size >= 0 ? entry.size : null;
 
   async function addDirectory(relativeDirectory) {
     const remoteDirectory = joinRemotePath(remoteSourcePath, relativeDirectory);
-    const entries = await client.list(remoteDirectory);
+    const entries = await list(remoteDirectory);
     for (const entry of entries) {
       if (!entry.name || path.posix.basename(entry.name) !== entry.name) continue;
       const relativePath = path.posix.join(relativeDirectory, entry.name);
       if (entry.isDirectory) await addDirectory(relativePath);
-      else if (entry.isFile) files.push({
+      else if (entry.isFile && isSourceFile(relativePath)) files.push({
         relativePath,
         remotePath: joinRemotePath(remoteSourcePath, relativePath),
+        size: sizeOf(entry),
       });
     }
   }
 
-  for (const bundlePath of EDITABLE_PROJECT_BUNDLE) {
-    if (path.posix.extname(bundlePath)) {
+  for (const entry of SOURCE_ENTRIES) {
+    const bundlePath = entry.path;
+    if (entry.optional) {
+      if (!sourceEntries.some(item => item.name === bundlePath.split("/")[0] && item.isDirectory)) continue;
+      const entries = await list(joinRemotePath(remoteSourcePath, path.posix.dirname(bundlePath)));
+      if (!entries.some(item => item.name === path.posix.basename(bundlePath))) continue;
+    }
+    if (!entry.directory) {
+      const entries = await list(joinRemotePath(remoteSourcePath, path.posix.dirname(bundlePath)));
       files.push({
         relativePath: bundlePath,
         remotePath: joinRemotePath(remoteSourcePath, bundlePath),
+        size: sizeOf(entries.find(item => item.name === path.posix.basename(bundlePath))),
       });
     } else {
       await addDirectory(bundlePath);
-    }
-  }
-
-  const sourceEntries = await client.list(remoteSourcePath);
-  if (sourceEntries.some((entry) => entry.name === "public" && entry.isDirectory)) {
-    const publicEntries = await client.list(joinRemotePath(remoteSourcePath, "public"));
-    for (const assetPath of STATIC_PROJECT_ASSETS) {
-      const entry = publicEntries.find((item) => item.name === path.posix.basename(assetPath));
-      if (!entry) continue;
-      if (entry.isDirectory) await addDirectory(assetPath);
-      else if (entry.isFile) files.push({
-        relativePath: assetPath,
-        remotePath: joinRemotePath(remoteSourcePath, assetPath),
-      });
     }
   }
 
@@ -1032,6 +1213,8 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
   }
 
   let uploadStarted = false;
+  const recoveryStore = getRecoveryStore();
+  let recovery = null;
   try {
     await client.access({
       host: sanitized.host,
@@ -1068,24 +1251,34 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
       };
     }
 
+    const sourceFiles = await listEditableProjectBundleFiles(projectRoot);
+    recovery = await recoveryStore.prepare(client, "source", sanitized, sourceFiles, await recoveryStore.fingerprint(sourceFiles));
+    await recoveryStore.mark(recovery, "source", "mutating");
     uploadStarted = true;
-    await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath);
+    await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath, sourceFiles);
     const verification = await verifyRemoteEditableProject(
       client,
       sanitized.remoteSourcePath,
     );
     if (!verification.ok) {
-      return { ...verification, remoteState: "possibly_partial" };
+      throw new Error(verification.message);
     }
+    await recoveryStore.verifyRemote(client, recovery, "source");
+    await recoveryStore.mark(recovery, "source", "success");
 
+    const retentionPending = await recoveryStore.prune().then(() => false, () => true);
     return {
       ok: true,
       code: "REMOTE_PROJECT_SOURCE_INITIALIZED",
       message: "Projeto editável remoto inicializado.",
       markers: verification.markers,
+      recovery: recoveryStore.summary(recovery, "source"),
+      retentionPending,
     };
   } catch (error) {
-    return { ...classifyFtpError(error), remoteState: uploadStarted ? "possibly_partial" : "not_written" };
+    if (recovery) await recoveryStore.mark(recovery, "source", uploadStarted ? "possibly_partial" : "failed_before_mutation");
+    return { ...classifyFtpError(error), remoteState: uploadStarted ? "possibly_partial" : "not_written",
+      recovery: recovery ? recoveryStore.summary(recovery, "source") : null };
   } finally {
     client.close();
   }
@@ -1103,6 +1296,9 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
     return localValidation;
   }
   const secret = password || (await loadPublishPassword());
+  const recoveryStore = getRecoveryStore();
+  let recovery = null;
+  let mutationStarted = false;
 
   if (!secret) {
     return {
@@ -1137,13 +1333,21 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
     }
 
     const deletions = await verifyContentDeletions(client, projectRoot, sanitized.remoteSourcePath);
-    await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath);
+    const sourceFiles = await listEditableProjectBundleFiles(projectRoot);
+    const revision = await recoveryStore.fingerprint(sourceFiles);
+    recovery = await recoveryStore.prepare(client, "source", sanitized, [
+      ...sourceFiles,
+      ...deletions.map(deletion => ({ relativePath: deletion.relativePath, localPath: null })),
+    ], revision);
+    await recoveryStore.mark(recovery, "source", "mutating");
+    mutationStarted = true;
+    await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath, sourceFiles);
     const verification = await verifyRemoteEditableProject(
       client,
       sanitized.remoteSourcePath,
     );
     if (!verification.ok) {
-      return verification;
+      throw new Error(verification.message);
     }
 
     for (const deletion of deletions) {
@@ -1154,17 +1358,24 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
           throw new Error("Não foi possível verificar a remoção do registro remoto.");
         }
       }
-      await fs.unlink(deletion.ledgerPath);
     }
 
+    await recoveryStore.verifyRemote(client, recovery, "source");
+    await recoveryStore.mark(recovery, "source", "success");
+    for (const deletion of deletions) await fs.unlink(deletion.ledgerPath);
+
+    const retentionPending = await recoveryStore.prune().then(() => false, () => true);
     return {
       ok: true,
       code: "REMOTE_PROJECT_SOURCE_UPDATED",
       message: "Projeto editável remoto atualizado.",
       markers: verification.markers,
+      recovery: recoveryStore.summary(recovery, "source"),
+      retentionPending,
     };
   } catch (error) {
-    return classifyFtpError(error);
+    if (recovery) await recoveryStore.mark(recovery, "source", mutationStarted ? "possibly_partial" : "failed_before_mutation");
+    return { ...classifyFtpError(error), recovery: recovery ? recoveryStore.summary(recovery, "source") : null };
   } finally {
     client.close();
   }
@@ -1191,9 +1402,8 @@ async function verifyContentDeletions(client, projectRoot, remoteSourcePath) {
 }
 
 async function validateLocalEditableProject(rootPath, { requireLockfile = true } = {}) {
-  const required = [
+  const required = requireLockfile ? REQUIRED_SOURCE_MARKERS : [
     "package.json",
-    ...(requireLockfile ? ["package-lock.json"] : []),
     "content/page.json",
     "content/site.json",
     "scripts/build-data.js",
@@ -1228,16 +1438,7 @@ async function listRemotePath(client, remotePath) {
 }
 
 async function verifyRemoteEditableProject(client, remoteSourcePath) {
-  const requiredMarkers = [
-    "package.json",
-    "content/page.json",
-    "content/site.json",
-    "scripts/build-data.js",
-    "src/js/main.js",
-    "index.html",
-    "editor.html",
-    "vite.config.js",
-  ];
+  const requiredMarkers = REQUIRED_SOURCE_MARKERS;
   const markers = [];
 
   for (const marker of requiredMarkers) {
@@ -1268,8 +1469,8 @@ async function verifyRemoteEditableProject(client, remoteSourcePath) {
   return { ok: true, markers };
 }
 
-async function uploadEditableProjectBundle(client, projectRoot, remoteSourcePath) {
-  const files = await listEditableProjectBundleFiles(projectRoot);
+async function uploadEditableProjectBundle(client, projectRoot, remoteSourcePath, preparedFiles) {
+  const files = preparedFiles || await listEditableProjectBundleFiles(projectRoot);
 
   for (const file of files) {
     const remotePath = joinRemotePath(remoteSourcePath, file.relativePath);
@@ -1284,9 +1485,10 @@ async function uploadEditableProjectBundle(client, projectRoot, remoteSourcePath
 async function listEditableProjectBundleFiles(projectRoot) {
   const files = [];
 
-  for (const bundlePath of [...EDITABLE_PROJECT_BUNDLE, ...STATIC_PROJECT_ASSETS]) {
+  for (const entry of SOURCE_ENTRIES) {
+    const bundlePath = entry.path;
     const localPath = path.join(projectRoot, bundlePath);
-    if (STATIC_PROJECT_ASSETS.includes(bundlePath) && !(await pathExists(null, projectRoot, bundlePath))) continue;
+    if (entry.optional && !(await pathExists(null, projectRoot, bundlePath))) continue;
     const stat = await fs.stat(localPath);
 
     if (stat.isDirectory()) {
@@ -1314,7 +1516,7 @@ async function collectDirectoryFiles(projectRoot, directoryPath, files) {
       continue;
     }
 
-    if (entry.isFile()) {
+    if (entry.isFile() && isSourceFile(path.relative(projectRoot, entryPath).replaceAll(path.sep, "/"))) {
       files.push({
         localPath: entryPath,
         relativePath: path.relative(projectRoot, entryPath).replaceAll(path.sep, "/"),
@@ -1582,6 +1784,49 @@ async function hasStoredPassword() {
   }
 }
 
+function getRecoveryStore() {
+  return createRecoveryStore(path.join(getPublishStorageDirectory(), "recovery", "transactions"));
+}
+
+async function restoreRemoteBackup(_event, profile, password) {
+  const sanitized = sanitizeProfile(profile);
+  const profileError = validateNativeProfile(sanitized);
+  if (profileError) return profileError;
+  const secret = password || (await loadPublishPassword());
+  if (!secret) return { ok: false, message: "Senha FTP não configurada." };
+  const store = getRecoveryStore();
+  const transactions = await store.list(sanitized);
+  const choices = ["public", "source"].map(domain => ({ domain, transaction: transactions.find(transaction =>
+    !transaction.restoreOf && !transaction.snapshots[domain]?.resolvedAt && transaction.snapshots[domain]?.verifiedAt &&
+    transaction.snapshots[domain]?.status !== "backup_failed") })).filter(choice => choice.transaction);
+  if (!choices.length) return { ok: false, message: "Nenhuma cópia de segurança disponível para esta conexão." };
+  const { dialog, BrowserWindow } = require("electron");
+  const options = { type: "warning", title: "Recuperar versão anterior",
+    message: "Escolha a versão anterior que deseja restaurar.",
+    detail: choices.map(choice => `${choice.domain === "public" ? "Site publicado" : "Projeto editável"}: ${choice.transaction.createdAt}`).join("\n") +
+      "\n\nA versão atual será protegida antes da restauração. Restaurar o projeto editável substitui a versão remota; será necessário recuperá-lo novamente.",
+    buttons: ["Cancelar", ...choices.map(choice => choice.domain === "public" ? "Restaurar site publicado" : "Restaurar projeto editável")],
+    defaultId: 0, cancelId: 0, noLink: true };
+  const owner = BrowserWindow.getFocusedWindow();
+  const answer = await (owner ? dialog.showMessageBox(owner, options) : dialog.showMessageBox(options));
+  const choice = choices[answer.response - 1];
+  if (!choice) return { ok: false, cancelled: true };
+  // Validate the stored files before opening a connection or attempting mutation.
+  try { await store.verify(choice.transaction.id, choice.domain); }
+  catch { return { ok: false, message: "A cópia de segurança está incompleta ou danificada. Nenhum arquivo remoto foi alterado." }; }
+  const client = appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000);
+  if (client.ftp) client.ftp.verbose = false;
+  try {
+    await client.access({ host: sanitized.host, port: sanitized.port, user: sanitized.username, password: secret, secure: sanitized.secure });
+    const recovery = await store.restore(client, choice.transaction.id, choice.domain, sanitized);
+    return { ok: true, domain: choice.domain, recovery, message: choice.domain === "public"
+      ? "Site publicado restaurado. Projeto editável preservado." : "Projeto editável restaurado. Recupere o projeto remoto novamente." };
+  } catch (error) {
+    return { ok: false, domain: choice.domain, recovery: error.recovery || null,
+      message: "A restauração não foi concluída. As cópias locais foram preservadas para uma nova tentativa." };
+  } finally { client.close(); }
+}
+
 function getPublishStorageDirectory() {
   if (appServices.app) {
     return path.join(appServices.app.getPath("userData"), "publish");
@@ -1686,7 +1931,7 @@ function classifyFtpError(error) {
 }
 
 if (require.main === module || (process.versions.electron && process.type === "browser")) {
-  const { app, BrowserWindow, dialog, ipcMain, safeStorage } = require("electron");
+  const { app, BrowserWindow, dialog, ipcMain, safeStorage, Menu, shell } = require("electron");
   configureAppServices({ app, safeStorage });
 
   const images = createImageAssetService({ dialog, validateProject: (root) => validateLocalEditableProject(root, { requireLockfile: false }) });
@@ -1715,8 +1960,15 @@ if (require.main === module || (process.versions.electron && process.type === "b
   ipcMain.handle("labfon:retrieveRemoteProject", async (event, ...args) => images.rememberProject(event, await retrieveRemoteProject(event, ...args)));
   ipcMain.handle("labfon:initializeRemoteProjectSource", initializeRemoteProjectSource);
   ipcMain.handle("labfon:updateRemoteProjectSource", updateRemoteProjectSource);
+  ipcMain.handle("labfon:updateSite", updateSite);
+  ipcMain.handle("labfon:reviewRemoteCleanup", reviewRemoteCleanup);
+  ipcMain.handle("labfon:executeRemoteCleanup", executeRemoteCleanup);
+  ipcMain.handle("labfon:restoreRemoteBackup", restoreRemoteBackup);
 
-  app.whenReady().then(() => createWindow({ BrowserWindow }));
+  app.whenReady().then(() => {
+    installEditorMenu({ app, Menu, dialog, shell, BrowserWindow });
+    createWindow({ BrowserWindow });
+  });
 
   app.on("window-all-closed", () => {
     stopGeneratedPreviewServer();
@@ -1733,6 +1985,8 @@ if (require.main === module || (process.versions.electron && process.type === "b
 }
 
 module.exports = {
+  createWindow,
+  isPublicArtifact,
   pathExists,
   readTextFile,
   readJsonFiles,
@@ -1751,6 +2005,9 @@ module.exports = {
   retrieveRemoteProject,
   initializeRemoteProjectSource,
   updateRemoteProjectSource,
+  updateSite,
+  reviewRemoteCleanup,
+  executeRemoteCleanup,
   sanitizeProfile,
   classifyFtpError,
   listDistFiles,

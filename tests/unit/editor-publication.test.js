@@ -77,6 +77,8 @@ async function createDisposableProject() {
     "utf8",
   );
   await writeDisposableContent(tempRoot);
+  await fs.mkdir(path.join(tempRoot, "node_modules"), { recursive: true });
+  await fs.symlink(path.join(repoRoot, "node_modules", "vite"), path.join(tempRoot, "node_modules", "vite"), "junction");
 
   return {
     path: tempRoot,
@@ -211,6 +213,8 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
       return Promise.all(
         entries.map(async (entry) => ({
           name: entry.name,
+          isFile: entry.isFile(),
+          isDirectory: entry.isDirectory(),
           size: entry.isFile()
             ? (await fs.stat(path.join(localPath, entry.name))).size
             : 0,
@@ -219,6 +223,12 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
     },
     close() {
       calls.push(["close"]);
+    },
+    async downloadTo(destination, remotePath) {
+      if (options.failBackup) throw new Error("Backup download interrupted");
+      const bytes = await fs.readFile(await toLocal(remotePath));
+      if (typeof destination === "string") await fs.writeFile(destination, bytes);
+      else destination.end(bytes);
     },
   };
 }
@@ -286,6 +296,35 @@ describe("editor safe FTP publication", () => {
       expect(client.calls).toEqual([]);
     } finally {
       await fs.rm(project, { recursive: true, force: true });
+    }
+  });
+
+  it("refuses to publish a build containing an Editor entry", async () => {
+    await fs.mkdir(path.join(repoRoot, "tmp"), { recursive: true });
+    const project = await fs.mkdtemp(path.join(repoRoot, "tmp", "editor-publication-"));
+    const remoteRoot = await fs.mkdtemp(path.join(repoRoot, "tmp", "remote-"));
+    const client = createFilesystemFtpClient(remoteRoot);
+    await fs.mkdir(path.join(project, "dist"), { recursive: true });
+    await fs.writeFile(path.join(project, "dist", "index.html"), "public", "utf8");
+    await fs.writeFile(
+      path.join(project, "dist", "data.json"),
+      JSON.stringify({ page: { sections: [] } }),
+      "utf8",
+    );
+    await fs.writeFile(path.join(project, "dist", "editor.html"), "editor", "utf8");
+
+    try {
+      const result = await withNativePublicationClient(client, () =>
+        nativeHandlers.publishGeneratedSite(null, project, createProfile(), "secret"),
+      );
+
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe("PUBLISH_LOCAL_BUILD_INVALID");
+      expect(result.stage).toBe("not_started");
+      expect(client.calls).toEqual([]);
+    } finally {
+      await fs.rm(project, { recursive: true, force: true });
+      await fs.rm(remoteRoot, { recursive: true, force: true });
     }
   });
 
@@ -392,6 +431,7 @@ describe("editor safe FTP publication", () => {
       expect(result.code).toBe("PUBLISH_TRANSFER_FAILED");
       expect(result.stage).toBe("failed_during_transfer");
       expect(result.manifest.uploadedCount).toBeGreaterThan(0);
+      expect(result.recovery.status).toBe("possibly_partial");
       expect(client.calls.at(-1)).toEqual(["close"]);
     } finally {
       await project.cleanup();
@@ -413,10 +453,27 @@ describe("editor safe FTP publication", () => {
       expect(result.ok).toBe(false);
       expect(result.code).toBe("PUBLISH_VERIFICATION_FAILED");
       expect(result.stage).toBe("failed_during_transfer");
+      expect(result.recovery.status).toBe("possibly_partial");
       expect(client.calls.at(-1)).toEqual(["close"]);
     } finally {
       await project.cleanup();
       await fs.rm(remoteRoot, { recursive: true, force: true });
     }
+  }, 60000);
+
+  it("stops publication before any upload when mandatory backup capture fails", async () => {
+    const project = await createDisposableProject();
+    const remoteRoot = await fs.mkdtemp(path.join(repoRoot, "tmp", "remote-"));
+    await fs.writeFile(path.join(remoteRoot, "index.html"), "previous site");
+    const client = createFilesystemFtpClient(remoteRoot, { failBackup: true });
+    try {
+      expect((await nativeHandlers.runProjectBuild(null, project.path)).ok).toBe(true);
+      const result = await withNativePublicationClient(client, () =>
+        nativeHandlers.publishGeneratedSite(null, project.path, createProfile(), "secret"));
+      expect(result.ok).toBe(false);
+      expect(result.stage).toBe("failed_before_mutation");
+      expect(client.calls.some(([operation]) => operation === "uploadFrom")).toBe(false);
+      expect(await fs.readFile(path.join(remoteRoot, "index.html"), "utf8")).toBe("previous site");
+    } finally { await project.cleanup(); await fs.rm(remoteRoot, { recursive: true, force: true }); }
   }, 60000);
 });

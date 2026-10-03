@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { createNativeDesktopHost } from "../../src/js/editor/desktop-host.js";
 import { createPublishController } from "../../src/js/editor/publish-service.js";
@@ -10,7 +11,7 @@ import { removeSection } from "../../src/js/editor/composition-commands.js";
 
 const require = createRequire(import.meta.url);
 const nativeHandlers = require("../../desktop/main.cjs");
-const { saveContentRecord } = require("../../desktop/content-store.cjs");
+const { readContentDataset, saveContentRecord } = require("../../desktop/content-store.cjs");
 const repoRoot = process.cwd();
 
 function createProfile(overrides = {}) {
@@ -148,6 +149,17 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
     remoteRoot,
     calls,
     ftp: {},
+    async features() {
+      return new Map(options.hashes ? [["HASH", "SHA-256;SHA-1*"]] : []);
+    },
+    async send(command) {
+      calls.push(["send", command]);
+      if (command === "OPTS HASH SHA-256") return { code: 200, message: "200 SHA-256" };
+      const remotePath = command.slice(5);
+      if (options.badHash) return { code: 213, message: "213 SHA-1 uncertain" };
+      const data = await fs.readFile(toLocal(remotePath));
+      return { code: 213, message: `213 SHA-256 ${options.partialHash ? 1 : 0}-${data.length - 1} ${createHash("sha256").update(data).digest("hex")} ${options.wrongPath ? "/different.png" : remotePath}` };
+    },
     get maxActiveDownloads() { return maxActiveDownloads; },
     async access(config) {
       calls.push(["access", config]);
@@ -161,11 +173,12 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
       const entries = await fs.readdir(toLocal(remotePath || "/"), {
         withFileTypes: true,
       });
-      return entries.map((entry) => ({
+      return Promise.all(entries.map(async (entry) => ({
         name: entry.name,
         isDirectory: entry.isDirectory(),
         isFile: entry.isFile(),
-      }));
+        size: options.unknownSizes ? undefined : (await fs.stat(toLocal(path.posix.join(remotePath || "/", entry.name)))).size,
+      })));
     },
     async downloadTo(localPath, remotePath) {
       calls.push(["downloadTo", remotePath]);
@@ -199,6 +212,7 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
       await reportTransferred(localPath);
     },
     trackProgress(callback) {
+      transferredBytes = 0;
       progressCallback = callback || null;
     },
     async ensureDir(remotePath) {
@@ -213,6 +227,9 @@ function createFilesystemFtpClient(remoteRoot, options = {}) {
     async remove(remotePath) {
       calls.push(["remove", remotePath]);
       await fs.unlink(toLocal(remotePath));
+    },
+    async size(remotePath) {
+      return (await fs.stat(toLocal(remotePath))).size;
     },
     close() {
       calls.push(["close"]);
@@ -255,6 +272,131 @@ async function withNativeServices(client, callback, options = {}) {
 }
 
 describe("remote editable project retrieval", () => {
+  it.each([false, true])("runs the native guided workflow with real builds and local FTP (public failure=%s)", async failPublication => {
+    const layout = await createRemoteLayout();
+    const primary = createFilesystemFtpClient(layout.remoteRoot);
+    const secondary = createFilesystemFtpClient(layout.remoteRoot);
+    let failOnce = failPublication;
+    for (const client of [primary, secondary]) {
+      const upload = client.uploadFrom.bind(client);
+      client.uploadFrom = async (local, remote) => {
+        if (failOnce && remote === "/index.html") { failOnce = false; throw new Error("Simulated publication interruption"); }
+        return upload(local, remote);
+      };
+    }
+    try {
+      await withNativeServices(primary, async () => {
+        const retrieved = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
+        expect(retrieved.ok).toBe(true);
+        const root = retrieved.directory.path;
+        const sitePath = path.join(root, "content/site.json");
+        const site = JSON.parse(await fs.readFile(sitePath, "utf8"));
+        site.hero.title = "Guided update";
+        await writeJson(sitePath, site);
+        const originalPublicData = await fs.readFile(path.join(layout.remoteRoot, "data.json"), "utf8");
+        const stages = [];
+        const result = await nativeHandlers.updateSite({ sender: { send: (_, value) => stages.push(value.stage) } }, root, createProfile(), "secret");
+        expect(result.ok).toBe(!failPublication);
+        expect(result.receipts.source).toBeTruthy();
+        expect(JSON.parse(await fs.readFile(path.join(layout.remoteRoot, "source/content/site.json"), "utf8")).hero.title).toBe("Guided update");
+        if (failPublication) {
+          expect(stages).toContain("recovery");
+          expect(await fs.readFile(path.join(layout.remoteRoot, "index.html"), "utf8")).toBe("<html></html>");
+          expect(await fs.readFile(path.join(layout.remoteRoot, "data.json"), "utf8")).toBe(originalPublicData);
+          const sourceUploads = [...primary.calls, ...secondary.calls].filter(([op, target]) => op === "uploadFrom" && target.startsWith("/source/"));
+          expect((await nativeHandlers.updateSite(null, root, createProfile(), "secret")).ok).toBe(true);
+          expect([...primary.calls, ...secondary.calls].filter(([op, target]) => op === "uploadFrom" && target.startsWith("/source/"))).toHaveLength(sourceUploads.length);
+        }
+        expect(JSON.parse(await fs.readFile(path.join(layout.remoteRoot, "data.json"), "utf8")).site.hero.title).toBe("Guided update");
+        expect(await nativeHandlers.pathExists(null, root, "dist/editor.html")).toBe(false);
+        expect((await nativeHandlers.updateSite(null, layout.remoteRoot, createProfile(), "secret")).ok).toBe(false);
+      }, { secondaryClient: secondary });
+    } finally { await layout.cleanup(); }
+  }, 60000);
+
+  it.each(["unchanged", "remote changed", "local changed", "unsupported", "malformed", "unknown sizes", "partial hash", "wrong path"])(
+    "retrieves safely with a cached asset: %s", async mode => {
+      const layout = await createRemoteLayout();
+      const asset = "public/assets/images/cached.png";
+      const remote = path.join(layout.remoteRoot, "source", asset);
+      await fs.mkdir(path.dirname(remote), { recursive: true });
+      await fs.writeFile(remote, "original");
+      const primary = createFilesystemFtpClient(layout.remoteRoot, {
+        hashes: mode !== "unsupported", badHash: mode === "malformed", unknownSizes: mode === "unknown sizes",
+        partialHash: mode === "partial hash", wrongPath: mode === "wrong path",
+      });
+      const secondary = createFilesystemFtpClient(layout.remoteRoot);
+      try {
+        await withNativeServices(primary, async () => {
+          const first = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
+          expect(first.ok).toBe(true);
+          if (mode === "remote changed") await fs.writeFile(remote, "modified");
+          if (mode === "local changed") await fs.writeFile(path.join(first.directory.path, asset), "tampered");
+          primary.calls.length = 0;
+          secondary.calls.length = 0;
+          const events = [];
+          const second = await nativeHandlers.retrieveRemoteProject({ sender: { send: (_, value) => events.push(value) } }, createProfile(), "secret");
+          expect(second.ok).toBe(true);
+          expect(await fs.readFile(path.join(second.directory.path, asset), "utf8")).toBe(mode === "remote changed" ? "modified" : "original");
+          const downloads = [...primary.calls, ...secondary.calls].filter(([op, target]) => op === "downloadTo" && target === `/source/${asset}`);
+          expect(downloads.length).toBe(mode === "unchanged" ? 0 : 1);
+          // The fixture also contains a fixed source asset; it is independently reusable.
+          expect(second.metrics.reusedFiles).toBe(mode === "unchanged" ? 2 : ["remote changed", "local changed"].includes(mode) ? 1 : 0);
+          expect(second.metrics.reusedBytes + second.metrics.transferredBytes).toBe(second.metrics.totalBytes);
+          expect(events.filter(e => e.phase === "download").at(-1).percent).toBe(100);
+          expect(events.filter(e => e.phase === "download").at(-1).transferredBytes).toBe(second.metrics.transferredBytes);
+          if (mode === "unknown sizes") expect(events.find(e => e.phase === "download").totalBytes).toBeNull();
+          expect([...primary.calls, ...secondary.calls].some(([op]) => ["uploadFrom", "remove", "ensureDir"].includes(op))).toBe(false);
+        }, { secondaryClient: secondary });
+      } finally { await layout.cleanup(); }
+    },
+  );
+  it("round-trips a portable website without Editor files through editing, build, preview and publication", async () => {
+    const layout = await createRemoteLayout();
+    const sourceRoot = path.join(layout.remoteRoot, "source");
+    await fs.mkdir(path.join(sourceRoot, "public", "assets", "images"), { recursive: true });
+    await fs.writeFile(path.join(sourceRoot, "public", "assets", "images", "retained.svg"), "<svg/>");
+    await fs.rm(path.join(sourceRoot, "editor.html"));
+    const primary = createFilesystemFtpClient(layout.remoteRoot);
+    const secondary = createFilesystemFtpClient(layout.remoteRoot);
+    try {
+      await withNativeServices(primary, async () => {
+        const expected = (await nativeHandlers.listEditableProjectBundleFiles(sourceRoot)).map(file => file.relativePath).sort();
+        const retrieved = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
+        expect(retrieved.ok).toBe(true);
+        const root = retrieved.directory.path;
+        const downloaded = [...primary.calls, ...secondary.calls]
+          .filter(([name]) => name === "downloadTo").map(([, target]) => target.slice("/source/".length)).sort();
+        expect(downloaded).toEqual(expected);
+        expect(await nativeHandlers.validateLocalEditableProject(root)).toEqual({ ok: true });
+        for (const excluded of ["editor.html", "src/js/editor", "src/css/editor.css", "scripts/editor-smoke-ftp.cjs"]) {
+          expect(await nativeHandlers.pathExists(null, root, excluded)).toBe(false);
+        }
+        const record = (await readContentDataset(null, root, "equipe"))[0];
+        await saveContentRecord(null, root, "equipe", record.name, record.value, { ...record.value, instituicao: "UFRJ" });
+        const update = await nativeHandlers.updateRemoteProjectSource(null, root, createProfile(), "secret");
+        expect(update.ok).toBe(true);
+        const uploads = [...primary.calls, ...secondary.calls].filter(([name]) => name === "uploadFrom")
+          .map(([, target]) => target.slice("/source/".length)).sort();
+        expect(uploads).toEqual(expected);
+        // Supply fixture-local tooling; production retrieval prepares it through npm ci.
+        await fs.mkdir(path.join(root, "node_modules"), { recursive: true });
+        await fs.symlink(path.join(repoRoot, "node_modules", "vite"), path.join(root, "node_modules", "vite"), "junction");
+        const build = await nativeHandlers.runProjectBuild(null, root);
+        expect(build.ok).toBe(true);
+        expect(await nativeHandlers.pathExists(null, root, "dist/editor.html")).toBe(false);
+        expect((await nativeHandlers.previewGeneratedSite(null, root)).ok).toBe(true);
+        const publication = await nativeHandlers.publishGeneratedSite(null, root, createProfile(), "secret");
+        expect(publication.ok).toBe(true);
+        expect(publication.recovery.transactionId).toBe(update.recovery.transactionId);
+        expect(await fs.readFile(path.join(layout.remoteRoot, "assets/images/retained.svg"), "utf8")).toBe("<svg/>");
+      }, { secondaryClient: secondary });
+    } finally {
+      await nativeHandlers.stopGeneratedPreviewServer();
+      await layout.cleanup();
+    }
+  }, 60000);
+
   it("forwards native progress and unsubscribes after retrieval", async () => {
     let progressListener = null;
     let unsubscribeCount = 0;

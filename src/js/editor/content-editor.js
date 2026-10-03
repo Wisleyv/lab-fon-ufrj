@@ -6,6 +6,7 @@ import { createImageField } from "./image-field.js";
 import { normalizeInstagramInput, PROVALE_INSTAGRAM } from "../sections/provale-instagram.js";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
+const teamNameCollator = new Intl.Collator("pt-BR", { sensitivity: "base" });
 
 function createUniqueId(label, used) {
   const base = String(label || "")
@@ -212,7 +213,10 @@ export function createContentEditor({ host, store, customEditor }) {
     try {
       records = await host.readContentDataset(directory, dataset);
       const previousName = selected?.name;
-      recordsSelect.replaceChildren(...records.map((r) => el("option", { value: r.name }, r.value.nome || r.value.hero?.title || schema().label)));
+      const options = dataset === "equipe"
+        ? [...records].sort((left, right) => teamNameCollator.compare(left.value.nome || "", right.value.nome || ""))
+        : records;
+      recordsSelect.replaceChildren(...options.map((r) => el("option", { value: r.name }, r.value.nome || r.value.hero?.title || schema().label)));
       if (records.some((record) => record.name === previousName)) recordsSelect.value = previousName;
       baselineModel = clone(store.getState().editorSiteModel);
       selectRecord();

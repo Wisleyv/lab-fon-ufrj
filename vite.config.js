@@ -12,10 +12,9 @@ export default defineConfig({
     outDir: process.env.BUILD_OUTPUT || "dist", // Flexible output: dist for CI/Netlify, C:/labfonac for local
     emptyOutDir: true, // Clean output directory before build
     rollupOptions: {
-      input: {
-        index: "index.html",
-        editor: "editor.html",
-      },
+      input: isEditorDesktopBuild
+        ? { editor: "editor.html" }
+        : { index: "index.html" },
       output: {
         entryFileNames: "js/[name].[hash].js",
         chunkFileNames: "js/[name].[hash].js",

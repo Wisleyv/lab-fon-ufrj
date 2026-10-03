@@ -34,7 +34,7 @@ import {
   getRetrievalReadiness,
   getSourceUpdateReadiness,
   getSourceInitializationReadiness,
-  getPublicationReadiness,
+  getSiteUpdateReadiness,
 } from "./publish-service.js";
 import { createEditorStore, createInitialEditorState, getBusyReadiness, getEditingReadiness } from "./state.js";
 
@@ -580,7 +580,7 @@ function createLayout(
   );
   const publishStatus = createElement(
     "p",
-    { id: "editor-publish-status", className: "editor-status" },
+    { id: "editor-publish-status", className: "editor-status", role: "status", "aria-live": "polite" },
     "Configure o destino de publicação.",
   );
   remoteCard.appendChild(publishStatus);
@@ -865,7 +865,7 @@ function createLayout(
     "aria-labelledby": "editor-publish-title",
   });
   publishCard.appendChild(
-    createElement("h2", { id: "editor-publish-title" }, "Publicação"),
+    createElement("h2", { id: "editor-publish-title" }, "Atualização do site Labfonac"),
   );
   const publishSiteActions = createElement("div", { className: "editor-actions" });
   const initializeRemoteSourceButton = createElement("button", {
@@ -887,12 +887,24 @@ function createLayout(
       type: "button",
       className: "editor-btn editor-btn-primary",
     },
-    "Publicar site",
+    "Atualizar site",
   );
   publishSiteActions.appendChild(initializeRemoteSourceButton);
   publishSiteActions.appendChild(updateRemoteSourceButton);
+  updateRemoteSourceButton.hidden = true;
   publishSiteActions.appendChild(publishSiteButton);
+  const restoreBackupButton = createElement("button", {
+    id: "editor-restore-backup", type: "button", className: "editor-btn editor-btn-secondary",
+  }, "Recuperar versão anterior");
+  publishSiteActions.appendChild(restoreBackupButton);
   publishCard.appendChild(publishSiteActions);
+  const maintenance = createElement("details", { className: "editor-advanced" });
+  maintenance.appendChild(createElement("summary", {}, "Manutenção"));
+  const reviewCleanupButton = createElement("button", {
+    id: "editor-review-cleanup", type: "button", className: "editor-btn editor-btn-secondary",
+  }, "Revisar limpeza remota");
+  maintenance.appendChild(reviewCleanupButton);
+  publishCard.appendChild(maintenance);
   main.appendChild(publishCard);
 
   const contentCard = createElement("section", {
@@ -999,7 +1011,7 @@ function createLayout(
     summary.appendChild(createElement("div", {}, [createElement("dt", {}, label), value]));
   }
   const operationReasons = new Map();
-  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, initializeRemoteSourceButton, updateRemoteSourceButton, publishSiteButton]) {
+  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, initializeRemoteSourceButton, updateRemoteSourceButton, publishSiteButton, restoreBackupButton]) {
     const reason = createElement("p", { id: `${button.id}-reason`, className: "editor-operation-reason" });
     const operation = createElement("div", { className: "editor-operation" });
     button.setAttribute("aria-describedby", reason.id);
@@ -1813,14 +1825,19 @@ function createLayout(
         const messages = {
           setup: "Conectando...",
           discovery: "Localizando arquivos...",
+          reuse: "Verificando arquivos locais...",
           validation: "Verificando projeto...",
         };
         let message = messages[progress?.phase];
         if (progress?.phase === "download") {
           const bytes = Number(progress.transferredBytes) || 0;
-          message = bytes > 0
-            ? `Baixando projeto... ${formatByteCount(bytes)}`
-            : "Baixando projeto...";
+          const parts = [];
+          if (Number.isFinite(progress.percent)) parts.push(`${progress.percent}% (${progress.completedFiles}/${progress.totalFiles} arquivos)`);
+          if (bytes > 0) parts.push(`${formatByteCount(bytes)} recebidos`);
+          if (progress.totalBytes !== null && progress.totalBytes > 0) parts.push(`${formatByteCount(progress.totalBytes)} no total`);
+          if (progress.bytesPerSecond > 0) parts.push(`${formatByteCount(progress.bytesPerSecond)}/s`);
+          if (progress.etaSeconds > 0) parts.push(`cerca de ${progress.etaSeconds} s restantes`);
+          message = `Baixando projeto...${parts.length ? ` ${parts.join(" · ")}` : ""}`;
         }
         if (!message) return;
         const current = store.getState();
@@ -1890,21 +1907,32 @@ function createLayout(
     const state = store.getState();
     const profile = state.publish?.profile || readPublishProfileFromForm();
     const confirmed = (documentRef.defaultView || window).confirm(
-      `Publicar o site gerado?\n\nSite generated: ready\nServer: configured\nDestination: ${profile.remotePublishPath}`,
+      "Atualizar o site? As versões atuais serão protegidas antes do envio.",
     );
 
     if (!confirmed) return;
 
-    // Validate the tested destination before changing the UI to its busy state.
-    const publication = publishController.publish(
+    // Evaluate existing clean-project guards before entering the busy UI state.
+    const publication = publishController.updateSite(
       profile,
       publishPasswordInput.value,
+      progress => {
+        const current = store.getState();
+        if (current.publish?.status !== "publishing" || current.revision !== state.revision) return;
+        const receipts = { ...current.receipts };
+        if (progress.receipts?.source) receipts.source = { revision: state.revision, ...progress.receipts.source };
+        if (progress.receipts?.build) receipts.build = { revision: state.revision, ...progress.receipts.build };
+        store.setState({ receipts,
+          publish: { ...current.publish, message: progress.message || "Atualizando site...", stage: progress.stage } });
+      },
     );
     store.setState({
+      receipts: { ...state.receipts, build: null, publication: null },
+      build: { ...state.build, status: "idle", previewUrl: null, message: "Geração pendente para esta atualização." },
       publish: {
         ...state.publish,
         status: "publishing",
-        message: "Publicando site...",
+        message: "Atualizando site...",
         diagnostics: [],
       },
     });
@@ -1913,12 +1941,20 @@ function createLayout(
     const current = state.revision === store.getState().revision && JSON.stringify(profile) === JSON.stringify(store.getState().publish.profile);
 
     store.setState({
-      receipts: { ...store.getState().receipts, publication: result.ok && current ? { revision: state.revision } : null },
+      receipts: {
+        ...store.getState().receipts,
+        ...(current && result.receipts ? {
+          source: result.receipts.source ? { revision: state.revision, ...result.receipts.source } : null,
+          build: result.receipts.build ? { revision: state.revision, ...result.receipts.build } : null,
+        } : {}),
+        publication: result.ok && current ? { revision: state.revision, ...result.receipts?.publication } : null,
+      },
+      ...(current && result.receipts?.build ? { build: { ...store.getState().build, status: "success", message: "Site gerado para esta atualização.", previewUrl: null } } : {}),
       publish: {
         ...store.getState().publish,
         status: result.ok ? "success" : "failed",
         message: result.ok
-          ? current ? "Site publicado nesta sessão." : "Publicação concluída para o contexto anterior. Estado atual não verificado."
+          ? current ? "Site atualizado." : "Atualização concluída para o contexto anterior. Estado atual não verificado."
           : result.message || "Falha ao publicar o site.",
         diagnostics: result.ok
           ? []
@@ -1929,7 +1965,8 @@ function createLayout(
                 message: result.message,
               },
             ],
-        summary: result.ok && current ? result.manifest || null : null,
+        summary: null,
+        stage: result.stage,
       },
     });
   });
@@ -2036,6 +2073,46 @@ function createLayout(
     });
   });
 
+  restoreBackupButton.addEventListener("click", async () => {
+    const state = store.getState();
+    if (restoreBackupButton.disabled || state.contentDirty || state.compositionDirty || !getBusyReadiness(state).ok) return;
+    const profile = readPublishProfileFromForm();
+    showPublishFeedbackIn(publishCard);
+    store.setState({ publish: { ...state.publish, status: "publishing", message: "Recuperando versão anterior..." } });
+    const result = await operationResult(desktopHost.restoreRemoteBackup(profile, publishPasswordInput.value));
+    if (result.cancelled) { store.setState({ publish: state.publish }); return; }
+    if (result.domain === "source") {
+      await operationResult(desktopHost.closeProject?.());
+      activeCompositionService = compositionService;
+      const initial = createInitialEditorState();
+      store.reset({ ...initial, projectSource: state.projectSource,
+        publish: { ...initial.publish, profile, status: result.ok ? "configured" : "failed", message: result.message } });
+      hydrateFromSource(state.projectSource);
+    } else {
+      store.setState({ receipts: { ...state.receipts, publication: null },
+        publish: { ...state.publish, status: result.ok ? "configured" : "failed", message: result.message,
+          recovery: result.recovery || null, summary: null } });
+    }
+  });
+
+  reviewCleanupButton.addEventListener("click", async () => {
+    if (reviewCleanupButton.disabled) return;
+    const state = store.getState();
+    const profile = state.publish?.profile || readPublishProfileFromForm();
+    showPublishFeedbackIn(publishCard);
+    store.setState({ publish: { ...state.publish, status: "publishing", message: "Revisando arquivos remotos...", summary: null, diagnostics: [] } });
+    let result = await operationResult(desktopHost.reviewRemoteCleanup(state.openedProject, profile, publishPasswordInput.value));
+    if (result.ok && !Array.isArray(result.manifest?.proposed)) result = { ok: false, message: "Revisão inválida. Nenhum arquivo remoto foi removido." };
+    if (state.revision !== store.getState().revision || JSON.stringify(profile) !== JSON.stringify(store.getState().publish.profile)) {
+      store.setState({ publish: { ...store.getState().publish, status: "failed", message: "Contexto alterado. Revisão descartada." } });
+      return;
+    }
+    store.setState({ publish: { ...store.getState().publish, status: result.ok ? "configured" : "failed", message: result.message,
+      diagnostics: result.ok ? [{ code: "CLEANUP_REVIEW", severity: "info", message:
+        `${result.manifest.proposed.length} arquivos propostos (${formatByteCount(result.manifest.proposedBytes)}).\n` +
+        result.manifest.proposed.map(file => `/${file.path} (${formatByteCount(file.bytes)})`).join("\n") }] : [] } });
+  });
+
   hydrateFromSource(store.getState().projectSource);
 
   const updateOperationUi = (state) => {
@@ -2070,9 +2147,18 @@ function createLayout(
     apply(generateSiteButton, buildController.getReadiness());
     apply(previewGeneratedSiteButton, getGeneratedPreviewReadiness(state));
     apply(updateRemoteSourceButton, getSourceUpdateReadiness(state, state.publish?.profile || profile, password));
+    updateRemoteSourceButton.disabled = true;
+    updateRemoteSourceButton.parentElement.hidden = true;
     initializeRemoteSourceButton.parentElement.hidden = state.openedProject?.source !== "local";
     apply(initializeRemoteSourceButton, getSourceInitializationReadiness(state, profile, password));
-    apply(publishSiteButton, getPublicationReadiness(state));
+    apply(publishSiteButton, getSiteUpdateReadiness(state, state.publish?.profile || profile, password));
+    if (store.getState().publish?.status !== "publishing") publishSiteButton.textContent = state.publish?.status === "failed" ? "Tentar atualizar novamente" : "Atualizar site";
+    apply(restoreBackupButton, !busy.ok ? busy : state.contentDirty || state.compositionDirty
+      ? unavailable("Salve ou descarte as alterações antes de recuperar uma versão.")
+      : typeof desktopHost.restoreRemoteBackup !== "function" ? unavailable("A recuperação exige o aplicativo desktop.")
+      : getProfileReadiness(profile, password));
+    reviewCleanupButton.disabled = !getSiteUpdateReadiness(state, state.publish?.profile || profile, password).ok ||
+      state.build?.status !== "success" || typeof desktopHost.reviewRemoteCleanup !== "function";
     savePublishProfileButton.disabled = !busy.ok;
     for (const input of publishForm.querySelectorAll("input")) input.disabled = !busy.ok;
     const validComposition = !!state.draftComposition && validatePageComposition(state.draftComposition).valid;

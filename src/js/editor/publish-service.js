@@ -1,4 +1,5 @@
 import { getBusyReadiness, getEditingReadiness } from "./state.js";
+import { getBuildReadiness } from "./build-service.js";
 export const DEFAULT_FTP_PORT = 2100;
 export const FIXED_REMOTE_SOURCE_PATH = "/source";
 export const FIXED_REMOTE_PUBLISH_PATH = "/";
@@ -101,6 +102,13 @@ export function validateConnectionProfile(profile = {}, options = {}) {
 export function createPublishController({ host, getState } = {}) {
   let initializing = false;
   return {
+    async updateSite(profile, password, onProgress) {
+      const state = getState();
+      const readiness = getSiteUpdateReadiness(state, profile, password);
+      if (!readiness.ok) return readiness;
+      if (typeof host.updateSite !== "function") return { ok: false, code: "SITE_UPDATE_UNAVAILABLE", message: "A atualização exige o aplicativo desktop." };
+      return host.updateSite(state.openedProject, sanitizePublishProfile(profile), password || "", onProgress);
+    },
     async loadProfile() {
       if (typeof host.loadPublishProfile !== "function") {
         return {
@@ -431,6 +439,12 @@ export function getSourceUpdateReadiness(state, profile, password) {
   if (state.openedProject.source === "local") return localProjectRemoteUnavailable();
   if (state.contentDirty || state.compositionDirty) return { ok: false, code: "REMOTE_UNSAVED_CHANGES", message: "Salve as alterações antes de atualizar o projeto remoto." };
   return getProfileReadiness(profile, password);
+}
+
+export function getSiteUpdateReadiness(state, profile, password) {
+  const source = getSourceUpdateReadiness(state, profile, password);
+  if (!source.ok) return source;
+  return getBuildReadiness(state);
 }
 
 export function getSourceInitializationReadiness(state, profile, password) {

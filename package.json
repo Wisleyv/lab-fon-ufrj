@@ -8,7 +8,8 @@
     "dev": "vite",
     "dev:editor": "vite --open /editor.html",
     "editor:dev": "concurrently -k \"vite --host 127.0.0.1 --port 3000 --strictPort false\" \"cross-env LABFON_EDITOR_DEV=true electron .\"",
-    "editor:build": "cross-env LABFON_EDITOR_BUILD=true vite build && electron-builder",
+    "build:editor-renderer": "cross-env LABFON_EDITOR_BUILD=true vite build",
+    "editor:build": "npm run build:editor-renderer && electron-builder",
     "prebuild": "node scripts/build-data.js",
     "build": "vite build",
     "build:local": "node scripts/build-data.js && cross-env BUILD_OUTPUT=C:/labfonac vite build",
@@ -38,6 +39,7 @@
       "output": "release"
     },
     "files": [
+      "build/icon.ico",
       "desktop/**/*",
       "dist/**/*",
       "package.json",

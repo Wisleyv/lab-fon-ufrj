@@ -99,6 +99,8 @@ async function createDisposableProject() {
   );
 
   await writeDisposableContent(tempRoot);
+  await fs.mkdir(path.join(tempRoot, "node_modules"), { recursive: true });
+  await fs.symlink(path.join(repoRoot, "node_modules", "vite"), path.join(tempRoot, "node_modules", "vite"), "junction");
 
   return {
     directory: {
@@ -296,6 +298,29 @@ describe("editor build workflow", () => {
     expect(result.artifacts).toEqual(["dist/index.html", "dist/data.json"]);
   });
 
+  it("rejects Editor-only artifacts from generated public output", async () => {
+    const projectPath = await fs.mkdtemp(path.join(repoRoot, "tmp", "editor-dist-"));
+    await fs.mkdir(path.join(projectPath, "dist", "js"), { recursive: true });
+    await fs.writeFile(path.join(projectPath, "dist", "index.html"), "public", "utf8");
+    await fs.writeFile(
+      path.join(projectPath, "dist", "data.json"),
+      JSON.stringify({ page: { sections: [] } }),
+      "utf8",
+    );
+    await fs.writeFile(path.join(projectPath, "dist", "editor.html"), "editor", "utf8");
+    await fs.writeFile(path.join(projectPath, "dist", "js", "editor.hash.js"), "", "utf8");
+
+    try {
+      const result = await nativeHandlers.validateGeneratedSite(projectPath);
+
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe("BUILD_ARTIFACT_INVALID");
+      expect(result.unexpected).toEqual(["editor.html", "js/editor.hash.js"]);
+    } finally {
+      await fs.rm(projectPath, { recursive: true, force: true });
+    }
+  });
+
   it("targets generated dist for preview instead of draft data", async () => {
     const controller = createBuildController({
       host: createHost(),
@@ -363,6 +388,33 @@ describe("editor build workflow", () => {
       );
     } finally {
       await nativeHandlers.stopGeneratedPreviewServer();
+      await project.cleanup();
+    }
+  }, 60000);
+
+  it("builds retrieved legacy source without restoring Editor files or changing its config", async () => {
+    const project = await createDisposableProject();
+    const configPath = path.join(project.directory.path, "vite.config.js");
+    const legacyConfig = `export default { base: '/labfonac/', build: { rollupOptions: { input: { index: 'index.html', editor: 'editor.html' }, output: { entryFileNames: 'js/[name].[hash].js', chunkFileNames: 'js/[name].[hash].js', assetFileNames: 'assets/[name].[hash][extname]' } } } };\n`;
+    await fs.writeFile(configPath, legacyConfig);
+    await fs.rm(path.join(project.directory.path, "editor.html"));
+    const sourceBefore = await fs.readFile(path.join(project.directory.path, "content", "site.json"), "utf8");
+    const priorMode = process.env.LABFON_EDITOR_BUILD;
+    const priorOutput = process.env.BUILD_OUTPUT;
+    process.env.LABFON_EDITOR_BUILD = "true";
+    process.env.BUILD_OUTPUT = "unexpected-output";
+    try {
+      const result = await nativeHandlers.runProjectBuild(null, project.directory.path);
+      expect(result.ok, result.output).toBe(true);
+      expect(await fs.readFile(configPath, "utf8")).toBe(legacyConfig);
+      expect(await fs.readFile(path.join(project.directory.path, "content", "site.json"), "utf8")).toBe(sourceBefore);
+      await expect(fs.access(path.join(project.directory.path, "editor.html"))).rejects.toThrow();
+      await expect(fs.access(path.join(project.directory.path, "dist", "editor.html"))).rejects.toThrow();
+      await expect(fs.access(path.join(project.directory.path, "unexpected-output"))).rejects.toThrow();
+      expect((await nativeHandlers.validateGeneratedSite(project.directory.path)).ok).toBe(true);
+    } finally {
+      if (priorMode === undefined) delete process.env.LABFON_EDITOR_BUILD; else process.env.LABFON_EDITOR_BUILD = priorMode;
+      if (priorOutput === undefined) delete process.env.BUILD_OUTPUT; else process.env.BUILD_OUTPUT = priorOutput;
       await project.cleanup();
     }
   }, 60000);

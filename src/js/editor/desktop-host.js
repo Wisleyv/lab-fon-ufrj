@@ -187,6 +187,18 @@ export function createBrowserDesktopHost(windowRef = window) {
 
 export function createNativeDesktopHost(nativeBridge) {
   return {
+    reviewRemoteCleanup(directory, profile, password) {
+      return nativeBridge.reviewRemoteCleanup(directory.path, profile, password);
+    },
+    async updateSite(directory, profile, password, onProgress) {
+      const unsubscribe = typeof onProgress === "function" && typeof nativeBridge.onSiteUpdateProgress === "function"
+        ? nativeBridge.onSiteUpdateProgress(onProgress) : null;
+      try { return await nativeBridge.updateSite(directory.path, profile, password); }
+      finally { unsubscribe?.(); }
+    },
+    restoreRemoteBackup(profile, password) {
+      return nativeBridge.restoreRemoteBackup(profile, password);
+    },
     closeProject() {
       return nativeBridge.closeProject();
     },
@@ -558,6 +570,11 @@ export function createMemoryDesktopHost(filesByPath = {}, options = {}) {
 
     getWrites() {
       return [...writes];
+    },
+
+    async updateSite(directoryRef, profile, password, onProgress) {
+      if (typeof options.updateSite === "function") return options.updateSite(directoryRef, profile, password, onProgress);
+      return { ok: false, code: "SITE_UPDATE_UNAVAILABLE", message: "Atualização indisponível neste host." };
     },
 
     getText(relativePath) {

@@ -1,0 +1,991 @@
+{
+  "version": 1,
+  "scope": "Local canonical content and public website source; generated output and remote inventory are not scanned",
+  "limitations": [
+    "Static source literals only; computed asset paths need review",
+    "Disabled canonical content references remain retained",
+    "External assets are recorded but not fetched",
+    "Candidates are not authorization for deletion",
+    "Duplicate groups overlap retention categories; redundant bytes are not guaranteed cleanup savings"
+  ],
+  "summary": {
+    "assets": {
+      "count": 100,
+      "bytes": 75895436
+    },
+    "retained": {
+      "count": 46,
+      "bytes": 53029547
+    },
+    "fixed": {
+      "count": 5,
+      "bytes": 42894
+    },
+    "candidates": {
+      "count": 53,
+      "bytes": 22862090
+    },
+    "unresolvedAssets": {
+      "count": 1,
+      "bytes": 3799
+    },
+    "duplicateGroups": 1,
+    "duplicateRedundantBytes": 123235,
+    "missing": 0,
+    "invalid": 0,
+    "unresolved": 1
+  },
+  "retained": [
+    {
+      "path": "public/assets/images/apple-touch-icon.png",
+      "bytes": 9502,
+      "sha256": "e3696b675265ad4d902e130b3c909358cd27eef4f83e093c91fbf82dd24be4e0",
+      "references": [
+        {
+          "source": "index.html",
+          "field": "href",
+          "value": "/assets/images/apple-touch-icon.png",
+          "kind": "fixed"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/curriculo_lattes_150x61.png",
+      "bytes": 10961,
+      "sha256": "a6c19d8744035a85de5bb777b05494cd9b2ad3e0271440f6e61d155a6c83e109",
+      "references": [
+        {
+          "source": "src/js/sections/pesquisadores.js",
+          "field": "static literal",
+          "value": "/labfonac/assets/images/curriculo_lattes_150x61.png",
+          "kind": "fixed"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/favicon.svg",
+      "bytes": 21346,
+      "sha256": "391c09687c430467d91694c84b4caca1af1a6a2e5606365677198a1b21d66646",
+      "references": [
+        {
+          "source": "index.html",
+          "field": "href",
+          "value": "/assets/images/favicon.svg",
+          "kind": "fixed"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/favicon_32x32.png",
+      "bytes": 846,
+      "sha256": "b3a76fe59dc61a1960d40a7ea134ec26ddbe96a2b1d1fd1c0b3470b97d75918f",
+      "references": [
+        {
+          "source": "index.html",
+          "field": "href",
+          "value": "/assets/images/favicon_32x32.png",
+          "kind": "fixed"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+      "bytes": 1720729,
+      "sha256": "177939787188bc22f322075bfd0fb93b624824a944549f2378c68603907864b4",
+      "references": [
+        {
+          "source": "content/equipe/registro-2036d9af-a6c4-497d-9d2b-d9935431c81b.json",
+          "field": "$.foto",
+          "value": "assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+      "bytes": 24434,
+      "sha256": "485cc5da484db40194609ac5353469f7228c9bd36b6fa7ba29090d681c65471f",
+      "references": [
+        {
+          "source": "content/parcerias/cnpq.json",
+          "field": "$.logo",
+          "value": "assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+      "bytes": 361397,
+      "sha256": "a7eda934b37ad349887c28382806b7954f967fab11313f7cd4d2fee046b213c1",
+      "references": [
+        {
+          "source": "content/equipe/maria-luiza-de-almeida-mattos-weinstein.json",
+          "field": "$.foto",
+          "value": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+      "bytes": 123235,
+      "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+      "references": [
+        {
+          "source": "content/equipe/registro-6620fcd5-cd59-4572-9fb0-54468ea653e9.json",
+          "field": "$.foto",
+          "value": "assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+      "bytes": 18527,
+      "sha256": "db172b6489663e53ea790e89e31eba3b3d5886f4eaeadc13aae28519baa2e5e5",
+      "references": [
+        {
+          "source": "content/equipe/joao-antonio-de-moraes.json",
+          "field": "$.foto",
+          "value": "assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+      "bytes": 1121108,
+      "sha256": "cfd2b0b33aa80af87ea0c616734471742d7acd92e677dbf1b3c317889fa415b0",
+      "references": [
+        {
+          "source": "content/equipe/vitor-gabriel-caldas.json",
+          "field": "$.foto",
+          "value": "assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+      "bytes": 2771062,
+      "sha256": "b9a6c2248780dac5b17c1643848a8dea0baee7a1d7a93c37eea5ae419d136c21",
+      "references": [
+        {
+          "source": "content/equipe/priscila-batista-ara-jo-de-almeida.json",
+          "field": "$.foto",
+          "value": "assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+      "bytes": 179393,
+      "sha256": "ea3e8291e9bab6c2cbb79cf976b18cce0823a5e37e92b3a0856b99a6df3f1ebd",
+      "references": [
+        {
+          "source": "content/equipe/mayara-gak-assump-uo.json",
+          "field": "$.foto",
+          "value": "assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+      "bytes": 591908,
+      "sha256": "78274f72197185f1e6bf0cf45493b865e132dfbbe92b8f73ff5bb60d9d01783a",
+      "references": [
+        {
+          "source": "content/equipe/leandro-lisboa-lopes-da-silva.json",
+          "field": "$.foto",
+          "value": "assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+      "bytes": 6390634,
+      "sha256": "65a82544c4e1ad2f251fc4c68891b3c3fcd9e827b51b055f913d6f08fa678799",
+      "references": [
+        {
+          "source": "content/equipe/manuella-carnaval.json",
+          "field": "$.foto",
+          "value": "assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+      "bytes": 859753,
+      "sha256": "dd6874927ca81d7c48b0670d5198b01acaea9c9d5cc53c99b4dbc74f653978b5",
+      "references": [
+        {
+          "source": "content/equipe/jhennefer-c-omara-da-silva.json",
+          "field": "$.foto",
+          "value": "assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+      "bytes": 123235,
+      "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+      "references": [
+        {
+          "source": "content/equipe/nicole-maria-dos-santos-mello.json",
+          "field": "$.foto",
+          "value": "assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+      "bytes": 171949,
+      "sha256": "3210f42d8c9463b5fcf7f85e6a3036d6233ac312e592539569218199e171714a",
+      "references": [
+        {
+          "source": "content/equipe/registro-e06f9505-b540-4bc7-9eb2-a5d5008da281.json",
+          "field": "$.foto",
+          "value": "assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+      "bytes": 9244759,
+      "sha256": "50a4891e8fee1c2899e91b2bff7d8c487dc5ed4a3432bcd0635501b653888444",
+      "references": [
+        {
+          "source": "content/equipe/victor-hugo-teixeira-de-souza.json",
+          "field": "$.foto",
+          "value": "assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+      "bytes": 342967,
+      "sha256": "005c46c49771b78e5da470140b45a68abac6d0a1009bcd87c9da72742507bec8",
+      "references": [
+        {
+          "source": "content/equipe/registro-fba342c5-4468-4764-a12e-e806e18244c2.json",
+          "field": "$.foto",
+          "value": "assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+      "bytes": 2602600,
+      "sha256": "474e1125712af906997158ac241e7d4e3a8c62db7e6105f5a6228260db8fb490",
+      "references": [
+        {
+          "source": "content/equipe/registro-536afa96-e57a-4eaf-bc75-fa51b2010933.json",
+          "field": "$.foto",
+          "value": "assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+      "bytes": 578105,
+      "sha256": "069ab42cc911934a290ca31bf147bbc23da0624016ca0875b02a97436d0be256",
+      "references": [
+        {
+          "source": "content/equipe/registro-65bff363-e8d2-40b0-83d2-4d7c1fc020c8.json",
+          "field": "$.foto",
+          "value": "assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+      "bytes": 122286,
+      "sha256": "5fda3328151533a9802f9fc78b3671d87b86d2904dce36db0515726f8fc7510b",
+      "references": [
+        {
+          "source": "content/parcerias/lisn.json",
+          "field": "$.logo",
+          "value": "assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+      "bytes": 624974,
+      "sha256": "392e171f27e25b88814aa34a10bbbf22c961937b9f5ba9e3599c3d8ce81073a7",
+      "references": [
+        {
+          "source": "content/parcerias/faperj.json",
+          "field": "$.logo",
+          "value": "assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+      "bytes": 1240501,
+      "sha256": "6933bf3972b45435db165583fd8fa421dc20bfe6034191cf34a5b768cd7e337c",
+      "references": [
+        {
+          "source": "content/equipe/mayra-su-zia-oliveira-dos-santos.json",
+          "field": "$.foto",
+          "value": "assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+      "bytes": 2148731,
+      "sha256": "44f6ba220ac5cf4837fd2a101d0aec075194ddd036d0ca44f222766e50ca9e74",
+      "references": [
+        {
+          "source": "content/equipe/registro-e2f4a610-70f7-4594-b27e-599d9104bb6e.json",
+          "field": "$.foto",
+          "value": "assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+      "bytes": 384550,
+      "sha256": "fff8c5fde69fd9ce830a7064c2f8dfad2a5ee3cfc9adc3ecd716bb78fe3ae78a",
+      "references": [
+        {
+          "source": "content/equipe/juliana-benicio-de-andrade-dias.json",
+          "field": "$.foto",
+          "value": "assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+      "bytes": 1208625,
+      "sha256": "a2c4ce1d3cd184498773d76ac4af6edbb392415871c2ee43746060f094381c1f",
+      "references": [
+        {
+          "source": "content/equipe/registro-a9a96502-50d0-42fb-a313-a188a694f3d3.json",
+          "field": "$.foto",
+          "value": "assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+      "bytes": 156959,
+      "sha256": "7a60fef6d345fd4f52c937c7ef42baef21cc099284b9fe7173820d4c7cb93d06",
+      "references": [
+        {
+          "source": "content/equipe/paloma-de-barros-moura.json",
+          "field": "$.foto",
+          "value": "assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+      "bytes": 7612153,
+      "sha256": "b214a20ec70d972a675f6ed082e81e6258da18f4d0901738af6bc81f916818fb",
+      "references": [
+        {
+          "source": "content/equipe/registro-ca100822-2cd6-4b74-9215-743b514aef80.json",
+          "field": "$.foto",
+          "value": "assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+      "bytes": 94098,
+      "sha256": "97ce7655c18ed4a6988f8bd31c4c3d5fcfd293c9282b1d1aea7f7583ecc4f591",
+      "references": [
+        {
+          "source": "content/equipe/caio-korol-gon-alves-da-silva.json",
+          "field": "$.foto",
+          "value": "assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+      "bytes": 189971,
+      "sha256": "1cf277dff3fe8ceec396323a56a218e2517d4526df75ba747fdb052290b3c528",
+      "references": [
+        {
+          "source": "content/equipe/carolina-ribeiro-serra.json",
+          "field": "$.foto",
+          "value": "assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+      "bytes": 169273,
+      "sha256": "709f0ee003c87fe7dfba103de8c76203188fb76999bb65241ba978a4c014cd42",
+      "references": [
+        {
+          "source": "content/parcerias/registro-f604102b-ec3e-48e8-8f44-08819302cca4.json",
+          "field": "$.logo",
+          "value": "assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+      "bytes": 110276,
+      "sha256": "f497b5248172b6b80c838e26c710b94ab14dc9348751925f9115cdbefb4a822e",
+      "references": [
+        {
+          "source": "content/parcerias/capes.json",
+          "field": "$.logo",
+          "value": "assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+      "bytes": 336853,
+      "sha256": "dc8861bbe532a911dda521e788f99a36f3c3b18e8091a4c9e730a85e934840d5",
+      "references": [
+        {
+          "source": "content/equipe/albert-olivier-blaise-rilliard.json",
+          "field": "$.foto",
+          "value": "assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+      "bytes": 79225,
+      "sha256": "26775fca39dd6181d38bc91c62125ceb00b9b69a35bae2a98aa03ec0730311a9",
+      "references": [
+        {
+          "source": "content/equipe/registro-12bf6ce5-744c-4e79-b304-e5d575a9e4f2.json",
+          "field": "$.foto",
+          "value": "assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+      "bytes": 120737,
+      "sha256": "392e476082c548ac9d99823bccc55bed81e3e27f877c7f1e7f1baa85808daf38",
+      "references": [
+        {
+          "source": "content/parcerias/ufpb.json",
+          "field": "$.logo",
+          "value": "assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+      "bytes": 719662,
+      "sha256": "aa5b8a3a267221d2408747593e99a79f9fbf9f44cae97e35c6c9a6543d64232b",
+      "references": [
+        {
+          "source": "content/equipe/daniel-borges-dos-santos.json",
+          "field": "$.foto",
+          "value": "assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+      "bytes": 1974064,
+      "sha256": "fe56fc69b305e4f07cb20f704c3376b22725fe1237cd82c42ac4894c6efae133",
+      "references": [
+        {
+          "source": "content/equipe/registro-207e2e6d-b86c-4b1e-98db-ca74e1326598.json",
+          "field": "$.foto",
+          "value": "assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+      "bytes": 7129678,
+      "sha256": "d46314791281db5ca19be1432dbb8d28a213cace9b374ac944a14186a6d6e81e",
+      "references": [
+        {
+          "source": "content/equipe/carolina-gomes-da-silva.json",
+          "field": "$.foto",
+          "value": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+      "bytes": 1154277,
+      "sha256": "b3b1aacabe509c63a40a055035c53c0f67797edd09df0fbf1d38070f256e6ed9",
+      "references": [
+        {
+          "source": "content/equipe/isabelli-de-lima-lacet.json",
+          "field": "$.foto",
+          "value": "assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/logo_300x130.png",
+      "bytes": 13023,
+      "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+      "references": [
+        {
+          "source": "content/site.json",
+          "field": "$.header.logo.fallback",
+          "value": "/assets/images/logo_300x130.png",
+          "kind": "canonical"
+        },
+        {
+          "source": "content/site.json",
+          "field": "$.header.logo.srcset",
+          "value": "/assets/images/logo_300x130.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/logo_300x130.svg",
+      "bytes": 21286,
+      "sha256": "8b2bbc681eb10cc378f7d7342dad852375184958175d457fa108699c66bb1ed4",
+      "references": [
+        {
+          "source": "content/site.json",
+          "field": "$.header.logo.source",
+          "value": "/assets/images/logo_300x130.svg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/logo_retina.png",
+      "bytes": 49110,
+      "sha256": "4540820205ff9fec550c25d57411f50fcc0292479d3632c4ffbd0bafeedd48a1",
+      "references": [
+        {
+          "source": "content/site.json",
+          "field": "$.header.logo.srcset",
+          "value": "/assets/images/logo_retina.png",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/mikaellen_nascimento.jpeg",
+      "bytes": 51894,
+      "sha256": "7be9ee3d39b6946660c9614874ded72c7c5fb7b476f8b65e5ed7373f54c009fd",
+      "references": [
+        {
+          "source": "content/equipe/mikaellen-kawany-do-nascimento.json",
+          "field": "$.foto",
+          "value": "assets/images/mikaellen_nascimento.jpeg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/tathiana_alcon.jpeg",
+      "bytes": 48652,
+      "sha256": "6a70622f613e0247f3a8b7d103646b6eddd65513559eb0fa7fc2027ed071c312",
+      "references": [
+        {
+          "source": "content/equipe/tathiana-lacerda-alcon.json",
+          "field": "$.foto",
+          "value": "assets/images/tathiana_alcon.jpeg",
+          "kind": "canonical"
+        }
+      ]
+    },
+    {
+      "path": "public/assets/images/team-placeholder.svg",
+      "bytes": 239,
+      "sha256": "8676c118053be169fd02398e6a779b00687bd5bece42f281af04b3551971460d",
+      "references": [
+        {
+          "source": "src/js/sections/team-photo.js",
+          "field": "static literal",
+          "value": "assets/images/team-placeholder.svg",
+          "kind": "fixed"
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "path": "public/assets/images/avatar.png",
+      "bytes": 6732587,
+      "sha256": "5fd733e7b46a07246c0c8f1ce014ee5d14b2b3e0c867fac4c13acff90abe8b83",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/avatar.webp",
+      "bytes": 28014,
+      "sha256": "c7116b90f70c56900087a22b4795939e35e6c28333d1e644a89197b168e31c23",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/carolina_silva.jpeg",
+      "bytes": 55293,
+      "sha256": "9bdaa28af599aa549db7264ffc5382a5f6d8cbbd69219032f88a04b66ae96f90",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/curriculo_lattes_button.png",
+      "bytes": 22701,
+      "sha256": "b68b3dca034f8f2e2dcb83b3da53c3edebcabc54c728c31d247f7ce04bc66e1e",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/daniel_saraiva.jpeg",
+      "bytes": 53662,
+      "sha256": "5c04c0c2f99b6321e00726437bbc0394bbdfd170a642a4b46c33523b194cee72",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/isabelli_lacet.jpeg",
+      "bytes": 44664,
+      "sha256": "fdaf6b409b746a980dc435ea5f667e5d8dd1cd8177fd45453a55c435110a02cc",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/jose_mesquita.jpeg",
+      "bytes": 38737,
+      "sha256": "7bfd20e3614b6ee654dc89acf298c7889ff23687e5d2fcf502d5c52eb49afd21",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/juliana_dias.jpeg",
+      "bytes": 33197,
+      "sha256": "8f485943ca13fe5a67e859cdf64fdf1915aebd698315995d94df18ccfb93b66a",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/jussara_soares.jpeg",
+      "bytes": 47884,
+      "sha256": "8d697e2cba6aa348e08436006830099582e0e6cbf025fc19d774f615c167ff35",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac-logo_300x300.png",
+      "bytes": 19269,
+      "sha256": "1564cb50cb4c27ffaba07770d6993a2dbd7948609cbf743097a54bc9f803a710",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac-logo_300x300_(white_bckg).png",
+      "bytes": 21131,
+      "sha256": "c17b7dfc97b0fc3c237e6e59b2759635489040041cd2a489a862e92ce4af3484",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac-logo_600x200_(white_bckg).png",
+      "bytes": 26651,
+      "sha256": "e607242fe17b2edf351b7eda39777e4e9a60fe293a06664ee0b83137f6b461cc",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac-logo_600x200_(white_bckg).svg",
+      "bytes": 30883,
+      "sha256": "bcfa4cd891530edde90613a00cd604378bdc803b07e056c69e151ce97328c1db",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac_logo_300x300_(transp-bckg).svg",
+      "bytes": 29617,
+      "sha256": "394cda095e4d8991f8a6bc8c881696061a80087cb7a79c3c42e0be41e9485296",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/labfonac_logo_300x300_(white-bckg.svg",
+      "bytes": 29697,
+      "sha256": "21e868902f8e682c3cc6cb2fa802910f288fb9c37ddcb8e6faceb088be0a3e8c",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/lattes-square.svg",
+      "bytes": 1670,
+      "sha256": "9fabf047ccd23ec97cf25181e1667f1a23e5ac4387dbf71208a70ab78fc18278",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_labfonac.jpeg",
+      "bytes": 32990,
+      "sha256": "765fd26baeefc53b027dcff02d4012981f2025277635d30b374efc62ea31eed8",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_provale.jpeg",
+      "bytes": 15952,
+      "sha256": "223dc7739f1a15e7c60cb429879d554a056b795372615c7e0372fc393e6935b9",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_uern.jpeg",
+      "bytes": 37198,
+      "sha256": "3ab080887a07381e1bfaa0efa7801dd0bc6606f87005295e5818460306d8efa2",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_ufpb.jpeg",
+      "bytes": 42176,
+      "sha256": "24a25722efc9dd422dbc9385d2da0378bf1c61c851dfc52bb28bce72289959a9",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_ufrj.jpeg",
+      "bytes": 27232,
+      "sha256": "bce13e9bdd44eaad5d3651e06a997f1fe33da4950d7e1716a1c750e233155768",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/logo_unila.jpeg",
+      "bytes": 28099,
+      "sha256": "3d0f835b812ed440b719b9333a639ac19323e6955209379294266f11340a1949",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/manuella_carnaval.jpeg",
+      "bytes": 44359,
+      "sha256": "0e5d2a4a52d03475bfbe7ab187847e20bc01f5904f28213f3018aef0025abadb",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/maria_luiza_weinstein.jpeg",
+      "bytes": 29420,
+      "sha256": "275c185bef41aaa86f012f5381e37350accf2da1d31ee0f6fea40f1e17d4bb00",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/mayra_santos.jpeg",
+      "bytes": 38740,
+      "sha256": "45ad9b8842f5ee2a0d5c53ba0b53d912fd95707dd09851fe379a34add0fb46de",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/natalia_figueiredo.jpeg",
+      "bytes": 39473,
+      "sha256": "51d46d778b37b903698b2e8efa9242b828c3382981a56c68aacc5c122f3670aa",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/paloma_moura.jpeg",
+      "bytes": 37989,
+      "sha256": "ee6ceddca5d05ff978a08ef8d21194a3e2183a85bd86e7ec8672ce91ea7647c0",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/carolina_silva.png",
+      "bytes": 1636155,
+      "sha256": "b5113cdd8c270c1a807fcf80efe085a357da3901a85daf766614c1fe36888143",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/daniel_saraiva.png",
+      "bytes": 1799614,
+      "sha256": "6203463bf99282d7294b0f3098dcd23c308218a672421328ba6849a8df48201a",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/isabelli_lacet.png",
+      "bytes": 1724520,
+      "sha256": "5d57ee4859db8c9505dbfbf339dcf1ebb0979ab0a96df16bb5b3c468954b6bd0",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/jose_mesquita.png",
+      "bytes": 542462,
+      "sha256": "a90f1744d096ac440e660a78e9c1d94a88ff55bd539f769b0b629d034acf6c5c",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/juliana_dias.png",
+      "bytes": 406798,
+      "sha256": "e508c34374e6196c5c070ee58df95b255b94319166e9ba0c67a2bbb47fb24f1e",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/jussara_soares.png",
+      "bytes": 896492,
+      "sha256": "38926be66fee89cf050ad5d55dcd8c987ad877256d1e22a805cc3a632efa69a5",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_labfonac.png",
+      "bytes": 40260,
+      "sha256": "0d32e1719bd3571bf3442af3d2b06fa8aa20c383e36860764cc3e1cc08eb6208",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_provale.png",
+      "bytes": 36863,
+      "sha256": "e211adf5250c84c962ff5a516837d871819d28660b0584322a63dc76ffb55a8c",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_uern.png",
+      "bytes": 102785,
+      "sha256": "b9ddc86ffccc7e77639d03e9a3c00bd0054becdbd00d8a37ba4fc7ddd91cb0de",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_ufpb.png",
+      "bytes": 99188,
+      "sha256": "db11302053bec4d57a916c57dd21a302076f82c46240c0a2b27422156df9a53f",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_ufrj.png",
+      "bytes": 30033,
+      "sha256": "247b5ba9c5fa72b0ecf77fbe75ee938f81ca5a172bfb211b02c9a041de4b7fe1",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/logo_unila.png",
+      "bytes": 170460,
+      "sha256": "e4e68271eb7d888ce223012513f6d10a173bb032ab379a95747cf4aed2e4a554",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/manuella_carnaval.png",
+      "bytes": 785983,
+      "sha256": "ab3051dbc0ba70b4a913a493d702524f8a09241b1e6baecd9ef2e2fad45029ff",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/maria_luiza_weinstein.png",
+      "bytes": 360145,
+      "sha256": "2cea56bfa71fe6b68e9b43279804dbd11127ca1b8b5ef73345e3bba5d854980a",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/mayra_santos.png",
+      "bytes": 1044235,
+      "sha256": "1feacaf0169e5a443c99e4484c28c588af128083add6aff9865a57efcfb939d6",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/mikaellen_nascimento.png",
+      "bytes": 619950,
+      "sha256": "694af2da72b48783ec22381239baccef30c45c97a8867c989c04fce8eb8943a8",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/natalia_figueiredo.png",
+      "bytes": 100741,
+      "sha256": "33e7656896cca28da8fc29745e52b3466ad1db1d5d5efc4852cc0beb92855966",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/paloma_moura.png",
+      "bytes": 637836,
+      "sha256": "e78262df2519c36cbaf4a0c8ca12240758f8c839c8c8ae18acd22c12a4cd976b",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/priscila_almeida.png",
+      "bytes": 227600,
+      "sha256": "04cf7c2dcd99df0d16365b0ced679a8d32a3794204d563b138efbd02d68bad41",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/safira_brandao.png",
+      "bytes": 1500979,
+      "sha256": "bc47de035074ed973952a0f42309f68734803db55668655096057cce01df6789",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/tatiana_alcon.png",
+      "bytes": 570971,
+      "sha256": "a38a87c95509a3bc0d0adc378ed501cae093361bc54fac29c589de7a0004a69b",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/png/victor_hugo_souza.png",
+      "bytes": 1831864,
+      "sha256": "7fe1b0fdfab69d79bec1ee1bcd264265b3054d4504546ff241b2fe76aec9b4df",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/priscila_almeida.jpeg",
+      "bytes": 39251,
+      "sha256": "0decaf0938871d726b025d02e89e25b3dacddbe89305b1a1514722ea0b6b530a",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/safira_brandao.jpeg",
+      "bytes": 44455,
+      "sha256": "9fb1d47241d69ac5abdb58c100f94f16f22613bf1e862d68e7de78992dd10576",
+      "references": []
+    },
+    {
+      "path": "public/assets/images/victor_souza.jpeg",
+      "bytes": 22755,
+      "sha256": "a5b612ded9532adfa0f0ad29a7086e65159c677f6d87173f0e231900bd8d4e00",
+      "references": []
+    },
+    {
+      "path": "src/assets/images/placeholder-avatar.jpg",
+      "bytes": 410,
+      "sha256": "fb742f6d55991c21882d49d6b2aeddd822aef1306822edb4b39a186b77d2c2ab",
+      "references": []
+    }
+  ],
+  "duplicates": [
+    {
+      "paths": [
+        "public/assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+        "public/assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg"
+      ],
+      "bytesPerFile": 123235,
+      "redundantBytes": 123235,
+      "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190"
+    }
+  ],
+  "missing": [],
+  "invalid": [],
+  "unresolved": [
+    {
+      "source": "public/assets/images/README.md",
+      "reason": "unreferenced non-media project asset; retain pending review"
+    }
+  ],
+  "external": [
+    {
+      "source": "content/extensao.json",
+      "field": "$.projects[0].instagram.source",
+      "value": "https://www.instagram.com/provaleinterinstitucional/",
+      "kind": "canonical"
+    }
+  ]
+}

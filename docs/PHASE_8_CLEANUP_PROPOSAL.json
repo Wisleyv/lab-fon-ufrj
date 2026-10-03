@@ -1,0 +1,3478 @@
+{
+  "evidence": "Read-only C:/tmp/backup mirror; not current-server evidence or authorization",
+  "manifest": {
+    "version": 1,
+    "connectionKey": "offline-mirror-not-live-FTP",
+    "sourceRevision": "dc554e90aea5d22b983f68c8156afe7b904539979b06b37dea1a68f3cc625bd0",
+    "publicRevision": "37ee9451706aa9d86db2df0541af71f7b940b3048ee51a66e744f5971b841920",
+    "inventoryDigest": "12e636aa3648b7b5ab59142aff56cdf740207c1459491766540331538e154900",
+    "sourceCurrent": false,
+    "publicCurrent": false,
+    "proposed": [],
+    "retained": [
+      {
+        "path": ".ftpquota",
+        "bytes": 15,
+        "sha256": "063924336fd282220996fc9f55a4ff0bc2817315dfb37135c997ecf638f07190",
+        "type": "file",
+        "domain": "public",
+        "relativePath": ".ftpquota",
+        "classification": "hosting-metadata-retained"
+      },
+      {
+        "path": "assets/editor.BHo_L3CZ.css",
+        "bytes": 8277,
+        "sha256": "316ccf8109918c1932ce221adb534ed6e97ffda2e70bccbcb69208f491b72df8",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/editor.BHo_L3CZ.css",
+        "classification": "obsolete-public-editor-deferred-until-guided-update"
+      },
+      {
+        "path": "assets/images/apple-touch-icon.png",
+        "bytes": 9502,
+        "sha256": "e3696b675265ad4d902e130b3c909358cd27eef4f83e093c91fbf82dd24be4e0",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/apple-touch-icon.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/avatar.png",
+        "bytes": 6732587,
+        "sha256": "5fd733e7b46a07246c0c8f1ce014ee5d14b2b3e0c867fac4c13acff90abe8b83",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/avatar.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/avatar.webp",
+        "bytes": 28014,
+        "sha256": "c7116b90f70c56900087a22b4795939e35e6c28333d1e644a89197b168e31c23",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/avatar.webp",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/carolina_silva.jpeg",
+        "bytes": 55293,
+        "sha256": "9bdaa28af599aa549db7264ffc5382a5f6d8cbbd69219032f88a04b66ae96f90",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/carolina_silva.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/curriculo_lattes_150x61.png",
+        "bytes": 10961,
+        "sha256": "a6c19d8744035a85de5bb777b05494cd9b2ad3e0271440f6e61d155a6c83e109",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/curriculo_lattes_150x61.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/curriculo_lattes_button.png",
+        "bytes": 22701,
+        "sha256": "b68b3dca034f8f2e2dcb83b3da53c3edebcabc54c728c31d247f7ce04bc66e1e",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/curriculo_lattes_button.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/daniel_saraiva.jpeg",
+        "bytes": 53662,
+        "sha256": "5c04c0c2f99b6321e00726437bbc0394bbdfd170a642a4b46c33523b194cee72",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/daniel_saraiva.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/favicon_32x32.png",
+        "bytes": 846,
+        "sha256": "b3a76fe59dc61a1960d40a7ea134ec26ddbe96a2b1d1fd1c0b3470b97d75918f",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/favicon_32x32.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/favicon.svg",
+        "bytes": 21346,
+        "sha256": "391c09687c430467d91694c84b4caca1af1a6a2e5606365677198a1b21d66646",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/favicon.svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+        "bytes": 1720729,
+        "sha256": "177939787188bc22f322075bfd0fb93b624824a944549f2378c68603907864b4",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+        "bytes": 24434,
+        "sha256": "485cc5da484db40194609ac5353469f7228c9bd36b6fa7ba29090d681c65471f",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+        "bytes": 361397,
+        "sha256": "a7eda934b37ad349887c28382806b7954f967fab11313f7cd4d2fee046b213c1",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+        "bytes": 123235,
+        "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+        "bytes": 18527,
+        "sha256": "db172b6489663e53ea790e89e31eba3b3d5886f4eaeadc13aae28519baa2e5e5",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+        "bytes": 1121108,
+        "sha256": "cfd2b0b33aa80af87ea0c616734471742d7acd92e677dbf1b3c317889fa415b0",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+        "bytes": 2771062,
+        "sha256": "b9a6c2248780dac5b17c1643848a8dea0baee7a1d7a93c37eea5ae419d136c21",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+        "bytes": 179393,
+        "sha256": "ea3e8291e9bab6c2cbb79cf976b18cce0823a5e37e92b3a0856b99a6df3f1ebd",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+        "bytes": 591908,
+        "sha256": "78274f72197185f1e6bf0cf45493b865e132dfbbe92b8f73ff5bb60d9d01783a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+        "bytes": 6390634,
+        "sha256": "65a82544c4e1ad2f251fc4c68891b3c3fcd9e827b51b055f913d6f08fa678799",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+        "bytes": 859753,
+        "sha256": "dd6874927ca81d7c48b0670d5198b01acaea9c9d5cc53c99b4dbc74f653978b5",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+        "bytes": 123235,
+        "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+        "bytes": 171949,
+        "sha256": "3210f42d8c9463b5fcf7f85e6a3036d6233ac312e592539569218199e171714a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+        "bytes": 9244759,
+        "sha256": "50a4891e8fee1c2899e91b2bff7d8c487dc5ed4a3432bcd0635501b653888444",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+        "bytes": 342967,
+        "sha256": "005c46c49771b78e5da470140b45a68abac6d0a1009bcd87c9da72742507bec8",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+        "bytes": 2602600,
+        "sha256": "474e1125712af906997158ac241e7d4e3a8c62db7e6105f5a6228260db8fb490",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+        "bytes": 578105,
+        "sha256": "069ab42cc911934a290ca31bf147bbc23da0624016ca0875b02a97436d0be256",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+        "bytes": 122286,
+        "sha256": "5fda3328151533a9802f9fc78b3671d87b86d2904dce36db0515726f8fc7510b",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+        "bytes": 624974,
+        "sha256": "392e171f27e25b88814aa34a10bbbf22c961937b9f5ba9e3599c3d8ce81073a7",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-ae9cffe6-b83a-42be-a1af-b2e555560bb3.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-ae9cffe6-b83a-42be-a1af-b2e555560bb3.png",
+        "classification": "asset-history-unproven-retained"
+      },
+      {
+        "path": "assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+        "bytes": 1240501,
+        "sha256": "6933bf3972b45435db165583fd8fa421dc20bfe6034191cf34a5b768cd7e337c",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+        "bytes": 2148731,
+        "sha256": "44f6ba220ac5cf4837fd2a101d0aec075194ddd036d0ca44f222766e50ca9e74",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-b2ce14cc-b5d6-499d-8eae-eb09677a2c29.jpg",
+        "bytes": 361397,
+        "sha256": "a7eda934b37ad349887c28382806b7954f967fab11313f7cd4d2fee046b213c1",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-b2ce14cc-b5d6-499d-8eae-eb09677a2c29.jpg",
+        "classification": "asset-history-unproven-retained"
+      },
+      {
+        "path": "assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+        "bytes": 384550,
+        "sha256": "fff8c5fde69fd9ce830a7064c2f8dfad2a5ee3cfc9adc3ecd716bb78fe3ae78a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-c8479bf6-5b8d-4371-8f1f-bdae916b9ed1.jpg",
+        "bytes": 66477,
+        "sha256": "4271f3a8e39364833c0c0ed91484fa1042eb7664d36b622875ce62311658f25a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-c8479bf6-5b8d-4371-8f1f-bdae916b9ed1.jpg",
+        "classification": "asset-history-unproven-retained"
+      },
+      {
+        "path": "assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+        "bytes": 1208625,
+        "sha256": "a2c4ce1d3cd184498773d76ac4af6edbb392415871c2ee43746060f094381c1f",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+        "bytes": 156959,
+        "sha256": "7a60fef6d345fd4f52c937c7ef42baef21cc099284b9fe7173820d4c7cb93d06",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+        "bytes": 7612153,
+        "sha256": "b214a20ec70d972a675f6ed082e81e6258da18f4d0901738af6bc81f916818fb",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+        "bytes": 94098,
+        "sha256": "97ce7655c18ed4a6988f8bd31c4c3d5fcfd293c9282b1d1aea7f7583ecc4f591",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+        "bytes": 189971,
+        "sha256": "1cf277dff3fe8ceec396323a56a218e2517d4526df75ba747fdb052290b3c528",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+        "bytes": 169273,
+        "sha256": "709f0ee003c87fe7dfba103de8c76203188fb76999bb65241ba978a4c014cd42",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-e993606c-83d5-4632-81e9-bc9bd49d2987.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-e993606c-83d5-4632-81e9-bc9bd49d2987.png",
+        "classification": "asset-history-unproven-retained"
+      },
+      {
+        "path": "assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+        "bytes": 110276,
+        "sha256": "f497b5248172b6b80c838e26c710b94ab14dc9348751925f9115cdbefb4a822e",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+        "bytes": 336853,
+        "sha256": "dc8861bbe532a911dda521e788f99a36f3c3b18e8091a4c9e730a85e934840d5",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+        "bytes": 79225,
+        "sha256": "26775fca39dd6181d38bc91c62125ceb00b9b69a35bae2a98aa03ec0730311a9",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+        "bytes": 120737,
+        "sha256": "392e476082c548ac9d99823bccc55bed81e3e27f877c7f1e7f1baa85808daf38",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+        "bytes": 719662,
+        "sha256": "aa5b8a3a267221d2408747593e99a79f9fbf9f44cae97e35c6c9a6543d64232b",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+        "bytes": 1974064,
+        "sha256": "fe56fc69b305e4f07cb20f704c3376b22725fe1237cd82c42ac4894c6efae133",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-f86263a3-5bc9-4d27-9c9f-c3300132a926.jpg",
+        "bytes": 3010,
+        "sha256": "815b8cceabfb7b79ae4aeefb47a0fc3b85b59cf899c3f3822447958e5a6c87fc",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-f86263a3-5bc9-4d27-9c9f-c3300132a926.jpg",
+        "classification": "asset-history-unproven-retained"
+      },
+      {
+        "path": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+        "bytes": 7129678,
+        "sha256": "d46314791281db5ca19be1432dbb8d28a213cace9b374ac944a14186a6d6e81e",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+        "bytes": 1154277,
+        "sha256": "b3b1aacabe509c63a40a055035c53c0f67797edd09df0fbf1d38070f256e6ed9",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/isabelli_lacet.jpeg",
+        "bytes": 44664,
+        "sha256": "fdaf6b409b746a980dc435ea5f667e5d8dd1cd8177fd45453a55c435110a02cc",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/isabelli_lacet.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/jose_mesquita.jpeg",
+        "bytes": 38737,
+        "sha256": "7bfd20e3614b6ee654dc89acf298c7889ff23687e5d2fcf502d5c52eb49afd21",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/jose_mesquita.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/juliana_dias.jpeg",
+        "bytes": 33197,
+        "sha256": "8f485943ca13fe5a67e859cdf64fdf1915aebd698315995d94df18ccfb93b66a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/juliana_dias.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/jussara_soares.jpeg",
+        "bytes": 47884,
+        "sha256": "8d697e2cba6aa348e08436006830099582e0e6cbf025fc19d774f615c167ff35",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/jussara_soares.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac_logo_300x300_(transp-bckg).svg",
+        "bytes": 29617,
+        "sha256": "394cda095e4d8991f8a6bc8c881696061a80087cb7a79c3c42e0be41e9485296",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac_logo_300x300_(transp-bckg).svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac_logo_300x300_(white-bckg.svg",
+        "bytes": 29697,
+        "sha256": "21e868902f8e682c3cc6cb2fa802910f288fb9c37ddcb8e6faceb088be0a3e8c",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac_logo_300x300_(white-bckg.svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac-logo_300x300_(white_bckg).png",
+        "bytes": 21131,
+        "sha256": "c17b7dfc97b0fc3c237e6e59b2759635489040041cd2a489a862e92ce4af3484",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac-logo_300x300_(white_bckg).png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac-logo_300x300.png",
+        "bytes": 19269,
+        "sha256": "1564cb50cb4c27ffaba07770d6993a2dbd7948609cbf743097a54bc9f803a710",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac-logo_300x300.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac-logo_600x200_(white_bckg).png",
+        "bytes": 26651,
+        "sha256": "e607242fe17b2edf351b7eda39777e4e9a60fe293a06664ee0b83137f6b461cc",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac-logo_600x200_(white_bckg).png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/labfonac-logo_600x200_(white_bckg).svg",
+        "bytes": 30883,
+        "sha256": "bcfa4cd891530edde90613a00cd604378bdc803b07e056c69e151ce97328c1db",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/labfonac-logo_600x200_(white_bckg).svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/lattes-square.svg",
+        "bytes": 1670,
+        "sha256": "9fabf047ccd23ec97cf25181e1667f1a23e5ac4387dbf71208a70ab78fc18278",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/lattes-square.svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_300x130.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_300x130.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_300x130.svg",
+        "bytes": 21326,
+        "sha256": "33805f153b96909ae3994963610e6c197d5db2860799c178ed93c74631fd511e",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_300x130.svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_labfonac.jpeg",
+        "bytes": 32990,
+        "sha256": "765fd26baeefc53b027dcff02d4012981f2025277635d30b374efc62ea31eed8",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_labfonac.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_provale.jpeg",
+        "bytes": 15952,
+        "sha256": "223dc7739f1a15e7c60cb429879d554a056b795372615c7e0372fc393e6935b9",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_provale.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_retina.png",
+        "bytes": 49110,
+        "sha256": "4540820205ff9fec550c25d57411f50fcc0292479d3632c4ffbd0bafeedd48a1",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_retina.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_uern.jpeg",
+        "bytes": 37198,
+        "sha256": "3ab080887a07381e1bfaa0efa7801dd0bc6606f87005295e5818460306d8efa2",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_uern.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_ufpb.jpeg",
+        "bytes": 42176,
+        "sha256": "24a25722efc9dd422dbc9385d2da0378bf1c61c851dfc52bb28bce72289959a9",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_ufpb.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_ufrj.jpeg",
+        "bytes": 27232,
+        "sha256": "bce13e9bdd44eaad5d3651e06a997f1fe33da4950d7e1716a1c750e233155768",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_ufrj.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/logo_unila.jpeg",
+        "bytes": 28099,
+        "sha256": "3d0f835b812ed440b719b9333a639ac19323e6955209379294266f11340a1949",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/logo_unila.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/manuella_carnaval.jpeg",
+        "bytes": 44359,
+        "sha256": "0e5d2a4a52d03475bfbe7ab187847e20bc01f5904f28213f3018aef0025abadb",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/manuella_carnaval.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/maria_luiza_weinstein.jpeg",
+        "bytes": 29420,
+        "sha256": "275c185bef41aaa86f012f5381e37350accf2da1d31ee0f6fea40f1e17d4bb00",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/maria_luiza_weinstein.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/mayra_santos.jpeg",
+        "bytes": 38740,
+        "sha256": "45ad9b8842f5ee2a0d5c53ba0b53d912fd95707dd09851fe379a34add0fb46de",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/mayra_santos.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/mikaellen_nascimento.jpeg",
+        "bytes": 51894,
+        "sha256": "7be9ee3d39b6946660c9614874ded72c7c5fb7b476f8b65e5ed7373f54c009fd",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/mikaellen_nascimento.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/natalia_figueiredo.jpeg",
+        "bytes": 39473,
+        "sha256": "51d46d778b37b903698b2e8efa9242b828c3382981a56c68aacc5c122f3670aa",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/natalia_figueiredo.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/paloma_moura.jpeg",
+        "bytes": 37989,
+        "sha256": "ee6ceddca5d05ff978a08ef8d21194a3e2183a85bd86e7ec8672ce91ea7647c0",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/paloma_moura.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/carolina_silva.png",
+        "bytes": 1636155,
+        "sha256": "b5113cdd8c270c1a807fcf80efe085a357da3901a85daf766614c1fe36888143",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/carolina_silva.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/daniel_saraiva.png",
+        "bytes": 1799614,
+        "sha256": "6203463bf99282d7294b0f3098dcd23c308218a672421328ba6849a8df48201a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/daniel_saraiva.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/isabelli_lacet.png",
+        "bytes": 1724520,
+        "sha256": "5d57ee4859db8c9505dbfbf339dcf1ebb0979ab0a96df16bb5b3c468954b6bd0",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/isabelli_lacet.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/jose_mesquita.png",
+        "bytes": 542462,
+        "sha256": "a90f1744d096ac440e660a78e9c1d94a88ff55bd539f769b0b629d034acf6c5c",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/jose_mesquita.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/juliana_dias.png",
+        "bytes": 406798,
+        "sha256": "e508c34374e6196c5c070ee58df95b255b94319166e9ba0c67a2bbb47fb24f1e",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/juliana_dias.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/jussara_soares.png",
+        "bytes": 896492,
+        "sha256": "38926be66fee89cf050ad5d55dcd8c987ad877256d1e22a805cc3a632efa69a5",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/jussara_soares.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_labfonac.png",
+        "bytes": 40260,
+        "sha256": "0d32e1719bd3571bf3442af3d2b06fa8aa20c383e36860764cc3e1cc08eb6208",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_labfonac.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_provale.png",
+        "bytes": 36863,
+        "sha256": "e211adf5250c84c962ff5a516837d871819d28660b0584322a63dc76ffb55a8c",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_provale.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_uern.png",
+        "bytes": 102785,
+        "sha256": "b9ddc86ffccc7e77639d03e9a3c00bd0054becdbd00d8a37ba4fc7ddd91cb0de",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_uern.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_ufpb.png",
+        "bytes": 99188,
+        "sha256": "db11302053bec4d57a916c57dd21a302076f82c46240c0a2b27422156df9a53f",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_ufpb.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_ufrj.png",
+        "bytes": 30033,
+        "sha256": "247b5ba9c5fa72b0ecf77fbe75ee938f81ca5a172bfb211b02c9a041de4b7fe1",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_ufrj.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/logo_unila.png",
+        "bytes": 170460,
+        "sha256": "e4e68271eb7d888ce223012513f6d10a173bb032ab379a95747cf4aed2e4a554",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/logo_unila.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/manuella_carnaval.png",
+        "bytes": 785983,
+        "sha256": "ab3051dbc0ba70b4a913a493d702524f8a09241b1e6baecd9ef2e2fad45029ff",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/manuella_carnaval.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/maria_luiza_weinstein.png",
+        "bytes": 360145,
+        "sha256": "2cea56bfa71fe6b68e9b43279804dbd11127ca1b8b5ef73345e3bba5d854980a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/maria_luiza_weinstein.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/mayra_santos.png",
+        "bytes": 1044235,
+        "sha256": "1feacaf0169e5a443c99e4484c28c588af128083add6aff9865a57efcfb939d6",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/mayra_santos.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/mikaellen_nascimento.png",
+        "bytes": 619950,
+        "sha256": "694af2da72b48783ec22381239baccef30c45c97a8867c989c04fce8eb8943a8",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/mikaellen_nascimento.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/natalia_figueiredo.png",
+        "bytes": 100741,
+        "sha256": "33e7656896cca28da8fc29745e52b3466ad1db1d5d5efc4852cc0beb92855966",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/natalia_figueiredo.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/paloma_moura.png",
+        "bytes": 637836,
+        "sha256": "e78262df2519c36cbaf4a0c8ca12240758f8c839c8c8ae18acd22c12a4cd976b",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/paloma_moura.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/priscila_almeida.png",
+        "bytes": 227600,
+        "sha256": "04cf7c2dcd99df0d16365b0ced679a8d32a3794204d563b138efbd02d68bad41",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/priscila_almeida.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/safira_brandao.png",
+        "bytes": 1500979,
+        "sha256": "bc47de035074ed973952a0f42309f68734803db55668655096057cce01df6789",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/safira_brandao.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/tatiana_alcon.png",
+        "bytes": 570971,
+        "sha256": "a38a87c95509a3bc0d0adc378ed501cae093361bc54fac29c589de7a0004a69b",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/tatiana_alcon.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/png/victor_hugo_souza.png",
+        "bytes": 1831864,
+        "sha256": "7fe1b0fdfab69d79bec1ee1bcd264265b3054d4504546ff241b2fe76aec9b4df",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/png/victor_hugo_souza.png",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/priscila_almeida.jpeg",
+        "bytes": 39251,
+        "sha256": "0decaf0938871d726b025d02e89e25b3dacddbe89305b1a1514722ea0b6b530a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/priscila_almeida.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/README.md",
+        "bytes": 3799,
+        "sha256": "60da9a9c9eebcf73a410b8c805ba5ce8000452ca4bac27195a8f387f628e51c2",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/README.md",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/safira_brandao.jpeg",
+        "bytes": 44455,
+        "sha256": "9fb1d47241d69ac5abdb58c100f94f16f22613bf1e862d68e7de78992dd10576",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/safira_brandao.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/tathiana_alcon.jpeg",
+        "bytes": 48652,
+        "sha256": "6a70622f613e0247f3a8b7d103646b6eddd65513559eb0fa7fc2027ed071c312",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/tathiana_alcon.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/team-placeholder.svg",
+        "bytes": 239,
+        "sha256": "8676c118053be169fd02398e6a779b00687bd5bece42f281af04b3551971460d",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/team-placeholder.svg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/images/victor_souza.jpeg",
+        "bytes": 22755,
+        "sha256": "a5b612ded9532adfa0f0ad29a7086e65159c677f6d87173f0e231900bd8d4e00",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/images/victor_souza.jpeg",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "assets/index._vzd7w5h.css",
+        "bytes": 36908,
+        "sha256": "99ed056cb9e59128a6f6b3590d190a6de7dfd72ee6e0a202fde0f624ff3d4750",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "assets/index._vzd7w5h.css",
+        "classification": "public-bundle-deferred-until-guided-update"
+      },
+      {
+        "path": "data.json",
+        "bytes": 39405,
+        "sha256": "a0065591588687a19fcb8cb1bfdcf568190775cabbd96449c351206906858fb6",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "data.json",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "editor.html",
+        "bytes": 678,
+        "sha256": "8b341521ed6f2cc0d867b4ea547f5c42b36dc308e266cc838534395f927f4c29",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "editor.html",
+        "classification": "obsolete-public-editor-deferred-until-guided-update"
+      },
+      {
+        "path": "index.html",
+        "bytes": 11463,
+        "sha256": "5f80d68dbc25ad0101575ad079c1a50d9cce37266c89ec4362cd5a8ffc5ddda9",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "index.html",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "js/editor.C-ML6Nq9.js",
+        "bytes": 92292,
+        "sha256": "1febdb4342204d181070fa5acec84a6d50e5087b7b6aa3bc8206dd602dc027a3",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "js/editor.C-ML6Nq9.js",
+        "classification": "obsolete-public-editor-deferred-until-guided-update"
+      },
+      {
+        "path": "js/index.W4knCKLQ.js",
+        "bytes": 6282,
+        "sha256": "f38e210dc2d691a73b4f0ce8d15edc58300321c4dbf1e2143e581b7e4c2303ab",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "js/index.W4knCKLQ.js",
+        "classification": "public-bundle-deferred-until-guided-update"
+      },
+      {
+        "path": "js/site-content.ByZ8ym78.js",
+        "bytes": 62253,
+        "sha256": "709ea323f6ec8cebc3ea6feb0c47f747986dc37393ab8c497fca2b9b7df9867a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "js/site-content.ByZ8ym78.js",
+        "classification": "public-bundle-deferred-until-guided-update"
+      },
+      {
+        "path": "publication_references.json",
+        "bytes": 36334,
+        "sha256": "24e955641b8fa497fff5d9a343a888e44d44be82ffe57e15ebf234baeb23d09a",
+        "type": "file",
+        "domain": "public",
+        "relativePath": "publication_references.json",
+        "classification": "public-output-path-retained"
+      },
+      {
+        "path": "source/content/equipe/albert-olivier-blaise-rilliard.json",
+        "bytes": 227,
+        "sha256": "9d18a61488ed09628c4f9f6bf209da8848f3e98de6195755eb0f845ec118d9cd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/albert-olivier-blaise-rilliard.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/caio-korol-gon-alves-da-silva.json",
+        "bytes": 230,
+        "sha256": "9d14e1108aee9b0c36b11e93081adc5d90f1acc119719eb4fdb493e595327405",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/caio-korol-gon-alves-da-silva.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/carolina-gomes-da-silva.json",
+        "bytes": 276,
+        "sha256": "c3477d21b3461a87480d6dfeb4aa7b3b832dd07d887c9f88ae63d662d52720e2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/carolina-gomes-da-silva.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/carolina-ribeiro-serra.json",
+        "bytes": 219,
+        "sha256": "87b1d1520d4468941680061ac9eab95540b5198793492070b871247cbdc32d8d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/carolina-ribeiro-serra.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/daniel-borges-dos-santos.json",
+        "bytes": 223,
+        "sha256": "8cfc045cd1f3fffd6fcfad6b57074d5030f63cb2af07816e66420ccb18c8eeb7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/daniel-borges-dos-santos.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/isabelli-de-lima-lacet.json",
+        "bytes": 221,
+        "sha256": "863d4bf96198cdda21644d2de136c79943452a4b3fd029fca674eeb7ae717ba2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/isabelli-de-lima-lacet.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/jhennefer-c-omara-da-silva.json",
+        "bytes": 225,
+        "sha256": "05940ee0d6e126945a242b90af7ae70c7863991ccffed6bc329253683754f9db",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/jhennefer-c-omara-da-silva.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/joao-antonio-de-moraes.json",
+        "bytes": 263,
+        "sha256": "5dc0e28a8ac5112c5f401f27eb9d0227227441e9cd3cbd8a2555087ce141d28c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/joao-antonio-de-moraes.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/juliana-benicio-de-andrade-dias.json",
+        "bytes": 266,
+        "sha256": "bb9797761b21210f71d3e48efe002e6dba7778d0d5c9aff70509fbc565fa6cd7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/juliana-benicio-de-andrade-dias.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/leandro-lisboa-lopes-da-silva.json",
+        "bytes": 229,
+        "sha256": "1eab302d8dd7ddb01843775113b912c9c41a9e0a57ad725db43d5732a0fb955f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/leandro-lisboa-lopes-da-silva.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/manuella-carnaval.json",
+        "bytes": 274,
+        "sha256": "514bec5ccc4ff0aee692f2655a9e3aba5aa732e750374db47102cb4d38d19ea1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/manuella-carnaval.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/maria-luiza-de-almeida-mattos-weinstein.json",
+        "bytes": 238,
+        "sha256": "fa3d4326e6e35d6a96fc2ab60be00f0ec712c8f1f41e4506208aea9067b97502",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/maria-luiza-de-almeida-mattos-weinstein.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/mayara-gak-assump-uo.json",
+        "bytes": 222,
+        "sha256": "ace95024edbe8125f433e7172ec6f3cdaf69b9df69c6728c61161491b0ce7198",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/mayara-gak-assump-uo.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/mayra-su-zia-oliveira-dos-santos.json",
+        "bytes": 229,
+        "sha256": "175cd3b9a0b6af556f91d84fcaf1cebc398ccbabdf98e7961210f9e0004c2d9f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/mayra-su-zia-oliveira-dos-santos.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/mikaellen-kawany-do-nascimento.json",
+        "bytes": 209,
+        "sha256": "0782cfd774264c81c4743eca0625ff6e4487bb691170d41d3dcf3b3e8ba3641d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/mikaellen-kawany-do-nascimento.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/nicole-maria-dos-santos-mello.json",
+        "bytes": 229,
+        "sha256": "6e57ef0e3f03e2385171ed551d10458eb1a672238030858fbb99538934c25bdd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/nicole-maria-dos-santos-mello.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/paloma-de-barros-moura.json",
+        "bytes": 221,
+        "sha256": "64eecc30a8990400ad768997957a00dc3d54714329fedccbbd133b71b06e2232",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/paloma-de-barros-moura.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/priscila-batista-ara-jo-de-almeida.json",
+        "bytes": 231,
+        "sha256": "070164dc29f957159651a64aed29d3053efb6066679e84d4353027cd9f7da9d2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/priscila-batista-ara-jo-de-almeida.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-12bf6ce5-744c-4e79-b304-e5d575a9e4f2.json",
+        "bytes": 227,
+        "sha256": "6861a96f0bf5ebfbb0375f1b5dbcd37900bed2291bb4607e2430efd4a3da0c42",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-12bf6ce5-744c-4e79-b304-e5d575a9e4f2.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-2036d9af-a6c4-497d-9d2b-d9935431c81b.json",
+        "bytes": 233,
+        "sha256": "3336de004050f093b29a0ef5f0a35e8970b7014248e3f137ca31b4a217262c02",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-2036d9af-a6c4-497d-9d2b-d9935431c81b.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-207e2e6d-b86c-4b1e-98db-ca74e1326598.json",
+        "bytes": 228,
+        "sha256": "3122e94d07b4d0a87ed6a2c45d101e620e4dadcf5c81313edc0576d94c833535",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-207e2e6d-b86c-4b1e-98db-ca74e1326598.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-536afa96-e57a-4eaf-bc75-fa51b2010933.json",
+        "bytes": 230,
+        "sha256": "80c4f8cd4ba7b3cd962a0364c03e1abd12b26d15888bcc8c444327fcaadaef67",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-536afa96-e57a-4eaf-bc75-fa51b2010933.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-65bff363-e8d2-40b0-83d2-4d7c1fc020c8.json",
+        "bytes": 226,
+        "sha256": "dcd2cd86e3ae7784564785a7601532ced338414471304532b6759998c9a0cb93",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-65bff363-e8d2-40b0-83d2-4d7c1fc020c8.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-6620fcd5-cd59-4572-9fb0-54468ea653e9.json",
+        "bytes": 232,
+        "sha256": "e30b0b1404e46f5398d3791ab10109c4ffbb761e6c26a76ad21c4c37eb296479",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-6620fcd5-cd59-4572-9fb0-54468ea653e9.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-a9a96502-50d0-42fb-a313-a188a694f3d3.json",
+        "bytes": 230,
+        "sha256": "9405fd9a6b05801ecb9bbd8e8af2d1315715e34cf458044812c0790b1db6902a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-a9a96502-50d0-42fb-a313-a188a694f3d3.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-ca100822-2cd6-4b74-9215-743b514aef80.json",
+        "bytes": 236,
+        "sha256": "fbc00902ed907c7b27718e476f257830a0b4e2cf8a84d1c105bb461ffc57d6dc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-ca100822-2cd6-4b74-9215-743b514aef80.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-e06f9505-b540-4bc7-9eb2-a5d5008da281.json",
+        "bytes": 226,
+        "sha256": "d0b33731248082304730e30b6408e43b9cc1f94e3fef2eb37e3d6c94df9ba255",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-e06f9505-b540-4bc7-9eb2-a5d5008da281.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-e2f4a610-70f7-4594-b27e-599d9104bb6e.json",
+        "bytes": 220,
+        "sha256": "194c96b87968da59d65fee69057c741f3d635d4d2cf7c6757365e8ae4aaefeb3",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-e2f4a610-70f7-4594-b27e-599d9104bb6e.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/registro-fba342c5-4468-4764-a12e-e806e18244c2.json",
+        "bytes": 244,
+        "sha256": "953c5e5a8177024217e001f7ba80cfe6231956cff8050a161bef29d4092eeccd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/registro-fba342c5-4468-4764-a12e-e806e18244c2.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/tathiana-lacerda-alcon.json",
+        "bytes": 193,
+        "sha256": "ad8a86a3371c591e43f56052c49606052fb6cf0f275ed7edb34da4bbf9778e0d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/tathiana-lacerda-alcon.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/victor-hugo-teixeira-de-souza.json",
+        "bytes": 228,
+        "sha256": "4f57abecada72ac6b98e659bb0f574b9d894718aea0845b9688dc4b29a371b47",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/victor-hugo-teixeira-de-souza.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/equipe/vitor-gabriel-caldas.json",
+        "bytes": 217,
+        "sha256": "591fe1694d700015600d79929b8fd4a7eec14af624d20907cce28c25984bee1c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/equipe/vitor-gabriel-caldas.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/extensao.json",
+        "bytes": 1387,
+        "sha256": "22b4206fd3fcddbf3002ad9af306e79b923cb62a9e3d6340f61575b745bd9cb9",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/extensao.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/fonetica-experimental.json",
+        "bytes": 364,
+        "sha256": "b03237504344816aae1df960e9046f784aebe1d3bbc3b8ee7d8fac609af2bb4d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/fonetica-experimental.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/prosodia-ensino.json",
+        "bytes": 311,
+        "sha256": "03b8e4b9282640792b7394b5d4d6f2b8f460fc4078b780494866ee9800155e3e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/prosodia-ensino.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/prosodia-expressividade.json",
+        "bytes": 364,
+        "sha256": "5abd46f6bb160abfe22b797c2559da0710aa916670db850a13462515da6737fc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/prosodia-expressividade.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/prosodia-fonologia.json",
+        "bytes": 371,
+        "sha256": "8c0cab92e741e9107bda2afec9027598c50f114a240f2b4a5b1864c9d68ee103",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/prosodia-fonologia.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/prosodia-interfaces.json",
+        "bytes": 381,
+        "sha256": "b46dacb616a3128276fda4f83c11cfdd4146bf2d04e72ab6497b17df13c772eb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/prosodia-interfaces.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/linhas/prosodia-multimodal.json",
+        "bytes": 364,
+        "sha256": "8659029f1d4f02ccc4709eb96e3091eee03b964f5ec5e7e8fc1cf8f4e4889678",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/linhas/prosodia-multimodal.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/page.json",
+        "bytes": 2110,
+        "sha256": "04752d79db9e7d58dcb54bc3c879daca2933580284457615c64a1cc9bb75b65d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/page.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/capes.json",
+        "bytes": 344,
+        "sha256": "a63fc2fd6496e7799051e85d0dcbe78b450f44a90df8eef11a4a7211dfec3945",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/capes.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/cnpq.json",
+        "bytes": 298,
+        "sha256": "335e733bc8c6da5e7b6b3b91e1e20423bd62dbdc3301bade0213d937360600bf",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/cnpq.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/faperj.json",
+        "bytes": 365,
+        "sha256": "9ffdc5d79c5cb758c1785b4f20ca6cb235ee293272298c5a95a3ca7a061eeeb6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/faperj.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/lisn.json",
+        "bytes": 340,
+        "sha256": "1208002736e26f62d45c5036f7e69d3e23086bc6282d285c1d48aea7c8679261",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/lisn.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/registro-f604102b-ec3e-48e8-8f44-08819302cca4.json",
+        "bytes": 698,
+        "sha256": "e178e24e41ef078b1c0257358dffb3eee85cdc65a70212c0980a10e2f0ff312f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/registro-f604102b-ec3e-48e8-8f44-08819302cca4.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/parcerias/ufpb.json",
+        "bytes": 317,
+        "sha256": "45ae302f1f8cd6bba4e00b9b05b3599cf4640243c1302ec17792e34c7ecc9134",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/parcerias/ufpb.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2014-analise-entonacional-e-pragmatica-de-conversas-tel.json",
+        "bytes": 720,
+        "sha256": "789d3529f47f4ffa338e31fc418daeaaade600c30580fdd353d0dad4034c4523",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2014-analise-entonacional-e-pragmatica-de-conversas-tel.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2015-a-carnaval-m-coelho-a-b-b-a-manifestacao.json",
+        "bytes": 432,
+        "sha256": "e433304ef5a9ec2a0c95e71f6125076c2ce5df1854739e98f5ac410f4caacb29",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2015-a-carnaval-m-coelho-a-b-b-a-manifestacao.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2015-a-rilliard-a-o-b-estrutura-prosodica-e-focal.json",
+        "bytes": 351,
+        "sha256": "2b4bb2ae1ecf5582ce251f089ad340baf6a13fd0db9ccc81abaa1fbc5cf3b022",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2015-a-rilliard-a-o-b-estrutura-prosodica-e-focal.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2017-foco-informacional-e-foco-contrastivo-no-portugues.json",
+        "bytes": 494,
+        "sha256": "c7e7571f66ad5ae0b9d8408e7e70fdeda56f312f3207107d6d4edb1797e65631",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2017-foco-informacional-e-foco-contrastivo-no-portugues.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2017-r-ferreira-p-santos-figueiredo-n-actitudes.json",
+        "bytes": 331,
+        "sha256": "29fa50e6da7620cca39b29acf48aa1072ee62716ebac72812f26ef5c32c0c2c4",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2017-r-ferreira-p-santos-figueiredo-n-actitudes.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2017-r-santos-figueiredo-n-ferreira-p-entonacion.json",
+        "bytes": 374,
+        "sha256": "763039326f11d7ac6f6fffba14b01ee07cc7230d9786abea3b3c639b240d6ebf",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2017-r-santos-figueiredo-n-ferreira-p-entonacion.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2017-r-silva-c-g-da-miranda-l-s-prosodia-de-en.json",
+        "bytes": 445,
+        "sha256": "6eab56ef16d193bb2a9f43b7ebb82130e3c6d3e878c21663052b8730c5c3ebc6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2017-r-silva-c-g-da-miranda-l-s-prosodia-de-en.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2019-a-prosodia-de-atos-de-fala-no-espanhol-da-cidade-d.json",
+        "bytes": 555,
+        "sha256": "b9b65d8da78636dd60552cfc0ab29365d32184ded8c9ed8dfdb717248a2848e8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2019-a-prosodia-de-atos-de-fala-no-espanhol-da-cidade-d.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2019-analise-entonacional-de-atos-de-fala-diretivos-na.json",
+        "bytes": 468,
+        "sha256": "4a51cfd42e994e6bf751c7591fcc06433c49a2180928f8c8558db5df6a986da7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2019-analise-entonacional-de-atos-de-fala-diretivos-na.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2019-r-pontes-a-l-entoacao.json",
+        "bytes": 309,
+        "sha256": "d0581c593543920e5e35dca4435d84017ee0fa5dfb8f6c1b27fdaf48a723ff8c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2019-r-pontes-a-l-entoacao.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2019-s-mesquita-neto-j-r-interfonologia-entoaciona.json",
+        "bytes": 269,
+        "sha256": "c6ff2df0ee18a62f056b1089528bde3141913fd3645e49c154e8a23592aaf448",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2019-s-mesquita-neto-j-r-interfonologia-entoaciona.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2020-a-atos-de-fala-diretivos-em-portugues-e-em-espanh.json",
+        "bytes": 394,
+        "sha256": "bcaff8e379a0f376f1b4f20fa404a3db1915d66c6ff6f14e37ca3568f52dc411",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2020-a-atos-de-fala-diretivos-em-portugues-e-em-espanh.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2020-r-pontes-a-l-espanhol-como-lingua-estrangeira.json",
+        "bytes": 325,
+        "sha256": "d807436ce266a789badaa0aacb346cb29630741dabdceb72e210daf6b0fa302c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2020-r-pontes-a-l-espanhol-como-lingua-estrangeira.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2020-s-gomes-da-silva-carolina-moraes-j-a-rilli.json",
+        "bytes": 472,
+        "sha256": "6c97ac25034276ebfff14d041f0389e74e46b5a4ff32b153764f640d3a4c54fc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2020-s-gomes-da-silva-carolina-moraes-j-a-rilli.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-analise-prosodico-pragmatica-da-ordem-no-filme-ma.json",
+        "bytes": 546,
+        "sha256": "d4359175ac9f6b08d25ac2291429d19dc22ebeac3e94fbe27c06eb6211860e7d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-analise-prosodico-pragmatica-da-ordem-no-filme-ma.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-entoacao-e-pragmatica-de-perguntas-totais-em-corpu.json",
+        "bytes": 541,
+        "sha256": "44f04343edd7e12162d26567cbb1886894093d09db7b33e642163e0993f5d0d2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-entoacao-e-pragmatica-de-perguntas-totais-em-corpu.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-focalizacao-no-portugues-do-brasil.json",
+        "bytes": 443,
+        "sha256": "2833e2b5db84b9ef431e894e3ab42712341e938da44644e9e1ed002256dc3b67",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-focalizacao-no-portugues-do-brasil.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-p-entoacao-das-perguntas-no-espanhol-da-argentina.json",
+        "bytes": 398,
+        "sha256": "bf2268b814d90009dde0695b23e95a7d45115c6c3daf16ad2cd56f9b80108b10",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-p-entoacao-das-perguntas-no-espanhol-da-argentina.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-s-variacao-pragmatica-de-atos-de-fala-diretivos-d.json",
+        "bytes": 381,
+        "sha256": "73e36cb6d6ca3472ccf1b7be526314d451fe1bf87baa87de2c37737ec187f172",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-s-variacao-pragmatica-de-atos-de-fala-diretivos-d.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2021-s-vergara-sembergman-e-murillo-bocanegra-l.json",
+        "bytes": 440,
+        "sha256": "e0c08223ad63938e3473d46f6c01ecb233698e873495812a92d5dcb12458cc90",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2021-s-vergara-sembergman-e-murillo-bocanegra-l.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2022-a-rilliard-a-o-b-focus-types-in-brazilian-po.json",
+        "bytes": 406,
+        "sha256": "e35edd27960225c8809871cb5cc6cec357669853a4e2c22db279024f4ff0dd58",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2022-a-rilliard-a-o-b-focus-types-in-brazilian-po.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2022-a-rilliard-a-o-b-os-dominios-da-focalizacao.json",
+        "bytes": 341,
+        "sha256": "a0f8bf8fdc61352b509542ac33ad4c0232bd61cf021de379161c4ff3877438b0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2022-a-rilliard-a-o-b-os-dominios-da-focalizacao.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2022-m-lucena-r-m-gomes-da-silva-carolina-vos.json",
+        "bytes": 321,
+        "sha256": "1034ad08ddcbb93ad8097768136edce237cc8f42ef18478338a26777ef08d04c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2022-m-lucena-r-m-gomes-da-silva-carolina-vos.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2022-s-o-gomes-da-silva-carolina-praticas-de-orali.json",
+        "bytes": 356,
+        "sha256": "46761c785be1dfc6a98858a908343e2ffa86b192302f49c8f32b1e5277688753",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2022-s-o-gomes-da-silva-carolina-praticas-de-orali.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2022-s-rebollo-couto-l-gomes-da-silva-carolina-e.json",
+        "bytes": 295,
+        "sha256": "55b50f62ae44e9ec594bab19de9c82ad2e6bcdff579d2b6f64efd5bba6cd8be6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2022-s-rebollo-couto-l-gomes-da-silva-carolina-e.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-analise-entonacional-de-atos-de-fala-diretivos-pro.json",
+        "bytes": 586,
+        "sha256": "bcd79f289c92d8dfd20cc595640b7d3a7bf6bcdeea946b352fcd5143e61d3dfe",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-analise-entonacional-de-atos-de-fala-diretivos-pro.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-analisis-multimodal-de-actos-de-habla-en-espanol-d.json",
+        "bytes": 388,
+        "sha256": "09ccbc535a558ff4d22cb4250f9a5ea669aedc0e5eb28bd2aeddcf189a4487cf",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-analisis-multimodal-de-actos-de-habla-en-espanol-d.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-as-perguntas-totais-em-portugues-e-espanhol-lingua.json",
+        "bytes": 586,
+        "sha256": "ca93b7ea9e7fcf67ed4ffde095c2d5cc083f6f5a9f7ad0b0ca56dad86dfe3882",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-as-perguntas-totais-em-portugues-e-espanhol-lingua.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-m-castedo-t-m-analisis-de-la-entonacion-de-en.json",
+        "bytes": 483,
+        "sha256": "70bcecdccae47c79c8fae37fba6321d9eb619a64d90a48e8508b89a2d56e0b59",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-m-castedo-t-m-analisis-de-la-entonacion-de-en.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-s-o-nascimento-m-k-brandao-s-d-c-r-ent.json",
+        "bytes": 396,
+        "sha256": "9c4c955c62597bfefa83763914771b9825b99a2013b68bdd320a5567b893a9e8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-s-o-nascimento-m-k-brandao-s-d-c-r-ent.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2023-s-preguntas-y-pedidos-en-portugues-y-en-espanol.json",
+        "bytes": 370,
+        "sha256": "b693248ec5b7dd8a63f2d113947934ec44d7e845b96c3695d5a68744699689e6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2023-s-preguntas-y-pedidos-en-portugues-y-en-espanol.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-analise-acustica-vogais.json",
+        "bytes": 254,
+        "sha256": "f7fdf55f8909dc094bfb5f2cbffb9bb493a0ddc413064bb67326d3ea4f582e14",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-analise-acustica-vogais.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-analise-entonacional-e-pragmatica-de-enunciados-in.json",
+        "bytes": 463,
+        "sha256": "47c2c25db50b8de35e4af22d850aa62fc5e71ea496af9c2320015113d49c9c2a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-analise-entonacional-e-pragmatica-de-enunciados-in.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-as-emocoes-em-narracoes-de-partidas-de-futebol-um.json",
+        "bytes": 529,
+        "sha256": "8370e91e1283f92f69e92388ed7bb674dfb40f82f3427c5601edb190fe5755a3",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-as-emocoes-em-narracoes-de-partidas-de-futebol-um.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-quando-a-prosodia-e-a-pragmatica-se-encontram.json",
+        "bytes": 295,
+        "sha256": "e44f07af27c7f7071300b4ff836291b6d5bf7c0a7509e2507bf6d32951c2df49",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-quando-a-prosodia-e-a-pragmatica-se-encontram.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-s-carnaval-m-cunha-c-s-command-intonation.json",
+        "bytes": 309,
+        "sha256": "97d4fb9afbb4c00b7b15731595dbbc61c01276335178970975751f2ee56cd470",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-s-carnaval-m-cunha-c-s-command-intonation.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-s-gomes-da-silva-carolina-carnaval-m-prosodi.json",
+        "bytes": 324,
+        "sha256": "d94c55693cd2cfbd480fcc50c5cde0547f3923a93fe9b654fbf8a7f1eaf865a8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-s-gomes-da-silva-carolina-carnaval-m-prosodi.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/publicacoes/2024-s-moraes-joao-antonio-de-rilliard-a-o-b-fu.json",
+        "bytes": 349,
+        "sha256": "74da0aa7d1d013ebc4409a290923d55a4d379888e5ada0cdfe74f62383014ea5",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/publicacoes/2024-s-moraes-joao-antonio-de-rilliard-a-o-b-fu.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/content/site.json",
+        "bytes": 3894,
+        "sha256": "f22e27d63fbc478c967332d5ebb498c45003bb8ad2fe153b4bf7d618f767c03c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "content/site.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/editor.html",
+        "bytes": 541,
+        "sha256": "bf44ba9f589863fa877b4dc9b8b5b532c08ece141ced257a3707d22498f25e4d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "editor.html",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/index.html",
+        "bytes": 11292,
+        "sha256": "62c5007d8e47ffc98119ecddf0871d29224ca3c43eec570188eca54b5f832216",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "index.html",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/package-lock.json",
+        "bytes": 236505,
+        "sha256": "4367fc31ffa497fcf0753fc7a42b87cbac86641ac1b2a14d48987ea6f1c7b1f6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "package-lock.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/package.json",
+        "bytes": 2067,
+        "sha256": "dbec74dbadb63abca0f734397eb2610626adc074c38f2302abc7402422080980",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "package.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/apple-touch-icon.png",
+        "bytes": 9502,
+        "sha256": "e3696b675265ad4d902e130b3c909358cd27eef4f83e093c91fbf82dd24be4e0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/apple-touch-icon.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/avatar.png",
+        "bytes": 6732587,
+        "sha256": "5fd733e7b46a07246c0c8f1ce014ee5d14b2b3e0c867fac4c13acff90abe8b83",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/avatar.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/avatar.webp",
+        "bytes": 28014,
+        "sha256": "c7116b90f70c56900087a22b4795939e35e6c28333d1e644a89197b168e31c23",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/avatar.webp",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/carolina_silva.jpeg",
+        "bytes": 55293,
+        "sha256": "9bdaa28af599aa549db7264ffc5382a5f6d8cbbd69219032f88a04b66ae96f90",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/carolina_silva.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/curriculo_lattes_150x61.png",
+        "bytes": 10961,
+        "sha256": "a6c19d8744035a85de5bb777b05494cd9b2ad3e0271440f6e61d155a6c83e109",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/curriculo_lattes_150x61.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/curriculo_lattes_button.png",
+        "bytes": 22701,
+        "sha256": "b68b3dca034f8f2e2dcb83b3da53c3edebcabc54c728c31d247f7ce04bc66e1e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/curriculo_lattes_button.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/daniel_saraiva.jpeg",
+        "bytes": 53662,
+        "sha256": "5c04c0c2f99b6321e00726437bbc0394bbdfd170a642a4b46c33523b194cee72",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/daniel_saraiva.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/favicon_32x32.png",
+        "bytes": 846,
+        "sha256": "b3a76fe59dc61a1960d40a7ea134ec26ddbe96a2b1d1fd1c0b3470b97d75918f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/favicon_32x32.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/favicon.svg",
+        "bytes": 21346,
+        "sha256": "391c09687c430467d91694c84b4caca1af1a6a2e5606365677198a1b21d66646",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/favicon.svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+        "bytes": 1720729,
+        "sha256": "177939787188bc22f322075bfd0fb93b624824a944549f2378c68603907864b4",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-01dd82ca-ea58-4fea-a0c8-5274e2c1f17a.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+        "bytes": 24434,
+        "sha256": "485cc5da484db40194609ac5353469f7228c9bd36b6fa7ba29090d681c65471f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-103ae6f1-b4b1-419a-b442-35d9a4e2ec04.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+        "bytes": 361397,
+        "sha256": "a7eda934b37ad349887c28382806b7954f967fab11313f7cd4d2fee046b213c1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-1e256c4b-4393-4c06-b73d-789f6c09a120.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+        "bytes": 123235,
+        "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-2e612c11-bae1-4178-9cd3-ba542b3cfef9.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+        "bytes": 18527,
+        "sha256": "db172b6489663e53ea790e89e31eba3b3d5886f4eaeadc13aae28519baa2e5e5",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-42817204-bfbf-4b99-8a5f-13cee0e42673.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+        "bytes": 1121108,
+        "sha256": "cfd2b0b33aa80af87ea0c616734471742d7acd92e677dbf1b3c317889fa415b0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-4ee9a66e-8a3b-41bd-9358-bf4c86f77c55.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+        "bytes": 2771062,
+        "sha256": "b9a6c2248780dac5b17c1643848a8dea0baee7a1d7a93c37eea5ae419d136c21",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-4fab5fb4-ca1c-46d6-876a-6a10c9b7b9e7.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+        "bytes": 179393,
+        "sha256": "ea3e8291e9bab6c2cbb79cf976b18cce0823a5e37e92b3a0856b99a6df3f1ebd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-5cfa8855-fcd3-43d8-b200-e94474e80e85.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+        "bytes": 591908,
+        "sha256": "78274f72197185f1e6bf0cf45493b865e132dfbbe92b8f73ff5bb60d9d01783a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-5d07a056-f0a8-43d5-b8bc-b3b5c8f265d6.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+        "bytes": 6390634,
+        "sha256": "65a82544c4e1ad2f251fc4c68891b3c3fcd9e827b51b055f913d6f08fa678799",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-5dc2b0c4-4376-4c1e-9596-91b80e3646f6.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+        "bytes": 859753,
+        "sha256": "dd6874927ca81d7c48b0670d5198b01acaea9c9d5cc53c99b4dbc74f653978b5",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-6addf337-52e6-4b90-a5ff-085fed637abe.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+        "bytes": 123235,
+        "sha256": "d883b731de1abf7a3c5353a7f2606102bdfdfd8603fab3d8bcd1ae0098494190",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-721ec0b0-b35c-4878-8c93-53bed2f2a141.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+        "bytes": 171949,
+        "sha256": "3210f42d8c9463b5fcf7f85e6a3036d6233ac312e592539569218199e171714a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-7e44146d-5f5d-412a-86cd-ca4b2a26a01e.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+        "bytes": 9244759,
+        "sha256": "50a4891e8fee1c2899e91b2bff7d8c487dc5ed4a3432bcd0635501b653888444",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-8a7e2c19-9ce7-4a53-83aa-ea0dc50268b4.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+        "bytes": 342967,
+        "sha256": "005c46c49771b78e5da470140b45a68abac6d0a1009bcd87c9da72742507bec8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-922e869b-ec18-4242-856d-4b344ede756e.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+        "bytes": 2602600,
+        "sha256": "474e1125712af906997158ac241e7d4e3a8c62db7e6105f5a6228260db8fb490",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-9230d1d8-d011-4cdd-8e88-4540f04f4e09.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+        "bytes": 578105,
+        "sha256": "069ab42cc911934a290ca31bf147bbc23da0624016ca0875b02a97436d0be256",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-9dc304b5-8ff6-4ac3-b511-4715a1baa122.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+        "bytes": 122286,
+        "sha256": "5fda3328151533a9802f9fc78b3671d87b86d2904dce36db0515726f8fc7510b",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-a7b17f37-8386-4147-a4c7-2f2cd34113e8.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+        "bytes": 624974,
+        "sha256": "392e171f27e25b88814aa34a10bbbf22c961937b9f5ba9e3599c3d8ce81073a7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-aca106db-49eb-4e2c-b620-5d7c71e188e7.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-ae9cffe6-b83a-42be-a1af-b2e555560bb3.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-ae9cffe6-b83a-42be-a1af-b2e555560bb3.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+        "bytes": 1240501,
+        "sha256": "6933bf3972b45435db165583fd8fa421dc20bfe6034191cf34a5b768cd7e337c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-afaedf03-d410-4b52-9bc0-abe120c512c0.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+        "bytes": 2148731,
+        "sha256": "44f6ba220ac5cf4837fd2a101d0aec075194ddd036d0ca44f222766e50ca9e74",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-b103455b-6040-4044-9fe4-774e9feab2f0.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-b2ce14cc-b5d6-499d-8eae-eb09677a2c29.jpg",
+        "bytes": 361397,
+        "sha256": "a7eda934b37ad349887c28382806b7954f967fab11313f7cd4d2fee046b213c1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-b2ce14cc-b5d6-499d-8eae-eb09677a2c29.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+        "bytes": 384550,
+        "sha256": "fff8c5fde69fd9ce830a7064c2f8dfad2a5ee3cfc9adc3ecd716bb78fe3ae78a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-b5c8d80c-1239-4183-a0c9-760bbcf81d95.webp",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-c8479bf6-5b8d-4371-8f1f-bdae916b9ed1.jpg",
+        "bytes": 66477,
+        "sha256": "4271f3a8e39364833c0c0ed91484fa1042eb7664d36b622875ce62311658f25a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-c8479bf6-5b8d-4371-8f1f-bdae916b9ed1.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+        "bytes": 1208625,
+        "sha256": "a2c4ce1d3cd184498773d76ac4af6edbb392415871c2ee43746060f094381c1f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-d075d792-501b-4245-b032-6b0c447a3fee.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+        "bytes": 156959,
+        "sha256": "7a60fef6d345fd4f52c937c7ef42baef21cc099284b9fe7173820d4c7cb93d06",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-d96cbf06-dc5c-4f78-80c8-92145e87c7b9.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+        "bytes": 7612153,
+        "sha256": "b214a20ec70d972a675f6ed082e81e6258da18f4d0901738af6bc81f916818fb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-da2c444d-106c-4dc9-b1f9-6f826c76c99c.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+        "bytes": 94098,
+        "sha256": "97ce7655c18ed4a6988f8bd31c4c3d5fcfd293c9282b1d1aea7f7583ecc4f591",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-da50bd97-45d6-4a70-abb3-7559514d05f4.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+        "bytes": 189971,
+        "sha256": "1cf277dff3fe8ceec396323a56a218e2517d4526df75ba747fdb052290b3c528",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-de245694-e92c-44b8-bc2e-e0faee68d6bc.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+        "bytes": 169273,
+        "sha256": "709f0ee003c87fe7dfba103de8c76203188fb76999bb65241ba978a4c014cd42",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-e93f1419-f9e0-4b98-a8f8-b9744e94e82d.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-e993606c-83d5-4632-81e9-bc9bd49d2987.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-e993606c-83d5-4632-81e9-bc9bd49d2987.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+        "bytes": 110276,
+        "sha256": "f497b5248172b6b80c838e26c710b94ab14dc9348751925f9115cdbefb4a822e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-ec1e8d1a-b85e-46c1-aa57-04d236c8022b.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+        "bytes": 336853,
+        "sha256": "dc8861bbe532a911dda521e788f99a36f3c3b18e8091a4c9e730a85e934840d5",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-ec317a94-2fa4-4d83-aea2-db0fcfb8c629.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+        "bytes": 79225,
+        "sha256": "26775fca39dd6181d38bc91c62125ceb00b9b69a35bae2a98aa03ec0730311a9",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-ed16b4a7-fb8b-4ef6-aecc-c9e7316fcc20.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+        "bytes": 120737,
+        "sha256": "392e476082c548ac9d99823bccc55bed81e3e27f877c7f1e7f1baa85808daf38",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-edb350a3-5e65-4827-9b18-34892070bdf3.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+        "bytes": 719662,
+        "sha256": "aa5b8a3a267221d2408747593e99a79f9fbf9f44cae97e35c6c9a6543d64232b",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-f07946c3-4796-44d9-8eee-0e25c382eb35.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+        "bytes": 1974064,
+        "sha256": "fe56fc69b305e4f07cb20f704c3376b22725fe1237cd82c42ac4894c6efae133",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-f813d11c-8d05-422b-b6e4-45de5d1c4f0d.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-f86263a3-5bc9-4d27-9c9f-c3300132a926.jpg",
+        "bytes": 3010,
+        "sha256": "815b8cceabfb7b79ae4aeefb47a0fc3b85b59cf899c3f3822447958e5a6c87fc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-f86263a3-5bc9-4d27-9c9f-c3300132a926.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+        "bytes": 7129678,
+        "sha256": "d46314791281db5ca19be1432dbb8d28a213cace9b374ac944a14186a6d6e81e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-fa854f37-632b-4c82-9f2a-b8b588ebabc7.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+        "bytes": 1154277,
+        "sha256": "b3b1aacabe509c63a40a055035c53c0f67797edd09df0fbf1d38070f256e6ed9",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/image-fde574db-3785-474b-b207-5c832aa6f251.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/isabelli_lacet.jpeg",
+        "bytes": 44664,
+        "sha256": "fdaf6b409b746a980dc435ea5f667e5d8dd1cd8177fd45453a55c435110a02cc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/isabelli_lacet.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/jose_mesquita.jpeg",
+        "bytes": 38737,
+        "sha256": "7bfd20e3614b6ee654dc89acf298c7889ff23687e5d2fcf502d5c52eb49afd21",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/jose_mesquita.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/juliana_dias.jpeg",
+        "bytes": 33197,
+        "sha256": "8f485943ca13fe5a67e859cdf64fdf1915aebd698315995d94df18ccfb93b66a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/juliana_dias.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/jussara_soares.jpeg",
+        "bytes": 47884,
+        "sha256": "8d697e2cba6aa348e08436006830099582e0e6cbf025fc19d774f615c167ff35",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/jussara_soares.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac_logo_300x300_(transp-bckg).svg",
+        "bytes": 29617,
+        "sha256": "394cda095e4d8991f8a6bc8c881696061a80087cb7a79c3c42e0be41e9485296",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac_logo_300x300_(transp-bckg).svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac_logo_300x300_(white-bckg.svg",
+        "bytes": 29697,
+        "sha256": "21e868902f8e682c3cc6cb2fa802910f288fb9c37ddcb8e6faceb088be0a3e8c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac_logo_300x300_(white-bckg.svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac-logo_300x300_(white_bckg).png",
+        "bytes": 21131,
+        "sha256": "c17b7dfc97b0fc3c237e6e59b2759635489040041cd2a489a862e92ce4af3484",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac-logo_300x300_(white_bckg).png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac-logo_300x300.png",
+        "bytes": 19269,
+        "sha256": "1564cb50cb4c27ffaba07770d6993a2dbd7948609cbf743097a54bc9f803a710",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac-logo_300x300.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac-logo_600x200_(white_bckg).png",
+        "bytes": 26651,
+        "sha256": "e607242fe17b2edf351b7eda39777e4e9a60fe293a06664ee0b83137f6b461cc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac-logo_600x200_(white_bckg).png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/labfonac-logo_600x200_(white_bckg).svg",
+        "bytes": 30883,
+        "sha256": "bcfa4cd891530edde90613a00cd604378bdc803b07e056c69e151ce97328c1db",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/labfonac-logo_600x200_(white_bckg).svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/lattes-square.svg",
+        "bytes": 1670,
+        "sha256": "9fabf047ccd23ec97cf25181e1667f1a23e5ac4387dbf71208a70ab78fc18278",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/lattes-square.svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_300x130.png",
+        "bytes": 13023,
+        "sha256": "f2d629aac9807aefb7b4304e7790c0c6badbd0c4b21252322045c1e3a386bd27",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_300x130.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_300x130.svg",
+        "bytes": 21326,
+        "sha256": "33805f153b96909ae3994963610e6c197d5db2860799c178ed93c74631fd511e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_300x130.svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_labfonac.jpeg",
+        "bytes": 32990,
+        "sha256": "765fd26baeefc53b027dcff02d4012981f2025277635d30b374efc62ea31eed8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_labfonac.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_provale.jpeg",
+        "bytes": 15952,
+        "sha256": "223dc7739f1a15e7c60cb429879d554a056b795372615c7e0372fc393e6935b9",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_provale.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_retina.png",
+        "bytes": 49110,
+        "sha256": "4540820205ff9fec550c25d57411f50fcc0292479d3632c4ffbd0bafeedd48a1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_retina.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_uern.jpeg",
+        "bytes": 37198,
+        "sha256": "3ab080887a07381e1bfaa0efa7801dd0bc6606f87005295e5818460306d8efa2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_uern.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_ufpb.jpeg",
+        "bytes": 42176,
+        "sha256": "24a25722efc9dd422dbc9385d2da0378bf1c61c851dfc52bb28bce72289959a9",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_ufpb.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_ufrj.jpeg",
+        "bytes": 27232,
+        "sha256": "bce13e9bdd44eaad5d3651e06a997f1fe33da4950d7e1716a1c750e233155768",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_ufrj.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/logo_unila.jpeg",
+        "bytes": 28099,
+        "sha256": "3d0f835b812ed440b719b9333a639ac19323e6955209379294266f11340a1949",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/logo_unila.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/manuella_carnaval.jpeg",
+        "bytes": 44359,
+        "sha256": "0e5d2a4a52d03475bfbe7ab187847e20bc01f5904f28213f3018aef0025abadb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/manuella_carnaval.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/maria_luiza_weinstein.jpeg",
+        "bytes": 29420,
+        "sha256": "275c185bef41aaa86f012f5381e37350accf2da1d31ee0f6fea40f1e17d4bb00",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/maria_luiza_weinstein.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/mayra_santos.jpeg",
+        "bytes": 38740,
+        "sha256": "45ad9b8842f5ee2a0d5c53ba0b53d912fd95707dd09851fe379a34add0fb46de",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/mayra_santos.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/mikaellen_nascimento.jpeg",
+        "bytes": 51894,
+        "sha256": "7be9ee3d39b6946660c9614874ded72c7c5fb7b476f8b65e5ed7373f54c009fd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/mikaellen_nascimento.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/natalia_figueiredo.jpeg",
+        "bytes": 39473,
+        "sha256": "51d46d778b37b903698b2e8efa9242b828c3382981a56c68aacc5c122f3670aa",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/natalia_figueiredo.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/paloma_moura.jpeg",
+        "bytes": 37989,
+        "sha256": "ee6ceddca5d05ff978a08ef8d21194a3e2183a85bd86e7ec8672ce91ea7647c0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/paloma_moura.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/carolina_silva.png",
+        "bytes": 1636155,
+        "sha256": "b5113cdd8c270c1a807fcf80efe085a357da3901a85daf766614c1fe36888143",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/carolina_silva.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/daniel_saraiva.png",
+        "bytes": 1799614,
+        "sha256": "6203463bf99282d7294b0f3098dcd23c308218a672421328ba6849a8df48201a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/daniel_saraiva.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/isabelli_lacet.png",
+        "bytes": 1724520,
+        "sha256": "5d57ee4859db8c9505dbfbf339dcf1ebb0979ab0a96df16bb5b3c468954b6bd0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/isabelli_lacet.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/jose_mesquita.png",
+        "bytes": 542462,
+        "sha256": "a90f1744d096ac440e660a78e9c1d94a88ff55bd539f769b0b629d034acf6c5c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/jose_mesquita.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/juliana_dias.png",
+        "bytes": 406798,
+        "sha256": "e508c34374e6196c5c070ee58df95b255b94319166e9ba0c67a2bbb47fb24f1e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/juliana_dias.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/jussara_soares.png",
+        "bytes": 896492,
+        "sha256": "38926be66fee89cf050ad5d55dcd8c987ad877256d1e22a805cc3a632efa69a5",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/jussara_soares.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_labfonac.png",
+        "bytes": 40260,
+        "sha256": "0d32e1719bd3571bf3442af3d2b06fa8aa20c383e36860764cc3e1cc08eb6208",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_labfonac.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_provale.png",
+        "bytes": 36863,
+        "sha256": "e211adf5250c84c962ff5a516837d871819d28660b0584322a63dc76ffb55a8c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_provale.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_uern.png",
+        "bytes": 102785,
+        "sha256": "b9ddc86ffccc7e77639d03e9a3c00bd0054becdbd00d8a37ba4fc7ddd91cb0de",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_uern.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_ufpb.png",
+        "bytes": 99188,
+        "sha256": "db11302053bec4d57a916c57dd21a302076f82c46240c0a2b27422156df9a53f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_ufpb.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_ufrj.png",
+        "bytes": 30033,
+        "sha256": "247b5ba9c5fa72b0ecf77fbe75ee938f81ca5a172bfb211b02c9a041de4b7fe1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_ufrj.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/logo_unila.png",
+        "bytes": 170460,
+        "sha256": "e4e68271eb7d888ce223012513f6d10a173bb032ab379a95747cf4aed2e4a554",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/logo_unila.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/manuella_carnaval.png",
+        "bytes": 785983,
+        "sha256": "ab3051dbc0ba70b4a913a493d702524f8a09241b1e6baecd9ef2e2fad45029ff",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/manuella_carnaval.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/maria_luiza_weinstein.png",
+        "bytes": 360145,
+        "sha256": "2cea56bfa71fe6b68e9b43279804dbd11127ca1b8b5ef73345e3bba5d854980a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/maria_luiza_weinstein.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/mayra_santos.png",
+        "bytes": 1044235,
+        "sha256": "1feacaf0169e5a443c99e4484c28c588af128083add6aff9865a57efcfb939d6",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/mayra_santos.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/mikaellen_nascimento.png",
+        "bytes": 619950,
+        "sha256": "694af2da72b48783ec22381239baccef30c45c97a8867c989c04fce8eb8943a8",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/mikaellen_nascimento.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/natalia_figueiredo.png",
+        "bytes": 100741,
+        "sha256": "33e7656896cca28da8fc29745e52b3466ad1db1d5d5efc4852cc0beb92855966",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/natalia_figueiredo.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/paloma_moura.png",
+        "bytes": 637836,
+        "sha256": "e78262df2519c36cbaf4a0c8ca12240758f8c839c8c8ae18acd22c12a4cd976b",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/paloma_moura.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/priscila_almeida.png",
+        "bytes": 227600,
+        "sha256": "04cf7c2dcd99df0d16365b0ced679a8d32a3794204d563b138efbd02d68bad41",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/priscila_almeida.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/safira_brandao.png",
+        "bytes": 1500979,
+        "sha256": "bc47de035074ed973952a0f42309f68734803db55668655096057cce01df6789",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/safira_brandao.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/tatiana_alcon.png",
+        "bytes": 570971,
+        "sha256": "a38a87c95509a3bc0d0adc378ed501cae093361bc54fac29c589de7a0004a69b",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/tatiana_alcon.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/png/victor_hugo_souza.png",
+        "bytes": 1831864,
+        "sha256": "7fe1b0fdfab69d79bec1ee1bcd264265b3054d4504546ff241b2fe76aec9b4df",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/png/victor_hugo_souza.png",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/priscila_almeida.jpeg",
+        "bytes": 39251,
+        "sha256": "0decaf0938871d726b025d02e89e25b3dacddbe89305b1a1514722ea0b6b530a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/priscila_almeida.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/README.md",
+        "bytes": 3799,
+        "sha256": "60da9a9c9eebcf73a410b8c805ba5ce8000452ca4bac27195a8f387f628e51c2",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/README.md",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/safira_brandao.jpeg",
+        "bytes": 44455,
+        "sha256": "9fb1d47241d69ac5abdb58c100f94f16f22613bf1e862d68e7de78992dd10576",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/safira_brandao.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/tathiana_alcon.jpeg",
+        "bytes": 48652,
+        "sha256": "6a70622f613e0247f3a8b7d103646b6eddd65513559eb0fa7fc2027ed071c312",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/tathiana_alcon.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/team-placeholder.svg",
+        "bytes": 239,
+        "sha256": "8676c118053be169fd02398e6a779b00687bd5bece42f281af04b3551971460d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/team-placeholder.svg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/assets/images/victor_souza.jpeg",
+        "bytes": 22755,
+        "sha256": "a5b612ded9532adfa0f0ad29a7086e65159c677f6d87173f0e231900bd8d4e00",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/assets/images/victor_souza.jpeg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/public/publication_references.json",
+        "bytes": 36334,
+        "sha256": "24e955641b8fa497fff5d9a343a888e44d44be82ffe57e15ebf234baeb23d09a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "public/publication_references.json",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/scripts/build-data.js",
+        "bytes": 4432,
+        "sha256": "af981f9f08b3119a8b85e3f0ffe6ee92508d212fde7303321283983abbbf1beb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "scripts/build-data.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/scripts/clean_publication_data.py",
+        "bytes": 16881,
+        "sha256": "0e3e4e6e16d22afdbb4c14d3eabbbedc2d11e04a3f5f177b53304864b5a82b60",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "scripts/clean_publication_data.py",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/scripts/editor-smoke-ftp.cjs",
+        "bytes": 5096,
+        "sha256": "e3b4c24f1749f8bf34e286ed9a9afeb7e6292d236dd0eebad04e46b0610328dc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "scripts/editor-smoke-ftp.cjs",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/scripts/fix-encoding.js",
+        "bytes": 2374,
+        "sha256": "4b53fe3f3f315b19b8d710601f4c20a542b41e5899c8a292856a148634cd9d99",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "scripts/fix-encoding.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/assets/images/placeholder-avatar.jpg",
+        "bytes": 410,
+        "sha256": "fb742f6d55991c21882d49d6b2aeddd822aef1306822edb4b39a186b77d2c2ab",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/assets/images/placeholder-avatar.jpg",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/css/editor.css",
+        "bytes": 10307,
+        "sha256": "58e19f3e490a6461faa453816715a96ab6c582277ae6932ef171dea82901c1cb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/css/editor.css",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/css/main.css",
+        "bytes": 52413,
+        "sha256": "8700b24b778d4b864a293c83aa3fec1b8409f67a50f8ce43f909738c80b04d44",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/css/main.css",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/adapters/DataAdapter.js",
+        "bytes": 1301,
+        "sha256": "c8e07608b350fcea76ca6a2b4a3bcc5a1b80deef4a62e846109f04b679b99fe7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/adapters/DataAdapter.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/adapters/JSONAdapter.js",
+        "bytes": 3374,
+        "sha256": "c9148ec315dd1701f667c35b44c55cc4ea5b51ca65803bc004bb438ba761c462",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/adapters/JSONAdapter.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/editor/bootstrap.js",
+        "bytes": 83406,
+        "sha256": "62006d3edaad227d7b1fa57eea0bec9cacc4f1de8ddd0aa913cc350183064f5b",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/bootstrap.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/build-service.js",
+        "bytes": 3859,
+        "sha256": "7c38f14a1df69819c23e34e879b51c60f0ba5a7b95933d13f98a528f10ac7c0f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/build-service.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/composition-commands.js",
+        "bytes": 7609,
+        "sha256": "86c0f746734b5f7725aa4c8648ac5ab4f96ac7110df2184eb247306bc7469cfc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/composition-commands.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/composition-preview.js",
+        "bytes": 4738,
+        "sha256": "0bd428157d166f880db77610a037894c36cff35ed9feb9fff965b1bc4707a768",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/composition-preview.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/composition-service.js",
+        "bytes": 4711,
+        "sha256": "536b77d0751870e89f15c89c0d8888d1db93d56cc2d74e723f3e57178f6bb102",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/composition-service.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/content-editor.js",
+        "bytes": 15191,
+        "sha256": "96dda078937d7d4955444d170e70b0e811f10fd2acebf4c64eb0adf8f1e82ed7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/content-editor.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/content-fields.js",
+        "bytes": 6403,
+        "sha256": "70bcf17728b05f67a7befbae7faef3ebf77759f0878fd67bf05e8d3254eb8022",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/content-fields.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/custom-section-editor.js",
+        "bytes": 9935,
+        "sha256": "fff2bd16558ed296fbf0f2bdcba8c58315d17523bfc530720c4e538c2d73e09d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/custom-section-editor.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/desktop-host.js",
+        "bytes": 16335,
+        "sha256": "e6d9f40ea668b689689d62865a3ee09473ca30f879e7c2ba8dabbec0b71353ff",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/desktop-host.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/focused-fields.js",
+        "bytes": 6159,
+        "sha256": "5fefef305538a972f3e36d98eef8080ae9507cf1cd0f87447481f81060c167a4",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/focused-fields.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/image-field.js",
+        "bytes": 4237,
+        "sha256": "800506fad466ac20a9435453d9dc614edde538970288f502fc863f741a0ce230",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/image-field.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/main.js",
+        "bytes": 449,
+        "sha256": "0eea92f1a50e8dd15ec8514ca35f716d8e8feac48e30ed16fb17d1bd55e1a949",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/main.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/project-loader.js",
+        "bytes": 6263,
+        "sha256": "39a6cc9d64b0d8aaea5ead8c6c7f7e781aa33e28f2f54c1f9ec21b2738f6459d",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/project-loader.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/publish-service.js",
+        "bytes": 15124,
+        "sha256": "22bcd66989bdf7a206ac7a6719364606599f8379a091386e05ad68ca7983d8cd",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/publish-service.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/editor/state.js",
+        "bytes": 4038,
+        "sha256": "d1e4f80e7f847be62c2a6aef470f99bcea7394cbd13ef92ba1cef2349844f4c7",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/editor/state.js",
+        "classification": "obsolete-source-deferred-until-guided-update"
+      },
+      {
+        "path": "source/src/js/header-scroll.js",
+        "bytes": 1635,
+        "sha256": "2678aca1a1e72b35c797b9041960e1aabb2ed0b2550ee861c167d3d6c084a44e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/header-scroll.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/main.js",
+        "bytes": 12038,
+        "sha256": "a5ce69733fd64f0e6ef10425f9e5cd5c9e6fe94bf1c52653856a6890ffedfb0f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/main.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/modules/renderer.js",
+        "bytes": 4250,
+        "sha256": "b811be615d289df92df235e92f99bcc8596b5aedc0ad4a4c860b4e8227d34209",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/modules/renderer.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/page/composition.js",
+        "bytes": 9014,
+        "sha256": "14b18988d916b7853c34fdbb5a20345eaf4c06e0f1f8a011a5754bd0a569bdcc",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/page/composition.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/page/custom-schema.js",
+        "bytes": 3090,
+        "sha256": "271c83cc6fc809241889da796b3dcaeb5147477e96feb4fc069b1b086ada11d3",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/page/custom-schema.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/page/default-composition.js",
+        "bytes": 1938,
+        "sha256": "8e12cd158aa253cf78cfc8ae6c5d483aebc617a7f502979c7f440ac1c932ba05",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/page/default-composition.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/page/navigation.js",
+        "bytes": 2878,
+        "sha256": "b0e29edf0b7226742b925050dda93e9d3e90566a06adbf4c5e0ff58dffecd450",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/page/navigation.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/page/section-registry.js",
+        "bytes": 4456,
+        "sha256": "5e074ff153e90762506df8c5714b83c19f9d833a707379f916809b0e22f257bb",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/page/section-registry.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/custom.js",
+        "bytes": 2258,
+        "sha256": "6caebdae9cf93b0586b6ce23de86db03572cc8f7294dc913e706d457ea543836",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/custom.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/equipe-categories.js",
+        "bytes": 1399,
+        "sha256": "e78aeeb16b6ae5255ad07f380be3aae18ac2824eeaecb388bf9c3ea6790d087c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/equipe-categories.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/extensao.js",
+        "bytes": 7503,
+        "sha256": "40539318f24efcddced5447f438177f29ace6b63ed90690f84a64e10ae9f84de",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/extensao.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/linhas-pesquisa.js",
+        "bytes": 7340,
+        "sha256": "5aaf67d0f81269a19aa14cea9aa0339e0b7687b259b8f8be9f64f063923d7529",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/linhas-pesquisa.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/parcerias.js",
+        "bytes": 5255,
+        "sha256": "5c69c8f99390ae74226fa5d9ba8e88ce18d824adb936d44bc40a0a5563c2374f",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/parcerias.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/pesquisadores.js",
+        "bytes": 13234,
+        "sha256": "e840c129fae7c1aaac6f504f5cb34700d6cc9619cb2875809adfbb22e53bf53c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/pesquisadores.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/provale-instagram.js",
+        "bytes": 3205,
+        "sha256": "f1696bc964186c84515c14f36613cb028d0feff7bb999df07b4fa330a3de66e1",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/provale-instagram.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/publicacoes.js",
+        "bytes": 33543,
+        "sha256": "94487aea9a95295a46fd6c1efd626163c2797cc3e9f974a559bbcb6d2b9fb817",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/publicacoes.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/sections/team-photo.js",
+        "bytes": 623,
+        "sha256": "39a31caa2f4e167b9855844ca63e3047e22828bdfa872a1d60ed13a5f8af93b0",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/sections/team-photo.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/site-content.js",
+        "bytes": 10418,
+        "sha256": "c3fcf3af12691e03617cd8d7b162168db086041412b60360f999064853286d6c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/site-content.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/utils/citation-formatter.js",
+        "bytes": 9604,
+        "sha256": "8629d59f7c56c8ea2da90241d13f46c1cf39bbb3eb69c279ab49a8da15c37f9c",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/utils/citation-formatter.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/utils/helpers.js",
+        "bytes": 3096,
+        "sha256": "ac2cb63e5ec081f04a90eef4104dbafa21a9b65d85047b19eb46b10c4daf90ec",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/utils/helpers.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/src/js/utils/sanitizer.js",
+        "bytes": 3605,
+        "sha256": "201523e97db4b2764e5d14c4e3ce01445e332b3b3b49aefce632a80f37c4848a",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "src/js/utils/sanitizer.js",
+        "classification": "portable-source-retained"
+      },
+      {
+        "path": "source/vite.config.js",
+        "bytes": 1597,
+        "sha256": "b21ae8ac2f46cb3595fe2eb0fa5d9189238f82d569114b3d203d10dedd9b267e",
+        "type": "file",
+        "domain": "source",
+        "relativePath": "vite.config.js",
+        "classification": "portable-source-retained"
+      }
+    ],
+    "proposedBytes": 0,
+    "authorization": "none",
+    "productionGate": "Phase 7 manual acceptance and explicit Phase 8 authorization required",
+    "id": "a8e1b8f0289f6c023f8274156c8e68d6381a72208fba9f55a51ae6fe00b06bd7"
+  },
+  "deferredProposedAfterGuidedUpdate": [
+    {
+      "path": "assets/editor.BHo_L3CZ.css",
+      "bytes": 8277,
+      "sha256": "316ccf8109918c1932ce221adb534ed6e97ffda2e70bccbcb69208f491b72df8",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "assets/editor.BHo_L3CZ.css",
+      "classification": "obsolete-public-editor-deferred-until-guided-update"
+    },
+    {
+      "path": "assets/index._vzd7w5h.css",
+      "bytes": 36908,
+      "sha256": "99ed056cb9e59128a6f6b3590d190a6de7dfd72ee6e0a202fde0f624ff3d4750",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "assets/index._vzd7w5h.css",
+      "classification": "public-bundle-deferred-until-guided-update"
+    },
+    {
+      "path": "editor.html",
+      "bytes": 678,
+      "sha256": "8b341521ed6f2cc0d867b4ea547f5c42b36dc308e266cc838534395f927f4c29",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "editor.html",
+      "classification": "obsolete-public-editor-deferred-until-guided-update"
+    },
+    {
+      "path": "js/editor.C-ML6Nq9.js",
+      "bytes": 92292,
+      "sha256": "1febdb4342204d181070fa5acec84a6d50e5087b7b6aa3bc8206dd602dc027a3",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "js/editor.C-ML6Nq9.js",
+      "classification": "obsolete-public-editor-deferred-until-guided-update"
+    },
+    {
+      "path": "js/index.W4knCKLQ.js",
+      "bytes": 6282,
+      "sha256": "f38e210dc2d691a73b4f0ce8d15edc58300321c4dbf1e2143e581b7e4c2303ab",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "js/index.W4knCKLQ.js",
+      "classification": "public-bundle-deferred-until-guided-update"
+    },
+    {
+      "path": "js/site-content.ByZ8ym78.js",
+      "bytes": 62253,
+      "sha256": "709ea323f6ec8cebc3ea6feb0c47f747986dc37393ab8c497fca2b9b7df9867a",
+      "type": "file",
+      "domain": "public",
+      "relativePath": "js/site-content.ByZ8ym78.js",
+      "classification": "public-bundle-deferred-until-guided-update"
+    },
+    {
+      "path": "source/editor.html",
+      "bytes": 541,
+      "sha256": "bf44ba9f589863fa877b4dc9b8b5b532c08ece141ced257a3707d22498f25e4d",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "editor.html",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/scripts/clean_publication_data.py",
+      "bytes": 16881,
+      "sha256": "0e3e4e6e16d22afdbb4c14d3eabbbedc2d11e04a3f5f177b53304864b5a82b60",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "scripts/clean_publication_data.py",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/scripts/editor-smoke-ftp.cjs",
+      "bytes": 5096,
+      "sha256": "e3b4c24f1749f8bf34e286ed9a9afeb7e6292d236dd0eebad04e46b0610328dc",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "scripts/editor-smoke-ftp.cjs",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/scripts/fix-encoding.js",
+      "bytes": 2374,
+      "sha256": "4b53fe3f3f315b19b8d710601f4c20a542b41e5899c8a292856a148634cd9d99",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "scripts/fix-encoding.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/css/editor.css",
+      "bytes": 10307,
+      "sha256": "58e19f3e490a6461faa453816715a96ab6c582277ae6932ef171dea82901c1cb",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/css/editor.css",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/bootstrap.js",
+      "bytes": 83406,
+      "sha256": "62006d3edaad227d7b1fa57eea0bec9cacc4f1de8ddd0aa913cc350183064f5b",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/bootstrap.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/build-service.js",
+      "bytes": 3859,
+      "sha256": "7c38f14a1df69819c23e34e879b51c60f0ba5a7b95933d13f98a528f10ac7c0f",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/build-service.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/composition-commands.js",
+      "bytes": 7609,
+      "sha256": "86c0f746734b5f7725aa4c8648ac5ab4f96ac7110df2184eb247306bc7469cfc",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/composition-commands.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/composition-preview.js",
+      "bytes": 4738,
+      "sha256": "0bd428157d166f880db77610a037894c36cff35ed9feb9fff965b1bc4707a768",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/composition-preview.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/composition-service.js",
+      "bytes": 4711,
+      "sha256": "536b77d0751870e89f15c89c0d8888d1db93d56cc2d74e723f3e57178f6bb102",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/composition-service.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/content-editor.js",
+      "bytes": 15191,
+      "sha256": "96dda078937d7d4955444d170e70b0e811f10fd2acebf4c64eb0adf8f1e82ed7",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/content-editor.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/content-fields.js",
+      "bytes": 6403,
+      "sha256": "70bcf17728b05f67a7befbae7faef3ebf77759f0878fd67bf05e8d3254eb8022",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/content-fields.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/custom-section-editor.js",
+      "bytes": 9935,
+      "sha256": "fff2bd16558ed296fbf0f2bdcba8c58315d17523bfc530720c4e538c2d73e09d",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/custom-section-editor.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/desktop-host.js",
+      "bytes": 16335,
+      "sha256": "e6d9f40ea668b689689d62865a3ee09473ca30f879e7c2ba8dabbec0b71353ff",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/desktop-host.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/focused-fields.js",
+      "bytes": 6159,
+      "sha256": "5fefef305538a972f3e36d98eef8080ae9507cf1cd0f87447481f81060c167a4",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/focused-fields.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/image-field.js",
+      "bytes": 4237,
+      "sha256": "800506fad466ac20a9435453d9dc614edde538970288f502fc863f741a0ce230",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/image-field.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/main.js",
+      "bytes": 449,
+      "sha256": "0eea92f1a50e8dd15ec8514ca35f716d8e8feac48e30ed16fb17d1bd55e1a949",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/main.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/project-loader.js",
+      "bytes": 6263,
+      "sha256": "39a6cc9d64b0d8aaea5ead8c6c7f7e781aa33e28f2f54c1f9ec21b2738f6459d",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/project-loader.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/publish-service.js",
+      "bytes": 15124,
+      "sha256": "22bcd66989bdf7a206ac7a6719364606599f8379a091386e05ad68ca7983d8cd",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/publish-service.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    },
+    {
+      "path": "source/src/js/editor/state.js",
+      "bytes": 4038,
+      "sha256": "d1e4f80e7f847be62c2a6aef470f99bcea7394cbd13ef92ba1cef2349844f4c7",
+      "type": "file",
+      "domain": "source",
+      "relativePath": "src/js/editor/state.js",
+      "classification": "obsolete-source-deferred-until-guided-update"
+    }
+  ],
+  "deferredBytes": 430346,
+  "approvedAssetRemovals": [],
+  "simulationOnlyAfterVerifiedGuidedUpdate": {
+    "sourceCurrent": true,
+    "publicCurrent": true,
+    "removedPaths": [
+      "assets/editor.BHo_L3CZ.css",
+      "assets/index._vzd7w5h.css",
+      "editor.html",
+      "js/editor.C-ML6Nq9.js",
+      "js/index.W4knCKLQ.js",
+      "js/site-content.ByZ8ym78.js",
+      "source/editor.html",
+      "source/scripts/clean_publication_data.py",
+      "source/scripts/editor-smoke-ftp.cjs",
+      "source/scripts/fix-encoding.js",
+      "source/src/css/editor.css",
+      "source/src/js/editor/bootstrap.js",
+      "source/src/js/editor/build-service.js",
+      "source/src/js/editor/composition-commands.js",
+      "source/src/js/editor/composition-preview.js",
+      "source/src/js/editor/composition-service.js",
+      "source/src/js/editor/content-editor.js",
+      "source/src/js/editor/content-fields.js",
+      "source/src/js/editor/custom-section-editor.js",
+      "source/src/js/editor/desktop-host.js",
+      "source/src/js/editor/focused-fields.js",
+      "source/src/js/editor/image-field.js",
+      "source/src/js/editor/main.js",
+      "source/src/js/editor/project-loader.js",
+      "source/src/js/editor/publish-service.js",
+      "source/src/js/editor/state.js"
+    ],
+    "removedBytes": 430346,
+    "survivingBoundaryExceptions": [],
+    "note": "In-memory inventory overlay only; neither the mirror nor production was changed"
+  }
+}

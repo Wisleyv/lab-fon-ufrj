@@ -188,6 +188,48 @@ it.each(["equipe", "parcerias", "linhasPesquisa"])("focuses one %s record and pr
   } finally { editor.destroy(); }
 });
 
+it("sorts only Equipe options in Portuguese while preserving record identity and canonical order", async () => {
+  const records = ["Zélia", "émilia", "Ana", "Álvaro"].map((nome, index) => ({
+    name: `${index}.json`, value: { nome, instituicao: "UFRJ", categoria: "docentes" },
+  }));
+  const originalOrder = records.map(record => record.name);
+  const host = {
+    readContentDataset: vi.fn(async () => records),
+    saveContentRecord: vi.fn(async (_directory, _dataset, name, _previous, value) => {
+      records.find(record => record.name === name).value = structuredClone(value);
+      return { ok: true };
+    }),
+  };
+  const store = createEditorStore();
+  const editor = createContentEditor({ host, store });
+  document.body.replaceChildren(editor.element);
+  const get = id => document.getElementById(id);
+  try {
+    get("editor-content-dataset").value = "equipe";
+    store.setState({ openedProject: { path: "fixture", status: "valid" }, editorSiteModel: { equipe: records.map(record => record.value) } });
+    await vi.waitFor(() => expect(get("editor-content-record").options).toHaveLength(4));
+    expect([...get("editor-content-record").options].map(option => option.textContent)).toEqual(["Álvaro", "Ana", "émilia", "Zélia"]);
+    expect(records.map(record => record.name)).toEqual(originalOrder);
+    expect(store.getState().editorSiteModel.equipe.map(record => record.nome)).toEqual(["Zélia", "émilia", "Ana", "Álvaro"]);
+    get("editor-content-record").value = "0.json";
+    get("editor-content-record").dispatchEvent(new Event("change"));
+    const nameInput = get("content-field-root.nome");
+    nameInput.value = "Beatriz";
+    nameInput.dispatchEvent(new Event("input", { bubbles: true }));
+    get("editor-content-cancel").click();
+    expect(get("editor-content-record").value).toBe("0.json");
+    expect(get("content-field-root.nome").value).toBe("Zélia");
+    get("content-field-root.nome").value = "Beatriz";
+    get("content-field-root.nome").dispatchEvent(new Event("input", { bubbles: true }));
+    get("editor-content-form").dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(store.getState().contentSaving).toBe(false));
+    expect(get("editor-content-record").value).toBe("0.json");
+    expect([...get("editor-content-record").options].map(option => option.textContent)).toEqual(["Álvaro", "Ana", "Beatriz", "émilia"]);
+    expect(records.map(record => record.name)).toEqual(originalOrder);
+    expect(host.saveContentRecord.mock.calls[0][2]).toBe("0.json");
+  } finally { editor.destroy(); }
+});
+
 it("focuses Site groups and one nested link, preserving add/remove/reorder through canonical read-back", async () => {
   const root = await fixture();
   const original = JSON.parse(await fs.readFile("content/site.json", "utf8"));
