@@ -12,6 +12,8 @@ Este guia descreve o fluxo pós-v1 aceito em 2026-10-03, não uma nova versão i
 
 Use a distribuição fornecida ou indicada pelo responsável técnico. O instalador publicado v1.0.0 chama-se `Lab-FON-Editor-Setup-1.0.0.exe`. Depois da instalação, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
+Para teste do candidato 1.1.0, os arquivos são `Lab-FON-Editor-Setup-1.1.0.exe` e `Lab-FON-Editor-Portable-1.1.0.zip`; ele ainda não é uma release publicada. Consulte [aceitação/checksums](RELEASE_CANDIDATE_1.1.0.md) e confirme a origem com o suporte. Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
+
 Esse instalador não tem assinatura digital. O Windows pode indicar fornecedor desconhecido ou aviso de reputação. Confirme a origem oficial com o responsável técnico; não desative as proteções do Windows.
 
 Na distribuição portátil, extraia o ZIP completo, mantenha os arquivos juntos e abra o **Editor Labfonac** pelo executável `Lab-FON Editor.exe`. Não mova somente o executável. Os nomes de arquivos e identificadores de instalação da distribuição v1.0.0 conservam a nomenclatura original; o nome do aplicativo neste guia é **Editor Labfonac**.

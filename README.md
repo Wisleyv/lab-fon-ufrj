@@ -14,6 +14,8 @@ Use a distribuição validada do **Editor Labfonac**, com a máquina preparada p
 
 Este fluxo descreve o checkpoint pós-v1 aceito, não uma nova release instalada. O instalador publicado v1.0.0 antecede esse checkpoint; confirme a distribuição com o responsável técnico.
 
+O [candidato 1.1.0](docs/RELEASE_CANDIDATE_1.1.0.md) tem instalador/ZIP aceitos e checksums registrados, mas ainda não foi publicado.
+
 Consulte o [Guia do Usuário do Editor Labfonac](docs/GUIA-DO-USUARIO.md) para instalação e uso cotidiano.
 
 O instalador e a distribuição portátil são artefatos de versão; binários gerados não são armazenados neste repositório.
