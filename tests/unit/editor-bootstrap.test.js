@@ -354,7 +354,7 @@ describe("Editor Bootstrap (E1-H1)", () => {
     expect(document.querySelector(".editor-shell")).toBeTruthy();
     expect(document.querySelector(".editor-title").textContent).toBe("Editor Labfonac");
     const mark = document.querySelector(".editor-brand-mark");
-    expect(mark.getAttribute("src")).toContain("assets/images/logo_300x130.png");
+    expect(mark.getAttribute("src")).toContain("assets/images/editor-brand.png");
     expect(mark.alt).toBe("");
     expect(document.querySelectorAll(".editor-nav-btn").length).toBe(6);
     expect(document.getElementById("editor-project-status")?.textContent).toBe(

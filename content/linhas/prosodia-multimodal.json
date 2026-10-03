@@ -1,9 +1,0 @@
-{
-  "id": "prosodia-multimodal",
-  "nome": "Prosódia Multimodal",
-  "icon": "fa-solid fa-photo-film",
-  "estudantes": 6,
-  "pesquisadores": 3,
-  "descricao": "Esta linha de pesquisa dedica-se ao estudo da integração entre os elementos prosódicos da fala e os recursos gestuais, faciais e corporais na construção do sentido e na interação.",
-  "ordem": 5
-}

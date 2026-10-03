@@ -1,4 +1,5 @@
 import { createElement } from "../utils/helpers.js";
+import editorBrandMark from "../../assets/images/editor-brand.png";
 import { validatePageComposition } from "../page/composition.js";
 import {
   SECTION_REGISTRY,
@@ -346,7 +347,7 @@ function createLayout(
   const wrapper = createElement("div", { className: "editor-shell" });
 
   const header = createElement("header", { className: "editor-header" }, [
-    createElement("img", { className: "editor-brand-mark", src: `${import.meta.env.BASE_URL}assets/images/logo_300x130.png`, alt: "", width: "92", height: "40" }),
+    createElement("img", { className: "editor-brand-mark", src: editorBrandMark, alt: "", width: "92", height: "40" }),
     createElement("h1", { className: "editor-title" }, "Editor Labfonac"),
   ]);
 

@@ -1,0 +1,15 @@
+{
+  "projects": [
+    {
+      "id": "extension-example",
+      "title": "Projeto de Extensão de Exemplo",
+      "projectType": "Projeto de Extensão",
+      "minibio": "Parágrafo de exemplo: pesquisa, ensino e divulgação. Texto sintético para testes.",
+      "instagram": {
+        "enabled": true,
+        "provider": "instagram",
+        "source": "https://www.instagram.com/example/"
+      }
+    }
+  ]
+}

@@ -25,16 +25,16 @@ it("renders a restrained decorative logo beside its named institution and remove
   expect(card.querySelector("h3").textContent).toBe(partner.nome);
 });
 
-it("renders exactly one CNPq alongside existing partners through the current schema", async () => {
-  const files = fs.readdirSync("content/parcerias").filter((file) => file.endsWith(".json"));
-  const partners = files.map((file) => JSON.parse(fs.readFileSync(`content/parcerias/${file}`, "utf8")));
-  expect(files).toContain("cnpq.json");
-  expect(partners.filter((partner) => partner.sigla === "CNPq")).toHaveLength(1);
-  const cnpq = partners.find((partner) => partner.sigla === "CNPq");
-  expect(cnpq.nome).toBe("Conselho Nacional de Desenvolvimento Científico e Tecnológico");
-  expect(cnpq.url).toBe("https://www.gov.br/cnpq/pt-br/");
+it("renders exactly one PARTNER-B alongside existing partners through the current schema", async () => {
+  const files = fs.readdirSync("examples/content/parcerias").filter((file) => file.endsWith(".json"));
+  const partners = files.map((file) => JSON.parse(fs.readFileSync(`examples/content/parcerias/${file}`, "utf8")));
+  expect(files).toContain("partner-b.json");
+  expect(partners.filter((partner) => partner.sigla === "PARTNER-B")).toHaveLength(1);
+  const cnpq = partners.find((partner) => partner.sigla === "PARTNER-B");
+  expect(cnpq.nome).toBe("Instituição de Exemplo partner-b");
+  expect(cnpq.url).toBe("https://example.org/partner-b");
   expect(validateContent(cnpq, CONTENT_DATASETS.parcerias.fields)).toEqual([]);
-  expect(Object.keys(cnpq).sort()).toEqual(Object.keys(partners.find((partner) => partner.sigla === "CAPES")).sort());
+  expect(Object.keys(cnpq).sort()).toEqual(Object.keys(partners.find((partner) => partner.sigla === "PARTNER-A")).sort());
   document.body.innerHTML = '<div id="parcerias-content"></div>';
   await new ParceriasSection("parcerias-content").render(partners);
   expect(document.querySelectorAll(".parceria-card")).toHaveLength(partners.length);

@@ -1,0 +1,96 @@
+{
+  "header": {
+    "title": "Laboratório de Exemplo",
+    "subtitle": "Instituição de Exemplo",
+    "logo": {
+      "source": "/assets/images/logo_300x130.svg",
+      "fallback": "/assets/images/logo_300x130.png",
+      "alt": "Logo de exemplo"
+    }
+  },
+  "hero": {
+    "title": "Site de Exemplo",
+    "description": "Conteúdo sintético para desenvolvimento.",
+    "actions": []
+  },
+  "sobre": {
+    "title": "Sobre o Exemplo",
+    "paragraphs": [
+      "Este conteúdo é fictício."
+    ]
+  },
+  "footer": {
+    "sections": [
+      {
+        "title": "Laboratório de Exemplo",
+        "lines": [
+          "Endereço de exemplo"
+        ]
+      },
+      {
+        "title": "Contato",
+        "contacts": [
+          {
+            "label": "Email",
+            "href": "mailto:example@example.org",
+            "text": "example@example.org"
+          }
+        ]
+      },
+      {
+        "title": "Links Úteis",
+        "links": [
+          {
+            "label": "Exemplo institution",
+            "href": "https://example.org/institution/"
+          },
+          {
+            "label": "Exemplo faculty",
+            "href": "https://example.org/faculty/"
+          },
+          {
+            "label": "Exemplo graduate",
+            "href": "https://example.org/graduate/"
+          },
+          {
+            "label": "Exemplo curriculum",
+            "href": "https://example.org/curriculum/"
+          }
+        ]
+      }
+    ],
+    "coordination": {
+      "lab": [
+        {
+          "name": "Pessoa A"
+        },
+        {
+          "name": "Pessoa B"
+        }
+      ],
+      "extensionProject": [
+        {
+          "name": "Pessoa C"
+        },
+        {
+          "name": "Pessoa B"
+        },
+        {
+          "name": "Pessoa D"
+        }
+      ]
+    },
+    "institutionalCredits": [
+      {
+        "label": "Exemplo A"
+      },
+      {
+        "label": "Exemplo B"
+      },
+      {
+        "label": "Exemplo C"
+      }
+    ],
+    "bottomText": "© Laboratório de Exemplo. Todos os direitos reservados."
+  }
+}

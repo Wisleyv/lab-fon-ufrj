@@ -2,6 +2,10 @@
 
 Site institucional do Laboratório de Fonética da Universidade Federal do Rio de Janeiro e seu aplicativo de manutenção, o Editor Labfonac.
 
+O **Editor Labfonac** foi concebido e desenvolvido por **Wisley Vilela**, com financiamento de **PPGLEV/UFRJ**. É uma ferramenta específica para projetos e servidores compatíveis com o fluxo LAB-FON.
+
+Este repositório distribui software, documentação, contratos e exemplos sintéticos. O conteúdo de produção fica fora do Git: `content/`, dados gerados e fotografias locais não são distribuídos. Sem `content/`, `npm run build` usa `examples/content/` para gerar um site demonstrativo; isso não constitui conteúdo publicável de produção. O build desktop contém somente o Editor e não copia `public/`. Consulte [a política e auditoria de conteúdo](docs/REPOSITORY_CONTENT_BOUNDARY.md).
+
 O site é estático e pode ser hospedado em um servidor FTP comum. O conteúdo institucional permanece separado da apresentação, passa pelos adaptadores e renderizadores do projeto e é convertido em arquivos estáticos pelo Vite.
 
 ## Para quem mantém o conteúdo
@@ -77,4 +81,4 @@ Nunca registre no repositório senhas de FTP, tokens, chaves ou dados privados. 
 
 ## Licença
 
-MIT.
+Software de código aberto sob a [MIT License](LICENSE). O financiamento não altera a licença. A licença do software não concede direitos sobre conteúdo institucional ou fotografias mantidos fora deste repositório.

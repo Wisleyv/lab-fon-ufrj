@@ -143,7 +143,7 @@ describe("site content binding", () => {
       footer: {
         sections: [
           {
-            title: "Laboratório de Fonética Acústica UFRJ",
+            title: "Laboratório de Exemplo",
             lines: ["Faculdade de Letras - UFRJ", "Rio de Janeiro - RJ"],
           },
           {
@@ -151,8 +151,8 @@ describe("site content binding", () => {
             contacts: [
               {
                 label: "Email",
-                href: "mailto:labfonac@letras.ufrj.br",
-                text: "labfonac@letras.ufrj.br",
+                href: "mailto:example@example.org",
+                text: "example@example.org",
               },
             ],
           },
@@ -179,30 +179,30 @@ describe("site content binding", () => {
     );
     expect(
       document.querySelector(".footer-section a")?.getAttribute("href"),
-    ).toBe("mailto:labfonac@letras.ufrj.br");
+    ).toBe("mailto:example@example.org");
     expect(
       document.querySelector("[data-site-footer-bottom]").textContent,
     ).toBe("© 1990–2025 Laboratório de Fonética Acústica | UFRJ.");
   });
 
-  it("keeps the canonical contact and PPGLEV link consistent and ordered", () => {
-    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+  it("keeps the example contact and links consistent and ordered", () => {
+    const site = JSON.parse(fs.readFileSync("examples/content/site.json", "utf8"));
     const contact = site.footer.sections.find(({ title }) => title === "Contato").contacts[0];
     const links = site.footer.sections.find(({ title }) => title === "Links Úteis").links;
 
     expect(contact).toMatchObject({
-      href: "mailto:labfonac@letras.ufrj.br",
-      text: "labfonac@letras.ufrj.br",
+      href: "mailto:example@example.org",
+      text: "example@example.org",
     });
     expect(links.map(({ label }) => label)).toEqual([
-      "UFRJ",
-      "Faculdade de Letras",
-      "PPGLEV",
-      "Plataforma Lattes",
+      "Exemplo institution",
+      "Exemplo faculty",
+      "Exemplo graduate",
+      "Exemplo curriculum",
     ]);
     expect(links[2]).toEqual({
-      label: "PPGLEV",
-      href: "https://posvernaculas.letras.ufrj.br",
+      label: "Exemplo graduate",
+      href: "https://example.org/graduate/",
     });
 
     applySiteContent(document, site);
@@ -210,7 +210,7 @@ describe("site content binding", () => {
     expect(renderedLinks.map((link) => link.textContent)).toEqual(
       links.map(({ label }) => label),
     );
-    expect(renderedLinks[2].href).toBe("https://posvernaculas.letras.ufrj.br/");
+    expect(renderedLinks[2].href).toBe("https://example.org/graduate/");
   });
 
   it("handles missing optional footer fields gracefully", () => {
@@ -233,18 +233,18 @@ describe("site content binding", () => {
   });
 
   it("binds canonical coordination before contact and credits outside the columns", () => {
-    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+    const site = JSON.parse(fs.readFileSync("examples/content/site.json", "utf8"));
     applySiteContent(document, site);
     const columns = document.querySelector("[data-site-footer-content]");
     expect(columns.children).toHaveLength(4);
     expect([...columns.children].map((column) => column.querySelector("h3").textContent)).toEqual([
-      "Laboratório de Fonética Acústica UFRJ", "Coordenação", "Contato", "Links Úteis",
+      "Laboratório de Exemplo", "Coordenação", "Contato", "Links Úteis",
     ]);
     expect([...columns.querySelectorAll(".footer-coordination-group")].map((group) => [...group.querySelectorAll("li")].map((li) => li.textContent))).toEqual([
-      ["João Moraes", "Manuella Carnaval"],
-      ["Carolina Gomes da Silva", "Manuella Carnaval", "Juliana Dias"],
+      ["Pessoa A", "Pessoa B"],
+      ["Pessoa C", "Pessoa B", "Pessoa D"],
     ]);
-    expect([...document.querySelectorAll(".footer-credits li")].map((li) => li.textContent)).toEqual(["LabFonAc-UFRJ", "PPGLEV", "UFRJ"]);
+    expect([...document.querySelectorAll(".footer-credits li")].map((li) => li.textContent)).toEqual(["Exemplo A", "Exemplo B", "Exemplo C"]);
     expect(document.querySelector("footer").textContent).not.toMatch(/CNPq|Conselho Nacional de Desenvolvimento/);
     expect(columns.contains(document.querySelector(".footer-credits"))).toBe(false);
     expect(document.querySelector("[data-site-footer-bottom]").textContent).toBe(site.footer.bottomText.replace("© ", "© 1990–2025 "));
@@ -281,7 +281,7 @@ describe("site content binding", () => {
   });
 
   it("rebinds without duplicates and removes absent optional groups on older data", () => {
-    const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+    const site = JSON.parse(fs.readFileSync("examples/content/site.json", "utf8"));
     applySiteContent(document, site);
     applySiteContent(document, site);
     expect(document.querySelectorAll(".footer-coordination")).toHaveLength(1);

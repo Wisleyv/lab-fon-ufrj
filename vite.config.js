@@ -5,6 +5,8 @@ const isEditorDesktopBuild = process.env.LABFON_EDITOR_BUILD === "true";
 
 export default defineConfig({
   root: ".",
+  // The native Editor opens external projects; never bundle this checkout's site data.
+  publicDir: isEditorDesktopBuild ? false : "public",
   base: isEditorDesktopBuild
     ? "./"
     : "/labfonac/", // Subpath for deployment on both staging and production servers

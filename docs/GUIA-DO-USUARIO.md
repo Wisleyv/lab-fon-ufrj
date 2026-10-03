@@ -6,6 +6,10 @@ O Editor Labfonac é o aplicativo usado para manter o conteúdo do site do Labor
 
 A manutenção normal deve ser feita pelo próprio Editor. Não é necessário manipular arquivos internos do projeto nem usar programas de FTP.
 
+O aplicativo requer um projeto compatível com o fluxo LAB-FON e um servidor configurado para publicar esse projeto. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. O software é de código aberto sob a MIT License.
+
+Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão instalada e acesse o guia, o código-fonte, a licença e a última versão disponível. Esses links abrem no navegador e requerem conexão à internet.
+
 ## 2. Instalação
 
 ### Instalação recomendada

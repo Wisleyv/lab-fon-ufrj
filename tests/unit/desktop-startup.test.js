@@ -12,6 +12,7 @@ async function loadEntry(electronProcess, development = true) {
   const loadFile = vi.fn();
   const webContents = { on: vi.fn(), getZoomLevel: vi.fn(() => 0), setZoomLevel: vi.fn() };
   const electron = {
+    Menu: { buildFromTemplate: vi.fn(template => template), setApplicationMenu: vi.fn() },
     app: { whenReady: vi.fn(() => Promise.resolve()), on: vi.fn() },
     ipcMain: { handle: vi.fn() },
     BrowserWindow: vi.fn(function () { return { loadURL, loadFile, webContents }; }),

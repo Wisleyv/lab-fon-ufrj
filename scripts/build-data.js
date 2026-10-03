@@ -64,7 +64,7 @@ export function readJsonFile(filePath, fallback = {}) {
  * Main consolidation function
  */
 export function consolidateData({
-  contentDir = CONTENT_DIR,
+  contentDir = fs.existsSync(CONTENT_DIR) ? CONTENT_DIR : path.join(__dirname, "../examples/content"),
   outputFile = OUTPUT_FILE,
 } = {}) {
   console.log("📦 Consolidating content files...");

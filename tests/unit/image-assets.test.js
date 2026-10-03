@@ -194,6 +194,7 @@ it("wires native project selection to the sender-scoped image handlers", async (
   dialog.showOpenDialog.mockResolvedValueOnce({ canceled: false, filePaths: [root] });
   const handlers = new Map();
   const electron = {
+    Menu: { buildFromTemplate: vi.fn(template => template), setApplicationMenu: vi.fn() },
     dialog, ipcMain: { handle: (name, fn) => handlers.set(name, fn) },
     app: { whenReady: () => Promise.resolve(), on() {} },
     BrowserWindow: function () { return { webContents: { on() {} }, loadURL() {} }; },

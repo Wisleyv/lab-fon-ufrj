@@ -37,13 +37,11 @@ describe("ExtensaoSection", () => {
     document.body.innerHTML = '<div id="extensao-content"></div>';
   });
 
-  it("preserves the supplied paragraph verbatim in a production-composition preview", async () => {
-    const extension = JSON.parse(fs.readFileSync("content/extensao.json", "utf8"));
-    const supplied = fs.readFileSync("docs/update_site_labfon.md", "utf8")
-      .split(/\r?\n/).find((line) => line.startsWith("O projeto Prosódia, Variação e Ensino,"));
-    expect(supplied).toBeTruthy();
+  it("preserves a synthetic paragraph verbatim in a composition preview", async () => {
+    const extension = JSON.parse(fs.readFileSync("examples/content/extensao.json", "utf8"));
+    const supplied = "Parágrafo de exemplo: pesquisa, ensino e divulgação. Texto sintético para testes.";
     expect(extension.projects[0].minibio).toBe(supplied);
-    const composition = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
+    const composition = JSON.parse(fs.readFileSync("examples/content/page.json", "utf8"));
     composition.sections.forEach((section) => {
       section.enabled = section.type === "extension";
     });

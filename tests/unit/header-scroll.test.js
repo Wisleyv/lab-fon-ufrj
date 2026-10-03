@@ -8,7 +8,7 @@ it("keeps one semantic header with adjacent identity and existing navigation con
   const parsed = new DOMParser().parseFromString(html, "text/html");
   const header = parsed.querySelector(".site-header");
   document.body.replaceChildren(document.importNode(header, true));
-  const site = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
+  const site = JSON.parse(fs.readFileSync("examples/content/site.json", "utf8"));
   applySiteContent(document, site);
   const layout = document.querySelector(".header-content");
   expect([...layout.children].map((node) => node.className)).toEqual(["logo", "logo-text", "main-nav"]);

@@ -1,4 +1,29 @@
 # Dependencies
+# Institutional project data remains local or in the compatible remote source.
+/content/
+/public/data.json
+/public/publication_references.json
+/public/assets/images/*
+!/public/assets/images/favicon.svg
+!/public/assets/images/favicon_32x32.png
+!/public/assets/images/apple-touch-icon.png
+!/public/assets/images/avatar.png
+!/public/assets/images/avatar.webp
+!/public/assets/images/team-placeholder.svg
+!/public/assets/images/lattes-square.svg
+!/public/assets/images/logo_300x130.svg
+!/public/assets/images/logo_300x130.png
+!/public/assets/images/logo_retina.png
+/docs/pesquisadores.md
+/docs/publications.*
+/docs/linhas_pesquisa.html
+/docs/update_site_labfon.md
+/data-backup.json
+/remote-snapshots/
+/recovery/
+/publish-profile.json
+/publish-password.bin
+
 node_modules/
 npm-debug.log*
 yarn-debug.log*

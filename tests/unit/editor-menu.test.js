@@ -24,14 +24,18 @@ describe("Portuguese native Editor menu", () => {
     app.getVersion.mockReturnValue("2.4.6");
     await about();
     const options = dialog.showMessageBox.mock.calls[0][0];
-    expect(options.detail).toBe("Versão 2.4.6\n\nDesenvolvimento do Editor: Wisley Vilela");
+    expect(options.message).toBe("Editor Labfonac — Versão 2.4.6");
+    expect(options.detail).toBe("Ferramenta de manutenção do site do Laboratório de Fonética Acústica - UFRJ. Requer um projeto compatível com o fluxo de trabalho do laboratório e, para publicação, acesso a um servidor configurado para esse projeto.\n\nConcepção e desenvolvimento: Wisley Vilela\nFinanciamento: PPGLEV/UFRJ\n\nSoftware de código aberto sob a MIT License.");
+    expect(options.buttons).toEqual(["Fechar", "Guia do usuário", "Código-fonte", "Licença MIT", "Última versão"]);
     expect(JSON.stringify(options)).not.toMatch(/orcid/i);
     expect(shell.openExternal).not.toHaveBeenCalled();
   });
 
   it.each([
     [1, "https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/GUIA-DO-USUARIO.md"],
-    [2, "https://github.com/Wisleyv/lab-fon-ufrj/releases/latest"],
+    [2, "https://github.com/Wisleyv/lab-fon-ufrj"],
+    [3, "https://opensource.org/license/mit"],
+    [4, "https://github.com/Wisleyv/lab-fon-ufrj/releases/latest"],
   ])("opens only the approved link for response %s", async (response, url) => {
     const { about, shell } = fixture(response);
     await about();

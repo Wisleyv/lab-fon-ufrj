@@ -2,9 +2,9 @@ import fs from "fs";
 import { describe, expect, it } from "vitest";
 import { EQUIPE_CATEGORIES } from "../../src/js/sections/equipe-categories.js";
 
-describe("Current Content Preservation", () => {
+describe("Example Content Contracts", () => {
   it("keeps Publicações present but disabled in the release composition", () => {
-    const page = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
+    const page = JSON.parse(fs.readFileSync("examples/content/page.json", "utf8"));
     const publicacoes = page.sections.find(
       (section) => section.type === "publicacoes",
     );
@@ -15,22 +15,22 @@ describe("Current Content Preservation", () => {
     });
   });
 
-  it("keeps Egressos available without restoring removed production members", () => {
-    const files = fs.readdirSync("content/equipe");
+  it("keeps the Egressos category available using a synthetic member", () => {
+    const files = fs.readdirSync("examples/content/equipe");
     const members = files
       .filter((file) => file.endsWith(".json"))
       .map((file) =>
-        JSON.parse(fs.readFileSync(`content/equipe/${file}`, "utf8")),
+        JSON.parse(fs.readFileSync(`examples/content/equipe/${file}`, "utf8")),
       );
 
     expect(EQUIPE_CATEGORIES.some((category) => category.id === "egressos")).toBe(true);
-    expect(members.some((member) => member.categoria === "egressos")).toBe(false);
+    expect(members.some((member) => member.categoria === "egressos")).toBe(true);
   });
 
   it("represents active PROVALE content within the Extensão model", () => {
-    const page = JSON.parse(fs.readFileSync("content/page.json", "utf8"));
+    const page = JSON.parse(fs.readFileSync("examples/content/page.json", "utf8"));
     const extensao = JSON.parse(
-      fs.readFileSync("content/extensao.json", "utf8"),
+      fs.readFileSync("examples/content/extensao.json", "utf8"),
     );
 
     expect(
@@ -46,10 +46,10 @@ describe("Current Content Preservation", () => {
       page.sections.some((section) => section.type === "provale_extensao"),
     ).toBe(false);
     expect(extensao.projects[0].projectType).toBe("Projeto de Extensão");
-    expect(extensao.projects[0].title).toBe("PROVALE em Extensão");
+    expect(extensao.projects[0].title).toBe("Projeto de Extensão de Exemplo");
     expect(extensao.projects[0].instagram).toEqual({
       enabled: true,
-      source: "https://www.instagram.com/provaleinterinstitucional/",
+      source: "https://www.instagram.com/example/",
       provider: "instagram",
     });
   });

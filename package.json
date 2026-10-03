@@ -1,7 +1,7 @@
 {
   "name": "lab-fon-ufrj",
   "version": "1.0.0",
-  "description": "Website do Laboratório de Fonética da UFRJ",
+  "description": "Editor Labfonac e site estático compatível com o fluxo LAB-FON",
   "type": "module",
   "main": "desktop/main.cjs",
   "scripts": {
@@ -30,7 +30,7 @@
     "pesquisa",
     "linguística"
   ],
-  "author": "Laboratório de Fonética UFRJ",
+  "author": "Wisley Vilela",
   "license": "MIT",
   "build": {
     "appId": "br.ufrj.labfon.editor",
@@ -43,6 +43,7 @@
       "desktop/**/*",
       "dist/**/*",
       "package.json",
+      "LICENSE",
       "node_modules/basic-ftp/**/*"
     ],
     "win": {
