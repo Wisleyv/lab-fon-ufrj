@@ -1,6 +1,6 @@
-# Editor Labfonac 1.1.0 — candidato de release
+# Editor Labfonac 1.1.0 — proveniência e aceitação da release
 
-Status: **Fase 4 aprovada — candidato 1.1.0 construído e aceito, ainda não publicado.** Fase 5 pronta para instrução separada; este documento não autoriza merge, tag, GitHub Release ou escrita/limpeza em produção.
+Status: **Fases 4–5 concluídas; [release v1.1.0 publicada](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0).** O nome histórico deste arquivo foi conservado para não quebrar links. Fonte final em `main`, identificada pelo tag `v1.1.0`; pacote e aceitação descritos abaixo. Produção não foi republicada ou limpa. Futuras operações requerem autorização própria.
 
 ## Entradas congeladas
 
@@ -8,7 +8,7 @@ Base de software: `d46ccfdbe194ab9a00cf904f9cc4a6e9b8cf6cb7`, branch `work/post-
 
 Versão selecionada: **1.1.0**. A atualização acrescenta funcionalidades compatíveis — recuperação remota, atualização guiada, backups/recuperação, reconciliação/retry e revisão somente leitura — além de correções. Não há mudança incompatível do contrato suportado. `package.json` é a fonte da versão; o lockfile a espelha e o diálogo usa `app.getVersion()`.
 
-## Notas de release — rascunho
+## Notas de release
 
 - Fluxo cotidiano guiado **Atualizar site**, com proteção/verificação da fonte e do público.
 - Retry e reconciliação de operações interrompidas; recuperação explícita separada de fonte e site publicado.
@@ -22,17 +22,19 @@ Artefatos aceitos: `Lab-FON-Editor-Setup-1.1.0.exe` e `Lab-FON-Editor-Portable-1
 
 Feche o Editor antes de instalar/atualizar; preserve trabalhos, backups e recibos privados. Instalar/atualizar não publica o site. O suporte deve preparar Node.js/npm no PATH e verificar a geração; o aplicativo não inclui o toolchain completo. Extraia todo o ZIP portátil e mantenha seus arquivos juntos. Não misture dependências de builds diferentes.
 
-O candidato não tem assinatura digital; confirme origem/checksum, sem desativar proteção do Windows. Desinstalar remove o aplicativo; dados de trabalho/recuperação exigem preservação e decisão separada, não exclusão automática.
+A distribuição não tem assinatura digital; confirme origem/checksum, sem desativar proteção do Windows. Desinstalar remove o aplicativo; dados de trabalho/recuperação exigem preservação e decisão separada, não exclusão automática.
 
 ## Limites e gates
 
 Continuam as seis assertions/fixtures obsoletas e os findings/restrições de dependências descritos na [auditoria de continuidade](CONTINUITY_REPRODUCIBILITY_AUDIT.md). A conta descartável antiga não é requisito permanente de entrega. Não se repetiu aceitação destrutiva já suficiente. A aceitação abaixo comprovou os requisitos de Fase 4 sem demonstrar novo blocker.
 
-O link do guia aponta a `main` e o de última versão à release publicada: durante preparação privada podem anteceder 1.1.0. A integração documental autorizada deve preceder a publicação futura. Estes limites não afirmam que uma release nova já existe.
+O link do guia aponta a `main` e o de última versão à release publicada. A documentação de 1.1.0 foi integrada antes da publicação, resolvendo o limite da preparação privada. Os links continuam sujeitos a disponibilidade externa e poderão apontar versões posteriores no futuro.
 
 ## Checkpoint, artefatos e integridade
 
 **Fonte efetivamente empacotada:** `bc6ca74ddfd963e5433b67447c4c16fa4804228f`, commit limpo contendo os 28 arquivos revisados de documentação/imagens/metadados. Build feito em clone separado sem conteúdo ignorado. As atualizações posteriores deste registro/guia/README são somente documentais; não foram entradas de um segundo build nem mudam o executável aceito.
+
+**Reconciliação do tag:** `e2b02ada41e2bfab1a8ee6cdbc10ecb514a68dee` alterou somente README, guia e este registro, todos excluídos de `build.files`. A finalização da Fase 5 também altera somente Markdown fora do pacote. Código/renderer/fontes de assets, ícone, LICENSE, package/lockfile e configuração/scripts de build são idênticos a `bc6ca74`; dependências permanecem travadas pelo mesmo lockfile. Portanto, o commit final identificado por `v1.1.0` reproduz legitimamente as entradas dos artefatos testados, sem rebuild por mera mudança de documentação web. `main` foi integrado por fast-forward para esse mesmo commit, sem linhagem alternativa. Os hashes publicados abaixo identificam os binários aceitos; a equivalência de entradas não promete identidade binária de rebuilds sob timestamps/ambientes diferentes.
 
 | Artefato | SHA-256 |
 | --- | --- |
@@ -59,4 +61,4 @@ Reprodução: checkout desse commit, `npm ci`, `npm run editor:build`; criar ZIP
 
 Inspector/CDP/UI Automation foram usados apenas nos helpers externos para observar o pacote real, isolar userData e bloquear mutação em produção; nenhum helper foi distribuído. Races iniciais de startup do driver foram resolvidos aguardando inicialização, sem correção no aplicativo. Nenhuma mudança de código/configuração/dependências foi necessária.
 
-**Decisão final:** Fase 4 aprovada; nenhum blocker de artefato/continuidade identificado. Fase 5 pode começar por instrução explícita de revisão/integração e handoff da fonte e destes artefatos/checksums, com custódia privada separada. Merge, tag e publicação continuam não autorizados nesta fase. Não houve produção modificada, limpeza, história reescrita ou trabalho alheio ao candidato.
+**Decisão final:** release v1.1.0 e handover técnico concluídos, reutilizando a aceitação de Fase 4. Assets publicados: instalador, ZIP portátil, `SHA256SUMS.txt` e `RELEASE_NOTES.md`; hashes conferidos após download da release, vinculados à fonte final pelo tag. Sem blocker técnico para continuidade independente. O [handover final](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) explicita papéis e recibo de custódia ainda pendentes, sem inventar responsáveis ou afirmar transferência já realizada. Nenhuma produção modificada, limpeza, história reescrita ou mudança de aplicação/dependência foi necessária para publicação.

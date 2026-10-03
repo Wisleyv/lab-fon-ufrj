@@ -2,7 +2,7 @@
 
 **Fase 3: aprovada por evidência cumulativa.** A reavaliação autorizada no `next.md` considera em conjunto a aceitação destrutiva anterior, a convergência de produção, backups/recibos verificados e o setup/recuperação/build/prévia reproduzidos no ambiente novo. Não foi identificada evidência única faltante ou defeito de continuidade não resolvido. O problema DNS/TLS do servidor descartável é limitação externa de repetição, não requisito permanente do produto.
 
-**Fase 4: preparação autorizada pelo gate, não executada neste passe.** A aprovação anterior ficou pendente enquanto o critério exigia repetir manutenção no destino novo; esta decisão substitui aquele gate sem alegar que a repetição ocorreu. TLS estrito permanece obrigatório. Nenhuma escrita em produção, alteração de aplicativo/dependências/versão, empacotamento, tag, release, merge, reescrita de histórico ou limpeza ocorreu nesta reavaliação.
+**Estado final de entrega:** Fase 4 posteriormente aceita e [v1.1.0 publicada](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0), com [proveniência e aceitação](RELEASE_CANDIDATE_1.1.0.md) e [handover final](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md). A aprovação anterior ficou pendente enquanto o critério exigia repetir manutenção no destino novo; a reavaliação cumulativa substituiu aquele gate sem alegar que a repetição ocorreu. TLS estrito permanece obrigatório. As seções abaixo preservam a evidência datada da Fase 3; suas referências a operações ainda não executadas são históricas, não pendências da release atual. Não houve nova mutação de produção para entregar a release.
 
 ## Ambiente e método
 

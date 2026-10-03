@@ -1,6 +1,6 @@
 # Delivery inventory and preservation decisions — 2026-10-03
 
-Dated Phase 1 inventory. Its documentation-state table records the input to Phase 2, not an assertion that subsequent revisions are still missing. Current operational documentation is the [revised guide](GUIA-DO-USUARIO.md) and [technical handover draft](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md); custody requirements below remain pending.
+Dated Phase 1 inventory. Its documentation-state table records the input to Phase 2, not an assertion that subsequent revisions are still missing. Current operational documentation is the [revised guide](GUIA-DO-USUARIO.md) and [final technical handover](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md); [release 1.1.0 and acceptance](RELEASE_CANDIDATE_1.1.0.md) close the software/documentation gates. Custody requirements below remain pending institutional designation/receipt.
 
 Phase 1 only. Software authority: `work/post-v1.0-hardening-2026-10-02`, commit `d46ccfdbe194ab9a00cf904f9cc4a6e9b8cf6cb7`. This inventory records dispositions; it authorizes no deletion, production operation, release or history rewrite. [Production convergence](PRODUCTION_CONVERGENCE_2026-10-03.md) records the accepted operational state. Private locators belong in the custody map accompanying the evidence, outside Git; none is a prerequisite path for a future installation.
 

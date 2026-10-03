@@ -2,7 +2,7 @@
 
 Este documento orienta desenvolvedores e responsáveis pela preparação de versões. Para manutenção comum do conteúdo, consulte o [Guia do Usuário do Editor Labfonac](docs/GUIA-DO-USUARIO.md).
 
-O [handover técnico](docs/ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) descreve ambiente, manifestos, recuperação e custódia. O fluxo pós-v1 aceito não anuncia uma nova release: v1.0.0 é a distribuição publicada anterior. Merge, preparação e publicação de versão requerem autorização própria.
+O [handover técnico final](docs/ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) descreve ambiente, manifestos, recuperação e custódia. A [release v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) distribui o fluxo aceito; v1.0.0 é histórica. Futuras integrações/publicações de versão requerem autorização própria.
 
 ## Modelo vigente
 
@@ -32,7 +32,7 @@ Sem `content/`, o clone usa exemplos e gera DEMO, nunca candidato institucional 
 
 ## Aplicativo Windows
 
-O candidato 1.1.0 e suas entradas/notas/aceitação estão no [registro de preparação](docs/RELEASE_CANDIDATE_1.1.0.md). Ainda não é uma release publicada. Os nomes históricos de instalador/executável são preservados para upgrade; a versão do aplicativo vem de `package.json`.
+A release 1.1.0 e suas entradas/notas/aceitação estão no [registro de preparação e publicação](docs/RELEASE_CANDIDATE_1.1.0.md). Os nomes históricos de instalador/executável são preservados para upgrade; a versão do aplicativo vem de `package.json`.
 
 Para gerar os artefatos do Editor:
 
@@ -57,7 +57,7 @@ Antes de distribuir uma versão, verifique em uma cópia limpa:
 5. desinstalação completa;
 6. abertura da distribuição portátil.
 
-O instalador `v1.0.0` não possui assinatura digital. O Windows pode indicar fornecedor desconhecido ou exibir um aviso de reputação. Isso deve ser comunicado com neutralidade; não desative nem oriente o usuário a desativar proteções do sistema.
+O instalador `v1.1.0` não possui assinatura digital. O Windows pode indicar fornecedor desconhecido ou exibir um aviso de reputação. Isso deve ser comunicado com neutralidade; não desative nem oriente o usuário a desativar proteções do sistema.
 
 ## Publicação do site
 

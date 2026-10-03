@@ -6,17 +6,17 @@ Ferramenta de manutenção do site do Laboratório de Fonética Acústica - UFRJ
 
 O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e atualizar o site. Faça a manutenção pelos controles do aplicativo; não é necessário editar JSON ou usar um cliente FTP. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. Software sob a MIT License.
 
-Este guia descreve o fluxo pós-v1 aceito em 2026-10-03, não uma nova versão instalada. O instalador publicado v1.0.0 é anterior a esse fluxo; confirme com o responsável técnico qual distribuição foi validada para utilizá-lo. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
+Este guia descreve o **Editor Labfonac 1.1.0**, publicado após aceitação em 2026-10-03. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
 ## 2. Instalação e preparação
 
-Use a distribuição fornecida ou indicada pelo responsável técnico. O instalador publicado v1.0.0 chama-se `Lab-FON-Editor-Setup-1.0.0.exe`. Depois da instalação, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
+Use a [release oficial v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.0.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
-Para teste do candidato 1.1.0, os arquivos são `Lab-FON-Editor-Setup-1.1.0.exe` e `Lab-FON-Editor-Portable-1.1.0.zip`; ele ainda não é uma release publicada. Consulte [aceitação/checksums](RELEASE_CANDIDATE_1.1.0.md) e confirme a origem com o suporte. Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
+A alternativa portátil é `Lab-FON-Editor-Portable-1.1.0.zip`. Confira `SHA256SUMS.txt` na release e [aceitação/checksums](RELEASE_CANDIDATE_1.1.0.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
 
 Esse instalador não tem assinatura digital. O Windows pode indicar fornecedor desconhecido ou aviso de reputação. Confirme a origem oficial com o responsável técnico; não desative as proteções do Windows.
 
-Na distribuição portátil, extraia o ZIP completo, mantenha os arquivos juntos e abra o **Editor Labfonac** pelo executável `Lab-FON Editor.exe`. Não mova somente o executável. Os nomes de arquivos e identificadores de instalação da distribuição v1.0.0 conservam a nomenclatura original; o nome do aplicativo neste guia é **Editor Labfonac**.
+Na distribuição portátil, extraia o ZIP completo, mantenha os arquivos juntos e abra o **Editor Labfonac** pelo executável `Lab-FON Editor.exe`. Não mova somente o executável. Nomes de arquivos e identificadores de instalação conservam a nomenclatura original por compatibilidade de upgrade; o nome do aplicativo é **Editor Labfonac**.
 
 Antes do primeiro uso, peça ao suporte para preparar e verificar a geração neste computador. O Editor atual utiliza Node.js e npm disponíveis no Windows: instalar apenas o aplicativo não garante essa preparação. Você não precisa executar comandos; o suporte configura o ambiente e o Editor conduz a geração. A primeira preparação das dependências do projeto também requer internet e pode demorar.
 

@@ -12,9 +12,7 @@ O site é estático e pode ser hospedado em um servidor FTP comum. O conteúdo i
 
 Use a distribuição validada do **Editor Labfonac**, com a máquina preparada pelo suporte técnico. O aplicativo recupera o projeto remoto, permite editar/salvar e revisar, e conduz **Atualizar site**: verificação, atualização da fonte, geração e publicação. O build utiliza Node.js/npm disponíveis na máquina; o mantenedor não precisa executar comandos, editar JSON ou operar um cliente FTP.
 
-Este fluxo descreve o checkpoint pós-v1 aceito, não uma nova release instalada. O instalador publicado v1.0.0 antecede esse checkpoint; confirme a distribuição com o responsável técnico.
-
-O [candidato 1.1.0](docs/RELEASE_CANDIDATE_1.1.0.md) tem instalador/ZIP aceitos e checksums registrados, mas ainda não foi publicado.
+Use a [release v1.1.0 do Editor Labfonac](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0), com instalador Windows, ZIP portátil, checksums e notas de release. O [registro de aceitação](docs/RELEASE_CANDIDATE_1.1.0.md) documenta os artefatos e sua origem. v1.0.0 permanece como versão histórica.
 
 Consulte o [Guia do Usuário do Editor Labfonac](docs/GUIA-DO-USUARIO.md) para instalação e uso cotidiano.
 
