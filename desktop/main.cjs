@@ -62,7 +62,7 @@ async function reviewRemoteCleanup(_event, rootPath, profile, password) {
     const filename = path.join(directory, `${manifest.id}.json`);
     await fs.writeFile(`${filename}.tmp`, `${JSON.stringify(manifest, null, 2)}\n`);
     await fs.rename(`${filename}.tmp`, filename);
-    return { ok: true, manifest, message: "Revisão concluída. Execução bloqueada: aceite manual e autorização pendentes." };
+    return { ok: true, manifest, message: "Revisão concluída. Nenhum arquivo foi excluído. Esta versão permite somente consultar os resultados; a remoção ainda não está disponível." };
   } catch {
     return { ok: false, code: "CLEANUP_REVIEW_FAILED", message: "Revisão não concluída. Nenhum arquivo remoto foi alterado." };
   }

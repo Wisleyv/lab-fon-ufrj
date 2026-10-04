@@ -158,7 +158,9 @@ O Editor verifica a cópia e protege a versão afetada atual antes de restaurar.
 
 ## 8. Revisar limpeza remota
 
-Com projeto remoto aberto, mudanças salvas e geração bem-sucedida, use **Publicar → Manutenção → Revisar limpeza remota**. O Editor consulta/classifica arquivos e mostra caminhos e tamanhos propostos. A ação é somente leitura: **não existe execução de limpeza disponível nesta versão aceita**.
+Com projeto remoto aberto, mudanças salvas e geração bem-sucedida, use **Publicar → Manutenção → Revisar limpeza remota**. O painel fica recolhido até você abri-lo e explica o alcance da ação. A revisão identifica arquivos antigos de programação, com quantidade e tamanho por grupo: **Site publicado** e **Projeto editável**. Abra os detalhes de cada grupo para consultar arquivo, tamanho e motivo. **Nenhum arquivo é excluído; a remoção ainda não está disponível nesta etapa.**
+
+As imagens são preservadas. Essa revisão ainda não identifica fotos substituídas ou sem uso. Se o projeto, o conteúdo ou a geração mudar, salve, gere o site e faça uma nova revisão. A identificação automática de imagens necessárias e a remoção com confirmação e recuperação pertencem às próximas etapas. Esta melhoria está no código do repositório; exige uma futura distribuição do Editor para aparecer na instalação v1.1.1.
 
 Arquivos antigos podem permanecer após atualizar. Sucesso confirma os arquivos mantidos pelo Editor, não a exclusão de todo material histórico. Não exclua candidatos ou imagens desconhecidas por FTP. Encaminhe a revisão ao técnico para decisão separada, com evidências atuais e cópias verificadas.
 

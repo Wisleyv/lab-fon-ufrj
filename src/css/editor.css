@@ -89,6 +89,10 @@ body {
 }
 .editor-advanced { margin-top: 1rem; }
 .editor-advanced summary { cursor: pointer; padding: 0.75rem 0; }
+.editor-cleanup-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.editor-cleanup-table caption { text-align: left; padding-block: 0.5rem; }
+.editor-cleanup-table th, .editor-cleanup-table td { text-align: left; vertical-align: top; padding: 0.5rem; border-bottom: 1px solid var(--editor-border); overflow-wrap: anywhere; }
+.editor-cleanup-table th:nth-child(2) { width: 6rem; }
 .editor-warning {
   margin: 0 0 1rem;
   padding: 0.75rem;

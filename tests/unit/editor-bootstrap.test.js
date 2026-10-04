@@ -14,22 +14,90 @@ describe("manual acceptance operation regressions", () => {
   it("offers a guarded read-only cleanup review with no deletion control", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const host = createMemoryDesktopHost();
-    host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Execução bloqueada.", manifest: { proposed: [{ path: "editor.html", bytes: 100 }], proposedBytes: 100 } }));
+    host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Revisão concluída. Nenhum arquivo foi excluído. A remoção ainda não está disponível.", manifest: { proposed: [
+      { path: "editor.html", bytes: 100, classification: "obsolete-public-editor" },
+      { path: "source/scripts/fix-encoding.js", bytes: 200, classification: "obsolete-source-editor-or-utility" },
+    ], proposedBytes: 300 } }));
     const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
     try {
       await app.ready;
       const project = { status: "valid", source: "remote-ftp", path: "C:/fixture" };
       app.store.setState({ openedProject: project, publish: { status: "configured", profile }, build: { status: "success" }, contentDirty: true });
       const button = document.getElementById("editor-review-cleanup");
+      const maintenance = document.getElementById("editor-maintenance");
+      expect(maintenance.open).toBe(false);
+      expect(button.getAttribute("aria-describedby")).toBe("editor-cleanup-help");
+      expect(document.getElementById("editor-cleanup-help").textContent).toContain("nenhum arquivo será excluído");
       expect(button.disabled).toBe(true); button.click();
       expect(host.reviewRemoteCleanup).not.toHaveBeenCalled();
       app.store.setState({ contentDirty: false }); button.click();
       expect(app.store.getState().publish.status).toBe("publishing");
       await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("configured"));
       expect(host.reviewRemoteCleanup).toHaveBeenCalledExactlyOnceWith(project, profile, "");
-      expect(document.getElementById("editor-publish-diagnostics").textContent).toContain("/editor.html");
-      expect(document.getElementById("editor-publish-status").textContent).toContain("bloqueada");
+      const report = document.getElementById("editor-publish-diagnostics");
+      expect(maintenance.contains(report)).toBe(true);
+      expect(report.textContent).toContain("2 arquivos antigos de programação");
+      expect(report.textContent).toContain("Imagens preservadas");
+      expect(report.querySelectorAll("details")).toHaveLength(2);
+      expect(report.querySelectorAll("tbody tr")).toHaveLength(2);
+      expect(report.textContent).toContain("Site publicado: 1 arquivo");
+      expect(report.textContent).toContain("Projeto editável: 1 arquivo");
+      expect(report.textContent).toContain("source/scripts/fix-encoding.js");
+      expect(report.textContent).toContain("Arquivo antigo do Editor no site publicado");
+      expect(document.getElementById("editor-publish-status").textContent).toContain("Nenhum arquivo foi excluído");
       expect(document.getElementById("editor-execute-cleanup")).toBeNull();
+      app.store.setState({ contentDirty: true });
+      expect(report.textContent).toBe("");
+      expect(document.getElementById("editor-publish-status").textContent).toContain("desatualizada");
+    } finally { app.destroy(); }
+  });
+
+  it.each(["empty", "deferred", "malformed", "failure"])("explains cleanup review outcome %s without presenting deletion controls", async outcome => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.reviewRemoteCleanup = vi.fn(async () => outcome === "failure"
+      ? { ok: false, message: "Revisão não concluída. Nenhum arquivo remoto foi alterado." }
+      : { ok: true, message: "Revisão concluída. Nenhum arquivo foi excluído.", manifest: {
+        proposed: outcome === "malformed" ? [null] : [],
+        sourceCurrent: outcome !== "deferred", publicCurrent: true,
+      } });
+    const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
+        publish: { status: "configured", profile }, build: { status: "success" } });
+      document.getElementById("editor-review-cleanup").click();
+      await vi.waitFor(() => expect(app.store.getState().publish.status).not.toBe("publishing"));
+      const report = document.getElementById("editor-publish-diagnostics");
+      if (["empty", "deferred"].includes(outcome)) {
+        expect(report.textContent).toContain("Nenhum arquivo antigo de programação foi identificado");
+        expect(report.querySelector("table")).toBeNull();
+        if (outcome === "deferred") expect(report.textContent).toContain("Conclua a atualização");
+      } else {
+        expect(app.store.getState().publish.status).toBe("failed");
+        expect(report.textContent).toBe("");
+        expect(document.getElementById("editor-publish-status").textContent).toContain(outcome === "malformed" ? "Revisão inválida" : "Revisão não concluída");
+      }
+      expect(document.getElementById("editor-execute-cleanup")).toBeNull();
+    } finally { app.destroy(); }
+  });
+
+  it("discards a cleanup result returned after the project changes", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    let finish;
+    const host = createMemoryDesktopHost();
+    host.reviewRemoteCleanup = vi.fn(() => new Promise(resolve => { finish = resolve; }));
+    const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" },
+        publish: { status: "configured", profile }, build: { status: "success" } });
+      document.getElementById("editor-review-cleanup").click();
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/another-project" } });
+      finish({ ok: true, manifest: { proposed: [{ path: "editor.html", bytes: 100 }] } });
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("failed"));
+      expect(document.getElementById("editor-publish-status").textContent).toContain("Revisão descartada");
+      expect(document.getElementById("editor-publish-diagnostics").textContent).toBe("");
     } finally { app.destroy(); }
   });
 

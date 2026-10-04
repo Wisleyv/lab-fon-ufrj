@@ -166,6 +166,45 @@ function renderDiagnostics(documentRef, container, diagnostics = []) {
   container.appendChild(list);
 }
 
+function renderCleanupReview(container, review) {
+  container.replaceChildren();
+  const countLabel = count => `${count} ${count === 1 ? "arquivo" : "arquivos"}`;
+  const total = review.files.reduce((sum, file) => sum + file.bytes, 0);
+  container.appendChild(createElement("p", {}, review.files.length
+    ? `${countLabel(review.files.length)} ${review.files.length === 1 ? "antigo de programação identificado" : "antigos de programação identificados"} (${formatByteCount(total)}). Nenhum arquivo foi excluído.`
+    : "Nenhum arquivo antigo de programação foi identificado nesta revisão. Nenhum arquivo foi excluído."));
+  const reasons = {
+    "obsolete-source-editor-or-utility": "Arquivo antigo do Editor ou ferramenta de desenvolvimento.",
+    "obsolete-public-editor": "Arquivo antigo do Editor no site publicado.",
+    "superseded-public-bundle": "Arquivo de uma versão anterior do site.",
+  };
+  for (const [source, label] of [[false, "Site publicado"], [true, "Projeto editável"]]) {
+    const files = review.files.filter(file => file.path.startsWith("source/") === source);
+    if (!files.length) continue;
+    const group = createElement("details", { className: "editor-cleanup-group" });
+    group.appendChild(createElement("summary", {}, `${label}: ${countLabel(files.length)} (${formatByteCount(files.reduce((sum, file) => sum + file.bytes, 0))}) — consultar detalhes`));
+    const table = createElement("table", { className: "editor-cleanup-table" });
+    table.appendChild(createElement("caption", {}, `Arquivos antigos de programação — ${label.toLowerCase()}`));
+    const header = createElement("tr");
+    for (const title of ["Arquivo", "Tamanho", "Motivo"]) header.appendChild(createElement("th", { scope: "col" }, title));
+    const head = createElement("thead");
+    head.appendChild(header);
+    const body = createElement("tbody");
+    for (const file of files) {
+      const row = createElement("tr");
+      for (const value of [file.path, formatByteCount(file.bytes), reasons[file.classification] || "Arquivo antigo identificado pela revisão."]) row.appendChild(createElement("td", {}, value));
+      body.appendChild(row);
+    }
+    table.append(head, body);
+    group.appendChild(table);
+    container.appendChild(group);
+  }
+  if (review.sourceCurrent === false || review.publicCurrent === false) {
+    container.appendChild(createElement("p", {}, "Parte da avaliação depende de uma atualização concluída do site. Conclua a atualização e faça uma nova revisão."));
+  }
+  container.appendChild(createElement("p", {}, "Imagens preservadas: esta revisão ainda não identifica fotos sem uso e não propõe removê-las."));
+}
+
 function renderSectionList(documentRef, store, listContainer, addSelect) {
   const state = store.getState();
   const composition = state.draftComposition;
@@ -899,10 +938,13 @@ function createLayout(
   }, "Recuperar versão anterior");
   publishSiteActions.appendChild(restoreBackupButton);
   publishCard.appendChild(publishSiteActions);
-  const maintenance = createElement("details", { className: "editor-advanced" });
+  const maintenance = createElement("details", { id: "editor-maintenance", className: "editor-advanced" });
   maintenance.appendChild(createElement("summary", {}, "Manutenção"));
+  maintenance.appendChild(createElement("p", { id: "editor-cleanup-help", className: "editor-warning" },
+    "A limpeza serve para retirar arquivos antigos que já não são necessários. Esta versão permite somente revisar arquivos antigos de programação: nenhum arquivo será excluído. A remoção e a identificação de imagens sem uso ainda não estão disponíveis. Uma futura remoção deverá exigir revisão da prévia, confirmação e cópia de recuperação."));
   const reviewCleanupButton = createElement("button", {
     id: "editor-review-cleanup", type: "button", className: "editor-btn editor-btn-secondary",
+    "aria-describedby": "editor-cleanup-help",
   }, "Revisar limpeza remota");
   maintenance.appendChild(reviewCleanupButton);
   publishCard.appendChild(maintenance);
@@ -1239,7 +1281,14 @@ function createLayout(
       return;
     }
 
-    if (publish.diagnostics?.length) renderDiagnostics(documentRef, publishDiagnostics, publish.diagnostics);
+    const cleanup = publish.diagnostics?.find(item => item.code === "CLEANUP_REVIEW")?.review;
+    if (cleanup) {
+      if (cleanup.revision !== state.revision || cleanup.projectPath !== state.openedProject?.path ||
+          cleanup.profileKey !== JSON.stringify(state.publish?.profile) || state.contentDirty || state.compositionDirty || state.build?.status !== "success") {
+        publishStatus.textContent = "A revisão anterior ficou desatualizada. Salve as alterações, gere o site e faça uma nova revisão.";
+        publishDiagnostics.replaceChildren();
+      } else renderCleanupReview(publishDiagnostics, cleanup);
+    } else if (publish.diagnostics?.length) renderDiagnostics(documentRef, publishDiagnostics, publish.diagnostics);
     else publishDiagnostics.replaceChildren();
   };
 
@@ -2100,18 +2149,20 @@ function createLayout(
     if (reviewCleanupButton.disabled) return;
     const state = store.getState();
     const profile = state.publish?.profile || readPublishProfileFromForm();
-    showPublishFeedbackIn(publishCard);
+    showPublishFeedbackIn(maintenance);
     store.setState({ publish: { ...state.publish, status: "publishing", message: "Revisando arquivos remotos...", summary: null, diagnostics: [] } });
     let result = await operationResult(desktopHost.reviewRemoteCleanup(state.openedProject, profile, publishPasswordInput.value));
-    if (result.ok && !Array.isArray(result.manifest?.proposed)) result = { ok: false, message: "Revisão inválida. Nenhum arquivo remoto foi removido." };
-    if (state.revision !== store.getState().revision || JSON.stringify(profile) !== JSON.stringify(store.getState().publish.profile)) {
+    if (result.ok && (!Array.isArray(result.manifest?.proposed) || result.manifest.proposed.some(file =>
+      !file || typeof file.path !== "string" || !Number.isSafeInteger(file.bytes) || file.bytes < 0))) result = { ok: false, message: "Revisão inválida. Nenhum arquivo remoto foi removido." };
+    if (state.revision !== store.getState().revision || state.openedProject?.path !== store.getState().openedProject?.path || JSON.stringify(profile) !== JSON.stringify(store.getState().publish.profile)) {
       store.setState({ publish: { ...store.getState().publish, status: "failed", message: "Contexto alterado. Revisão descartada." } });
       return;
     }
     store.setState({ publish: { ...store.getState().publish, status: result.ok ? "configured" : "failed", message: result.message,
-      diagnostics: result.ok ? [{ code: "CLEANUP_REVIEW", severity: "info", message:
-        `${result.manifest.proposed.length} arquivos propostos (${formatByteCount(result.manifest.proposedBytes)}).\n` +
-        result.manifest.proposed.map(file => `/${file.path} (${formatByteCount(file.bytes)})`).join("\n") }] : [] } });
+      diagnostics: result.ok ? [{ code: "CLEANUP_REVIEW", severity: "info", review: {
+        files: result.manifest.proposed, sourceCurrent: result.manifest.sourceCurrent, publicCurrent: result.manifest.publicCurrent,
+        revision: state.revision, projectPath: state.openedProject.path, profileKey: JSON.stringify(profile),
+      } }] : [] } });
   });
 
   hydrateFromSource(store.getState().projectSource);
