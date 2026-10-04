@@ -53,6 +53,16 @@ async function fixture(callback) {
 }
 
 describe("controlled remote cleanup", () => {
+  it("reports unreferenced images separately and never includes them in executable deletion paths", async () => fixture(async ({ service, client, evidence, approve, local }) => {
+    const engine = service({ evidence: async () => ({ ...await evidence(), mediaAudit: {
+      certain: true, reasons: [], revision: "fixture", unused: [{ path: "assets/images/uncertain.png" }],
+    } }) });
+    const manifest = await engine.plan(client, profile);
+    expect(manifest.mediaCandidates).toHaveLength(2);
+    expect(manifest.proposed.some(file => file.path.endsWith("uncertain.png"))).toBe(false);
+    expect((await engine.execute(client, profile, manifest, approve(manifest))).ok).toBe(true);
+    expect(await fs.readFile(local("assets/images/uncertain.png"), "utf8")).toBe("uncertain history");
+  }));
   it("reviews without writes, backs up both domains, converges, and restores exact original bytes", async () => fixture(async ({ client, service, approve, store, initial, local }) => {
     const engine = service();
     const manifest = await engine.plan(client, profile);

@@ -17,7 +17,10 @@ describe("manual acceptance operation regressions", () => {
     host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Revisão concluída. Nenhum arquivo foi excluído. A remoção ainda não está disponível.", manifest: { proposed: [
       { path: "editor.html", bytes: 100, classification: "obsolete-public-editor" },
       { path: "source/scripts/fix-encoding.js", bytes: 200, classification: "obsolete-source-editor-or-utility" },
-    ], proposedBytes: 300 } }));
+    ], proposedBytes: 300, mediaCandidates: [
+      { path: "source/public/assets/images/old-photo.png", bytes: 1048576 },
+      { path: "assets/images/old-photo.png", bytes: 1048576 },
+    ], mediaAudit: { certain: true } } }));
     const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
     try {
       await app.ready;
@@ -38,12 +41,15 @@ describe("manual acceptance operation regressions", () => {
       expect(maintenance.contains(report)).toBe(true);
       expect(report.textContent).toContain("2 arquivos antigos de programação");
       expect(report.textContent).toContain("Imagens preservadas");
-      expect(report.querySelectorAll("details")).toHaveLength(2);
+      expect(report.querySelectorAll("details")).toHaveLength(3);
       expect(report.querySelectorAll("tbody tr")).toHaveLength(2);
       expect(report.textContent).toContain("Site publicado: 1 arquivo");
       expect(report.textContent).toContain("Projeto editável: 1 arquivo");
       expect(report.textContent).toContain("source/scripts/fix-encoding.js");
       expect(report.textContent).toContain("Arquivo antigo do Editor no site publicado");
+      expect(report.textContent).toContain("Imagens sem referência no projeto: 2 arquivos");
+      expect(report.textContent).toContain("Permanecem no servidor");
+      expect(report.textContent).toContain("source/public/assets/images/old-photo.png");
       expect(document.getElementById("editor-publish-status").textContent).toContain("Nenhum arquivo foi excluído");
       expect(document.getElementById("editor-execute-cleanup")).toBeNull();
       app.store.setState({ contentDirty: true });

@@ -3,6 +3,7 @@ const path = require("node:path");
 const { createHash } = require("node:crypto");
 const { Writable } = require("node:stream");
 const { isSourceFile } = require("./source-manifest.cjs");
+const { mediaPath } = require("./media-references.cjs");
 
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
 const digest = value => hash(JSON.stringify(value));
@@ -68,7 +69,7 @@ async function scanRemote(client) {
   return files.sort((a, b) => a.path.localeCompare(b.path));
 }
 
-function createCleanupManifest(inventory, { sourceFiles, publicFiles, connectionKey }) {
+function createCleanupManifest(inventory, { sourceFiles, publicFiles, connectionKey, mediaAudit }) {
   if (!Array.isArray(sourceFiles) || !sourceFiles.length || !Array.isArray(publicFiles) || !publicFiles.length) throw new Error("Validated source and public evidence required");
   const seen = new Set();
   for (const file of inventory) {
@@ -85,6 +86,8 @@ function createCleanupManifest(inventory, { sourceFiles, publicFiles, connection
   const publicPaths = new Set(publicFiles.map(file => file.path));
   const proposed = [];
   const retained = [];
+  const unused = new Set(mediaAudit?.certain ? mediaAudit.unused.map(file => file.path) : []);
+  const mediaCandidates = [];
   for (const file of [...inventory].sort((a, b) => a.path.localeCompare(b.path))) {
     const domain = file.path.startsWith("source/") ? "source" : "public";
     const relative = domain === "source" ? file.path.slice(7) : file.path;
@@ -106,19 +109,26 @@ function createCleanupManifest(inventory, { sourceFiles, publicFiles, connection
       eligible = publicCurrent;
     }
     const record = { ...file, domain, relativePath: relative, classification };
+    if (classification !== "hosting-metadata-retained" && classification !== "uncertain-retained" && unused.has(mediaPath(relative))) {
+      mediaCandidates.push({ ...record, classification: "image-without-project-reference" });
+    }
     (eligible ? proposed : retained).push(record);
   }
   const payload = {
     version: 1, connectionKey, sourceRevision: digest(sourceFiles), publicRevision: digest(publicFiles),
     inventoryDigest: digest(inventory), sourceCurrent, publicCurrent,
-    proposed, retained, proposedBytes: proposed.reduce((sum, file) => sum + file.bytes, 0),
+    proposed, retained, mediaCandidates, mediaAudit: mediaAudit ? { certain: mediaAudit.certain, reasons: mediaAudit.reasons, revision: mediaAudit.revision } : null,
+    proposedBytes: proposed.reduce((sum, file) => sum + file.bytes, 0),
     authorization: "none", productionGate: "Phase 7 manual acceptance and explicit Phase 8 authorization required",
   };
   return { ...payload, id: digest(payload) };
 }
 
 function createRemoteCleanup({ recoveryStore, evidence, verifyCurrent, mutationGate = () => false }) {
-  const plan = async (client, profile) => createCleanupManifest(await scanRemote(client), await evidence(profile));
+  const plan = async (client, profile) => {
+    const inventory = await scanRemote(client);
+    return createCleanupManifest(inventory, await evidence(profile, inventory));
+  };
   return {
     plan,
     async execute(client, profile, manifest, approval) {

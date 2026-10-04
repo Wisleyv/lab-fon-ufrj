@@ -13,10 +13,11 @@ const { installEditorMenu } = require("./editor-menu.cjs");
 const { runPortableBuild } = require("./portable-build.cjs");
 const { createRecoveryStore, destinationKey } = require("./recovery-store.cjs");
 const { createRemoteCleanup, fileEvidence } = require("./remote-cleanup.cjs");
+const { mediaPath, inspectMediaReferences, selectReferencedMedia } = require("./media-references.cjs");
 // A later explicit authorization must follow Phase 7 manual acceptance and manifest review.
 const REMOTE_CLEANUP_AUTHORIZED = false;
 
-async function cleanupEvidence(root, profile) {
+async function cleanupEvidence(root, profile, inventory = []) {
   const source = await validateLocalEditableProject(root);
   if (!source.ok) throw new Error(source.message);
   const build = await validateGeneratedSite(root);
@@ -25,13 +26,14 @@ async function cleanupEvidence(root, profile) {
     sourceFiles: await fileEvidence(await listEditableProjectBundleFiles(root)),
     publicFiles: await fileEvidence(await listDistFiles(root)),
     connectionKey: destinationKey(profile),
+    mediaAudit: await inspectMediaReferences(root, inventory.map(file => ({ ...file, path: file.path.replace(/^source\//, "") }))),
   };
 }
 
 function cleanupService(root, password) {
   return createRemoteCleanup({
     recoveryStore: getRecoveryStore(),
-    evidence: profile => cleanupEvidence(root, profile),
+    evidence: (profile, inventory) => cleanupEvidence(root, profile, inventory),
     mutationGate: () => REMOTE_CLEANUP_AUTHORIZED,
     verifyCurrent: async profile => {
       const key = require("node:crypto").createHash("sha256").update(JSON.stringify([root, profile.host, profile.port, profile.username, profile.secure])).digest("hex");
@@ -88,7 +90,7 @@ async function executeRemoteCleanup(_event, rootPath, profile, password, manifes
 const { createAssetReuse } = require("./retrieval-cache.cjs");
 const { createRetrievalProgress } = require("./retrieval-progress.cjs");
 const { createGuidedUpdate } = require("./guided-update.cjs");
-const { openTransferClients, createTransferProgress, uploadProtectedFiles } = require("./remote-transfer.cjs");
+const { openTransferClients, createTransferProgress, uploadProtectedFiles, runTransferWorkers } = require("./remote-transfer.cjs");
 const transferClient = () => appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000);
 let guidedUpdate;
 let guidedUpdateDirectory;
@@ -288,10 +290,14 @@ async function runProjectBuild(_event, rootPath) {
     };
   }
 
+  const mediaAudit = await inspectMediaReferences(projectRoot);
   return {
     ok: true,
     code: "BUILD_SUCCEEDED",
-    message: "Site generated successfully.",
+    mediaAudit,
+    message: mediaAudit.certain
+      ? `Página gerada. ${mediaAudit.unused.length} imagens sem referência ficarão fora das transferências; nenhum arquivo foi excluído.`
+      : "Página gerada. Imagens preservadas nas transferências: há referências que exigem avaliação.",
     command: buildResult.command,
     output: buildResult.output,
     artifacts: validation.artifacts,
@@ -1007,7 +1013,7 @@ async function retrieveRemoteProject(event, profile, password) {
     const remoteValidation = await verifyRemoteEditableProject(client, sanitized.remoteSourcePath);
     if (!remoteValidation.ok) return remoteValidation;
 
-    const downloadManifest = await createRetrievalDownloadManifest(
+    let downloadManifest = await createRetrievalDownloadManifest(
       client,
       sanitized.remoteSourcePath,
     );
@@ -1018,8 +1024,51 @@ async function retrieveRemoteProject(event, profile, password) {
     reportProgress("reuse");
     const reuseStartedAt = performance.now();
     const reuse = await createAssetReuse(client, activeWorkspace);
+    // Retrieve reference-bearing files first. No copied raster checksum or download is
+    // requested until the saved content and code have established their use.
+    const bootstrap = downloadManifest.filter(file => !mediaPath(file.relativePath));
+    const bootstrapPending = [];
+    let bootstrapReusedFiles = 0;
+    let bootstrapDownloadedBytes = 0;
+    for (const file of bootstrap) {
+      const localPath = path.join(temporaryWorkspace, ...file.relativePath.split("/"));
+      await fs.mkdir(path.dirname(localPath), { recursive: true });
+      if (await reuse(file, localPath)) {
+        metrics.reusedFiles++;
+        metrics.reusedBytes += file.size;
+        bootstrapReusedFiles++;
+      } else bootstrapPending.push(file);
+    }
+    const bootstrapDownloadStartedAt = performance.now();
+    const bootstrapProgress = createRetrievalProgress(bootstrap.length, null);
+    let bootstrapCompleted = bootstrapReusedFiles;
+    const emitBootstrap = () => reportProgress("download", bootstrapProgress(bootstrapDownloadedBytes, bootstrapCompleted, metrics.reusedBytes));
+    emitBootstrap();
+    progressTimer = setInterval(emitBootstrap, 1000);
+    await runTransferWorkers(bootstrapPending, downloadClients, async (file, downloadClient) => {
+      const localPath = path.join(temporaryWorkspace, ...file.relativePath.split("/"));
+      await downloadClient.downloadTo(localPath, file.remotePath);
+      const bytes = (await fs.stat(localPath)).size;
+      bootstrapDownloadedBytes += bytes;
+      bootstrapCompleted++;
+      emitBootstrap();
+    });
+    clearInterval(progressTimer);
+    const bootstrapDownloadMs = Math.round(performance.now() - bootstrapDownloadStartedAt);
+    const bootstrapValidation = await validateLocalEditableProject(temporaryWorkspace);
+    if (!bootstrapValidation.ok) {
+      await fs.rm(temporaryWorkspace, { recursive: true, force: true });
+      return bootstrapValidation;
+    }
+    const mediaAudit = await inspectMediaReferences(temporaryWorkspace, downloadManifest);
+    const originalCount = downloadManifest.length;
+    downloadManifest = selectReferencedMedia(downloadManifest, mediaAudit);
+    metrics.excludedImages = originalCount - downloadManifest.length;
+    metrics.excludedImageBytes = mediaAudit.unusedBytes;
+    const bootstrapPaths = new Set(bootstrap.map(file => file.relativePath));
     const pending = [];
     for (const file of downloadManifest) {
+      if (bootstrapPaths.has(file.relativePath)) continue;
       const localPath = path.join(temporaryWorkspace, ...file.relativePath.split("/"));
       await fs.mkdir(path.dirname(localPath), { recursive: true });
       if (await reuse(file, localPath)) {
@@ -1027,14 +1076,14 @@ async function retrieveRemoteProject(event, profile, password) {
         metrics.reusedBytes += file.size;
       } else pending.push(file);
     }
-    metrics.reuseMs = Math.round(performance.now() - reuseStartedAt);
+    metrics.reuseMs = Math.max(0, Math.round(performance.now() - reuseStartedAt) - bootstrapDownloadMs);
     const knownTotal = downloadManifest.every(file => Number.isSafeInteger(file.size) && file.size >= 0)
       ? downloadManifest.reduce((sum, file) => sum + file.size, 0) : null;
     const progress = createRetrievalProgress(downloadManifest.length, knownTotal);
-    let completedFiles = metrics.reusedFiles;
+    let completedFiles = bootstrap.length + metrics.reusedFiles - bootstrapReusedFiles;
     const transferredBytes = [0, 0];
     const emitDownload = () => reportProgress("download", progress(
-      transferredBytes[0] + transferredBytes[1], completedFiles, metrics.reusedBytes,
+      bootstrapDownloadedBytes + transferredBytes[0] + transferredBytes[1], completedFiles, metrics.reusedBytes,
     ));
     emitDownload();
     progressTimer = setInterval(emitDownload, 1000);
@@ -1068,7 +1117,7 @@ async function retrieveRemoteProject(event, profile, password) {
     }));
     if (workerFailure) throw workerFailure;
     clearInterval(progressTimer);
-    metrics.downloadMs = Math.round(performance.now() - downloadStartedAt);
+    metrics.downloadMs = bootstrapDownloadMs + Math.round(performance.now() - downloadStartedAt);
     for (const downloadClient of downloadClients) {
       if (typeof downloadClient.trackProgress === "function") downloadClient.trackProgress(undefined);
     }
@@ -1509,7 +1558,7 @@ async function listEditableProjectBundleFiles(projectRoot) {
     });
   }
 
-  return files;
+  return selectReferencedMedia(files, await inspectMediaReferences(projectRoot));
 }
 
 async function collectDirectoryFiles(projectRoot, directoryPath, files) {
@@ -1585,7 +1634,8 @@ async function listDistFiles(projectRoot) {
   }
 
   await walk(distRoot);
-  return files.sort((left, right) =>
+  const selected = selectReferencedMedia(files, await inspectMediaReferences(projectRoot, files));
+  return selected.sort((left, right) =>
     left.relativePath.localeCompare(right.relativePath),
   );
 }

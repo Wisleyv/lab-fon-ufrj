@@ -202,7 +202,19 @@ function renderCleanupReview(container, review) {
   if (review.sourceCurrent === false || review.publicCurrent === false) {
     container.appendChild(createElement("p", {}, "Parte da avaliação depende de uma atualização concluída do site. Conclua a atualização e faça uma nova revisão."));
   }
-  container.appendChild(createElement("p", {}, "Imagens preservadas: esta revisão ainda não identifica fotos sem uso e não propõe removê-las."));
+  const images = review.mediaCandidates || [];
+  if (images.length) {
+    const group = createElement("details", { className: "editor-cleanup-group" });
+    group.appendChild(createElement("summary", {}, `Imagens sem referência no projeto: ${countLabel(images.length)} (${formatByteCount(images.reduce((sum, file) => sum + file.bytes, 0))}) — consultar detalhes`));
+    group.appendChild(createElement("p", {}, "Estas imagens ficam fora das transferências do projeto atual. Permanecem no servidor; sua remoção ainda não está disponível."));
+    const list = createElement("ul");
+    for (const file of images) list.appendChild(createElement("li", {}, `${file.path} (${formatByteCount(file.bytes)})`));
+    group.appendChild(list);
+    container.appendChild(group);
+  }
+  container.appendChild(createElement("p", {}, review.mediaAudit?.certain === false
+    ? "Imagens preservadas nas transferências: há referências que exigem avaliação. Nenhuma imagem será removida."
+    : "Imagens preservadas: referências compartilhadas, conteúdo desativado e imagens padrão continuam protegidos. Nenhuma imagem será removida."));
 }
 
 function renderSectionList(documentRef, store, listContainer, addSelect) {
@@ -941,7 +953,7 @@ function createLayout(
   const maintenance = createElement("details", { id: "editor-maintenance", className: "editor-advanced" });
   maintenance.appendChild(createElement("summary", {}, "Manutenção"));
   maintenance.appendChild(createElement("p", { id: "editor-cleanup-help", className: "editor-warning" },
-    "A limpeza serve para retirar arquivos antigos que já não são necessários. Esta versão permite somente revisar arquivos antigos de programação: nenhum arquivo será excluído. A remoção e a identificação de imagens sem uso ainda não estão disponíveis. Uma futura remoção deverá exigir revisão da prévia, confirmação e cópia de recuperação."));
+    "A limpeza serve para retirar arquivos antigos que já não são necessários. Esta versão permite revisar arquivos antigos de programação e imagens sem referência no projeto: nenhum arquivo será excluído. Uma futura remoção deverá exigir revisão da prévia, confirmação e cópia de recuperação."));
   const reviewCleanupButton = createElement("button", {
     id: "editor-review-cleanup", type: "button", className: "editor-btn editor-btn-secondary",
     "aria-describedby": "editor-cleanup-help",
@@ -2152,7 +2164,9 @@ function createLayout(
     showPublishFeedbackIn(maintenance);
     store.setState({ publish: { ...state.publish, status: "publishing", message: "Revisando arquivos remotos...", summary: null, diagnostics: [] } });
     let result = await operationResult(desktopHost.reviewRemoteCleanup(state.openedProject, profile, publishPasswordInput.value));
-    if (result.ok && (!Array.isArray(result.manifest?.proposed) || result.manifest.proposed.some(file =>
+    if (result.ok && (!Array.isArray(result.manifest?.proposed) ||
+      (result.manifest.mediaCandidates !== undefined && !Array.isArray(result.manifest.mediaCandidates)) ||
+      [...result.manifest.proposed, ...(Array.isArray(result.manifest.mediaCandidates) ? result.manifest.mediaCandidates : [])].some(file =>
       !file || typeof file.path !== "string" || !Number.isSafeInteger(file.bytes) || file.bytes < 0))) result = { ok: false, message: "Revisão inválida. Nenhum arquivo remoto foi removido." };
     if (state.revision !== store.getState().revision || state.openedProject?.path !== store.getState().openedProject?.path || JSON.stringify(profile) !== JSON.stringify(store.getState().publish.profile)) {
       store.setState({ publish: { ...store.getState().publish, status: "failed", message: "Contexto alterado. Revisão descartada." } });
@@ -2161,6 +2175,7 @@ function createLayout(
     store.setState({ publish: { ...store.getState().publish, status: result.ok ? "configured" : "failed", message: result.message,
       diagnostics: result.ok ? [{ code: "CLEANUP_REVIEW", severity: "info", review: {
         files: result.manifest.proposed, sourceCurrent: result.manifest.sourceCurrent, publicCurrent: result.manifest.publicCurrent,
+        mediaCandidates: result.manifest.mediaCandidates, mediaAudit: result.manifest.mediaAudit,
         revision: state.revision, projectPath: state.openedProject.path, profileKey: JSON.stringify(profile),
       } }] : [] } });
   });

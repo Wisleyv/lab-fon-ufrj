@@ -5,6 +5,14 @@ This document tracks all development sessions with detailed work summaries, tech
 
 ---
 
+## Session Handoff: October 4, 2026 — Media references, stage 2
+
+- Added a shared inspection of saved content and portable site code. Source updates and publication lists omit unreferenced raster images under `public/assets/images`; retrieval reads content/code first and excludes those images before requesting their checksums or bytes.
+- Shared images, inactive records, default images and SVG dependencies remain protected. SVGs, imported source assets and other public files are retained. Incomplete, malformed or recognized dynamic references preserve all raster images. The inspection is recomputed for each operation; no stored report authorizes filtering.
+- Generation reports the inspection result. Remote maintenance lists image candidates separately from executable cleanup paths. No local or remote images are deleted; generated preview files may still include unused images. References from other sites are outside this inspection and must be considered before any future deletion.
+- Regression validation: 225 tests passed across media references, retrieval, Editor UI/build/publication, guided update, recovery, cleanup, transfers, source manifest and portable builds. Site and Editor renderer builds passed. Maintenance was visually checked at 1024 and 375 px without horizontal overflow or deletion controls. FTP checks used disposable filesystem fixtures, including unchanged-image reuse, failed transfers, source/publication separation and preservation of unused server files.
+- Stage 3 remains a separate task: bind preview acceptance and explicit confirmation to current evidence, protect local and both remote domains with verified recovery, then enable coordinated removal. Version 1.1.1, the installed Editor and production were not changed; distribution is still pending.
+
 ## Session Handoff: September 11, 2026
 **Focus:** Reversible local project sanitization after the verified production milestone
 

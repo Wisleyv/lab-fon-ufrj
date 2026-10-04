@@ -70,6 +70,10 @@ async function createRemoteLayout({ source = "valid" } = {}) {
         }),
       ),
     );
+    // The actual page code requires this public image even in the small fixture.
+    await fs.mkdir(path.join(sourceRoot, "public/assets/images"), { recursive: true });
+    for (const name of ["curriculo_lattes_150x61.png", "favicon_32x32.png", "apple-touch-icon.png"])
+      await fs.writeFile(path.join(sourceRoot, "public/assets/images", name), "fixture image");
     await Promise.all(
       [
         "package.json",
@@ -314,6 +318,29 @@ describe("remote editable project retrieval", () => {
     } finally { await layout.cleanup(); }
   }, 60000);
 
+  it.each([false, true])("filters unused remote images conservatively (dynamic references=%s)", async dynamic => {
+    const layout = await createRemoteLayout();
+    const sourceRoot = path.join(layout.remoteRoot, "source");
+    const orphan = "public/assets/images/old-unused.png";
+    await fs.writeFile(path.join(sourceRoot, orphan), "obsolete photo");
+    if (dynamic) await fs.appendFile(path.join(sourceRoot, "src/js/main.js"), '\nconst dynamicImage = "assets/images/" + name;');
+    const primary = createFilesystemFtpClient(layout.remoteRoot, { hashes: true });
+    const secondary = createFilesystemFtpClient(layout.remoteRoot);
+    try {
+      await withNativeServices(primary, async () => {
+        const result = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
+        expect(result.ok).toBe(true);
+        expect(result.metrics.excludedImages).toBe(dynamic ? 0 : 1);
+        expect(await nativeHandlers.pathExists(null, result.directory.path, orphan)).toBe(dynamic);
+        expect([...primary.calls, ...secondary.calls].filter(([op, target]) => op === "downloadTo" && target === `/source/${orphan}`)).toHaveLength(dynamic ? 1 : 0);
+        primary.calls.length = 0; secondary.calls.length = 0;
+        expect((await nativeHandlers.updateRemoteProjectSource(null, result.directory.path, createProfile(), "secret")).ok).toBe(true);
+        if (!dynamic) expect([...primary.calls, ...secondary.calls].some(([, target]) => typeof target === "string" && target.includes("old-unused.png"))).toBe(false);
+        expect(await fs.readFile(path.join(sourceRoot, orphan), "utf8")).toBe("obsolete photo");
+      }, { secondaryClient: secondary });
+    } finally { await layout.cleanup(); }
+  });
+
   it.each(["unchanged", "remote changed", "local changed", "unsupported", "malformed", "unknown sizes", "partial hash", "wrong path"])(
     "retrieves safely with a cached asset: %s", async mode => {
       const layout = await createRemoteLayout();
@@ -321,6 +348,10 @@ describe("remote editable project retrieval", () => {
       const remote = path.join(layout.remoteRoot, "source", asset);
       await fs.mkdir(path.dirname(remote), { recursive: true });
       await fs.writeFile(remote, "original");
+      const sitePath = path.join(layout.remoteRoot, "source/content/site.json");
+      const site = JSON.parse(await fs.readFile(sitePath, "utf8"));
+      site.logo = "assets/images/cached.png";
+      await writeJson(sitePath, site);
       const primary = createFilesystemFtpClient(layout.remoteRoot, {
         hashes: mode !== "unsupported", badHash: mode === "malformed", unknownSizes: mode === "unknown sizes",
         partialHash: mode === "partial hash", wrongPath: mode === "wrong path",
@@ -812,6 +843,10 @@ describe("remote editable project retrieval", () => {
         const imagePath = path.join(retrieved.directory.path, "public/assets/images/logo.png");
         await fs.mkdir(path.dirname(imagePath), { recursive: true });
         await fs.writeFile(imagePath, Buffer.from([137, 80, 78, 71]));
+        const sitePath = path.join(retrieved.directory.path, "content/site.json");
+        const site = JSON.parse(await fs.readFile(sitePath, "utf8"));
+        site.logo = "assets/images/logo.png";
+        await writeJson(sitePath, site);
         await writeJson(path.join(retrieved.directory.path, "public/publication_references.json"), { references: [] });
         await fs.writeFile(path.join(retrieved.directory.path, "public/.htaccess"), "do not upload hosting configuration");
         const update = await nativeHandlers.updateRemoteProjectSource(null, retrieved.directory.path, createProfile(), "secret");

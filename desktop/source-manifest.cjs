@@ -6,7 +6,7 @@ const SOURCE_ENTRIES = [
   { path: "package-lock.json" },
   { path: "index.html" },
   { path: "vite.config.js" },
-  // Keep all existing media until the separate reference/orphan audit.
+  // Raster image selection is performed by the shared reference audit.
   { path: "public/assets", directory: true, optional: true },
   { path: "public/publication_references.json", optional: true },
 ];
