@@ -51,6 +51,7 @@ build/*
 deploy-*.log
 winscp_*.txt
 docs/ftp_access.md
+docs/disposable_ftp_connection.md
 
 # Editor directories and files
 .vscode/*

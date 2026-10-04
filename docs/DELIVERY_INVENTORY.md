@@ -54,7 +54,7 @@ An About capture is optional unless the guide needs to demonstrate version ident
 | Historical decision/session/retest documents | Retain as historical evidence with dated context; do not use obsolete proposals or cleanup manifests as current execution authority. | Public Git if already sanitized/tracked; raw supporting evidence private. |
 | Remote legacy/unmanaged files and uncertain historical assets | Preserve. Fresh review classified 26 obsolete artifacts, but deletion remains disabled and unauthorised. Unknown assets and hosting metadata are not automatic cleanup candidates. | Production server plus verified private baseline/retrieval evidence. |
 
-`docs/disposable_ftp_connection.md` is local-only through a worktree-local exclusion, not a shared `.gitignore` rule. Do not force-add it or copy its contents into delivery documents. Record the shared-protection gap for the later hygiene phase. Institutional data also remains in historical Git revisions; untracking the current tree does not erase history. Any history/publication policy change requires a separate decision.
+At Phase 1, `docs/disposable_ftp_connection.md` had only a worktree-local exclusion. The [post-release hygiene assessment](FINAL_CLOSURE_ASSESSMENT.md) adds the shared `.gitignore` protection. Do not force-add it or copy its contents into delivery documents. Institutional data also remains in historical Git revisions and preserved CMS branches/PRs; untracking the current tree does not erase those copies. Any history/publication policy change requires a separate decision.
 
 ## Preservation requirements and remaining ambiguity
 

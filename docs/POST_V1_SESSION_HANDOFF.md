@@ -1,6 +1,6 @@
 # Post-v1 remote-workflow checkpoint
 
-Historical checkpoint: its pending-production state is superseded by [accepted convergence on 2026-10-03](PRODUCTION_CONVERGENCE_2026-10-03.md). Current stewardship is described in the [technical handover draft](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md). This record is not authorization to repeat production or release operations.
+Historical checkpoint: its pending-production state is superseded by [accepted convergence on 2026-10-03](PRODUCTION_CONVERGENCE_2026-10-03.md). Current stewardship is described in the [final technical handover](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md); [post-release hygiene](FINAL_CLOSURE_ASSESSMENT.md) records retirement of the integrated post-v1 branch. This record is not authorization to repeat production or release operations.
 
 Session checkpoint: 2026-10-02, branch `work/post-v1.0-hardening-2026-10-02`.
 The milestone commit containing this note is the accepted session baseline.

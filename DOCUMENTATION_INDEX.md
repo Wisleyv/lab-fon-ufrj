@@ -22,9 +22,10 @@ Este índice separa a documentação vigente do material histórico produzido du
 - [Release 1.1.0 e aceitação do candidato](docs/RELEASE_CANDIDATE_1.1.0.md): entradas, proveniência do tag, artefatos/checksums e aceitação instalada/portátil. [Download oficial](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0).
 - [Notas de release 1.1.0](docs/RELEASE_NOTES_1.1.0.md): novidades, instalação, integridade e limites aceitos.
 
-- [Inventário de entrega e preservação](docs/DELIVERY_INVENTORY.md): classificação dos artefatos, capturas de tela, custódia privada e lacunas para a próxima fase de documentação.
+- [Fechamento e higiene após a release](docs/FINAL_CLOSURE_ASSESSMENT.md): avaliação das cinco fases, destino de branches/PRs, limpeza local verificada e pendências institucionais.
+- [Inventário de entrega e preservação](docs/DELIVERY_INVENTORY.md): inventário datado da Fase 1, capturas e requisitos de custódia; suas lacunas documentais foram superadas pelas fases posteriores.
 - [Convergência de produção aceita em 2026-10-03](docs/PRODUCTION_CONVERGENCE_2026-10-03.md): registro sanitizado do estado operacional; substitui as pendências de produção dos checkpoints anteriores, sem autorizar limpeza ou nova publicação.
-- [Auditoria de continuidade e reproducibilidade](docs/CONTINUITY_REPRODUCIBILITY_AUDIT.md): Fase 3 aprovada por setup/retrieval institucional novos e evidência cumulativa de manutenção/recuperação; condição DNS/TLS descartável não bloqueante e ponto de início da preparação de release.
+- [Auditoria de continuidade e reproducibilidade](docs/CONTINUITY_REPRODUCIBILITY_AUDIT.md): evidência datada da Fase 3 aprovada por setup/retrieval institucional novos e aceitação cumulativa; condição DNS/TLS descartável não bloqueante. Preparação e publicação posteriores estão no registro de release.
 - [Baseline editorial](docs/RELEASE_BASELINE_2026-09-16.md): registro detalhado da baseline aceita durante a preparação da versão.
 - [Relatório de aceitação C2](docs/C2-manual-acceptance-report-2026-09-13.md): resultados da aceitação manual do Editor.
 - [Log de desenvolvimento atual](docs/DEVELOPMENT_LOG.md): histórico recente da implementação e das verificações.

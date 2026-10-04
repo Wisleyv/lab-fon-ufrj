@@ -1,4 +1,6 @@
 # Project Status & Next Steps
+Historical status report (2025-11-27). Backend/CMS proposals and next-step markers below are not current operational instructions. Use the [final handover](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) and [closure assessment](FINAL_CLOSURE_ASSESSMENT.md) for the released static-site/Editor workflow and remaining institutional obligations.
+
 **Lab Fonética UFRJ Website Development**
 
 **Date:** November 27, 2025  
