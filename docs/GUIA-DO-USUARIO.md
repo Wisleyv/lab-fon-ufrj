@@ -6,13 +6,13 @@ Ferramenta de manutenção do site do Laboratório de Fonética Acústica - UFRJ
 
 O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e atualizar o site. Faça a manutenção pelos controles do aplicativo; não é necessário editar JSON ou usar um cliente FTP. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. Software sob a MIT License.
 
-Este guia descreve o **Editor Labfonac 1.1.0**, publicado após aceitação em 2026-10-03. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
+Este guia descreve o **Editor Labfonac 1.1.1**, com correção de desempenho FTPS aceita em produção em 2026-10-04. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
-O repositório também contém a correção de desempenho candidata à **v1.1.1**, disponível no [candidato local para teste final](RELEASE_CANDIDATE_1.1.1.md). A distribuição oficial permanece em v1.1.0. As melhorias de transferência e os indicadores detalhados da seção 5 exigem uma execução com o candidato; integrar código no repositório não atualiza o Editor instalado.
+A [release v1.1.1](RELEASE_CANDIDATE_1.1.1.md) inclui as melhorias de transferência e os indicadores detalhados da seção 5. Instale a versão para utilizá-los; integrar código no repositório não atualiza o Editor instalado. Na aceitação observada, abrir 221 arquivos levou 1 min 45 s, gerar a prévia levou 13 s e atualizar o site levou cerca de 7 min. Esses tempos dependem do projeto e do servidor e não constituem prazo garantido.
 
 ## 2. Instalação e preparação
 
-Use a [release oficial v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.0.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
+Use a [release oficial v1.1.1](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.1) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.1.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
 A alternativa portátil é `Lab-FON-Editor-Portable-1.1.0.zip`. Confira `SHA256SUMS.txt` na release e [aceitação/checksums](RELEASE_CANDIDATE_1.1.0.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
 
@@ -106,7 +106,7 @@ A comparação e a conferência usam SHA-256, um identificador do conteúdo: tam
 
 Projeto e site têm proteção e recuperação independentes. Se o projeto remoto foi atualizado com sucesso e a publicação posterior falhar, essa atualização do projeto permanece válida. Recibos e registros locais guardam as etapas verificadas para nova tentativa e reconciliação após interrupção. O envio usa no máximo duas conexões, aguarda os arquivos de apoio antes de enviar a página de entrada pública (`index.html`) e verifica o resultado remoto antes de informar sucesso.
 
-Com a correção candidata à v1.1.1, acompanhe **proteção**, **comparação**, **preparação de pastas**, **envio** e **verificação**. A mensagem mostra arquivos concluídos/total, quantidade realmente transferida, arquivos sem reenvio, tempo decorrido, velocidade quando há atividade e o arquivo atual. Os números pertencem à etapa indicada: completar a proteção ainda não significa concluir a publicação. **Sem progresso há pelo menos 15 s** indica espera por atividade ou resposta, sem presumir falha. Aguarde o resultado; se a espera persistir ou houver erro, registre etapa, horário e mensagem e siga a seção 6. Não há prazo único para todos os projetos e servidores.
+Na v1.1.1, acompanhe **proteção**, **comparação**, **preparação de pastas**, **envio** e **verificação**. A mensagem mostra arquivos concluídos/total, quantidade realmente transferida, arquivos sem reenvio, tempo decorrido, velocidade quando há atividade e o arquivo atual. Os números pertencem à etapa indicada: completar a proteção ainda não significa concluir a publicação. **Sem progresso há pelo menos 15 s** indica espera por atividade ou resposta, sem presumir falha. Aguarde o resultado; se a espera persistir ou houver erro, registre etapa, horário e mensagem e siga a seção 6. Não há prazo único para todos os projetos e servidores.
 
 ![Geração concluída e prévia disponível](images/guide/revisao.png)
 

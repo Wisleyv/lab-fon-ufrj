@@ -1,6 +1,6 @@
-# Editor Labfonac — local v1.1.1 candidate
+# Editor Labfonac — v1.1.1 release and sprint closure
 
-Prepared and accepted locally on 2026-10-04 for the maintainer's final manual site-update test. No v1.1.1 tag or GitHub Release was created; production was not accessed or modified. Official distribution remains v1.1.0.
+Prepared and accepted locally on 2026-10-04, then accepted by the maintainer in the real production workflow. The authorized [v1.1.1 release](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.1) closes this FTPS-performance patch sprint. Packaging and release closure did not access or modify production; the maintainer performed the final site test separately.
 
 ## Provenance and version
 
@@ -36,4 +36,16 @@ Both the installed executable and the executable extracted from the final portab
 
 Inspection helpers and runtime evidence are private at `C:\Temp\labfonac-v1.1.1-acceptance-20261004`, outside the clone, repository and application bundle. Both acceptance application processes were closed after verification. No credentials were provisioned and no FTP or institutional project was opened. No production mutation, destructive FTP scenarios, final tag, release publication, history rewrite, unrelated merge, cleanup or dependency modernization occurred.
 
-Stop here. The maintainer should perform the final real-world update using this candidate and review the progress/elapsed-time behavior described in the [FTPS repair record](FTPS_PERFORMANCE_REPAIR_2026-10-04.md). Final release publication requires separate authorization after that test.
+## Final source reconciliation and publication
+
+The accepted build source is `cd837042c776611006134f1c7fed85752afdad05`; candidate documentation checkpoint is `1ee80b3da169a699a89c03420d2e597feca3b57e`. The final `v1.1.1` tag identifies the subsequent release-closure documentation commit on `main`. The complete delta from the frozen build is Markdown only, outside `build.files`; runtime, renderer sources, assets/icon, license, package/lockfile, scripts and build configuration are unchanged. Therefore the tag legitimately corresponds to the accepted artifacts without rebuilding. Source/build inputs are reproducible and binaries traceable by their published hashes; byte-identical independent rebuilds are not promised.
+
+Publication uses the established draft/upload/verify/publish workflow, with four public assets: the accepted installer and ZIP, `SHA256SUMS.txt`, and `RELEASE_NOTES.md`. The binaries are reused unchanged. Final checksum coverage includes both binaries and the release-notes asset. The GitHub release body matches the release-notes asset. Anonymous download/hash and release-link checks are the publication completion gates. The v1.1.0 tag and artifacts are preserved.
+
+## Final real-world acceptance
+
+Maintainer-reported production result: **Abrir projeto remoto — 221 files: 1 min 45 s; Gerar prévia do site: 13 s; Atualizar site: approximately 7 min**. The original problematic update took about 21 minutes. The remaining duration reflects backup/integrity/recovery safeguards and is accepted, not an unresolved functional defect. Photo optimization significantly reduced production media size; institutional media remains outside the public software repository and release. These timings describe the observed acceptance run, not a universal benchmark or identical-payload comparison. The [FTPS repair record](FTPS_PERFORMANCE_REPAIR_2026-10-04.md) retains the diagnostic and guarded no-op evidence separately.
+
+## Encerramento e pendências institucionais
+
+Sprint FTPS encerrado; nenhuma tarefa de implementação permanece. Publicar o patch do Editor não requer nova atualização do site. Restam exclusivamente: revisão final de documentação/handover se necessária; aceite do contratante e da instituição; designação de responsáveis por custódia e acessos; destino restrito, backup, recibo de conferência do acervo privado e aceite do mantenedor sucessor com acessos próprios. A disposição histórica de branches/PRs consta do [fechamento operacional](FINAL_OPERATIONAL_CLOSURE.md); a branch desta correção foi integrada, sem limpeza adicional neste sprint. Essas providências não foram iniciadas nesta publicação e não constituem nova fase de programação.

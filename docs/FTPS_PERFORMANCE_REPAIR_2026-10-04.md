@@ -1,6 +1,6 @@
 # Targeted FTPS performance repair — 2026-10-04
 
-Implementation and acceptance on `fix/ftps-publication-performance`, based on `76ed92d`, followed by an authorized repository/documentation integration checkpoint. The implementation/acceptance pass did not commit, merge, package, install or publish a release. The integration checkpoint includes only this accepted repair, related tests and operational documentation. Package/lockfile metadata and the installed distribution remain v1.1.0; the integrated repair is a pending v1.1.1 patch.
+Implementation and acceptance on `fix/ftps-publication-performance`, based on `76ed92d`, followed by an authorized repository/documentation integration checkpoint. The implementation/acceptance pass did not commit, merge, package, install or publish a release. The integration checkpoint includes only this accepted repair, related tests and operational documentation. At that integration checkpoint, package/lockfile metadata and distribution remained v1.1.0. The later v1.1.1 packaging, maintainer acceptance and authorized release close this sprint; see the final result below.
 
 ## History and cause
 
@@ -66,4 +66,18 @@ Private harnesses, instrumented results, progress records, project copies and ba
 
 Three cached-asset count assertions also failed on an untouched baseline checkout because the fixture contains an additional retained branding asset. The relevant retrieval regression expectations now count eligible fixture assets. The portable source round-trip requires only its changed content upload while asserting that the recovery snapshot still includes the full manifest.
 
-Suitable as a **pending v1.1.1 patch**, with the maintainer's final site update and real-world test next. Production changed-file upload timing remains unmeasured; functional coverage is in fixtures and real-server acceptance is no-op. This repository integration checkpoint adds the [operational explanation](GUIA-DO-USUARIO.md), [technical continuity notes](ARCHITECTURE_AND_OPERATIONS_HANDOVER.md) and [release boundary](../DEPLOYMENT.md), without repeating the detailed evidence elsewhere. No production operation is part of this checkpoint. No unrelated cleanup, dependency modernization, remote cleanup, architectural redesign, history rewrite, tag/release change, installer creation or installation is authorized. Stop after repository/documentation integration; release preparation is a separate task.
+## Final maintainer production acceptance and sprint closure
+
+The maintainer accepted the packaged v1.1.1 candidate in the real production workflow on 2026-10-04:
+
+| Operation | Observed elapsed |
+| --- | ---: |
+| Abrir projeto remoto — 221 files | 1 min 45 s |
+| Gerar prévia do site | 13 s |
+| Atualizar site | approximately 7 min |
+
+The original problematic operation took 21 min 24 s (about 21 minutes). The repaired guarded workflow completed the accepted real-world update in about 7 minutes. Retrieval and preview were acceptable. The remaining update duration reflects the deliberate full-backup, integrity verification, independent source receipt and recovery safeguards described above, rather than an unresolved functional defect. Ordinary FTP transfer does not perform this complete workflow.
+
+Photo optimization significantly reduced production media size. Institutional media remains outside the public software repository and release. No numerical media-size reduction was supplied for this final test. These are maintainer-reported observed acceptance timings, not independently instrumented transfer measurements, an identical-payload benchmark or a guarantee for other projects/servers. This final acceptance is distinct from the earlier instrumented, mutation-blocked no-op.
+
+The [v1.1.1 release record](RELEASE_CANDIDATE_1.1.1.md) preserves source/artifact provenance and acceptance. Final release documentation changes no packaged input, so the accepted binaries are retained without rebuilding. No implementation task remains for this FTPS-performance issue. This patch sprint is complete; no production access or mutation, remote cleanup, dependency modernization, history rewrite or unrelated work is part of release closure. Publishing the Editor patch does not require another institutional-site update. The remaining work is institutional/documentary acceptance and custody, not another coding phase.

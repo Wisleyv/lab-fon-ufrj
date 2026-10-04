@@ -2,9 +2,9 @@
 
 Entrega técnica de 2026-10-03: **Editor Labfonac v1.1.0**, `main` e tag `v1.1.0`. O tag identifica o commit final da release; sua equivalência com a fonte efetivamente empacotada `bc6ca74ddfd963e5433b67447c4c16fa4804228f` e o checkpoint documental `e2b02ada41e2bfab1a8ee6cdbc10ecb514a68dee` está no [registro de proveniência/aceitação](RELEASE_CANDIDATE_1.1.0.md). Este handover finaliza a orientação técnica; não afirma transferência já recebida de arquivos privados ou credenciais. Operação cotidiana: [guia do usuário](GUIA-DO-USUARIO.md).
 
-Destinos oficiais: [site institucional](https://posvernaculas.letras.ufrj.br/labfonac/), [repositório público](https://github.com/Wisleyv/lab-fon-ufrj), [release v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) e [guia vigente em main](https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/GUIA-DO-USUARIO.md). A release contém instalador, ZIP portátil, SHA256SUMS e notas; dados institucionais e backups não são assets públicos.
+Destinos oficiais: [site institucional](https://posvernaculas.letras.ufrj.br/labfonac/), [repositório público](https://github.com/Wisleyv/lab-fon-ufrj), [release v1.1.1](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.1) e [guia vigente em main](https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/GUIA-DO-USUARIO.md). A release contém instalador, ZIP portátil, SHA256SUMS e notas; dados institucionais e backups não são assets públicos.
 
-Checkpoint de 2026-10-04: o repositório recebe a correção de desempenho FTPS candidata à **v1.1.1**. A preparação autorizada atualiza os metadados para **1.1.1** e verifica um [candidato local](RELEASE_CANDIDATE_1.1.1.md); a distribuição oficial permanece em **1.1.0**. O próximo passo é o teste final de atualização do site pelo mantenedor usando o candidato. Evidências e limites estão no [relatório da correção](FTPS_PERFORMANCE_REPAIR_2026-10-04.md).
+Encerramento de 2026-10-04: a correção FTPS foi aceita no teste real e distribuída na **v1.1.1**. Abrir projeto remoto (221 arquivos): 1 min 45 s; gerar prévia: 13 s; atualizar site: cerca de 7 min. Fonte/tag/artefatos são reconciliados no [registro de release](RELEASE_CANDIDATE_1.1.1.md). Evidências e limites estão no [relatório da correção](FTPS_PERFORMANCE_REPAIR_2026-10-04.md). Resta encerramento institucional/documental, sem nova fase de programação.
 
 ## 1. Finalidade e restrições institucionais
 
@@ -58,7 +58,7 @@ Recibos vinculam conexão, workspace e fingerprints. O diário em `<userData>/pu
 
 Referência: [aceitação da atualização guiada](PHASE_7_GUIDED_UPDATE_VERIFICATION.md) e [aceitação real em ambiente descartável](DISPOSABLE_FTP_ACCEPTANCE_REPORT.md). Os relatórios são datados; as pendências de produção/aceitação antigas foram encerradas pelas evidências posteriores.
 
-### Desempenho da correção candidata à v1.1.1
+### Desempenho da correção v1.1.1
 
 A concorrência anterior era exclusiva da recuperação/download; não houve regressão de publicação concorrente. O caminho de mutação serializava transferências, reenviava arquivos iguais e repetia a preparação das mesmas pastas por arquivo. A correção prepara cada destino uma vez por sessão, omite envios somente após comparação verificada e usa no máximo dois workers, com um fluxo sequencial por cliente. Todos os backups são verificados antes de escrever; falhas interrompem novos agendamentos e aguardam os workers ativos antes de recuperação. A página pública de entrada permanece após os arquivos de apoio.
 
@@ -86,7 +86,7 @@ O caminho real é resolvido por `app.getPath("userData")`; no Windows normalment
 
 ## 7. Preparar uma máquina de desenvolvimento/manutenção
 
-1. Obtenha o repositório pela URL oficial acima, selecione `v1.1.0` para reproduzir a release e preserve trabalho existente. Não presuma que futuros commits de `main` são equivalentes à versão instalada; use tags/commits explícitos.
+1. Obtenha o repositório pela URL oficial acima, selecione `v1.1.1` para reproduzir as entradas da release vigente e preserve trabalho existente. Não presuma que futuros commits de `main` são equivalentes à versão instalada; use tags/commits explícitos.
 2. Prepare Windows para Electron/empacotamento e Node.js/npm no PATH. O lockfile do checkpoint requer Node.js **22.12 ou superior** para o conjunto de ferramentas; a máquina usada nesta documentação tem Node.js **22.16.0**, npm **10.9.2**. Isso registra contexto, não aceitação completa de uma nova máquina.
 3. Em clone limpo, execute `npm ci`; para o site, use `npx vite --host 127.0.0.1` / `npm run build`; para o Editor, `npm run editor:dev`. Não publique o DEMO de um clone sem conteúdo institucional. O primeiro lançamento de desenvolvimento pode baixar o binário Electron do GitHub: acesso ao registry npm sozinho não garante esse download.
 4. Verifique com `npm test -- --run` e os builds relevantes na fase de verificação autorizada. Os seis failures de baseline já registrados precisam ser distinguidos de regressões; não declare suíte totalmente verde nem ajuste testes para esconder falhas. Evite upgrades/`npm audit fix` não aprovados.
@@ -114,9 +114,9 @@ O mantenedor de conteúdo recupera o projeto atual, edita/salva, revisa e confir
 
 Para recuperar falha, preserve conexão/revisão, mensagens e registros privados antes de decidir retry ou restauração. O relatório descartável comprova falha pública/retry, interrupção/reconciliação, recuperação dos dois domínios e nova recuperação/geração após restaurar fonte. Esses testes não autorizam repetição em produção.
 
-Preparação de versões futuras segue [DEPLOYMENT.md](../DEPLOYMENT.md): fonte/lockfile verificados, builds, aceitação instalada e portátil, revisão de fronteira/privacy, integração/tag/release explicitamente autorizados. `npm run editor:build` produz NSIS x64 por usuário e `win-unpacked`; empacote a árvore completa em ZIP portátil e publique os hashes dos artefatos efetivamente testados. A release v1.1.0 contém instalador/ZIP/checksums/notas; binários ficam na release, não no Git. Instalador sem assinatura exige comunicação neutra, jamais desativar proteção do Windows.
+Preparação de versões futuras segue [DEPLOYMENT.md](../DEPLOYMENT.md): fonte/lockfile verificados, builds, aceitação instalada e portátil, revisão de fronteira/privacy, integração/tag/release explicitamente autorizados. `npm run editor:build` produz NSIS x64 por usuário e `win-unpacked`; empacote a árvore completa em ZIP portátil e publique os hashes dos artefatos efetivamente testados. A release v1.1.1 contém instalador/ZIP/checksums/notas; binários ficam na release, não no Git. Instalador sem assinatura exige comunicação neutra, jamais desativar proteção do Windows.
 
-Atualizar o Editor não altera o site nem substitui o projeto institucional. Código novo do site precisa ser conciliado com `/source/` e conteúdo real antes de uma publicação institucional autorizada; o build DEMO nunca é candidato institucional. O menu de ajuda aponta para o guia em `main` e a última release publicada. O fechamento de 2026-10-03 mudou apenas documentação em relação aos artefatos aceitos; o checkpoint de 2026-10-04 acrescenta a correção candidata à v1.1.1, sem empacotar ou publicar versão e sem executar limpeza em produção.
+Atualizar o Editor não altera o site nem substitui o projeto institucional. Código novo do site precisa ser conciliado com `/source/` e conteúdo real antes de uma publicação institucional autorizada; o build DEMO nunca é candidato institucional. O menu de ajuda aponta para o guia em `main` e a última release publicada. O fechamento de 2026-10-03 mudou apenas documentação em relação aos artefatos aceitos; a release v1.1.1 de 2026-10-04 acrescenta a correção FTPS aceita. Sua publicação reutiliza os binários testados e não modifica nem limpa produção.
 
 ## 9. Estado aceito e limitações
 
