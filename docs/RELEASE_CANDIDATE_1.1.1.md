@@ -49,3 +49,17 @@ Maintainer-reported production result: **Abrir projeto remoto — 221 files: 1 m
 ## Encerramento e pendências institucionais
 
 Sprint FTPS encerrado; nenhuma tarefa de implementação permanece. Publicar o patch do Editor não requer nova atualização do site. Restam exclusivamente: revisão final de documentação/handover se necessária; aceite do contratante e da instituição; designação de responsáveis por custódia e acessos; destino restrito, backup, recibo de conferência do acervo privado e aceite do mantenedor sucessor com acessos próprios. A disposição histórica de branches/PRs consta do [fechamento operacional](FINAL_OPERATIONAL_CLOSURE.md); a branch desta correção foi integrada, sem limpeza adicional neste sprint. Essas providências não foram iniciadas nesta publicação e não constituem nova fase de programação.
+
+
+## Published release verification
+
+Release/tag source: `f284ca4b740618b6484f2af4d32a7e0a0b6b6d81`. All four assets were uploaded to a draft and downloaded with matching SHA-256 before publication. Anonymous publication checks cover all four downloads/hashes, checksum-file contents, release-note body, release/latest links and versioned documentation links. Final public asset hashes:
+
+| Asset | SHA-256 |
+| --- | --- |
+| `Lab-FON-Editor-Setup-1.1.1.exe` | `642f9a43abc4c3b245111e3420a3cf8685b62e1f8e04d8b4ba937a06930ff499` |
+| `Lab-FON-Editor-Portable-1.1.1.zip` | `671d5c0c575214f6b968a93d1ab923d9227b777fd6ea59ec9b01fd6057088365` |
+| `RELEASE_NOTES.md` | `3e5415db1e49e96e31950c0f90bec28631e7cc4f795be31e961bc3ce95182e9b` |
+| `SHA256SUMS.txt` | `9c753e28ea177426c2b96ff53f688d6d9211bd1d59f46de5f1123b945680c05e` |
+
+A small post-publication documentation correction updates the portable-version/checksum reference in the current user guide and the obsolete pending-test sentence in the handover, and appends this verification record. Thus `main` advances beyond the immutable release tag by documentation only; all packaged/build inputs remain identical to the tag and frozen build source. The tag was not moved and no history was rewritten. The versioned user guide at the release tag retains its older portable-reference sentence; the current guide in `main`, used by native Help, corrects it. The actual v1.1.1 release assets and checksums identify the accepted new binaries.

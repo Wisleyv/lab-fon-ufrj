@@ -14,7 +14,7 @@ A [release v1.1.1](RELEASE_CANDIDATE_1.1.1.md) inclui as melhorias de transferê
 
 Use a [release oficial v1.1.1](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.1) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.1.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
-A alternativa portátil é `Lab-FON-Editor-Portable-1.1.0.zip`. Confira `SHA256SUMS.txt` na release e [aceitação/checksums](RELEASE_CANDIDATE_1.1.0.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
+A alternativa portátil é `Lab-FON-Editor-Portable-1.1.1.zip`. Confira `SHA256SUMS.txt` na release e [aceitação/checksums](RELEASE_CANDIDATE_1.1.1.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
 
 Esse instalador não tem assinatura digital. O Windows pode indicar fornecedor desconhecido ou aviso de reputação. Confirme a origem oficial com o responsável técnico; não desative as proteções do Windows.
 

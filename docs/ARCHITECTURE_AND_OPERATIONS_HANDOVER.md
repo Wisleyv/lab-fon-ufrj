@@ -64,7 +64,7 @@ A concorrência anterior era exclusiva da recuperação/download; não houve reg
 
 O parser existente de SHA-256 remoto é compartilhado com proteção/verificação: exige algoritmo, caminho e intervalo de arquivo inteiro válidos. Se esse suporte não estiver disponível ou a resposta for incerta, permanece o download completo seguido de SHA-256 local. Recibos, conferência independente da fonte antes da publicação, TLS e limites dos manifestos não são dispensados. Por isso, bytes/segundo de um envio convencional pelo FileZilla não medem o mesmo trabalho: o Editor também baixa backups, gera o site, compara e verifica remotamente antes de concluir.
 
-O [relatório único de desempenho](FTPS_PERFORMANCE_REPAIR_2026-10-04.md) reúne contagens antes/depois, testes focados, aceitação real sem mutação, mensagens de atividade e limites da comparação. O teste de atualização real final pelo mantenedor permanece como próximo passo; a medição em produção foi uma operação protegida sem alteração de conteúdo.
+O [relatório único de desempenho](FTPS_PERFORMANCE_REPAIR_2026-10-04.md) reúne contagens antes/depois, testes focados, aceitação protegida sem mutação, mensagens de atividade e limites da comparação. O teste real final pelo mantenedor foi aceito: recuperação em 1 min 45 s, prévia em 13 s e atualização em cerca de 7 min. Essa aceitação é posterior e distinta da medição protegida sem alteração de conteúdo.
 
 ## 5. Conexão e acesso institucional
 
