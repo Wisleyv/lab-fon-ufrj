@@ -4,6 +4,8 @@ Entrega técnica de 2026-10-03: **Editor Labfonac v1.1.0**, `main` e tag `v1.1.0
 
 Destinos oficiais: [site institucional](https://posvernaculas.letras.ufrj.br/labfonac/), [repositório público](https://github.com/Wisleyv/lab-fon-ufrj), [release v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) e [guia vigente em main](https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/GUIA-DO-USUARIO.md). A release contém instalador, ZIP portátil, SHA256SUMS e notas; dados institucionais e backups não são assets públicos.
 
+Checkpoint de 2026-10-04: o repositório recebe a correção de desempenho FTPS candidata à **v1.1.1**. Metadados e distribuição permanecem em **1.1.0** até a preparação autorizada de versão; a integração não atualiza o aplicativo instalado. O próximo passo é a atualização do site e o teste final pelo mantenedor. Evidências e limites estão no [relatório da correção](FTPS_PERFORMANCE_REPAIR_2026-10-04.md).
+
 ## 1. Finalidade e restrições institucionais
 
 O site do Laboratório de Fonética Acústica - UFRJ é acadêmico, sem fins lucrativos, financiado pelo PPGLEV/UFRJ. Software concebido e desenvolvido por Wisley Vilela, distribuído sob MIT; a licença não concede direitos sobre conteúdo institucional/fotografias.
@@ -40,6 +42,7 @@ O Editor usa formulários e componentes controlados. Rascunhos são reversíveis
 | `desktop/main.cjs`, `desktop/preload.cjs` | Host Electron/IPC. `DesktopHostBridge` separa o renderer da implementação nativa; preserve validações de projeto/caminho e operações restritas. |
 | `desktop/source-manifest.cjs` | Lista positiva do projeto portátil e marcadores obrigatórios. |
 | `desktop/guided-update.cjs`, `desktop/recovery-store.cjs`, `desktop/remote-cleanup.cjs` | Coordenação, evidência de recuperação e revisão de limpeza. |
+| `desktop/remote-transfer.cjs`, `desktop/retrieval-cache.cjs` | Workers limitados, plano de envio protegido, progresso e identidade remota SHA-256 compartilhada. |
 | `desktop/portable-build.cjs`, `desktop/portable-vite.config.mjs` | Preparação local e adaptação de build portátil sem alterar a configuração canônica recuperada. |
 | `scripts/build-data.js`, `vite.config.js` | Consolidação dos dados e geração estática/desktop. |
 | `examples/`, `tests/`, `build/icon.ico` | Exemplos, contratos de teste e ícone do software: materiais necessários, não lixo temporário. |
@@ -54,6 +57,14 @@ Após recuperação remota, edição e salvamento explícito, **Atualizar site**
 Recibos vinculam conexão, workspace e fingerprints. O diário em `<userData>/publish/guided-updates/` guarda etapas e IDs de transação, sem senhas. Após interrupção, o coordenador reconcilia diário e transações; reutiliza somente resultados verificados, recupera publicação incompleta primeiro e gera novamente em nova tentativa. Mudança de fonte/build, conflito remoto ou recibo inválido bloqueia confiança no resultado antigo. Fonte atualizada não é revertida automaticamente se o build/publicação falhar.
 
 Referência: [aceitação da atualização guiada](PHASE_7_GUIDED_UPDATE_VERIFICATION.md) e [aceitação real em ambiente descartável](DISPOSABLE_FTP_ACCEPTANCE_REPORT.md). Os relatórios são datados; as pendências de produção/aceitação antigas foram encerradas pelas evidências posteriores.
+
+### Desempenho da correção candidata à v1.1.1
+
+A concorrência anterior era exclusiva da recuperação/download; não houve regressão de publicação concorrente. O caminho de mutação serializava transferências, reenviava arquivos iguais e repetia a preparação das mesmas pastas por arquivo. A correção prepara cada destino uma vez por sessão, omite envios somente após comparação verificada e usa no máximo dois workers, com um fluxo sequencial por cliente. Todos os backups são verificados antes de escrever; falhas interrompem novos agendamentos e aguardam os workers ativos antes de recuperação. A página pública de entrada permanece após os arquivos de apoio.
+
+O parser existente de SHA-256 remoto é compartilhado com proteção/verificação: exige algoritmo, caminho e intervalo de arquivo inteiro válidos. Se esse suporte não estiver disponível ou a resposta for incerta, permanece o download completo seguido de SHA-256 local. Recibos, conferência independente da fonte antes da publicação, TLS e limites dos manifestos não são dispensados. Por isso, bytes/segundo de um envio convencional pelo FileZilla não medem o mesmo trabalho: o Editor também baixa backups, gera o site, compara e verifica remotamente antes de concluir.
+
+O [relatório único de desempenho](FTPS_PERFORMANCE_REPAIR_2026-10-04.md) reúne contagens antes/depois, testes focados, aceitação real sem mutação, mensagens de atividade e limites da comparação. O teste de atualização real final pelo mantenedor permanece como próximo passo; a medição em produção foi uma operação protegida sem alteração de conteúdo.
 
 ## 5. Conexão e acesso institucional
 
@@ -105,7 +116,7 @@ Para recuperar falha, preserve conexão/revisão, mensagens e registros privados
 
 Preparação de versões futuras segue [DEPLOYMENT.md](../DEPLOYMENT.md): fonte/lockfile verificados, builds, aceitação instalada e portátil, revisão de fronteira/privacy, integração/tag/release explicitamente autorizados. `npm run editor:build` produz NSIS x64 por usuário e `win-unpacked`; empacote a árvore completa em ZIP portátil e publique os hashes dos artefatos efetivamente testados. A release v1.1.0 contém instalador/ZIP/checksums/notas; binários ficam na release, não no Git. Instalador sem assinatura exige comunicação neutra, jamais desativar proteção do Windows.
 
-Atualizar o Editor não altera o site nem substitui o projeto institucional. Código novo do site precisa ser conciliado com `/source/` e conteúdo real antes de uma publicação institucional autorizada; o build DEMO nunca é candidato institucional. O menu de ajuda aponta para o guia em `main` e a última release publicada. Este fechamento mudou apenas documentação em relação aos artefatos aceitos; não criou necessidade de nova publicação ou limpeza em produção.
+Atualizar o Editor não altera o site nem substitui o projeto institucional. Código novo do site precisa ser conciliado com `/source/` e conteúdo real antes de uma publicação institucional autorizada; o build DEMO nunca é candidato institucional. O menu de ajuda aponta para o guia em `main` e a última release publicada. O fechamento de 2026-10-03 mudou apenas documentação em relação aos artefatos aceitos; o checkpoint de 2026-10-04 acrescenta a correção candidata à v1.1.1, sem empacotar ou publicar versão e sem executar limpeza em produção.
 
 ## 9. Estado aceito e limitações
 

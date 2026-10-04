@@ -9,19 +9,33 @@ async function sha256(file) {
   return hash.digest("hex");
 }
 
-async function createAssetReuse(client, activeRoot) {
+async function createRemoteChecksum(client) {
   let enabled = false;
-  let realRoot;
   try {
-    realRoot = await fs.realpath(activeRoot);
     const features = await client.features();
     if (/(?:^|;)SHA-256\*?(?:;|$)/i.test(features.get("HASH") || "")) {
       enabled = (await client.send("OPTS HASH SHA-256")).code === 200;
     }
-  } catch { /* Unsupported checksums or missing cache: download normally. */ }
+  } catch { /* Unsupported checksums: verify by downloading. */ }
+  return async (remotePath, size) => {
+    if (!enabled || !Number.isSafeInteger(size) || size < 0 || /[\r\n]/.test(remotePath)) return null;
+    try {
+      const response = await client.send(`HASH ${remotePath}`);
+      const match = /^213 SHA-256 (?:(\d+)-(\d+) )?([a-f0-9]{64}) (.+)$/i.exec(response.message.trim());
+      if (response.code !== 213 || !match || match[4] !== remotePath ||
+          (match[1] !== undefined && (Number(match[1]) !== 0 || Number(match[2]) !== size - 1))) return null;
+      return match[3].toLowerCase();
+    } catch { return null; }
+  };
+}
+
+async function createAssetReuse(client, activeRoot) {
+  let realRoot;
+  try { realRoot = await fs.realpath(activeRoot); } catch { return async () => false; }
+  const checksum = await createRemoteChecksum(client);
 
   return async (file, destination) => {
-    if (!enabled || !/^(?:public\/assets|src\/assets\/images)\//.test(file.relativePath)
+    if (!/^(?:public\/assets|src\/assets\/images)\//.test(file.relativePath)
       || !Number.isSafeInteger(file.size) || file.size <= 0 || /[\r\n]/.test(file.remotePath)) return false;
     try {
       const source = path.join(activeRoot, ...file.relativePath.split("/"));
@@ -30,12 +44,8 @@ async function createAssetReuse(client, activeRoot) {
       if (relative.startsWith("..") || path.isAbsolute(relative)) return false;
       const stat = await fs.lstat(source);
       if (!stat.isFile() || stat.size !== file.size) return false;
-      const response = await client.send(`HASH ${file.remotePath}`);
-      // Accept only a full-file SHA-256, with an exact echoed path and byte range.
-      const match = /^213 SHA-256 (?:(\d+)-(\d+) )?([a-f0-9]{64}) (.+)$/i.exec(response.message.trim());
-      if (response.code !== 213 || !match || match[4] !== file.remotePath
-        || (match[1] !== undefined && (Number(match[1]) !== 0 || Number(match[2]) !== file.size - 1))) return false;
-      const expected = match[3].toLowerCase();
+      const expected = await checksum(file.remotePath, file.size);
+      if (!expected) return false;
       if (await sha256(source) !== expected) return false;
       await fs.copyFile(source, destination);
       if (await sha256(destination) !== expected) {
@@ -49,4 +59,4 @@ async function createAssetReuse(client, activeRoot) {
   };
 }
 
-module.exports = { createAssetReuse };
+module.exports = { createAssetReuse, createRemoteChecksum };

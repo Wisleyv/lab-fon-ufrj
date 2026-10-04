@@ -340,8 +340,11 @@ describe("remote editable project retrieval", () => {
           expect(await fs.readFile(path.join(second.directory.path, asset), "utf8")).toBe(mode === "remote changed" ? "modified" : "original");
           const downloads = [...primary.calls, ...secondary.calls].filter(([op, target]) => op === "downloadTo" && target === `/source/${asset}`);
           expect(downloads.length).toBe(mode === "unchanged" ? 0 : 1);
-          // The fixture also contains a fixed source asset; it is independently reusable.
-          expect(second.metrics.reusedFiles).toBe(mode === "unchanged" ? 2 : ["remote changed", "local changed"].includes(mode) ? 1 : 0);
+          // Count all eligible fixture assets, including the retained Editor branding image.
+          const cachedAssets = (await nativeHandlers.listEditableProjectBundleFiles(second.directory.path))
+            .filter(file => /^(?:public\/assets|src\/assets\/images)\//.test(file.relativePath)).length;
+          expect(second.metrics.reusedFiles).toBe(mode === "unchanged" ? cachedAssets
+            : ["remote changed", "local changed"].includes(mode) ? cachedAssets - 1 : 0);
           expect(second.metrics.reusedBytes + second.metrics.transferredBytes).toBe(second.metrics.totalBytes);
           expect(events.filter(e => e.phase === "download").at(-1).percent).toBe(100);
           expect(events.filter(e => e.phase === "download").at(-1).transferredBytes).toBe(second.metrics.transferredBytes);
@@ -378,7 +381,9 @@ describe("remote editable project retrieval", () => {
         expect(update.ok).toBe(true);
         const uploads = [...primary.calls, ...secondary.calls].filter(([name]) => name === "uploadFrom")
           .map(([, target]) => target.slice("/source/".length)).sort();
-        expect(uploads).toEqual(expected);
+        expect(uploads).toEqual(["content/equipe/egressa.json"]);
+        const recovery = JSON.parse(await fs.readFile(path.join(update.recovery.backupPath, "transaction.json"), "utf8"));
+        expect(recovery.snapshots.source.files.map(file => file.path).sort()).toEqual(expected);
         // Supply fixture-local tooling; production retrieval prepares it through npm ci.
         await fs.mkdir(path.join(root, "node_modules"), { recursive: true });
         await fs.symlink(path.join(repoRoot, "node_modules", "vite"), path.join(root, "node_modules", "vite"), "junction");

@@ -8,6 +8,8 @@ O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e at
 
 Este guia descreve o **Editor Labfonac 1.1.0**, publicado após aceitação em 2026-10-03. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
+O repositório também contém a correção de desempenho candidata à **v1.1.1**, ainda sem nova distribuição. As melhorias de transferência e os indicadores detalhados da seção 5 exigem uma execução com essa correção; integrar código no repositório não atualiza o Editor instalado.
+
 ## 2. Instalação e preparação
 
 Use a [release oficial v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.0.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
@@ -93,6 +95,18 @@ O fluxo cotidiano é **abrir projeto remoto → editar → salvar → revisar �
 4. Em **Publicar**, clique em **Atualizar site**, leia a confirmação e confirme somente se projeto e destino forem os esperados.
 5. Aguarde verificação, proteção da versão anterior, atualização do projeto remoto, nova geração e publicação. Não feche o Editor, desligue o computador ou inicie outra operação.
 6. Aguarde a mensagem de sucesso. Abra o endereço público fornecido pelo responsável e confira as mudanças, inclusive em tela pequena.
+
+### Tempo de atualização e proteção dos arquivos
+
+**Atualizar site** pode levar mais tempo que enviar arquivos por um cliente FTP, como o FileZilla. Além do envio, o Editor protege a versão anterior e confere o resultado. Esse tempo adicional, quando necessário, preserva a possibilidade de recuperação e a integridade do projeto e do site.
+
+Na conexão institucional por FTPS/TLS, o Editor valida o certificado e o nome do servidor. Os destinos são fixos: `/source/` para o projeto editável e `/` para o site publicado. Listas de arquivos permitidos limitam o que cada operação pode alterar. Antes de escrever, o Editor guarda e verifica cópias dos arquivos remotos afetados, incluindo o registro de arquivos que ainda não existem.
+
+A comparação e a conferência usam SHA-256, um identificador do conteúdo: tamanho ou data iguais não bastam para dispensar um envio. Arquivos comprovadamente iguais não são reenviados. Se o servidor não fornecer identificadores remotos confiáveis, o Editor baixa o conteúdo para calcular e conferir a integridade; isso pode exigir várias transferências mesmo quando pouca coisa mudou. Servidores com respostas demoradas também prolongam a operação.
+
+Projeto e site têm proteção e recuperação independentes. Se o projeto remoto foi atualizado com sucesso e a publicação posterior falhar, essa atualização do projeto permanece válida. Recibos e registros locais guardam as etapas verificadas para nova tentativa e reconciliação após interrupção. O envio usa no máximo duas conexões, aguarda os arquivos de apoio antes de enviar a página de entrada pública (`index.html`) e verifica o resultado remoto antes de informar sucesso.
+
+Com a correção candidata à v1.1.1, acompanhe **proteção**, **comparação**, **preparação de pastas**, **envio** e **verificação**. A mensagem mostra arquivos concluídos/total, quantidade realmente transferida, arquivos sem reenvio, tempo decorrido, velocidade quando há atividade e o arquivo atual. Os números pertencem à etapa indicada: completar a proteção ainda não significa concluir a publicação. **Sem progresso há pelo menos 15 s** indica espera por atividade ou resposta, sem presumir falha. Aguarde o resultado; se a espera persistir ou houver erro, registre etapa, horário e mensagem e siga a seção 6. Não há prazo único para todos os projetos e servidores.
 
 ![Geração concluída e prévia disponível](images/guide/revisao.png)
 

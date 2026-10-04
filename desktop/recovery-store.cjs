@@ -2,6 +2,8 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { createHash, randomUUID } = require("node:crypto");
 const { Writable } = require("node:stream");
+const { createRemoteChecksum } = require("./retrieval-cache.cjs");
+const { runTransferWorkers } = require("./remote-transfer.cjs");
 
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 const destinationKey = profile => sha(JSON.stringify([profile.host, profile.port, profile.username, profile.secure]));
@@ -100,7 +102,7 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
     }
     return sha(JSON.stringify(evidence));
   }
-  async function prepare(client, domain, profile, files, revision, { forceNew = false } = {}) {
+  async function prepare(client, domain, profile, files, revision, { forceNew = false, clients = [client], progress } = {}) {
     const history = await list(profile);
     const sourceTransaction = domain === "public" ? history.find(transaction =>
       transaction.revision === revision && transaction.snapshots.source?.status === "success") : null;
@@ -120,26 +122,42 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
     transaction.snapshots[domain] = snapshot;
     await save(transaction);
     try {
+      progress?.begin("protection", files.length);
       const inventory = await remoteInventory(client, domain);
       const seen = new Set();
-      for (const file of [...files].sort((a, b) => a.relativePath.localeCompare(b.relativePath))) {
+      const ordered = [...files].sort((a, b) => a.relativePath.localeCompare(b.relativePath));
+      // Validate the complete positive manifest before scheduling any capture.
+      for (const file of ordered) {
+        remotePath(domain, file.relativePath);
+        if (seen.has(file.relativePath)) throw new Error("Duplicate mutation path");
+        seen.add(file.relativePath);
+      }
+      const checksums = new Map(await Promise.all(clients.map(async worker => [worker, await createRemoteChecksum(worker)])));
+      const records = new Map();
+      await runTransferWorkers(ordered, clients, async (file, worker) => {
         const relative = safePath(file.relativePath);
-        remotePath(domain, relative);
-        if (seen.has(relative)) throw new Error("Duplicate mutation path");
-        seen.add(relative);
+        progress?.file(relative);
         const afterBytes = file.localPath ? await fs.readFile(file.localPath) : null;
         const record = { path: relative, before: null, after: afterBytes === null ? null : { bytes: afterBytes.length, sha256: sha(afterBytes) } };
         if (inventory.has(relative)) {
-          const bytes = await remoteBytes(client, remotePath(domain, relative));
           const size = inventory.get(relative).size;
+          const checksum = await checksums.get(worker)(remotePath(domain, relative), size);
+          // Only a fresh full-file remote checksum authorizes copying local bytes as backup.
+          const reused = afterBytes !== null && size === afterBytes.length && checksum === record.after.sha256;
+          const bytes = reused ? afterBytes : await remoteBytes(worker, remotePath(domain, relative));
+          if (!reused) progress?.transferred(worker, bytes.length);
           if (typeof size === "number" && size !== bytes.length) throw new Error("Remote size changed during backup");
+          if (checksum && checksum !== sha(bytes)) throw new Error("Remote checksum changed during backup");
           const local = path.join(transactionPath(transaction.id), domain, "files", relative);
           await fs.mkdir(path.dirname(local), { recursive: true });
           await fs.writeFile(local, bytes);
           record.before = { bytes: bytes.length, sha256: sha(bytes) };
         }
+        records.set(relative, record);
         snapshot.files.push(record);
-      }
+        progress?.done();
+      });
+      snapshot.files = ordered.map(file => records.get(file.relativePath));
       snapshot.verifiedAt = new Date().toISOString();
       snapshot.status = "verified";
       await save(transaction);
@@ -157,17 +175,29 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
     transaction.snapshots[domain].updatedAt = new Date().toISOString();
     await save(transaction);
   }
-  async function verifyRemote(client, transaction, domain) {
+  async function verifyRemote(client, transaction, domain, { clients = [client], progress } = {}) {
+    progress?.begin("verification", transaction.snapshots[domain].files.length);
     const inventory = await remoteInventory(client, domain);
-    for (const file of transaction.snapshots[domain].files) {
+    const checksums = new Map(await Promise.all(clients.map(async worker => [worker, await createRemoteChecksum(worker)])));
+    await runTransferWorkers(transaction.snapshots[domain].files, clients, async (file, worker) => {
+      progress?.file(file.path);
       if (file.after === null) {
         if (inventory.has(file.path)) throw new Error("Remote deletion verification failed");
       } else {
         if (!inventory.has(file.path)) throw new Error("Remote file verification failed");
-        const bytes = await remoteBytes(client, remotePath(domain, file.path));
-        if (bytes.length !== file.after.bytes || sha(bytes) !== file.after.sha256) throw new Error("Remote checksum verification failed");
+        const size = inventory.get(file.path).size;
+        if (typeof size === "number" && size !== file.after.bytes) throw new Error("Remote size verification failed");
+        const checksum = await checksums.get(worker)(remotePath(domain, file.path), size);
+        if (checksum) {
+          if (checksum !== file.after.sha256) throw new Error("Remote checksum verification failed");
+        } else {
+          const bytes = await remoteBytes(worker, remotePath(domain, file.path));
+          progress?.transferred(worker, bytes.length);
+          if (bytes.length !== file.after.bytes || sha(bytes) !== file.after.sha256) throw new Error("Remote checksum verification failed");
+        }
       }
-    }
+      progress?.done();
+    });
   }
   async function prune() {
     const transactions = await list();
@@ -186,9 +216,9 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
   function summary(transaction, domain) {
     return { transactionId: transaction.id, domain, status: transaction.snapshots[domain].status,
       backupPath: transactionPath(transaction.id), verifiedAt: transaction.snapshots[domain].verifiedAt,
-      retryRequiresValidation: true };
+      retryRequiresValidation: true, transfer: transaction.snapshots[domain].transfer };
   }
-  async function restore(client, id, domain, profile) {
+  async function restore(client, id, domain, profile, { clients = [client], progress } = {}) {
     let original = await verify(id, domain);
     if (original.destinationKey !== destinationKey(profile)) throw new Error("Backup belongs to another connection");
     const targetId = original.snapshots[domain].recoveryTargetId || id;
@@ -211,21 +241,30 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
     }
     const files = [...baseline.values()];
     // Preserve the current state before an explicitly requested restoration.
-    const undo = await prepare(client, domain, profile, files, `restore:${id}`, { forceNew: true });
+    const undo = await prepare(client, domain, profile, files, `restore:${id}`, { forceNew: true, clients, progress });
     undo.restoreOf = { transactionId: id, domain };
     await save(undo);
     try {
       await mark(undo, domain, "mutating");
       const inventory = await remoteInventory(client, domain);
       const ordered = [...files].sort((a, b) => (a.relativePath === "index.html") - (b.relativePath === "index.html") || a.relativePath.localeCompare(b.relativePath));
+      const directories = new Set();
+      progress?.begin("upload", ordered.length);
       for (const file of ordered) {
         const target = remotePath(domain, file.relativePath);
+        progress?.file(file.relativePath);
         if (file.localPath) {
-          await client.ensureDir(path.posix.dirname(target));
+          const directory = path.posix.dirname(target);
+          if (directory !== roots[domain] && !directories.has(directory)) {
+            await client.ensureDir(directory);
+            directories.add(directory);
+          }
           await client.uploadFrom(file.localPath, target);
+          progress?.transferred(client, (await fs.stat(file.localPath)).size, "upload");
         } else if (inventory.has(file.relativePath)) await client.remove(target);
+        progress?.done();
       }
-      await verifyRemote(client, undo, domain);
+      await verifyRemote(client, undo, domain, { clients, progress });
       await mark(undo, domain, "success");
       for (const transaction of chain) {
         transaction.snapshots[domain].resolvedAt = new Date().toISOString();

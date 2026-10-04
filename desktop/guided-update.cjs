@@ -1,6 +1,7 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const { createHash } = require("node:crypto");
+const { formatTransferProgress } = require("./remote-transfer.cjs");
 
 function createGuidedUpdate(directory, operations) {
   let busy = false;
@@ -28,6 +29,8 @@ function createGuidedUpdate(directory, operations) {
       onProgress({ stage: value, message: messages[value], receipts: journal.receipts });
     };
     const result = (ok, code, message) => ({ ok, code, message, stage: journal?.stage || "validation", receipts: journal?.receipts || {} });
+    const transferProgress = progress => onProgress({ ...progress, stage: journal?.stage,
+      receipts: journal?.receipts, message: formatTransferProgress(progress) });
     const unchanged = async () => {
       if (await operations.revision(root) !== journal.revision) {
         journal.receipts = { source: null, build: null, publication: null };
@@ -36,7 +39,7 @@ function createGuidedUpdate(directory, operations) {
       }
     };
     const verifyReceipt = async (id, domain) => {
-      try { await operations.verify(id, domain, profile, password); }
+      try { await operations.verify(id, domain, profile, password, transferProgress); }
       catch (error) {
         journal.receipts.publication = null;
         if (domain === "source") { journal.receipts.source = null; journal.receipts.build = null; }
@@ -55,7 +58,7 @@ function createGuidedUpdate(directory, operations) {
           journal.receipts.publication = { transactionId: transaction.id };
         } else if (["mutating", "possibly_partial"].includes(transaction.snapshots.public.status)) {
           await stage("recovery");
-          await operations.restorePublic(transaction.id, profile, password);
+          await operations.restorePublic(transaction.id, profile, password, transferProgress);
           journal.receipts.publication = null;
         }
       }
@@ -90,7 +93,7 @@ function createGuidedUpdate(directory, operations) {
       } else {
         await stage("source");
         await unchanged();
-        const updated = await operations.source(root, profile, password);
+        const updated = await operations.source(root, profile, password, transferProgress);
         if (!updated?.ok || !updated.recovery?.transactionId) return result(false, updated?.code || "UPDATE_SOURCE_FAILED", updated?.message || "Projeto remoto não atualizado. Site anterior preservado.");
         journal.receipts.source = { transactionId: updated.recovery.transactionId };
         await save();
@@ -122,7 +125,7 @@ function createGuidedUpdate(directory, operations) {
       }
       journal.publicPending = true;
       await stage("publication");
-      const published = await operations.publish(root, profile, password);
+      const published = await operations.publish(root, profile, password, transferProgress);
       if (!published?.ok || !published.recovery?.transactionId) {
         await reconcilePublication();
         return result(false, published?.code || "UPDATE_PUBLICATION_FAILED", "Projeto remoto atualizado. Publicação não concluída; site anterior preservado ou recuperado. Tente atualizar novamente.");

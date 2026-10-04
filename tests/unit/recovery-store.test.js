@@ -2,9 +2,11 @@ import { createRequire } from "node:module";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 const require = createRequire(import.meta.url);
 const { createRecoveryStore } = require("../../desktop/recovery-store.cjs");
+const { uploadProtectedFiles, createTransferProgress } = require("../../desktop/remote-transfer.cjs");
 const profile = { host: "example.edu", port: 21, username: "editor", secure: true, password: "never record this" };
 
 async function fixture(callback) {
@@ -49,6 +51,87 @@ async function fixture(callback) {
 }
 
 describe("transaction-scoped recovery", () => {
+  it("drains a second backup worker before persisting failed capture and never authorizes mutation", async () => {
+    await fixture(async ({ store, client, next, write, backups, calls }) => {
+      await write("/assets/a.bin", "before");
+      let drained = false;
+      const secondary = { ...client, downloadTo: async (...args) => {
+        await new Promise(resolve => setTimeout(resolve, 10));
+        await client.downloadTo(...args); drained = true;
+      } };
+      const primary = { ...client, downloadTo: async () => { throw Error("capture interrupted"); } };
+      await expect(store.prepare(primary, "public", profile, [
+        { relativePath: "assets/a.bin", localPath: next }, { relativePath: "index.html", localPath: next },
+      ], "workers", { clients: [primary, secondary] })).rejects.toThrow("interrupted");
+      expect(drained).toBe(true);
+      const [transaction] = await store.list(profile);
+      expect(transaction.snapshots.public).toMatchObject({ status: "backup_failed", verifiedAt: null });
+      expect(transaction.snapshots.public.files.map(file => file.path)).toEqual(["index.html"]);
+      expect(await fs.readFile(path.join(backups, transaction.id, "public/files/index.html"), "utf8")).toBe("previous site");
+      expect(calls).toEqual([]);
+    });
+  });
+  it.each([false, true])("backs up the full manifest and avoids unchanged uploads (server HASH=%s)", async hashSupported => {
+    await fixture(async ({ store, client, next, write, local }) => {
+      const old = Buffer.alloc(32768, 1), changed = Buffer.alloc(32768, 2);
+      await fs.writeFile(next, changed);
+      const unchangedLocal = path.join(path.dirname(next), "unchanged"); await fs.writeFile(unchangedLocal, old);
+      const files = Array.from({ length: 64 }, (_, index) => ({ relativePath: `assets/file-${index}.bin`, localPath: index ? unchangedLocal : next }));
+      for (const file of files) await write(`/${file.relativePath}`, old);
+      let downloads = 0, hashes = 0, uploads = 0, directories = 0;
+      const download = client.downloadTo, upload = client.uploadFrom, ensure = client.ensureDir;
+      client.downloadTo = async (...args) => { downloads++; await download(...args); };
+      client.uploadFrom = async (...args) => { uploads++; await upload(...args); };
+      client.ensureDir = async (...args) => { directories++; await ensure(...args); };
+      if (hashSupported) {
+        client.features = async () => new Map([["HASH", "SHA-256*"]]);
+        client.send = async command => {
+          if (command === "OPTS HASH SHA-256") return { code: 200 };
+          hashes++;
+          const remote = command.slice(5), bytes = await fs.readFile(local(remote));
+          return { code: 213, message: `213 SHA-256 0-${bytes.length - 1} ${createHash("sha256").update(bytes).digest("hex")} ${remote}` };
+        };
+      }
+      const progress = createTransferProgress([client]);
+      try {
+        const transaction = await store.prepare(client, "public", profile, files, "representative", { progress });
+        expect((await store.verify(transaction.id, "public")).snapshots.public.files).toHaveLength(64);
+        expect(uploads).toBe(0); // No mutation before all backup bytes are verified.
+        await store.mark(transaction, "public", "mutating");
+        const transfer = await uploadProtectedFiles(files, transaction.snapshots.public, [client], "/", progress);
+        await store.verifyRemote(client, transaction, "public", { progress });
+        await store.mark(transaction, "public", "success");
+        expect(transfer).toEqual({ uploadedFiles: 1, unchangedFiles: 63, preparedDirectories: 1 });
+        expect(uploads).toBe(1); expect(directories).toBe(1);
+        expect(downloads).toBe(hashSupported ? 1 : 128);
+        expect(progress.metrics().transferredBytes).toBe((hashSupported ? 2 : 129) * old.length);
+        console.log("Representative 64-file update", JSON.stringify({ hashSupported,
+          before: { downloads: 128, uploads: 64, ensureDir: 64, bytes: 192 * old.length },
+          after: { downloads, uploads, ensureDir: directories, hashes, bytes: progress.metrics().transferredBytes } }));
+        await store.restore(client, transaction.id, "public", profile);
+        expect(await fs.readFile(local("/assets/file-0.bin"))).toEqual(old);
+      } finally { progress.stop(); }
+    });
+  });
+
+  it("rejects equal-size remote conflicts with fresh HASH evidence, falling back on malformed responses", async () => {
+    await fixture(async ({ store, client, next, write, local }) => {
+      let malformed = true;
+      client.features = async () => new Map([["HASH", "SHA-256"]]);
+      client.send = async command => {
+        if (command.startsWith("OPTS")) return { code: 200 };
+        const remote = command.slice(5), bytes = await fs.readFile(local(remote));
+        return { code: 213, message: `213 SHA-256 ${createHash("sha256").update(bytes).digest("hex")} ${malformed ? "/wrong-path" : remote}` };
+      };
+      const transaction = await store.prepare(client, "public", profile, [{ relativePath: "index.html", localPath: next }], "hash");
+      await write("/index.html", "new content");
+      await store.verifyRemote(client, transaction, "public");
+      malformed = false;
+      await write("/index.html", "bad content");
+      await expect(store.verifyRemote(client, transaction, "public")).rejects.toThrow("checksum");
+    });
+  });
+
   it("links separate source/public snapshots and restores public failure without rolling back successful source", async () => {
     await fixture(async ({ store, client, next, write, local, backups }) => {
       const source = await store.prepare(client, "source", profile, [{ relativePath: "content/site.json", localPath: next }], "revision");

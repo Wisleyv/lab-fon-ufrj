@@ -88,6 +88,8 @@ async function executeRemoteCleanup(_event, rootPath, profile, password, manifes
 const { createAssetReuse } = require("./retrieval-cache.cjs");
 const { createRetrievalProgress } = require("./retrieval-progress.cjs");
 const { createGuidedUpdate } = require("./guided-update.cjs");
+const { openTransferClients, createTransferProgress, uploadProtectedFiles } = require("./remote-transfer.cjs");
+const transferClient = () => appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000);
 let guidedUpdate;
 let guidedUpdateDirectory;
 
@@ -115,37 +117,40 @@ async function updateSite(event, rootPath, profile, password) {
       revision: async project => getRecoveryStore().fingerprint(await listEditableProjectBundleFiles(project)),
       buildRevision: async project => getRecoveryStore().fingerprint(await listDistFiles(project)),
       history: target => getRecoveryStore().list(target),
-      verify: async (id, domain, target, pass) => verifyGuidedReceipt(id, domain, target, pass),
-      restorePublic: async (id, target, pass) => restoreGuidedPublic(id, target, pass),
-      source: (project, target, pass) => updateRemoteProjectSource(null, project, target, pass),
+      verify: async (id, domain, target, pass, progress) => verifyGuidedReceipt(id, domain, target, pass, progress),
+      restorePublic: async (id, target, pass, progress) => restoreGuidedPublic(id, target, pass, progress),
+      source: (project, target, pass, progress) => updateRemoteProjectSource(null, project, target, pass, progress),
       build: project => runProjectBuild(null, project),
-      publish: (project, target, pass) => publishGeneratedSite(null, project, target, pass),
+      publish: (project, target, pass, progress) => publishGeneratedSite(null, project, target, pass, progress),
     });
   }
   return guidedUpdate(root, sanitized, secret, progress => event?.sender?.send("labfon:siteUpdateProgress", progress));
 }
 
-async function withGuidedClient(profile, password, operation) {
+async function withGuidedClient(profile, password, operation, onProgress) {
   const client = appServices.createFtpClient ? appServices.createFtpClient() : new ftp.Client(15000);
   if (client.ftp) client.ftp.verbose = false;
+  let clients = [client], progress;
   try {
     await client.access({ host: profile.host, port: profile.port, user: profile.username, password, secure: profile.secure });
-    return await operation(client);
-  } finally { client.close(); }
+    clients = await openTransferClients(client, profile, password, transferClient);
+    progress = createTransferProgress(clients, onProgress);
+    return await operation(client, { clients, progress });
+  } finally { progress?.stop(); clients.forEach(worker => worker.close()); }
 }
 
-async function verifyGuidedReceipt(id, domain, profile, password) {
+async function verifyGuidedReceipt(id, domain, profile, password, onProgress) {
   const store = getRecoveryStore();
   const transaction = await store.verify(id, domain);
   const matches = (await store.list(profile)).some(item => item.id === id);
   if (!matches || transaction.snapshots[domain].status !== "success" || transaction.snapshots[domain].resolvedAt) throw new Error("Stale update receipt");
-  return withGuidedClient(profile, password, client => store.verifyRemote(client, transaction, domain));
+  return withGuidedClient(profile, password, (client, options) => store.verifyRemote(client, transaction, domain, options), onProgress);
 }
 
-async function restoreGuidedPublic(id, profile, password) {
+async function restoreGuidedPublic(id, profile, password, onProgress) {
   const store = getRecoveryStore();
   await store.verify(id, "public");
-  return withGuidedClient(profile, password, client => store.restore(client, id, "public", profile));
+  return withGuidedClient(profile, password, (client, options) => store.restore(client, id, "public", profile, options), onProgress);
 }
 
 const isDev = process.env.LABFON_EDITOR_DEV === "true";
@@ -781,7 +786,7 @@ async function listRemoteDirectory(_event, profile, password, _remotePath) {
   }
 }
 
-async function publishGeneratedSite(_event, rootPath, profile, password) {
+async function publishGeneratedSite(_event, rootPath, profile, password, onProgress) {
   const projectRoot = path.resolve(rootPath);
   const sanitized = sanitizeProfile(profile);
   const profileError = validateNativeProfile(sanitized);
@@ -835,6 +840,7 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
     client.ftp.verbose = false;
   }
 
+  let clients = [client], progress;
   try {
     await client.access({
       host: sanitized.host,
@@ -845,22 +851,16 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
     });
     await client.cd(sanitized.remotePublishPath);
 
+    clients = await openTransferClients(client, sanitized, secret, transferClient);
+    progress = createTransferProgress(clients, onProgress);
     let revision = null;
     try { revision = await recoveryStore.fingerprint(await listEditableProjectBundleFiles(projectRoot)); }
     catch { /* Publication fixtures may contain only a generated site. */ }
-    recovery = await recoveryStore.prepare(client, "public", sanitized, manifest.files, revision);
+    recovery = await recoveryStore.prepare(client, "public", sanitized, manifest.files, revision, { clients, progress });
     await recoveryStore.mark(recovery, "public", "mutating");
     mutationStarted = true;
 
-    for (const file of orderFilesForPublication(manifest.files)) {
-      const remotePath = joinRemotePath(sanitized.remotePublishPath, file.remotePath);
-      const remoteDir = path.posix.dirname(remotePath);
-      if (remoteDir && remoteDir !== "." && remoteDir !== sanitized.remotePublishPath) {
-        await client.ensureDir(remoteDir);
-      }
-      await client.uploadFrom(file.localPath, remotePath);
-      file.status = "uploaded";
-    }
+    const transfer = await uploadProtectedFiles(orderFilesForPublication(manifest.files), recovery.snapshots.public, clients, sanitized.remotePublishPath, progress);
 
     for (const criticalFile of CRITICAL_REMOTE_FILES) {
       const expected = manifest.files.find(
@@ -878,7 +878,8 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
       }
     }
 
-    await recoveryStore.verifyRemote(client, recovery, "public");
+    await recoveryStore.verifyRemote(client, recovery, "public", { clients, progress });
+    recovery.snapshots.public.transfer = { ...transfer, ...progress.metrics() };
     await recoveryStore.mark(recovery, "public", "success");
     manifest.recovery = recoveryStore.summary(recovery, "public");
     manifest.status = "success";
@@ -922,7 +923,8 @@ async function publishGeneratedSite(_event, rootPath, profile, password) {
       recovery: recovery ? recoveryStore.summary(recovery, "public") : null,
     };
   } finally {
-    client.close();
+    progress?.stop();
+    clients.forEach(worker => worker.close());
   }
 }
 
@@ -1284,7 +1286,7 @@ async function initializeRemoteProjectSource(_event, rootPath, profile, password
   }
 }
 
-async function updateRemoteProjectSource(_event, rootPath, profile, password) {
+async function updateRemoteProjectSource(_event, rootPath, profile, password, onProgress) {
   const projectRoot = path.resolve(rootPath);
   const sanitized = sanitizeProfile(profile);
   const profileError = validateNativeProfile(sanitized);
@@ -1315,6 +1317,7 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
     client.ftp.verbose = false;
   }
 
+  let clients = [client], progress;
   try {
     await client.access({
       host: sanitized.host,
@@ -1332,16 +1335,18 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
       return remoteValidation;
     }
 
+    clients = await openTransferClients(client, sanitized, secret, transferClient);
+    progress = createTransferProgress(clients, onProgress);
     const deletions = await verifyContentDeletions(client, projectRoot, sanitized.remoteSourcePath);
     const sourceFiles = await listEditableProjectBundleFiles(projectRoot);
     const revision = await recoveryStore.fingerprint(sourceFiles);
     recovery = await recoveryStore.prepare(client, "source", sanitized, [
       ...sourceFiles,
       ...deletions.map(deletion => ({ relativePath: deletion.relativePath, localPath: null })),
-    ], revision);
+    ], revision, { clients, progress });
     await recoveryStore.mark(recovery, "source", "mutating");
     mutationStarted = true;
-    await uploadEditableProjectBundle(client, projectRoot, sanitized.remoteSourcePath, sourceFiles);
+    const transfer = await uploadProtectedFiles(sourceFiles, recovery.snapshots.source, clients, sanitized.remoteSourcePath, progress);
     const verification = await verifyRemoteEditableProject(
       client,
       sanitized.remoteSourcePath,
@@ -1360,7 +1365,8 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
       }
     }
 
-    await recoveryStore.verifyRemote(client, recovery, "source");
+    await recoveryStore.verifyRemote(client, recovery, "source", { clients, progress });
+    recovery.snapshots.source.transfer = { ...transfer, ...progress.metrics() };
     await recoveryStore.mark(recovery, "source", "success");
     for (const deletion of deletions) await fs.unlink(deletion.ledgerPath);
 
@@ -1377,7 +1383,8 @@ async function updateRemoteProjectSource(_event, rootPath, profile, password) {
     if (recovery) await recoveryStore.mark(recovery, "source", mutationStarted ? "possibly_partial" : "failed_before_mutation");
     return { ...classifyFtpError(error), recovery: recovery ? recoveryStore.summary(recovery, "source") : null };
   } finally {
-    client.close();
+    progress?.stop();
+    clients.forEach(worker => worker.close());
   }
 }
 

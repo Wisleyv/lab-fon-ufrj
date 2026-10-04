@@ -43,6 +43,19 @@ async function fixture(callback) {
 }
 
 describe("guided site update", () => {
+  it("forwards real transfer activity through the existing guided progress channel", async () => fixture(async ({ run, ops, events }) => {
+    const source = ops.source.getMockImplementation();
+    ops.source.mockImplementation(async (...args) => {
+      args[3]({ activity: "protection", totalFiles: 3, completedFiles: 1, currentFile: "content/site.json",
+        transferredBytes: 1024, skippedFiles: 0, elapsedMs: 4000, bytesPerSecond: 256, stalled: false });
+      return source(...args);
+    });
+    expect((await run()).ok).toBe(true);
+    const progress = events.find(event => event.activity === "protection");
+    expect(progress).toMatchObject({ stage: "source", completedFiles: 1, transferredBytes: 1024 });
+    expect(progress.message).toContain("Protegendo arquivos: 1/3");
+    expect(progress.message).toContain("content/site.json");
+  }));
   it("sequences guarded stages and persists receipts without credentials", async () => fixture(async ({ run, ops, events, directory }) => {
     const result = await run();
     expect(result).toMatchObject({ ok: true, stage: "complete", receipts: { source: { transactionId: "source-1" }, publication: { transactionId: "public-1" } } });
@@ -72,11 +85,11 @@ describe("guided site update", () => {
     });
     const failed = await run();
     expect(failed).toMatchObject({ ok: false, receipts: { source: { transactionId: "source-1" }, publication: null } });
-    expect(ops.restorePublic).toHaveBeenCalledExactlyOnceWith("failed-public", profile, "private-password");
+    expect(ops.restorePublic).toHaveBeenCalledExactlyOnceWith("failed-public", profile, "private-password", expect.any(Function));
     expect(await run()).toMatchObject({ ok: true });
     expect(ops.source).toHaveBeenCalledOnce();
     expect(ops.build).toHaveBeenCalledTimes(2);
-    expect(ops.verify).toHaveBeenCalledWith("source-1", "source", profile, "private-password");
+    expect(ops.verify).toHaveBeenCalledWith("source-1", "source", profile, "private-password", expect.any(Function));
   }));
 
   it("keeps interrupted compensation pending across restart and blocks further publication", async () => fixture(async ({ run, ops, history, transaction }) => {
