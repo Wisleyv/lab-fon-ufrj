@@ -22,7 +22,8 @@ Este índice separa a documentação vigente do material histórico produzido du
 - [Release 1.1.0 e aceitação do candidato](docs/RELEASE_CANDIDATE_1.1.0.md): entradas, proveniência do tag, artefatos/checksums e aceitação instalada/portátil. [Download oficial](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0).
 - [Notas de release 1.1.0](docs/RELEASE_NOTES_1.1.0.md): novidades, instalação, integridade e limites aceitos.
 
-- [Fechamento e higiene após a release](docs/FINAL_CLOSURE_ASSESSMENT.md): avaliação das cinco fases, destino de branches/PRs, limpeza local verificada e pendências institucionais.
+- [Fechamento operacional final](docs/FINAL_OPERATIONAL_CLOSURE.md): main como única branch ativa, PRs encerradas com preservação privada, worktree antigo aposentado, pacote de custódia preparado e somente recebimento/aceite institucional pendentes.
+- [Primeira avaliação de higiene](docs/FINAL_CLOSURE_ASSESSMENT.md): registro histórico das cinco fases e das decisões iniciais, superado pelo fechamento operacional final.
 - [Inventário de entrega e preservação](docs/DELIVERY_INVENTORY.md): inventário datado da Fase 1, capturas e requisitos de custódia; suas lacunas documentais foram superadas pelas fases posteriores.
 - [Convergência de produção aceita em 2026-10-03](docs/PRODUCTION_CONVERGENCE_2026-10-03.md): registro sanitizado do estado operacional; substitui as pendências de produção dos checkpoints anteriores, sem autorizar limpeza ou nova publicação.
 - [Auditoria de continuidade e reproducibilidade](docs/CONTINUITY_REPRODUCIBILITY_AUDIT.md): evidência datada da Fase 3 aprovada por setup/retrieval institucional novos e aceitação cumulativa; condição DNS/TLS descartável não bloqueante. Preparação e publicação posteriores estão no registro de release.
