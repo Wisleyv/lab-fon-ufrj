@@ -4,7 +4,7 @@ Entrega técnica de 2026-10-03: **Editor Labfonac v1.1.0**, `main` e tag `v1.1.0
 
 Destinos oficiais: [site institucional](https://posvernaculas.letras.ufrj.br/labfonac/), [repositório público](https://github.com/Wisleyv/lab-fon-ufrj), [release v1.1.0](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.0) e [guia vigente em main](https://github.com/Wisleyv/lab-fon-ufrj/blob/main/docs/GUIA-DO-USUARIO.md). A release contém instalador, ZIP portátil, SHA256SUMS e notas; dados institucionais e backups não são assets públicos.
 
-Checkpoint de 2026-10-04: o repositório recebe a correção de desempenho FTPS candidata à **v1.1.1**. Metadados e distribuição permanecem em **1.1.0** até a preparação autorizada de versão; a integração não atualiza o aplicativo instalado. O próximo passo é a atualização do site e o teste final pelo mantenedor. Evidências e limites estão no [relatório da correção](FTPS_PERFORMANCE_REPAIR_2026-10-04.md).
+Checkpoint de 2026-10-04: o repositório recebe a correção de desempenho FTPS candidata à **v1.1.1**. A preparação autorizada atualiza os metadados para **1.1.1** e verifica um [candidato local](RELEASE_CANDIDATE_1.1.1.md); a distribuição oficial permanece em **1.1.0**. O próximo passo é o teste final de atualização do site pelo mantenedor usando o candidato. Evidências e limites estão no [relatório da correção](FTPS_PERFORMANCE_REPAIR_2026-10-04.md).
 
 ## 1. Finalidade e restrições institucionais
 

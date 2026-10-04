@@ -8,7 +8,7 @@ O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e at
 
 Este guia descreve o **Editor Labfonac 1.1.0**, publicado após aceitação em 2026-10-03. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
-O repositório também contém a correção de desempenho candidata à **v1.1.1**, ainda sem nova distribuição. As melhorias de transferência e os indicadores detalhados da seção 5 exigem uma execução com essa correção; integrar código no repositório não atualiza o Editor instalado.
+O repositório também contém a correção de desempenho candidata à **v1.1.1**, disponível no [candidato local para teste final](RELEASE_CANDIDATE_1.1.1.md). A distribuição oficial permanece em v1.1.0. As melhorias de transferência e os indicadores detalhados da seção 5 exigem uma execução com o candidato; integrar código no repositório não atualiza o Editor instalado.
 
 ## 2. Instalação e preparação
 

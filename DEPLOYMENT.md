@@ -80,7 +80,7 @@ Salvar não publica. Revisão prévia é recomendada; build anterior e teste man
 
 ## Preparação de uma versão
 
-O checkpoint de 2026-10-04 integra a [correção de desempenho FTPS candidata à v1.1.1](docs/FTPS_PERFORMANCE_REPAIR_2026-10-04.md). `package.json` e lockfile permanecem em **1.1.0**; a tag e os artefatos v1.1.0 conservam sua proveniência. Aguarde a atualização do site e o teste final pelo mantenedor antes de uma preparação de versão separadamente autorizada. Este checkpoint de repositório não cria instalador, tag ou GitHub Release.
+O checkpoint de 2026-10-04 integra a [correção de desempenho FTPS candidata à v1.1.1](docs/FTPS_PERFORMANCE_REPAIR_2026-10-04.md). A preparação autorizada atualiza `package.json` e lockfile para **1.1.1** e produz um [candidato local verificado](docs/RELEASE_CANDIDATE_1.1.1.md). A distribuição oficial, a tag e os artefatos v1.1.0 conservam sua proveniência. Aguarde o teste final de atualização do site pelo mantenedor e autorização própria antes de criar tag ou GitHub Release.
 
 Depois da aceitação funcional e documental:
 
