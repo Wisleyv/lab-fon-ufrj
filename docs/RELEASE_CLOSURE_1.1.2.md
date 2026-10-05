@@ -30,3 +30,11 @@ Os registros antigos de falha no GitHub Actions pertencem ao workflow histórico
 Publicação técnica e aceite do mantenedor não substituem o aceite institucional da Coordenação. Continuam externas ao sprint: formalizar recebimento e responsáveis pela custódia, garantir armazenamento restrito e backup do acervo privado, conferir o recibo e provisionar acessos próprios do responsável sucessor. O histórico dessas providências está em [FINAL_OPERATIONAL_CLOSURE.md](FINAL_OPERATIONAL_CLOSURE.md). Não são defeitos do release nem novas tarefas de programação.
 
 Orientação atualizada: [guia do usuário](GUIA-DO-USUARIO.md), [roteiro de teste aceito](TESTE_LIMPEZA_EDITOR_1.1.2.md) e [notas da versão](RELEASE_NOTES_1.1.2.md).
+
+## Publicação verificada
+
+A versão foi publicada em **4 de outubro de 2026, às 23h43, horário de Brasília**, como release estável mais recente. A tag anotada `v1.1.2` identifica `52df5b25d3957389201c0f7898c344cb6f357f48`; sua diferença para o código empacotado consiste somente nos quatro documentos de encerramento.
+
+Os quatro anexos foram baixados e conferidos por SHA-256 enquanto a release era rascunho e novamente, sem autenticação, após a publicação. O texto da release corresponde às notas anexadas. O endereço `releases/latest` resolve para 1.1.2; os links para a documentação também foram conferidos. Hash das notas: `ba27dee7f83ee086946e0c54573351ed53db1af59f23079bd6ab75bd0ac64f29`; hash de `SHA256SUMS.txt`: `c7af258d74b1ce3d7222c989993ce3bf8b528d1c8d24b8a5531bf654ba409d0c`.
+
+Este complemento de evidência avança `main` somente por documentação; a tag e os anexos publicados permanecem imutáveis. A referência órfã do worktree temporário foi removida. A organização final conserva somente `main`, sem branches temporárias, PRs ou issues abertos. Não há bloqueador técnico de encerramento identificado.
