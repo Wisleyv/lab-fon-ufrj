@@ -6,15 +6,15 @@ Ferramenta de manutenção do site do Laboratório de Fonética Acústica - UFRJ
 
 O Editor permite abrir o projeto remoto, editar e salvar conteúdo, revisar e atualizar o site. Faça a manutenção pelos controles do aplicativo; não é necessário editar JSON ou usar um cliente FTP. Concepção e desenvolvimento: Wisley Vilela. Financiamento: PPGLEV/UFRJ. Software sob a MIT License.
 
-Este guia descreve o **Editor Labfonac 1.1.1**, com correção de desempenho FTPS aceita em produção em 2026-10-04. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
+Este guia descreve o **Editor Labfonac 1.1.2**, com revisão, limpeza e recuperação de arquivos obsoletos aceitas pelo mantenedor. Em **Ajuda → Sobre o Editor Labfonac**, consulte a versão e os links para guia, código-fonte, licença e última versão. Os links requerem internet.
 
 A [release v1.1.1](RELEASE_CANDIDATE_1.1.1.md) inclui as melhorias de transferência e os indicadores detalhados da seção 5. Instale a versão para utilizá-los; integrar código no repositório não atualiza o Editor instalado. Na aceitação observada, abrir 221 arquivos levou 1 min 45 s, gerar a prévia levou 13 s e atualizar o site levou cerca de 7 min. Esses tempos dependem do projeto e do servidor e não constituem prazo garantido.
 
 ## 2. Instalação e preparação
 
-Use a [release oficial v1.1.1](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.1) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.1.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
+Use a [release oficial v1.1.2](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.2) ou a distribuição indicada pelo responsável técnico. Abra `Lab-FON-Editor-Setup-1.1.2.exe`; depois, abra o **Editor Labfonac** pelo atalho instalado no menu Iniciar. A instalação é por usuário e normalmente dispensa permissão de administrador.
 
-A alternativa portátil é `Lab-FON-Editor-Portable-1.1.1.zip`. Confira `SHA256SUMS.txt` na release e [aceitação/checksums](RELEASE_CANDIDATE_1.1.1.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
+A alternativa portátil é `Lab-FON-Editor-Portable-1.1.2.zip`. Confira `SHA256SUMS.txt` na release e o [registro de encerramento](RELEASE_CLOSURE_1.1.2.md). Antes de atualizar, feche o Editor e preserve trabalhos/recuperações. O upgrade não publica conteúdo; o executável portátil continua `Lab-FON Editor.exe`.
 
 Esse instalador não tem assinatura digital. O Windows pode indicar fornecedor desconhecido ou aviso de reputação. Confirme a origem oficial com o responsável técnico; não desative as proteções do Windows.
 
@@ -166,7 +166,7 @@ A revisão mostra separadamente as **imagens sem referência no projeto**. A lim
 
 Para excluir, marque as duas confirmações — prévia conferida e autorização da lista — e clique em **Excluir arquivos revisados**. A janela final permite cancelar. Ao confirmar, o Editor protege e confere as cópias locais e remotas antes da primeira exclusão, remove somente os arquivos listados e verifica o resultado. Textos, fotos em uso e arquivos de hospedagem são preservados. **Recuperar arquivos da última limpeza**, dentro de Manutenção, repõe conjuntamente os arquivos locais e remotos; **Recuperar versão anterior** continua destinado à atualização do site. Não apague as pastas de dados do Editor: elas contêm as cópias necessárias à recuperação.
 
-O recurso está disponível na versão **1.1.2 preparada para teste**, sem atualização automática da instalação anterior. Siga o [roteiro de teste](TESTE_LIMPEZA_EDITOR_1.1.2.md).
+O recurso está disponível na [versão oficial 1.1.2](https://github.com/Wisleyv/lab-fon-ufrj/releases/tag/v1.1.2), sem atualização automática da instalação anterior. O [roteiro de teste](TESTE_LIMPEZA_EDITOR_1.1.2.md) registra a sequência usada para aceitação.
 
 Arquivos antigos podem permanecer após atualizar. Sucesso confirma os arquivos mantidos pelo Editor, não a exclusão de todo material histórico. Não exclua imagens desconhecidas por FTP. Se uma limpeza for interrompida depois de começar, use a recuperação da limpeza antes de tentar novamente; mantenha as cópias e procure suporte caso a recuperação não conclua.
 

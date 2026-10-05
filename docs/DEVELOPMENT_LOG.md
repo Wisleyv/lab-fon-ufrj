@@ -5,6 +5,13 @@ This document tracks all development sessions with detailed work summaries, tech
 
 ---
 
+## Encerramento: 4 de outubro de 2026 — Editor Labfonac 1.1.2
+
+- O mantenedor confirmou o êxito dos testes e que o servidor remoto contém apenas arquivos pertinentes ao site. As três etapas de manutenção estão aceitas; não há implementação pendente neste sprint.
+- Release 1.1.2 autorizado. O instalador testado é reutilizado sem recompilação; o ZIP portátil completo e os hashes são conferidos antes da publicação. Guia atualizado para a versão oficial; registros históricos preservados.
+- Inspeção do GitHub: somente `main`, nenhum PR ou issue aberto. Encerramento documental sem nova branch. Não há alteração de FTP, conteúdo institucional ou instalação em uso.
+- Evidências, pacotes e pendências estritamente institucionais: [registro de encerramento 1.1.2](RELEASE_CLOSURE_1.1.2.md).
+
 ## Session Handoff: October 4, 2026 — Confirmed cleanup, stage 3
 
 - Replaced the application's fixed cleanup prohibition with current-preview evidence, two explicit UI confirmations, a final native cancellation dialog, exact reviewed-manifest matching and verified guided-update receipts. Editing, rebuilding or changing context clears UI consent; native checks repeat before mutation.
