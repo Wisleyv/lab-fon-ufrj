@@ -5,6 +5,14 @@ This document tracks all development sessions with detailed work summaries, tech
 
 ---
 
+## Session Handoff: October 4, 2026 — Confirmed cleanup, stage 3
+
+- Replaced the application's fixed cleanup prohibition with current-preview evidence, two explicit UI confirmations, a final native cancellation dialog, exact reviewed-manifest matching and verified guided-update receipts. Editing, rebuilding or changing context clears UI consent; native checks repeat before mutation.
+- Confirmed cleanup covers proven unused raster images and obsolete program files in `/source/` and the public root, plus unused local project/preview images. Other pages' program and image dependencies, inactive content, default/shared images, hosting metadata, linked paths and uncertain ownership remain protected. References outside this FTP root cannot be audited.
+- Verified local copies and transaction-scoped source/public backups precede every deletion. A durable cleanup record permits coordinated recovery after interruption. Recovery rejects newer files at the same paths; cleanup backups remain retained until restored. Generic publication recovery excludes cleanup transactions. Review, capture, deletion and restoration expose progress rather than an unexplained permission gate.
+- Validation: 247 distinct relevant tests passed, including the native generation/update/review/cancel/delete/restore cycle on a disposable filesystem FTP fixture, altered evidence, damaged backups, interruptions and failure-journal errors. Production and Editor renderer builds passed; layout checked at 1024/375 px without horizontal overflow. The packaged executable started as version 1.1.2 with isolated user data and working bridge controls. Packaged files exclude project content, credentials and documents.
+- Windows test artifacts: `C:\labfon-editor-release\v1.1.2-testing\win-unpacked\Lab-FON Editor.exe` and `Lab-FON-Editor-Setup-1.1.2.exe` in the same release directory. User procedure: [version 1.1.2 cleanup tests](TESTE_LIMPEZA_EDITOR_1.1.2.md). The installed application, real FTP server and existing GitHub releases/tags were not changed. Version 1.1.2 is a locally prepared test distribution; maintainer acceptance precedes any separately requested formal release.
+
 ## Session Handoff: October 4, 2026 — Media references, stage 2
 
 - Added a shared inspection of saved content and portable site code. Source updates and publication lists omit unreferenced raster images under `public/assets/images`; retrieval reads content/code first and excludes those images before requesting their checksums or bytes.

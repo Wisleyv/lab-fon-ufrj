@@ -187,8 +187,20 @@ export function createBrowserDesktopHost(windowRef = window) {
 
 export function createNativeDesktopHost(nativeBridge) {
   return {
-    reviewRemoteCleanup(directory, profile, password) {
-      return nativeBridge.reviewRemoteCleanup(directory.path, profile, password);
+    async reviewRemoteCleanup(directory, profile, password, onProgress) {
+      const unsubscribe = nativeBridge.onCleanupProgress?.(onProgress || (() => {}));
+      try { return await nativeBridge.reviewRemoteCleanup(directory.path, profile, password); }
+      finally { unsubscribe?.(); }
+    },
+    async executeRemoteCleanup(directory, profile, password, manifestId, approval, onProgress) {
+      const unsubscribe = nativeBridge.onCleanupProgress?.(onProgress || (() => {}));
+      try { return await nativeBridge.executeRemoteCleanup(directory.path, profile, password, manifestId, approval); }
+      finally { unsubscribe?.(); }
+    },
+    async restoreCleanup(directory, profile, password, onProgress) {
+      const unsubscribe = nativeBridge.onCleanupProgress?.(onProgress || (() => {}));
+      try { return await nativeBridge.restoreCleanup(directory.path, profile, password); }
+      finally { unsubscribe?.(); }
     },
     async updateSite(directory, profile, password, onProgress) {
       const unsubscribe = typeof onProgress === "function" && typeof nativeBridge.onSiteUpdateProgress === "function"

@@ -47,21 +47,43 @@ async function fixture(callback) {
   const evidence = async () => ({ sourceFiles, publicFiles, connectionKey: destinationKey(profile) });
   const verifyCurrent = vi.fn(async () => {});
   const service = (extra = {}) => createRemoteCleanup({ recoveryStore: store, evidence, verifyCurrent, mutationGate: () => true, ...extra });
-  const approve = manifest => ({ confirmed: true, manifestId: manifest.id, paths: manifest.proposed.map(file => file.path) });
+  const approve = manifest => ({ confirmed: true, previewAccepted: true, manifestId: manifest.id, paths: manifest.proposed.map(file => file.path) });
   try { await callback({ root, local, initial, client, store, evidence, verifyCurrent, service, approve }); }
   finally { await fs.rm(base, { recursive: true, force: true }); }
 }
 
 describe("controlled remote cleanup", () => {
-  it("reports unreferenced images separately and never includes them in executable deletion paths", async () => fixture(async ({ service, client, evidence, approve, local }) => {
-    const engine = service({ evidence: async () => ({ ...await evidence(), mediaAudit: {
+  it("preserves unused images referenced by another page on the server", async () => fixture(async ({ service, client, evidence, local }) => {
+    await fs.writeFile(local("assets/images/uncertain.png"), "uncertain source history");
+    await fs.writeFile(local("another-page.html"), '<link href="assets/index.older.css">');
+    await fs.writeFile(local("assets/index.older.css"), 'body { background: url("images/uncertain.png"); }');
+    const engine = service({ evidence: async () => ({ ...await evidence(),
+      sourceFiles: (await evidence()).sourceFiles.filter(file => !file.path.endsWith("uncertain.png")),
+      publicFiles: (await evidence()).publicFiles.filter(file => !file.path.endsWith("uncertain.png")),
+      mediaAudit: { certain: true, reasons: [], revision: "fixture", unused: [{ path: "assets/images/uncertain.png" }] },
+    }) });
+    const manifest = await engine.plan(client, profile);
+    expect(manifest.mediaCandidates).toEqual([]);
+    expect(manifest.proposed.some(file => file.path.endsWith("uncertain.png"))).toBe(false);
+    expect(manifest.proposed.some(file => file.path === "assets/index.older.css")).toBe(false);
+    expect(manifest.retained.filter(file => file.path.endsWith("uncertain.png"))).toHaveLength(2);
+  }));
+  it("includes proven unused images in the confirmed list and protects them for recovery", async () => fixture(async ({ service, client, evidence, approve, local, store }) => {
+    const engine = service({ evidence: async () => ({ ...await evidence(),
+      sourceFiles: (await evidence()).sourceFiles.filter(file => !file.path.endsWith("uncertain.png")),
+      publicFiles: (await evidence()).publicFiles.filter(file => !file.path.endsWith("uncertain.png")), mediaAudit: {
       certain: true, reasons: [], revision: "fixture", unused: [{ path: "assets/images/uncertain.png" }],
     } }) });
     const manifest = await engine.plan(client, profile);
-    expect(manifest.mediaCandidates).toHaveLength(2);
-    expect(manifest.proposed.some(file => file.path.endsWith("uncertain.png"))).toBe(false);
-    expect((await engine.execute(client, profile, manifest, approve(manifest))).ok).toBe(true);
+    // The public image has different bytes from its source copy: preserve it.
+    expect(manifest.mediaCandidates).toHaveLength(1);
+    expect(manifest.proposed.some(file => file.path === "source/public/assets/images/uncertain.png")).toBe(true);
+    const result = await engine.execute(client, profile, manifest, approve(manifest));
+    expect(result.ok).toBe(true);
+    await expect(fs.readFile(local("source/public/assets/images/uncertain.png"))).rejects.toMatchObject({ code: "ENOENT" });
     expect(await fs.readFile(local("assets/images/uncertain.png"), "utf8")).toBe("uncertain history");
+    for (const backup of result.recovery) await store.restore(client, backup.transactionId, backup.domain, profile);
+    expect(await fs.readFile(local("source/public/assets/images/uncertain.png"), "utf8")).toBe("uncertain source history");
   }));
   it("reviews without writes, backs up both domains, converges, and restores exact original bytes", async () => fixture(async ({ client, service, approve, store, initial, local }) => {
     const engine = service();
@@ -79,10 +101,11 @@ describe("controlled remote cleanup", () => {
     for (const [name, bytes] of Object.entries(initial)) expect(await fs.readFile(local(name), "utf8")).toBe(bytes);
   }));
 
-  it.each(["none", "wrong id", "wrong paths", "forged asset", "wrong connection", "changed file"])("rejects %s authorization/evidence before deletion", async mode => fixture(async ({ service, client, approve, local }) => {
+  it.each(["none", "missing preview", "wrong id", "wrong paths", "forged asset", "wrong connection", "changed file"])("rejects %s authorization/evidence before deletion", async mode => fixture(async ({ service, client, approve, local }) => {
     const engine = service(); const manifest = await engine.plan(client, profile);
     const approval = approve(manifest);
     if (mode === "none") approval.confirmed = false;
+    if (mode === "missing preview") approval.previewAccepted = false;
     if (mode === "wrong id") approval.manifestId = "other";
     if (mode === "wrong paths") approval.paths.push("assets/images/uncertain.png");
     if (mode === "forged asset") manifest.proposed.push(manifest.retained.find(file => file.path === "assets/images/uncertain.png"));
@@ -99,7 +122,7 @@ describe("controlled remote cleanup", () => {
     expect(await engine.execute(client, profile, manifest, approve(manifest))).toMatchObject({ code: "CLEANUP_PRODUCTION_GATE_PENDING" });
     expect(client.list).not.toHaveBeenCalled();
     expect(client.remove).not.toHaveBeenCalled();
-    expect(await native.executeRemoteCleanup(null, "invalid", profile, "secret", manifest.id, approve(manifest))).toMatchObject({ code: "CLEANUP_PRODUCTION_GATE_PENDING" });
+    expect(await native.executeRemoteCleanup(null, "invalid", profile, "secret", manifest.id, approve(manifest))).toMatchObject({ code: "CLEANUP_BLOCKED" });
   }));
 
   it.each(["source", "public"])("defers obsolete files when the %s revision is not current", async domain => fixture(async ({ evidence, root }) => {
@@ -170,6 +193,19 @@ describe("controlled remote cleanup", () => {
     client.uploadFrom.mockImplementation(upload);
     for (const recovery of result.recovery) await store.restore(client, recovery.transactionId, recovery.domain, profile);
     for (const [name, bytes] of Object.entries(initial)) expect(await fs.readFile(local(name), "utf8")).toBe(bytes);
+  }));
+  it("reports partial failure with recovery copies even if updating the failure journal also fails", async () => fixture(async ({ service, client, approve, store }) => {
+    const engine = service(), manifest = await engine.plan(client, profile);
+    const mark = store.mark;
+    store.mark = async (transaction, domain, status) => {
+      if (status === "possibly_partial") throw new Error("Disk full while recording failure");
+      return mark(transaction, domain, status);
+    };
+    client.remove.mockRejectedValue(new Error("FTP interrupted"));
+    const result = await engine.execute(client, profile, manifest, approve(manifest));
+    expect(result).toMatchObject({ ok: false, code: "CLEANUP_POSSIBLY_PARTIAL", message: "FTP interrupted" });
+    expect(result.recovery).toHaveLength(2);
+    for (const backup of result.recovery) expect((await store.verify(backup.transactionId, backup.domain)).id).toBe(backup.transactionId);
   }));
 
   it("rejects unsafe/duplicate paths and retains uncertain entry types", async () => fixture(async ({ root, evidence }) => {

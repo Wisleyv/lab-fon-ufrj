@@ -4,6 +4,17 @@ contextBridge.exposeInMainWorld("labfonDesktopHost", {
   reviewRemoteCleanup(rootPath, profile, password) {
     return ipcRenderer.invoke("labfon:reviewRemoteCleanup", rootPath, profile, password);
   },
+  executeRemoteCleanup(rootPath, profile, password, manifestId, approval) {
+    return ipcRenderer.invoke("labfon:executeRemoteCleanup", rootPath, profile, password, manifestId, approval);
+  },
+  restoreCleanup(rootPath, profile, password) {
+    return ipcRenderer.invoke("labfon:restoreCleanup", rootPath, profile, password);
+  },
+  onCleanupProgress(callback) {
+    const listener = (_event, progress) => callback(progress);
+    ipcRenderer.on("labfon:cleanupProgress", listener);
+    return () => ipcRenderer.removeListener("labfon:cleanupProgress", listener);
+  },
   updateSite(rootPath, profile, password) {
     return ipcRenderer.invoke("labfon:updateSite", rootPath, profile, password);
   },

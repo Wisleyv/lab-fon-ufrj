@@ -341,6 +341,44 @@ describe("remote editable project retrieval", () => {
     } finally { await layout.cleanup(); }
   });
 
+  it("runs confirmed cleanup and coordinated recovery through native handlers without changing the page", async () => {
+    const layout = await createRemoteLayout();
+    const orphan = "assets/images/old-unused.png", bytes = "old unused photo";
+    await fs.mkdir(path.join(layout.remoteRoot, "assets/images"), { recursive: true });
+    await fs.writeFile(path.join(layout.remoteRoot, orphan), bytes);
+    await fs.writeFile(path.join(layout.remoteRoot, "source/public", orphan), bytes);
+    const client = createFilesystemFtpClient(layout.remoteRoot);
+    let confirm = 0;
+    nativeHandlers.configureAppServices({ dialog: { showMessageBox: async () => ({ response: confirm }) } });
+    try {
+      await withNativeServices(client, async () => {
+        const retrieved = await nativeHandlers.retrieveRemoteProject(null, createProfile(), "secret");
+        const root = retrieved.directory.path;
+        await fs.writeFile(path.join(root, "public", orphan), bytes);
+        expect((await nativeHandlers.updateSite(null, root, createProfile(), "secret")).ok).toBe(true);
+        const before = await fs.readFile(path.join(layout.remoteRoot, "data.json"));
+        expect((await nativeHandlers.previewGeneratedSite(null, root)).ok).toBe(true);
+        const review = await nativeHandlers.reviewRemoteCleanup(null, root, createProfile(), "secret");
+        expect(review.ok).toBe(true); expect(review.previewReady).toBe(true);
+        expect(review.manifest.mediaCandidates).toHaveLength(2); expect(review.manifest.localCandidates).toHaveLength(2);
+        const approval = { confirmed: true, previewAccepted: true, manifestId: review.manifest.id, paths: review.manifest.proposed.map(file => file.path) };
+        expect((await nativeHandlers.executeRemoteCleanup(null, root, createProfile(), "secret", review.manifest.id, { ...approval, previewAccepted: false })).ok).toBe(false);
+        expect((await nativeHandlers.executeRemoteCleanup(null, root, createProfile(), "secret", review.manifest.id, approval)).cancelled).toBe(true);
+        expect(await fs.readFile(path.join(layout.remoteRoot, orphan), "utf8")).toBe(bytes);
+        confirm = 1;
+        const result = await nativeHandlers.executeRemoteCleanup(null, root, createProfile(), "secret", review.manifest.id, approval);
+        expect(result).toMatchObject({ ok: true, removedLocal: 2 });
+        await expect(fs.readFile(path.join(root, "public", orphan))).rejects.toMatchObject({ code: "ENOENT" });
+        await expect(fs.readFile(path.join(layout.remoteRoot, orphan))).rejects.toMatchObject({ code: "ENOENT" });
+        expect(await fs.readFile(path.join(layout.remoteRoot, "data.json"))).toEqual(before);
+        expect((await nativeHandlers.restoreCleanup(null, root, createProfile(), "secret")).ok).toBe(true);
+        for (const target of [path.join(root, "public", orphan), path.join(root, "dist", orphan), path.join(layout.remoteRoot, orphan), path.join(layout.remoteRoot, "source/public", orphan)])
+          expect(await fs.readFile(target, "utf8")).toBe(bytes);
+        expect(await fs.readFile(path.join(layout.remoteRoot, "data.json"))).toEqual(before);
+      });
+    } finally { await nativeHandlers.stopGeneratedPreviewServer(); nativeHandlers.configureAppServices({ dialog: null }); await layout.cleanup(); }
+  }, 60000);
+
   it.each(["unchanged", "remote changed", "local changed", "unsupported", "malformed", "unknown sizes", "partial hash", "wrong path"])(
     "retrieves safely with a cached asset: %s", async mode => {
       const layout = await createRemoteLayout();

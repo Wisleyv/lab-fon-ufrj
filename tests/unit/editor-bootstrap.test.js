@@ -10,8 +10,31 @@ const STORAGE_KEY = "labfon.editor.lastSource";
 
 describe("manual acceptance operation regressions", () => {
   const profile = { host: "ftp.example.edu", port: 21, username: "editor", remoteSourcePath: "/source", remotePublishPath: "/", secure: true, hasPassword: true };
+  it("requires both current confirmations, sends the exact list, and invalidates consent after edits", async () => {
+    document.body.innerHTML = '<div id="editor-root"></div>';
+    const host = createMemoryDesktopHost();
+    host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, previewReady: true, message: "Revisão concluída", manifest: {
+      id: "a".repeat(64), sourceCurrent: true, publicCurrent: true, proposed: [{ path: "editor.html", bytes: 10 }], localCandidates: [],
+    } }));
+    host.executeRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Limpeza concluída" }));
+    const app = initEditorApp({ desktopHost: host, compositionService: createMemoryCompositionService() });
+    try {
+      await app.ready;
+      app.store.setState({ openedProject: { status: "valid", source: "remote-ftp", path: "C:/fixture" }, publish: { status: "configured", profile }, build: { status: "success" } });
+      const review = document.getElementById("editor-review-cleanup"), execute = document.getElementById("editor-execute-cleanup");
+      const preview = document.getElementById("editor-cleanup-preview-accepted"), authorize = document.getElementById("editor-cleanup-authorized");
+      review.click(); await vi.waitFor(() => expect(preview.disabled).toBe(false));
+      expect(execute.disabled).toBe(true); preview.click(); expect(execute.disabled).toBe(true); authorize.click(); expect(execute.disabled).toBe(false);
+      execute.click(); await vi.waitFor(() => expect(host.executeRemoteCleanup).toHaveBeenCalledOnce());
+      expect(host.executeRemoteCleanup.mock.calls[0][4]).toEqual({ confirmed: true, previewAccepted: true, manifestId: "a".repeat(64), paths: ["editor.html"] });
+      await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("configured"));
+      expect(preview.checked).toBe(false); expect(authorize.checked).toBe(false); expect(execute.disabled).toBe(true);
+      review.click(); await vi.waitFor(() => expect(preview.disabled).toBe(false)); preview.click(); authorize.click();
+      app.store.setState({ contentDirty: true }); expect(execute.disabled).toBe(true); expect(preview.checked).toBe(false);
+    } finally { app.destroy(); }
+  });
 
-  it("offers a guarded read-only cleanup review with no deletion control", async () => {
+  it("offers a guarded read-only review and disables deletion before authorization", async () => {
     document.body.innerHTML = '<div id="editor-root"></div>';
     const host = createMemoryDesktopHost();
     host.reviewRemoteCleanup = vi.fn(async () => ({ ok: true, message: "Revisão concluída. Nenhum arquivo foi excluído. A remoção ainda não está disponível.", manifest: { proposed: [
@@ -36,7 +59,7 @@ describe("manual acceptance operation regressions", () => {
       app.store.setState({ contentDirty: false }); button.click();
       expect(app.store.getState().publish.status).toBe("publishing");
       await vi.waitFor(() => expect(app.store.getState().publish.status).toBe("configured"));
-      expect(host.reviewRemoteCleanup).toHaveBeenCalledExactlyOnceWith(project, profile, "");
+      expect(host.reviewRemoteCleanup).toHaveBeenCalledExactlyOnceWith(project, profile, "", expect.any(Function));
       const report = document.getElementById("editor-publish-diagnostics");
       expect(maintenance.contains(report)).toBe(true);
       expect(report.textContent).toContain("2 arquivos antigos de programação");
@@ -48,10 +71,10 @@ describe("manual acceptance operation regressions", () => {
       expect(report.textContent).toContain("source/scripts/fix-encoding.js");
       expect(report.textContent).toContain("Arquivo antigo do Editor no site publicado");
       expect(report.textContent).toContain("Imagens sem referência no projeto: 2 arquivos");
-      expect(report.textContent).toContain("Permanecem no servidor");
+      expect(report.textContent).toContain("Permanecem no servidor até você confirmar");
       expect(report.textContent).toContain("source/public/assets/images/old-photo.png");
       expect(document.getElementById("editor-publish-status").textContent).toContain("Nenhum arquivo foi excluído");
-      expect(document.getElementById("editor-execute-cleanup")).toBeNull();
+      expect(document.getElementById("editor-execute-cleanup").disabled).toBe(true);
       app.store.setState({ contentDirty: true });
       expect(report.textContent).toBe("");
       expect(document.getElementById("editor-publish-status").textContent).toContain("desatualizada");
@@ -84,7 +107,7 @@ describe("manual acceptance operation regressions", () => {
         expect(report.textContent).toBe("");
         expect(document.getElementById("editor-publish-status").textContent).toContain(outcome === "malformed" ? "Revisão inválida" : "Revisão não concluída");
       }
-      expect(document.getElementById("editor-execute-cleanup")).toBeNull();
+      expect(document.getElementById("editor-execute-cleanup").disabled).toBe(true);
     } finally { app.destroy(); }
   });
 

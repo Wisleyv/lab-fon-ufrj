@@ -464,3 +464,5 @@ body {
 .editor-image-preview img[hidden] { display: none; }
 .editor-image-path { display: block; overflow-wrap: anywhere; margin-block: 0.5rem; }
 .editor-cleanup-group li { overflow-wrap: anywhere; }
+.editor-cleanup-confirmation { display: flex; align-items: flex-start; gap: 0.5rem; margin-block: 0.75rem; }
+.editor-cleanup-confirmation input { flex: 0 0 auto; width: auto; margin-top: 0.25rem; }

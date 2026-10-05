@@ -14,27 +14,61 @@ const { runPortableBuild } = require("./portable-build.cjs");
 const { createRecoveryStore, destinationKey } = require("./recovery-store.cjs");
 const { createRemoteCleanup, fileEvidence } = require("./remote-cleanup.cjs");
 const { mediaPath, inspectMediaReferences, selectReferencedMedia } = require("./media-references.cjs");
-// A later explicit authorization must follow Phase 7 manual acceptance and manifest review.
-const REMOTE_CLEANUP_AUTHORIZED = false;
+const { createLocalCleanup } = require("./local-cleanup.cjs");
+const cleanupPreviews = new Map();
+
+async function cleanupPreviewFingerprint(root) {
+  const store = getRecoveryStore();
+  return JSON.stringify([await store.fingerprint(await listEditableProjectBundleFiles(root)), await store.fingerprint(await listDistFiles(root))]);
+}
+function localCleanup(root) { return createLocalCleanup(root, path.join(getPublishStorageDirectory(), "cleanup-local")); }
+function cleanupRunPath(id) {
+  if (!/^[a-f0-9]{64}$/.test(id || "")) throw new Error("Invalid cleanup identifier");
+  return path.join(getPublishStorageDirectory(), "cleanup-runs", `${id}.json`);
+}
+async function saveCleanupRun(record) {
+  const filename = cleanupRunPath(record.manifest.id);
+  await fs.mkdir(path.dirname(filename), { recursive: true });
+  await fs.writeFile(`${filename}.tmp`, JSON.stringify(record));
+  await fs.rename(`${filename}.tmp`, filename);
+}
+async function withCleanupProgress(event, operation) {
+  let latest = { phase: "review" }, movement = Date.now();
+  const emit = () => { try { event?.sender?.send("labfon:cleanupProgress", { ...latest, stalled: latest.stalled ?? Date.now() - movement >= 15000 }); } catch {} };
+  const progress = value => { latest = value; movement = Date.now(); emit(); };
+  const timer = setInterval(emit, 1000);
+  try { return await operation(progress); } finally { clearInterval(timer); }
+}
 
 async function cleanupEvidence(root, profile, inventory = []) {
   const source = await validateLocalEditableProject(root);
   if (!source.ok) throw new Error(source.message);
   const build = await validateGeneratedSite(root);
   if (!build.ok) throw new Error(build.message);
+  const mediaAudit = await inspectMediaReferences(root, inventory.map(file => ({ ...file, path: file.path.replace(/^source\//, "") })));
+  const localFiles = [];
+  for (const file of mediaAudit.unused) {
+    for (const prefix of ["public", "dist"]) {
+      const relativePath = `${prefix}/${file.path}`;
+      const localPath = path.join(root, ...relativePath.split("/"));
+      if (await pathExists(null, root, relativePath)) localFiles.push({ relativePath, localPath });
+    }
+  }
   return {
     sourceFiles: await fileEvidence(await listEditableProjectBundleFiles(root)),
     publicFiles: await fileEvidence(await listDistFiles(root)),
     connectionKey: destinationKey(profile),
-    mediaAudit: await inspectMediaReferences(root, inventory.map(file => ({ ...file, path: file.path.replace(/^source\//, "") }))),
+    mediaAudit, localFiles: await fileEvidence(localFiles),
   };
 }
 
-function cleanupService(root, password) {
+function cleanupService(root, password, onProgress) {
   return createRemoteCleanup({
     recoveryStore: getRecoveryStore(),
     evidence: (profile, inventory) => cleanupEvidence(root, profile, inventory),
-    mutationGate: () => REMOTE_CLEANUP_AUTHORIZED,
+    mutationGate: () => true,
+    localRecovery: localCleanup(root), onProgress,
+    onPrepared: record => saveCleanupRun({ ...record, root, createdAt: new Date().toISOString(), status: "possibly_partial" }),
     verifyCurrent: async profile => {
       const key = require("node:crypto").createHash("sha256").update(JSON.stringify([root, profile.host, profile.port, profile.username, profile.secure])).digest("hex");
       const journal = JSON.parse(await fs.readFile(path.join(getPublishStorageDirectory(), "guided-updates", `${key}.json`), "utf8"));
@@ -49,7 +83,7 @@ function cleanupService(root, password) {
   });
 }
 
-async function reviewRemoteCleanup(_event, rootPath, profile, password) {
+async function reviewRemoteCleanup(event, rootPath, profile, password) {
   const root = path.resolve(rootPath);
   if (root !== path.join(getWorkspacesDirectory(), "current")) return { ok: false, code: "REMOTE_PROJECT_REQUIRED", message: "Abra o projeto remoto para revisar a limpeza." };
   const sanitized = sanitizeProfile(profile);
@@ -58,20 +92,21 @@ async function reviewRemoteCleanup(_event, rootPath, profile, password) {
   const secret = password || await loadPublishPassword();
   if (!secret) return { ok: false, code: "FTP_AUTHENTICATION_FAILED", message: "Senha FTP não configurada." };
   try {
-    const manifest = await withGuidedClient(sanitized, secret, client => cleanupService(root, secret).plan(client, sanitized));
+    const manifest = await withCleanupProgress(event, progress => withGuidedClient(sanitized, secret, client => cleanupService(root, secret, progress).plan(client, sanitized)));
     const directory = path.join(getPublishStorageDirectory(), "cleanup-reviews");
     await fs.mkdir(directory, { recursive: true });
     const filename = path.join(directory, `${manifest.id}.json`);
     await fs.writeFile(`${filename}.tmp`, `${JSON.stringify(manifest, null, 2)}\n`);
     await fs.rename(`${filename}.tmp`, filename);
-    return { ok: true, manifest, message: "Revisão concluída. Nenhum arquivo foi excluído. Esta versão permite somente consultar os resultados; a remoção ainda não está disponível." };
+    const previewReady = cleanupPreviews.get(root) === await cleanupPreviewFingerprint(root);
+    return { ok: true, manifest, previewReady, message: "Revisão concluída. Nenhum arquivo foi excluído. Confira a lista e as confirmações abaixo para realizar a limpeza." };
   } catch {
     return { ok: false, code: "CLEANUP_REVIEW_FAILED", message: "Revisão não concluída. Nenhum arquivo remoto foi alterado." };
   }
 }
 
-async function executeRemoteCleanup(_event, rootPath, profile, password, manifestId, approval) {
-  if (!REMOTE_CLEANUP_AUTHORIZED) return { ok: false, code: "CLEANUP_PRODUCTION_GATE_PENDING", message: "Limpeza bloqueada: aceite manual e autorização pendentes." };
+async function executeRemoteCleanup(event, rootPath, profile, password, manifestId, approval) {
+  try {
   const root = path.resolve(rootPath);
   if (root !== path.join(getWorkspacesDirectory(), "current") || !/^[a-f0-9]{64}$/.test(manifestId || "")) return { ok: false, code: "CLEANUP_BLOCKED" };
   const sanitized = sanitizeProfile(profile);
@@ -80,12 +115,65 @@ async function executeRemoteCleanup(_event, rootPath, profile, password, manifes
   const secret = password || await loadPublishPassword();
   if (!secret) return { ok: false, code: "FTP_AUTHENTICATION_FAILED" };
   const manifest = JSON.parse(await fs.readFile(path.join(getPublishStorageDirectory(), "cleanup-reviews", `${manifestId}.json`), "utf8"));
-  const { dialog } = require("electron");
+  if (manifest.version !== 2 || !approval?.confirmed || !approval.previewAccepted || approval.manifestId !== manifestId ||
+      cleanupPreviews.get(root) !== await cleanupPreviewFingerprint(root))
+    return { ok: false, code: "CLEANUP_BLOCKED", message: "Abra e confira a prévia atual, faça uma nova revisão e marque as duas confirmações antes de limpar." };
+  const dialog = appServices.dialog || require("electron").dialog;
   const confirmation = await dialog.showMessageBox({ type: "warning", title: "Confirmar limpeza remota",
-    message: `${manifest.proposed.length} arquivos serão removidos.`,
-    detail: manifest.proposed.map(file => `/${file.path}`).join("\n"), buttons: ["Cancelar", "Confirmar limpeza"], defaultId: 0, cancelId: 0, noLink: true });
+    message: `Excluir ${manifest.proposed.length} arquivos do servidor e ${manifest.localCandidates.length} arquivos locais?`,
+    detail: "Somente os arquivos da lista revisada serão excluídos. As cópias de recuperação serão criadas e conferidas antes da exclusão. Textos, fotos em uso e arquivos de hospedagem serão preservados.", buttons: ["Cancelar", "Excluir arquivos revisados"], defaultId: 0, cancelId: 0, noLink: true });
   if (confirmation.response !== 1) return { ok: false, cancelled: true };
-  return withGuidedClient(sanitized, secret, client => cleanupService(root, secret).execute(client, sanitized, manifest, approval));
+  const result = await withCleanupProgress(event, progress => withGuidedClient(sanitized, secret, client => cleanupService(root, secret, progress).execute(client, sanitized, manifest, approval)));
+  if (result.ok || result.code === "CLEANUP_POSSIBLY_PARTIAL") {
+    try {
+      const record = JSON.parse(await fs.readFile(cleanupRunPath(manifestId), "utf8"));
+      await saveCleanupRun({ ...record, status: result.ok ? "success" : "possibly_partial" });
+    } catch { /* The record saved before mutation still permits recovery. */ }
+  }
+  return { ...result, message: result.ok
+    ? `Limpeza concluída. ${result.removed} arquivos remotos e ${result.removedLocal || 0} arquivos locais removidos. As cópias de recuperação foram preservadas.`
+    : result.code === "CLEANUP_POSSIBLY_PARTIAL" ? "Limpeza interrompida após iniciar a exclusão. Use Recuperar arquivos da última limpeza antes de tentar novamente."
+    : "Nenhum arquivo foi excluído. A lista ou a atualização mudou, ou não foi possível conferir as cópias. Atualize o site e faça uma nova revisão." };
+  } catch { return { ok: false, code: "CLEANUP_BLOCKED", message: "Não foi possível validar a limpeza. Faça uma nova revisão antes de tentar novamente." }; }
+}
+
+async function restoreCleanup(event, rootPath, profile, password) {
+  const root = path.resolve(rootPath);
+  if (root !== path.join(getWorkspacesDirectory(), "current")) return { ok: false, message: "Abra o projeto remoto antes de recuperar a limpeza." };
+  const sanitized = sanitizeProfile(profile);
+  const invalid = validateNativeProfile(sanitized); if (invalid) return invalid;
+  const secret = password || await loadPublishPassword();
+  if (!secret) return { ok: false, message: "Senha FTP não configurada." };
+  try {
+    const directory = path.dirname(cleanupRunPath("0".repeat(64)));
+    const names = await fs.readdir(directory).catch(error => { if (error.code === "ENOENT") return []; throw error; });
+    const records = await Promise.all(names.filter(name => /^[a-f0-9]{64}\.json$/.test(name)).map(async name => JSON.parse(await fs.readFile(path.join(directory, name), "utf8"))));
+    const record = records.filter(item => item.root === root && item.status !== "restored" && item.manifest.connectionKey === destinationKey(sanitized)).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+    if (!record) return { ok: false, message: "Nenhuma limpeza com cópia de recuperação disponível para esta conexão." };
+    const store = getRecoveryStore(), local = localCleanup(root);
+    for (const backup of record.recovery) await store.verify(backup.transactionId, backup.domain);
+    await local.validateCurrent(record.manifest.id, true);
+    const dialog = appServices.dialog || require("electron").dialog;
+    const answer = await dialog.showMessageBox({ type: "warning", title: "Recuperar arquivos da limpeza", message: "Repor os arquivos removidos pela última limpeza?",
+      detail: "Os arquivos serão repostos no projeto local e nas duas áreas do servidor. O conteúdo atual da página será preservado.", buttons: ["Cancelar", "Recuperar arquivos"], defaultId: 0, cancelId: 0, noLink: true });
+    if (answer.response !== 1) return { ok: false, cancelled: true };
+    await withCleanupProgress(event, progress => withGuidedClient(sanitized, secret, async client => {
+      progress({ phase: "restoration" });
+      const inventory = new Map((await require("./remote-cleanup.cjs").scanRemote(client, progress)).map(file => [file.path, file]));
+      for (const file of record.manifest.proposed) {
+        const current = inventory.get(file.path);
+        if (current && (current.sha256 !== file.sha256 || current.bytes !== file.bytes)) throw new Error("A newer remote file occupies a cleanup path");
+      }
+      for (const backup of record.recovery) {
+        const transfer = createTransferProgress([client], details => progress({ ...details, phase: "restoration" }));
+        try { await store.restore(client, backup.transactionId, backup.domain, sanitized, { progress: transfer }); }
+        finally { transfer.stop(); }
+      }
+      await local.restore(record.manifest.id);
+    }));
+    await saveCleanupRun({ ...record, status: "restored" });
+    return { ok: true, message: "Arquivos da limpeza recuperados no projeto local e no servidor. O conteúdo atual da página foi preservado. Faça uma nova revisão antes de limpar novamente." };
+  } catch { return { ok: false, message: "A recuperação não foi concluída. As cópias foram preservadas. Arquivos novos ou alterados não serão sobrescritos; solicite apoio técnico se a mensagem persistir." }; }
 }
 const { createAssetReuse } = require("./retrieval-cache.cjs");
 const { createRetrievalProgress } = require("./retrieval-progress.cjs");
@@ -425,6 +513,9 @@ async function previewGeneratedSite(_event, rootPath) {
   }
 
   await stopGeneratedPreviewServer();
+  // Local previews can be valid without a portable source bundle. Such a preview
+  // must not provide cleanup authorization evidence.
+  const previewFingerprint = await cleanupPreviewFingerprint(rootPath).catch(() => null);
 
   const distPath = resolveProjectPath(rootPath, "dist");
   generatedPreviewServer = http.createServer((request, response) => {
@@ -442,6 +533,8 @@ async function previewGeneratedSite(_event, rootPath) {
     });
 
     generatedPreviewServer.listen(0, "127.0.0.1", () => {
+      if (previewFingerprint) cleanupPreviews.set(path.resolve(rootPath), previewFingerprint);
+      else cleanupPreviews.delete(path.resolve(rootPath));
       const { port } = generatedPreviewServer.address();
       resolve({
         ok: true,
@@ -1854,7 +1947,7 @@ async function restoreRemoteBackup(_event, profile, password) {
   const store = getRecoveryStore();
   const transactions = await store.list(sanitized);
   const choices = ["public", "source"].map(domain => ({ domain, transaction: transactions.find(transaction =>
-    !transaction.restoreOf && !transaction.snapshots[domain]?.resolvedAt && transaction.snapshots[domain]?.verifiedAt &&
+    !transaction.restoreOf && !transaction.revision.startsWith("cleanup:") && !transaction.snapshots[domain]?.resolvedAt && transaction.snapshots[domain]?.verifiedAt &&
     transaction.snapshots[domain]?.status !== "backup_failed") })).filter(choice => choice.transaction);
   if (!choices.length) return { ok: false, message: "Nenhuma cópia de segurança disponível para esta conexão." };
   const { dialog, BrowserWindow } = require("electron");
@@ -2020,6 +2113,7 @@ if (require.main === module || (process.versions.electron && process.type === "b
   ipcMain.handle("labfon:updateSite", updateSite);
   ipcMain.handle("labfon:reviewRemoteCleanup", reviewRemoteCleanup);
   ipcMain.handle("labfon:executeRemoteCleanup", executeRemoteCleanup);
+  ipcMain.handle("labfon:restoreCleanup", restoreCleanup);
   ipcMain.handle("labfon:restoreRemoteBackup", restoreRemoteBackup);
 
   app.whenReady().then(() => {
@@ -2042,6 +2136,7 @@ if (require.main === module || (process.versions.electron && process.type === "b
 }
 
 module.exports = {
+  restoreCleanup,
   createWindow,
   isPublicArtifact,
   pathExists,

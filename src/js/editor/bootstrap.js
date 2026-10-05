@@ -169,9 +169,10 @@ function renderDiagnostics(documentRef, container, diagnostics = []) {
 function renderCleanupReview(container, review) {
   container.replaceChildren();
   const countLabel = count => `${count} ${count === 1 ? "arquivo" : "arquivos"}`;
-  const total = review.files.reduce((sum, file) => sum + file.bytes, 0);
-  container.appendChild(createElement("p", {}, review.files.length
-    ? `${countLabel(review.files.length)} ${review.files.length === 1 ? "antigo de programação identificado" : "antigos de programação identificados"} (${formatByteCount(total)}). Nenhum arquivo foi excluído.`
+  const programming = review.files.filter(file => file.classification !== "image-without-project-reference");
+  const total = programming.reduce((sum, file) => sum + file.bytes, 0);
+  container.appendChild(createElement("p", {}, programming.length
+    ? `${countLabel(programming.length)} ${programming.length === 1 ? "antigo de programação identificado" : "antigos de programação identificados"} (${formatByteCount(total)}). Nenhum arquivo foi excluído.`
     : "Nenhum arquivo antigo de programação foi identificado nesta revisão. Nenhum arquivo foi excluído."));
   const reasons = {
     "obsolete-source-editor-or-utility": "Arquivo antigo do Editor ou ferramenta de desenvolvimento.",
@@ -179,7 +180,7 @@ function renderCleanupReview(container, review) {
     "superseded-public-bundle": "Arquivo de uma versão anterior do site.",
   };
   for (const [source, label] of [[false, "Site publicado"], [true, "Projeto editável"]]) {
-    const files = review.files.filter(file => file.path.startsWith("source/") === source);
+    const files = programming.filter(file => file.path.startsWith("source/") === source);
     if (!files.length) continue;
     const group = createElement("details", { className: "editor-cleanup-group" });
     group.appendChild(createElement("summary", {}, `${label}: ${countLabel(files.length)} (${formatByteCount(files.reduce((sum, file) => sum + file.bytes, 0))}) — consultar detalhes`));
@@ -206,15 +207,22 @@ function renderCleanupReview(container, review) {
   if (images.length) {
     const group = createElement("details", { className: "editor-cleanup-group" });
     group.appendChild(createElement("summary", {}, `Imagens sem referência no projeto: ${countLabel(images.length)} (${formatByteCount(images.reduce((sum, file) => sum + file.bytes, 0))}) — consultar detalhes`));
-    group.appendChild(createElement("p", {}, "Estas imagens ficam fora das transferências do projeto atual. Permanecem no servidor; sua remoção ainda não está disponível."));
+    group.appendChild(createElement("p", {}, "Estas imagens ficam fora das transferências do projeto atual e poderão ser excluídas após as confirmações abaixo. Permanecem no servidor até você confirmar a limpeza."));
     const list = createElement("ul");
     for (const file of images) list.appendChild(createElement("li", {}, `${file.path} (${formatByteCount(file.bytes)})`));
     group.appendChild(list);
     container.appendChild(group);
   }
+  if (review.localCandidates?.length) {
+    const group = createElement("details", { className: "editor-cleanup-group" });
+    group.appendChild(createElement("summary", {}, `Projeto local e prévia: ${countLabel(review.localCandidates.length)} — consultar detalhes`));
+    const list = createElement("ul");
+    for (const file of review.localCandidates) list.appendChild(createElement("li", {}, `${file.path} (${formatByteCount(file.bytes)})`));
+    group.appendChild(list); container.appendChild(group);
+  }
   container.appendChild(createElement("p", {}, review.mediaAudit?.certain === false
     ? "Imagens preservadas nas transferências: há referências que exigem avaliação. Nenhuma imagem será removida."
-    : "Imagens preservadas: referências compartilhadas, conteúdo desativado e imagens padrão continuam protegidos. Nenhuma imagem será removida."));
+    : "Imagens preservadas: referências compartilhadas, conteúdo desativado, imagens padrão e arquivos de uso incerto continuam protegidos. Somente os arquivos listados poderão ser excluídos."));
 }
 
 function renderSectionList(documentRef, store, listContainer, addSelect) {
@@ -953,12 +961,25 @@ function createLayout(
   const maintenance = createElement("details", { id: "editor-maintenance", className: "editor-advanced" });
   maintenance.appendChild(createElement("summary", {}, "Manutenção"));
   maintenance.appendChild(createElement("p", { id: "editor-cleanup-help", className: "editor-warning" },
-    "A limpeza serve para retirar arquivos antigos que já não são necessários. Esta versão permite revisar arquivos antigos de programação e imagens sem referência no projeto: nenhum arquivo será excluído. Uma futura remoção deverá exigir revisão da prévia, confirmação e cópia de recuperação."));
+    "A limpeza retira arquivos antigos de programação e imagens sem uso no projeto. Primeiro confira a prévia e revise a lista: nenhum arquivo será excluído durante a revisão. Só prossiga se entender que a confirmação exclui os arquivos listados do projeto local e do servidor. As cópias de recuperação serão conferidas antes da exclusão."));
   const reviewCleanupButton = createElement("button", {
     id: "editor-review-cleanup", type: "button", className: "editor-btn editor-btn-secondary",
     "aria-describedby": "editor-cleanup-help",
   }, "Revisar limpeza remota");
   maintenance.appendChild(reviewCleanupButton);
+  const cleanupConfirmations = createElement("fieldset");
+  cleanupConfirmations.appendChild(createElement("legend", {}, "Confirmar limpeza dos arquivos listados"));
+  const previewAccepted = createElement("input", { type: "checkbox", id: "editor-cleanup-preview-accepted" });
+  const cleanupAuthorized = createElement("input", { type: "checkbox", id: "editor-cleanup-authorized" });
+  for (const [input, text] of [[previewAccepted, "Conferi a prévia atual: textos, fotos e logotipos estão corretos."],
+    [cleanupAuthorized, "Autorizo excluir todos os arquivos da lista revisada. Entendo que as cópias permitirão recuperá-los."]]) {
+    const label = createElement("label", { className: "editor-cleanup-confirmation" });
+    label.append(input, documentRef.createTextNode(text)); cleanupConfirmations.appendChild(label);
+  }
+  const executeCleanupButton = createElement("button", { id: "editor-execute-cleanup", type: "button", className: "editor-btn editor-btn-secondary" }, "Excluir arquivos revisados");
+  const restoreCleanupButton = createElement("button", { id: "editor-restore-cleanup", type: "button", className: "editor-btn editor-btn-secondary" }, "Recuperar arquivos da última limpeza");
+  maintenance.append(cleanupConfirmations, executeCleanupButton, restoreCleanupButton);
+  let cleanupApprovalId = null;
   publishCard.appendChild(maintenance);
   main.appendChild(publishCard);
 
@@ -1028,7 +1049,9 @@ function createLayout(
   // Keep the existing feedback nodes with the operation's tab, without changing workflow state.
   const publishFeedback = createElement("div", { className: "editor-operation-feedback" });
   publishFeedback.append(publishStatus, publishDiagnostics);
-  const showPublishFeedbackIn = (panel) => panel.appendChild(publishFeedback);
+  const showPublishFeedbackIn = (panel) => panel === maintenance
+    ? maintenance.insertBefore(publishFeedback, cleanupConfirmations)
+    : panel.appendChild(publishFeedback);
   showPublishFeedbackIn(publishCard);
   main.replaceChildren(...panels);
   const tabs = navItems.map((item) => createElement("button", {
@@ -1066,7 +1089,7 @@ function createLayout(
     summary.appendChild(createElement("div", {}, [createElement("dt", {}, label), value]));
   }
   const operationReasons = new Map();
-  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, initializeRemoteSourceButton, updateRemoteSourceButton, publishSiteButton, restoreBackupButton]) {
+  for (const button of [connectFtpButton, testFtpConnectionButton, openRemoteProjectButton, openSavedProjectButton, openProjectButton, saveCompositionButton, generateSiteButton, previewGeneratedSiteButton, initializeRemoteSourceButton, updateRemoteSourceButton, publishSiteButton, restoreBackupButton, executeCleanupButton, restoreCleanupButton]) {
     const reason = createElement("p", { id: `${button.id}-reason`, className: "editor-operation-reason" });
     const operation = createElement("div", { className: "editor-operation" });
     button.setAttribute("aria-describedby", reason.id);
@@ -2163,10 +2186,12 @@ function createLayout(
     const profile = state.publish?.profile || readPublishProfileFromForm();
     showPublishFeedbackIn(maintenance);
     store.setState({ publish: { ...state.publish, status: "publishing", message: "Revisando arquivos remotos...", summary: null, diagnostics: [] } });
-    let result = await operationResult(desktopHost.reviewRemoteCleanup(state.openedProject, profile, publishPasswordInput.value));
+    previewAccepted.checked = cleanupAuthorized.checked = false; cleanupApprovalId = null;
+    let result = await operationResult(desktopHost.reviewRemoteCleanup(state.openedProject, profile, publishPasswordInput.value, cleanupProgress));
     if (result.ok && (!Array.isArray(result.manifest?.proposed) ||
       (result.manifest.mediaCandidates !== undefined && !Array.isArray(result.manifest.mediaCandidates)) ||
-      [...result.manifest.proposed, ...(Array.isArray(result.manifest.mediaCandidates) ? result.manifest.mediaCandidates : [])].some(file =>
+      (result.manifest.localCandidates !== undefined && !Array.isArray(result.manifest.localCandidates)) ||
+      [...result.manifest.proposed, ...(Array.isArray(result.manifest.mediaCandidates) ? result.manifest.mediaCandidates : []), ...(Array.isArray(result.manifest.localCandidates) ? result.manifest.localCandidates : [])].some(file =>
       !file || typeof file.path !== "string" || !Number.isSafeInteger(file.bytes) || file.bytes < 0))) result = { ok: false, message: "Revisão inválida. Nenhum arquivo remoto foi removido." };
     if (state.revision !== store.getState().revision || state.openedProject?.path !== store.getState().openedProject?.path || JSON.stringify(profile) !== JSON.stringify(store.getState().publish.profile)) {
       store.setState({ publish: { ...store.getState().publish, status: "failed", message: "Contexto alterado. Revisão descartada." } });
@@ -2176,8 +2201,37 @@ function createLayout(
       diagnostics: result.ok ? [{ code: "CLEANUP_REVIEW", severity: "info", review: {
         files: result.manifest.proposed, sourceCurrent: result.manifest.sourceCurrent, publicCurrent: result.manifest.publicCurrent,
         mediaCandidates: result.manifest.mediaCandidates, mediaAudit: result.manifest.mediaAudit,
+        localCandidates: result.manifest.localCandidates || [], manifestId: result.manifest.id, previewReady: result.previewReady,
         revision: state.revision, projectPath: state.openedProject.path, profileKey: JSON.stringify(profile),
       } }] : [] } });
+  });
+
+  function cleanupProgress(progress) {
+    const label = { review: "Conferindo arquivos remotos", backup: "Criando e conferindo cópias de recuperação", removal: "Excluindo arquivos revisados", restoration: "Recuperando arquivos da limpeza" }[progress.phase] || "Conferindo a limpeza";
+    publishStatus.textContent = `${label}${progress.completedFiles !== undefined ? `: ${progress.completedFiles} arquivos conferidos` : ""}${progress.downloadedBytes !== undefined ? `; ${formatByteCount(progress.downloadedBytes)} recebidos` : ""}${progress.uploadedBytes ? `; ${formatByteCount(progress.uploadedBytes)} enviados` : ""}.${progress.stalled ? " Sem novos dados nos últimos 15 segundos; aguardando resposta do servidor." : ""}`;
+  }
+  previewAccepted.addEventListener("change", () => updateOperationUi(store.getState()));
+  cleanupAuthorized.addEventListener("change", () => updateOperationUi(store.getState()));
+  executeCleanupButton.addEventListener("click", async () => {
+    if (executeCleanupButton.disabled) return;
+    const state = store.getState(), profile = state.publish.profile;
+    const review = state.publish.diagnostics.find(item => item.code === "CLEANUP_REVIEW").review;
+    const approval = { confirmed: cleanupAuthorized.checked, previewAccepted: previewAccepted.checked,
+      manifestId: review.manifestId, paths: review.files.map(file => file.path) };
+    showPublishFeedbackIn(maintenance);
+    store.setState({ publish: { ...state.publish, status: "publishing", message: "Conferindo lista e cópias antes de excluir...", summary: null } });
+    const result = await operationResult(desktopHost.executeRemoteCleanup(state.openedProject, profile, publishPasswordInput.value, review.manifestId, approval, cleanupProgress));
+    previewAccepted.checked = cleanupAuthorized.checked = false; cleanupApprovalId = null;
+    store.setState({ publish: { ...store.getState().publish, status: result.ok ? "configured" : "failed", message: result.cancelled ? "Limpeza cancelada. Nenhum arquivo foi excluído." : result.message,
+      diagnostics: [], summary: null } });
+  });
+  restoreCleanupButton.addEventListener("click", async () => {
+    if (restoreCleanupButton.disabled) return;
+    const state = store.getState();
+    showPublishFeedbackIn(maintenance);
+    store.setState({ publish: { ...state.publish, status: "publishing", message: "Conferindo cópias da última limpeza...", summary: null, diagnostics: [] } });
+    const result = await operationResult(desktopHost.restoreCleanup(state.openedProject, state.publish.profile, publishPasswordInput.value, cleanupProgress));
+    store.setState({ publish: { ...store.getState().publish, status: result.ok ? "configured" : "failed", message: result.cancelled ? "Recuperação cancelada. Nenhum arquivo foi alterado." : result.message, diagnostics: [], summary: null } });
   });
 
   hydrateFromSource(store.getState().projectSource);
@@ -2226,6 +2280,22 @@ function createLayout(
       : getProfileReadiness(profile, password));
     reviewCleanupButton.disabled = !getSiteUpdateReadiness(state, state.publish?.profile || profile, password).ok ||
       state.build?.status !== "success" || typeof desktopHost.reviewRemoteCleanup !== "function";
+    const cleanup = state.publish?.diagnostics?.find(item => item.code === "CLEANUP_REVIEW")?.review;
+    const validCleanup = cleanup && cleanup.revision === state.revision && cleanup.projectPath === state.openedProject?.path &&
+      cleanup.profileKey === JSON.stringify(state.publish?.profile) && !state.contentDirty && !state.compositionDirty && state.build?.status === "success";
+    if (!validCleanup || cleanupApprovalId !== cleanup.manifestId) {
+      previewAccepted.checked = cleanupAuthorized.checked = false;
+      cleanupApprovalId = validCleanup ? cleanup.manifestId : null;
+    }
+    const available = validCleanup && /^[a-f0-9]{64}$/.test(cleanup.manifestId || "") && cleanup.previewReady && cleanup.sourceCurrent && cleanup.publicCurrent &&
+      (cleanup.files.length || cleanup.localCandidates.length) && typeof desktopHost.executeRemoteCleanup === "function";
+    previewAccepted.disabled = cleanupAuthorized.disabled = !available || !busy.ok;
+    apply(executeCleanupButton, !busy.ok ? busy : !available ? unavailable(validCleanup && !cleanup.previewReady
+      ? "Abra a prévia atual em Revisar, confira a página e faça uma nova revisão da limpeza."
+      : "Atualize o site e revise a limpeza. A lista deve corresponder ao projeto atual e conter arquivos removíveis.")
+      : !previewAccepted.checked || !cleanupAuthorized.checked ? unavailable("Marque as duas confirmações após conferir a prévia e a lista.") : { ok: true });
+    apply(restoreCleanupButton, !busy.ok ? busy : state.contentDirty || state.compositionDirty ? unavailable("Salve ou descarte alterações antes de recuperar arquivos.")
+      : state.openedProject?.source !== "remote-ftp" || typeof desktopHost.restoreCleanup !== "function" ? unavailable("Abra o projeto remoto no aplicativo desktop para recuperar a limpeza.") : getProfileReadiness(profile, password));
     savePublishProfileButton.disabled = !busy.ok;
     for (const input of publishForm.querySelectorAll("input")) input.disabled = !busy.ok;
     const validComposition = !!state.draftComposition && validatePageComposition(state.draftComposition).valid;

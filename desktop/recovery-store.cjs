@@ -207,6 +207,8 @@ function createRecoveryStore(baseDirectory, { keepSuccessful = 5 } = {}) {
     const successful = transactions.filter(transaction => Object.values(transaction.snapshots).length &&
       Object.values(transaction.snapshots).every(snapshot => snapshot.status === "success"));
     for (const transaction of successful.slice(keepSuccessful)) {
+      // Cleanup copies remain available until explicitly restored.
+      if (transaction.revision.startsWith("cleanup:") && Object.values(transaction.snapshots).some(snapshot => !snapshot.resolvedAt)) continue;
       if (referenced.has(transaction.id)) continue;
       const target = path.resolve(transactionPath(transaction.id));
       if (!target.startsWith(`${base}${path.sep}`)) throw new Error("Invalid retention target");
